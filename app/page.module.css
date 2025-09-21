@@ -1,64 +1,6 @@
 /* QueryDaily Version 1 Polished - AsyncSite Matching Dark Theme */
 
-:root {
-    /* AsyncSite Color System */
-    --color-bg-primary: #0d0d0d;
-    --color-bg-secondary: #1a1a1a;
-    --color-bg-tertiary: #242424;
-    --color-bg-elevated: #2a2a2a;
-
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #a0a0a0;
-    --color-text-tertiary: #707070;
-
-    --color-primary: #c3e88d;
-    --color-primary-dark: #a8d378;
-    --color-primary-light: #d4f0a0;
-
-    --color-accent: #82aaff;
-    --color-warning: #ffcb6b;
-    --color-error: #f07178;
-    --color-success: #c3e88d;
-
-    /* Spacing */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
-    --spacing-3xl: 4rem;
-
-    /* Typography */
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 2rem;
-    --font-size-4xl: 2.5rem;
-    --font-size-5xl: 3rem;
-
-    /* Border Radius */
-    --radius-sm: 0.25rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-full: 9999px;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
-
-    /* Transitions */
-    --transition-fast: 150ms ease;
-    --transition-base: 250ms ease;
-    --transition-slow: 350ms ease;
-}
+/* CSS Variables moved to globals.css - CSS Modules don't support :root */
 
 /* Container */
 .container {

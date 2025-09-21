@@ -21,7 +21,11 @@ export const metadata: Metadata = {
     title: 'QueryDaily - 맞춤형 면접 트레이닝',
     description: '매일 아침, 당신만을 위한 날카로운 면접 질문을 배달합니다.',
   },
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: '#0d0d0d',
 };
 

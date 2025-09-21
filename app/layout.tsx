@@ -6,12 +6,12 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'QueryDaily - 매일 성장하는 개발자를 위한 맞춤형 면접 트레이닝',
-  description: '당신의 Java/Spring 프로젝트 경험을 날카로운 무기로. 7일 무료 챌린지로 면접 자신감을 키우세요.',
+  description: '당신의 Java/Spring 프로젝트 경험을 날카로운 무기로. 3일 무료 챌린지로 면접 자신감을 키우세요.',
   keywords: '개발자 면접, Java 면접, Spring 면접, 기술 면접, 면접 준비, 백엔드 면접',
   authors: [{ name: 'QueryDaily' }],
   openGraph: {
     title: 'QueryDaily - 매일 성장하는 개발자를 위한 맞춤형 면접 트레이닝',
-    description: '당신의 Java/Spring 프로젝트 경험을 날카로운 무기로. 7일 무료 챌린지로 면접 자신감을 키우세요.',
+    description: '당신의 Java/Spring 프로젝트 경험을 날카로운 무기로. 3일 무료 챌린지로 면접 자신감을 키우세요.',
     type: 'website',
     locale: 'ko_KR',
     siteName: 'QueryDaily',

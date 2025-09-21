@@ -12,9 +12,86 @@ export default function HomePage() {
   const [resumeFileName, setResumeFileName] = useState<string>('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(1);
+  const [transition, setTransition] = useState(true);
   const [activeQuestionTab, setActiveQuestionTab] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  const testimonials = [
+    {
+      name: '김**',
+      role: '백엔드 2년차',
+      avatar: '👨‍💻',
+      text: '"매일 받는 질문이 실제 면접보다 더 어려웠어요. 덕분에 실제 면접에선 자신감 있게 대답할 수 있었습니다."',
+      result: '💼 네카라쿠배 합격'
+    },
+    {
+      name: '이**',
+      role: '신입 개발자',
+      avatar: '👩‍💻',
+      text: '"왜 QueryDaily 안 했을까 후회돼요. 면접장에서 비슷한 질문이 나와서 깜짝 놀랐습니다. 이력서 기반이라 그런가봐요."',
+      result: '🏢 시리즈 B 스타트업'
+    },
+    {
+      name: '박**',
+      role: '전공자 졸업예정',
+      avatar: '🧑‍🎓',
+      text: '"학교에서 배운 것과 실무는 정말 달라요. QueryDaily 덕분에 그 갭을 줄일 수 있었습니다."',
+      result: '🎆 대기업 합격'
+    },
+    {
+      name: '정**',
+      role: 'Spring 백엔드 4년차',
+      avatar: '👩‍🏫',
+      text: '"이직 준비하면서 제가 놓치고 있던 부분을 발견했어요. 왜 그렇게 했는지 설명하는 연습이 큰 도움이 됐습니다."',
+      result: '🚀 외국계 테크 회사'
+    },
+    {
+      name: '서**',
+      role: '부트캠프 수료생',
+      avatar: '🥰',
+      text: '"처음엔 \'내가 잘할 수 있을까\' 고민했는데, 3일 후엔 자신감이 생겼어요. 매일 받는 질문이 저를 성장시켰습니다."',
+      result: '🎯 원하는 회사 카카오'
+    },
+    {
+      name: '최**',
+      role: 'Java 백엔드 3년차',
+      avatar: '💻',
+      text: '"이력서 맞춤형이라 정말 좋았어요. 제 경험과 프로젝트를 기반으로 한 질문들이 실제 면접에서 큰 도움이 됐습니다."',
+      result: '🎉 토스 합격'
+    },
+    {
+      name: '조**',
+      role: 'SI 3년차 전직',
+      avatar: '🔥',
+      text: '"SI에서 서비스 회사로 이직하는 게 막막했는데, 제 프로젝트 경험을 어떻게 어필해야 할지 알게 됐어요."',
+      result: '🛍️ 쿠팡 합격'
+    },
+    {
+      name: '윤**',
+      role: '비전공 1년차',
+      avatar: '🌱',
+      text: '"비전공자라 기초가 부족한 줄만 알았는데, 제가 가진 강점이 뭔지 발견했습니다. 질문이 정말 날카로웠어요."',
+      result: '🏦 금융권 IT'
+    },
+    {
+      name: '장**',
+      role: 'MSA 전환 경험자',
+      avatar: '🏗️',
+      text: '"모놀리식에서 MSA 전환 프로젝트를 했는데, 그 경험을 어떻게 설명해야 할지 막막했어요. 이제는 자신있게 설명합니다."',
+      result: '🚀 라인 합격'
+    },
+    {
+      name: '한**',
+      role: '스타트업 CTO 출신',
+      avatar: '👨‍💼',
+      text: '"작은 스타트업 경험이 대기업 면접에서 통할까 걱정했는데, 오히려 강점으로 만드는 방법을 배웠습니다."',
+      result: '💳 삼성카드'
+    }
+  ];
+
+  // Clone for infinite scroll
+  const extendedTestimonials = [testimonials[testimonials.length - 1], ...testimonials, testimonials[0]];
 
   useEffect(() => {
     // Smooth scroll setup
@@ -33,6 +110,48 @@ export default function HomePage() {
     document.addEventListener('click', handleSmoothScroll);
     return () => document.removeEventListener('click', handleSmoothScroll);
   }, []);
+
+  // Handle infinite scroll positioning
+  useEffect(() => {
+    if (currentTestimonial === 0) {
+      setTimeout(() => {
+        setTransition(false);
+        setCurrentTestimonial(testimonials.length);
+        requestAnimationFrame(() => {
+          setTransition(true);
+        });
+      }, 500);
+    } else if (currentTestimonial === testimonials.length + 1) {
+      setTimeout(() => {
+        setTransition(false);
+        setCurrentTestimonial(1);
+        requestAnimationFrame(() => {
+          setTransition(true);
+        });
+      }, 500);
+    }
+  }, [currentTestimonial, testimonials.length]);
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial(prev => prev + 1);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleNext = () => {
+    setCurrentTestimonial(prev => prev + 1);
+  };
+
+  const handlePrev = () => {
+    setCurrentTestimonial(prev => prev - 1);
+  };
+
+  const handleDotClick = (index: number) => {
+    setCurrentTestimonial(index + 1);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -126,12 +245,12 @@ export default function HomePage() {
 
             <p className={styles.heroSubtitle}>
               매일 아침, 당신의 <strong>Java/Spring 프로젝트</strong>에서 가장 날카로운 질문 하나를 꺼내드립니다.<br/>
-              <strong>7일 뒤,</strong> 당신은 스스로의 경험을 증명하는 법을 알게 됩니다.
+              <strong>3일 뒤,</strong> 당신은 스스로의 경험을 증명하는 법을 알게 됩니다.
             </p>
 
             <div className={styles.heroStats}>
               <div className={styles.statItem}>
-                <div className={styles.statNumber}>7일</div>
+                <div className={styles.statNumber}>3일</div>
                 <div className={styles.statLabel}>무료 챌린지</div>
               </div>
               <div className={styles.statDivider}></div>
@@ -148,7 +267,7 @@ export default function HomePage() {
 
             <div className={styles.heroCta}>
               <a href="#apply" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}>
-                <span>7일 무료 챌린지, 지금 시작하기</span>
+                <span>3일 무료 챌린지, 지금 시작하기</span>
                 <span className={styles.btnArrow}>→</span>
               </a>
               <p className={styles.ctaNote}>
@@ -232,7 +351,7 @@ export default function HomePage() {
             <div className={styles.valueItem}>
               <div className={styles.valueIcon}>🧭</div>
               <h3>나만의 성장 지도</h3>
-              <p>7일 후, 당신은 어떤 경험을 어떻게 정리해야 할지, 무엇을 더 보강해야 할지 스스로 알게 됩니다.</p>
+              <p>3일 후, 당신은 어떤 경험을 어떻게 정리해야 할지, 무엇을 더 보강해야 할지 스스로 알게 됩니다.</p>
             </div>
           </div>
         </div>
@@ -267,7 +386,7 @@ export default function HomePage() {
               </div>
               <div className={styles.timelineContent}>
                 <h3 className={styles.timelineTitle}>매일 질문 수신</h3>
-                <p className={styles.timelineDesc}>7일 동안 매일 아침, 전문가가 당신을 위한 질문을 준비합니다.</p>
+                <p className={styles.timelineDesc}>3일 동안 매일 아침, 전문가가 당신을 위한 질문을 준비합니다.</p>
                 <div className={styles.timelineDetail}>
                   <span className={styles.timelineTiming}>📅 매일 오전 10시</span>
                   <span className={styles.timelineNote}>이메일로 편하게</span>
@@ -284,7 +403,7 @@ export default function HomePage() {
                 <h3 className={styles.timelineTitle}>성장의 시작</h3>
                 <p className={styles.timelineDesc}>질문에 스스로 답을 고민하는 과정에서, 당신의 경험은 비로소 날카로운 무기가 됩니다.</p>
                 <div className={styles.timelineDetail}>
-                  <span className={styles.timelineTiming}>💎 7일 후 변화</span>
+                  <span className={styles.timelineTiming}>💎 3일 후 변화</span>
                   <span className={styles.timelineNote}>면접 자신감 상승</span>
                 </div>
               </div>
@@ -420,51 +539,14 @@ export default function HomePage() {
           <h2 className={styles.sectionTitle}>먼저 경험한 개발자들의 이야기</h2>
 
           <div className={styles.testimonialsCarousel}>
-            <div className={styles.testimonialsWrapper} style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
-              {[
-                {
-                  name: '김**',
-                  role: '백엔드 2년차',
-                  avatar: '👨‍💻',
-                  text: '"제 이력서에 있는 프로젝트 기반으로 질문이 와서 놀랐어요. 덕분에 실제 면접에서 당황하지 않고 잘 대답할 수 있었습니다."',
-                  result: '💼 N사 합격'
-                },
-                {
-                  name: '이**',
-                  role: 'Java 백엔드 신입',
-                  avatar: '👩‍💻',
-                  text: '"매일 한 문제씩이라 부담없이 준비할 수 있었어요. 출근길 지하철에서 답변 구상하는 게 일상이 됐습니다."',
-                  result: '💼 스타트업 3곳 합격'
-                },
-                {
-                  name: '박**',
-                  role: 'Spring 백엔드 3년차',
-                  avatar: '🧑‍💻',
-                  text: '"기술 면접 준비의 방향을 잡을 수 있었습니다. 특히 트레이드오프 관련 질문들이 정말 도움됐어요."',
-                  result: '💼 연봉 협상 성공'
-                },
-                {
-                  name: '최**',
-                  role: '백엔드 1년차',
-                  avatar: '👨‍🎓',
-                  text: '"비전공자로 치열한 경쟁을 뚫고 취업했어요. QueryDaily가 저의 경험을 설명하는 방법을 가르쳐줬어요."',
-                  result: '🎆 대기업 합격'
-                },
-                {
-                  name: '정**',
-                  role: 'Spring 백엔드 4년차',
-                  avatar: '👩‍🏫',
-                  text: '"이직 준비하면서 제가 놓치고 있던 부분을 발견했어요. 왜 그렇게 했는지 설명하는 연습이 큰 도움이 됐습니다."',
-                  result: '🚀 외국계 테크 회사'
-                },
-                {
-                  name: '서**',
-                  role: '부트캠프 수료생',
-                  avatar: '🥰',
-                  text: '"처음엔 \'내가 잘할 수 있을까\' 고민했는데, 7일 후엔 자신감이 생겼어요. 매일 받는 질문이 저를 성장시켰습니다."',
-                  result: '🎯 원하는 회사 카카오'
-                }
-              ].map((testimonial, index) => (
+            <div
+              className={styles.testimonialsWrapper}
+              style={{
+                transform: `translateX(-${currentTestimonial * 100}%)`,
+                transition: transition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none'
+              }}
+            >
+              {extendedTestimonials.map((testimonial, index) => (
                 <div key={index} className={styles.testimonialSlide}>
                   <div className={styles.testimonialCard}>
                     <div className={styles.testimonialHeader}>
@@ -485,29 +567,35 @@ export default function HomePage() {
             {/* Carousel Controls */}
             <button
               className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
-              onClick={() => setCurrentTestimonial(prev => prev === 0 ? 5 : prev - 1)}
+              onClick={handlePrev}
               aria-label="Previous testimonial"
             >
-              ‹
+              ←
             </button>
             <button
               className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
-              onClick={() => setCurrentTestimonial(prev => prev === 5 ? 0 : prev + 1)}
+              onClick={handleNext}
               aria-label="Next testimonial"
             >
-              ›
+              →
             </button>
 
             {/* Carousel Dots */}
             <div className={styles.carouselDots}>
-              {[0, 1, 2, 3, 4, 5].map((index) => (
-                <button
-                  key={index}
-                  className={`${styles.dot} ${currentTestimonial === index ? styles.activeDot : ''}`}
-                  onClick={() => setCurrentTestimonial(index)}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
+              {testimonials.map((_, index) => {
+                let activeIndex = currentTestimonial - 1;
+                if (currentTestimonial === 0) activeIndex = testimonials.length - 1;
+                if (currentTestimonial === testimonials.length + 1) activeIndex = 0;
+                const isActive = activeIndex === index;
+                return (
+                  <button
+                    key={index}
+                    className={`${styles.dot} ${isActive ? styles.activeDot : ''}`}
+                    onClick={() => handleDotClick(index)}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
@@ -534,7 +622,7 @@ export default function HomePage() {
 
             <div className={styles.privacyCard}>
               <div className={styles.cardIcon}>⏱️</div>
-              <h3>7일 후 완전 삭제</h3>
+              <h3>3일 후 완전 삭제</h3>
               <p>챌린지 종료와 동시에 모든 데이터가 삭제됩니다</p>
               <div className={styles.deletionTimeline}>
                 <div className={styles.timelineItem}>
@@ -574,7 +662,7 @@ export default function HomePage() {
       </div>
 
       {/* FAQ Section - Collapsible Accordion */}
-      <div className={`${styles.section} ${styles.faqSection}`}>
+      <div id="faq" className={`${styles.section} ${styles.faqSection}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>아직 고민되시나요?</h2>
           <p className={styles.sectionSubtitle}>가장 많이 궁금해하시는 점들을 정리했습니다</p>
@@ -605,10 +693,10 @@ export default function HomePage() {
               },
               {
                 icon: '⏰',
-                question: '7일이면 충분한가요?',
+                question: '3일이면 충분한가요?',
                 answer: (
                   <div className={styles.faqAnswerContent}>
-                    <p><strong>7일은 시작입니다.</strong></p>
+                    <p><strong>3일은 시작입니다.</strong></p>
                     <p>이 기간 동안 당신은 자신의 약점을 명확히 파악하고, 어떤 부분을 보강해야 할지 알게 됩니다.</p>
 
                     <div className={styles.faqHighlight}>
@@ -632,7 +720,7 @@ export default function HomePage() {
                     <div className={styles.faqNote}>
                       <span className={styles.faqNoteIcon}>💪</span>
                       <div>
-                        <p>답변이 궁금하다면 7일 후 '인터뷰 패스' 플랜으로 업그레이드하실 수 있습니다.</p>
+                        <p>답변이 궁금하다면 3일 후 '인터뷰 패스' 플랜으로 업그레이드하실 수 있습니다.</p>
                         <p>하지만 <strong>먼저 스스로 생각해보는 시간</strong>이 꼭 필요합니다.</p>
                       </div>
                     </div>
@@ -754,7 +842,7 @@ export default function HomePage() {
                 <div className={styles.applyFeature}>
                   <span className={styles.featureCheck}>✓</span>
                   <div>
-                    <strong>7일 무료 챌린지</strong>
+                    <strong>3일 무료 챌린지</strong>
                     <p>날카로운 질문으로 시작하는 성장</p>
                   </div>
                 </div>
@@ -846,8 +934,7 @@ export default function HomePage() {
                 </div>
 
                 <p className={styles.formFooter}>
-                  가입 시 <a href="#">서비스 이용약관</a>과
-                  <a href="#">개인정보처리방침</a>에 동의하게 됩니다.
+                  가입 시 <a href="/terms">서비스 이용약관</a>과 <a href="/privacy">개인정보처리방침</a>에 동의하게 됩니다.
                 </p>
               </form>
             </div>
@@ -868,27 +955,21 @@ export default function HomePage() {
               <div className={styles.footerLinks}>
                 <div className={styles.footerColumn}>
                   <h4>서비스</h4>
-                  <a href="#">작동 방식</a>
-                  <a href="#">요금 안내</a>
-                  <a href="#">자주 묻는 질문</a>
-                </div>
-                <div className={styles.footerColumn}>
-                  <h4>회사</h4>
-                  <a href="#">소개</a>
-                  <a href="#">블로그</a>
-                  <a href="#">채용</a>
+                  <a href="#how-it-works">작동 방식</a>
+                  <a href="/pricing">요금 안내</a>
+                  <a href="#faq">자주 묻는 질문</a>
                 </div>
                 <div className={styles.footerColumn}>
                   <h4>지원</h4>
-                  <a href="#">문의하기</a>
-                  <a href="#">이용약관</a>
-                  <a href="#">개인정보처리방침</a>
+                  <a href="https://open.kakao.com/o/gKxyzABf" target="_blank" rel="noopener noreferrer">문의하기</a>
+                  <a href="/terms">이용약관</a>
+                  <a href="/privacy">개인정보처리방침</a>
                 </div>
               </div>
             </div>
 
             <div className={styles.footerBottom}>
-              <p>© 2024 QueryDaily. All rights reserved.</p>
+              <p>© 2025 QueryDaily. All rights reserved.</p>
               <div className={styles.socialLinks}>
                 <a href="#" aria-label="Twitter">𝕏</a>
                 <a href="#" aria-label="LinkedIn">in</a>

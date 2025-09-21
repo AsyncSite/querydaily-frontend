@@ -129,6 +129,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing-xl);
+    position: relative;
 }
 
 .heroContent {
@@ -288,10 +289,10 @@
 /* Hero Visual */
 .heroVisual {
     position: absolute;
-    right: -100px;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 500px;
+    width: 400px;
     height: 400px;
     pointer-events: none;
 }
@@ -307,21 +308,21 @@
 
 .card1 {
     top: 20px;
-    right: 50px;
+    right: 20px;
     width: 280px;
     animation: float 6s ease-in-out infinite;
 }
 
 .card2 {
     top: 180px;
-    right: 200px;
+    right: 100px;
     width: 200px;
     animation: float 6s ease-in-out infinite 2s;
 }
 
 .card3 {
     bottom: 40px;
-    right: 100px;
+    right: 50px;
     width: 80px;
     height: 80px;
     display: flex;
@@ -953,7 +954,6 @@
 
 .testimonialsWrapper {
     display: flex;
-    transition: transform 0.5s ease-in-out;
 }
 
 .testimonialSlide {
@@ -965,25 +965,29 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(195, 232, 141, 0.1);
-    border: 1px solid rgba(195, 232, 141, 0.3);
-    color: var(--color-primary);
-    font-size: 2rem;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-tertiary);
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
     z-index: 10;
+    opacity: 0.7;
 }
 
 .carouselBtn:hover {
-    background: rgba(195, 232, 141, 0.2);
-    border-color: var(--color-primary);
-    transform: translateY(-50%) scale(1.1);
+    background: rgba(195, 232, 141, 0.1);
+    border-color: rgba(195, 232, 141, 0.3);
+    color: var(--color-primary);
+    opacity: 1;
+    transform: translateY(-50%);
 }
 
 .carouselBtnPrev {
@@ -1026,6 +1030,8 @@
     border: 1px solid var(--color-bg-tertiary);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .testimonialHeader {
@@ -1554,6 +1560,7 @@
 /* Application Form */
 .apply {
     background: var(--color-bg-secondary);
+    padding-bottom: var(--spacing-3xl);
 }
 
 .applyWrapper {
@@ -1921,15 +1928,16 @@
 /* Footer */
 .footer {
     background: var(--color-bg-secondary);
-    border-top: 1px solid var(--color-bg-tertiary);
-    padding: var(--spacing-3xl) 0 var(--spacing-xl);
-    margin-top: var(--spacing-3xl);
+    border-top: 2px solid var(--color-bg-elevated);
+    padding: var(--spacing-lg) 0 var(--spacing-md);
+    margin-top: 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .footerContent {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-md);
 }
 
 .footerMain {

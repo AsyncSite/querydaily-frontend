@@ -19,6 +19,7 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [openFooterSection, setOpenFooterSection] = useState<string | null>(null);
 
   const testimonials = [
     {
@@ -1002,16 +1003,32 @@ export default function HomePage() {
 
               <div className={styles.footerLinks}>
                 <div className={styles.footerColumn}>
-                  <h4>서비스</h4>
-                  <a href="#how-it-works">작동 방식</a>
-                  <a href="/pricing">요금 안내</a>
-                  <a href="#faq">자주 묻는 질문</a>
+                  <h4
+                    className={styles.footerColumnHeader}
+                    onClick={() => setOpenFooterSection(openFooterSection === 'service' ? null : 'service')}
+                  >
+                    서비스
+                    <span className={styles.footerToggleIcon}>{openFooterSection === 'service' ? '−' : '+'}</span>
+                  </h4>
+                  <div className={`${styles.footerColumnContent} ${openFooterSection === 'service' ? styles.footerColumnContentOpen : ''}`}>
+                    <a href="#how-it-works">작동 방식</a>
+                    <a href="/pricing">요금 안내</a>
+                    <a href="#faq">자주 묻는 질문</a>
+                  </div>
                 </div>
                 <div className={styles.footerColumn}>
-                  <h4>지원</h4>
-                  <a href="https://open.kakao.com/o/gKxyzABf" target="_blank" rel="noopener noreferrer">문의하기</a>
-                  <a href="/terms">이용약관</a>
-                  <a href="/privacy">개인정보처리방침</a>
+                  <h4
+                    className={styles.footerColumnHeader}
+                    onClick={() => setOpenFooterSection(openFooterSection === 'support' ? null : 'support')}
+                  >
+                    지원
+                    <span className={styles.footerToggleIcon}>{openFooterSection === 'support' ? '−' : '+'}</span>
+                  </h4>
+                  <div className={`${styles.footerColumnContent} ${openFooterSection === 'support' ? styles.footerColumnContentOpen : ''}`}>
+                    <a href="https://open.kakao.com/o/gKxyzABf" target="_blank" rel="noopener noreferrer">문의하기</a>
+                    <a href="/terms">이용약관</a>
+                    <a href="/privacy">개인정보처리방침</a>
+                  </div>
                 </div>
               </div>
             </div>

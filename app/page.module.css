@@ -2000,6 +2000,29 @@
     margin-bottom: var(--spacing-md);
 }
 
+.footerColumnHeader {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    cursor: default;
+}
+
+.footerToggleIcon {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+}
+
+.footerColumnContent {
+    display: block;
+}
+
 .footerColumn a {
     display: block;
     color: var(--color-text-secondary);
@@ -2305,19 +2328,63 @@
         padding: var(--spacing-md) 0;
         font-size: var(--font-size-base);
         text-align: center;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .navLinkCta {
         width: 100%;
         justify-content: center;
+        min-height: 48px;
+        padding: var(--spacing-md) var(--spacing-xl);
+    }
+
+    /* Improve touch targets for all buttons */
+    .btn {
+        min-height: 48px;
+        padding: var(--spacing-md) var(--spacing-xl);
+        font-size: var(--font-size-base);
+    }
+
+    .carouselBtn {
+        width: 48px;
+        height: 48px;
     }
 
     .heroTitle {
         font-size: var(--font-size-3xl);
+        line-height: 1.3;
     }
 
     .heroTitleMain {
         font-size: var(--font-size-3xl);
+    }
+
+    .heroSubtitle {
+        font-size: var(--font-size-base);
+        line-height: 1.8;
+    }
+
+    /* Improve text readability */
+    .sectionTitle {
+        font-size: var(--font-size-2xl);
+        line-height: 1.3;
+    }
+
+    .sectionDescription {
+        font-size: var(--font-size-base);
+        line-height: 1.7;
+    }
+
+    p {
+        line-height: 1.7;
+    }
+
+    .testimonialText {
+        font-size: var(--font-size-base);
+        line-height: 1.8;
     }
 
     .solutionValues {
@@ -2410,6 +2477,39 @@
     .footerLinks {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
+    }
+
+    .footerColumnHeader {
+        cursor: pointer;
+        padding: var(--spacing-md) 0;
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--color-bg-tertiary);
+        user-select: none;
+    }
+
+    .footerToggleIcon {
+        display: block;
+    }
+
+    .footerColumnContent {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        padding: 0;
+    }
+
+    .footerColumnContentOpen {
+        max-height: 200px;
+        padding: var(--spacing-md) 0;
+        transition: max-height 0.3s ease-in, padding 0.3s ease-in;
+    }
+
+    .footerColumn {
+        border-bottom: 1px solid var(--color-bg-tertiary);
+    }
+
+    .footerColumn:last-child {
+        border-bottom: none;
     }
 
     .footerBottom {
@@ -2586,5 +2686,196 @@
     .faqTip {
         flex-direction: column;
         text-align: center;
+    }
+
+    /* Modal Optimization for Mobile */
+    .modal {
+        padding: var(--spacing-md);
+    }
+
+    .modalContent {
+        width: 100%;
+        max-width: calc(100vw - var(--spacing-xl));
+        max-height: calc(100vh - var(--spacing-xl));
+        overflow-y: auto;
+        padding: var(--spacing-xl);
+    }
+
+    .modalIcon {
+        font-size: var(--font-size-3xl);
+    }
+
+    .modalTitle {
+        font-size: var(--font-size-xl);
+    }
+
+    .modalText {
+        font-size: var(--font-size-base);
+    }
+
+    .modalTips {
+        padding: var(--spacing-md);
+    }
+
+    /* Error Toast Optimization for Mobile */
+    .errorToast {
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        top: auto;
+        bottom: var(--spacing-xl);
+        max-width: none;
+    }
+
+    .errorContent {
+        padding: var(--spacing-md);
+    }
+
+    .errorContent h4 {
+        font-size: var(--font-size-base);
+    }
+
+    .errorContent ul {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Small Mobile Screens */
+@media (max-width: 480px) {
+    .navContainer {
+        padding: 0 var(--spacing-md);
+    }
+
+    .heroContainer {
+        padding: 0 var(--spacing-md);
+    }
+
+    .sectionContainer {
+        padding: 0 var(--spacing-md);
+    }
+
+    .heroTitle {
+        font-size: var(--font-size-2xl);
+    }
+
+    .heroTitleMain {
+        font-size: var(--font-size-2xl);
+    }
+
+    .sectionTitle {
+        font-size: var(--font-size-xl);
+    }
+
+    .btnLarge {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-base);
+    }
+
+    .applyCard {
+        padding: var(--spacing-lg);
+    }
+
+    .applicationForm input[type="text"],
+    .applicationForm input[type="email"] {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    /* Modal - Extra Small Screens */
+    .modalContent {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-sm);
+    }
+
+    .modalIcon {
+        font-size: var(--font-size-2xl);
+    }
+
+    .modalTitle {
+        font-size: var(--font-size-lg);
+    }
+
+    .modalTips h3 {
+        font-size: var(--font-size-sm);
+    }
+
+    /* Error Toast - Extra Small Screens */
+    .errorToast {
+        bottom: var(--spacing-md);
+        left: var(--spacing-sm);
+        right: var(--spacing-sm);
+    }
+}
+
+/* Extra Small Mobile Screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+    .logo {
+        font-size: var(--font-size-base);
+    }
+
+    .betaTag {
+        display: none;
+    }
+
+    .heroStats {
+        transform: scale(0.9);
+    }
+
+    .floatingCard {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-md);
+    }
+
+    .testimonialCard {
+        padding: var(--spacing-md);
+    }
+
+    .footerLinks {
+        font-size: var(--font-size-sm);
+    }
+
+    .privacyCard,
+    .privacyItem {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Reduce animations for better mobile performance and accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .floatingCard {
+        animation: none !important;
+    }
+
+    .testimonialsWrapper {
+        transition: none !important;
+    }
+}
+
+/* Mobile-specific performance optimizations */
+@media (max-width: 768px) {
+    /* Disable complex animations on mobile */
+    .floatingCard {
+        animation: none;
+    }
+
+    .badgeIcon {
+        animation: none;
+    }
+
+    /* Simplify hover effects */
+    .btn:hover,
+    .navLink:hover,
+    .navLinkCta:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Disable parallax effects */
+    .hero {
+        background-attachment: scroll;
     }
 }

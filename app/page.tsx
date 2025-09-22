@@ -221,6 +221,7 @@ export default function HomePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (validateForm()) {
       try {
         const response = await submitBetaApplication({

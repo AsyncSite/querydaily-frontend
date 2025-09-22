@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8087';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
 
 export interface SubmitApplicationRequest {
   email: string;
@@ -33,7 +33,7 @@ export async function submitBetaApplication(data: SubmitApplicationRequest): Pro
   }
   formData.append('resume', data.resume);
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/queries`, {
+  const response = await fetch(`${API_BASE_URL}/api/queries`, {
     method: 'POST',
     body: formData,
   });

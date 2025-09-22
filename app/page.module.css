@@ -118,6 +118,42 @@
     transform: translateX(3px);
 }
 
+/* Hamburger Menu */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.hamburgerLine {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--color-text-primary);
+    margin: 3px 0;
+    transition: var(--transition-base);
+}
+
+.hamburgerLineOpen:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburgerLineOpen:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburgerLineOpen:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
 /* Hero Section */
 .hero {
     padding: 200px 0 80px;
@@ -2202,6 +2238,32 @@
 /* Responsive */
 @media (max-width: 1024px) {
     .heroVisual {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        height: auto;
+        margin-top: var(--spacing-2xl);
+        pointer-events: auto;
+    }
+
+    .floatingCard {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto var(--spacing-lg) auto;
+        animation: none;
+    }
+
+    .card1, .card2, .card3 {
+        right: auto;
+        top: auto;
+        bottom: auto;
+        left: auto;
+    }
+
+    .card3 {
         display: none;
     }
 
@@ -2215,8 +2277,39 @@
 }
 
 @media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
     .navMenu {
         display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--color-bg-primary);
+        border-bottom: 1px solid var(--color-bg-tertiary);
+        flex-direction: column;
+        padding: var(--spacing-xl);
+        gap: var(--spacing-lg);
+        z-index: 999;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .navMenuOpen {
+        display: flex;
+    }
+
+    .navLink {
+        width: 100%;
+        padding: var(--spacing-md) 0;
+        font-size: var(--font-size-base);
+        text-align: center;
+    }
+
+    .navLinkCta {
+        width: 100%;
+        justify-content: center;
     }
 
     .heroTitle {

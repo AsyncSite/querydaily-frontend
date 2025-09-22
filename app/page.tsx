@@ -16,6 +16,9 @@ export default function HomePage() {
   const [transition, setTransition] = useState(true);
   const [activeQuestionTab, setActiveQuestionTab] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   const testimonials = [
     {
@@ -153,6 +156,30 @@ export default function HomePage() {
     setCurrentTestimonial(index + 1);
   };
 
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      handleNext();
+    }
+    if (isRightSwipe) {
+      handlePrev();
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
     if (name === 'resume' && files && files[0]) {
@@ -214,11 +241,23 @@ export default function HomePage() {
               <span className={styles.logoText}>Query<span className={styles.logoAccent}>Daily</span></span>
               <span className={styles.betaTag}>BETA</span>
             </div>
-            <nav className={styles.navMenu}>
-              <a href="#why" className={styles.navLink}>왜 QueryDaily</a>
-              <a href="#how-it-works" className={styles.navLink}>작동 방식</a>
-              <a href="#testimonials" className={styles.navLink}>후기</a>
-              <a href="#apply" className={`${styles.navLink} ${styles.navLinkCta}`}>
+
+            {/* Hamburger Menu Button */}
+            <button
+              className={styles.hamburger}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="메뉴 열기"
+            >
+              <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineOpen : ''}`}></span>
+              <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineOpen : ''}`}></span>
+              <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineOpen : ''}`}></span>
+            </button>
+
+            <nav className={`${styles.navMenu} ${mobileMenuOpen ? styles.navMenuOpen : ''}`}>
+              <a href="#why" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>왜 QueryDaily</a>
+              <a href="#how-it-works" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>작동 방식</a>
+              <a href="#testimonials" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>후기</a>
+              <a href="#apply" className={`${styles.navLink} ${styles.navLinkCta}`} onClick={() => setMobileMenuOpen(false)}>
                 <span>무료 시작</span>
                 <span className={styles.navArrow}>→</span>
               </a>
@@ -538,7 +577,12 @@ export default function HomePage() {
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>먼저 경험한 개발자들의 이야기</h2>
 
-          <div className={styles.testimonialsCarousel}>
+          <div
+            className={styles.testimonialsCarousel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div
               className={styles.testimonialsWrapper}
               style={{
@@ -875,6 +919,8 @@ export default function HomePage() {
                     placeholder="example@gmail.com"
                     value={formData.email}
                     onChange={handleInputChange}
+                    autoComplete="email"
+                    inputMode="email"
                   />
                   <p className={styles.formHint}>매일 이 이메일로 날카로운 질문을 보내드립니다</p>
                 </div>
@@ -888,6 +934,8 @@ export default function HomePage() {
                     placeholder="홍길동"
                     value={formData.name}
                     onChange={handleInputChange}
+                    autoComplete="name"
+                    inputMode="text"
                   />
                   <p className={styles.formHint}>더 친근한 메일을 보내드릴 수 있어요</p>
                 </div>

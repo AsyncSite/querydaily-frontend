@@ -2378,10 +2378,6 @@
         line-height: 1.7;
     }
 
-    p {
-        line-height: 1.7;
-    }
-
     .testimonialText {
         font-size: var(--font-size-base);
         line-height: 1.8;

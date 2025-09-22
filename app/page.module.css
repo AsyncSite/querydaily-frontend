@@ -2836,18 +2836,28 @@
 
 /* Reduce animations for better mobile performance and accessibility */
 @media (prefers-reduced-motion: reduce) {
-    :global(*) {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-
     .floatingCard {
         animation: none !important;
     }
 
     .testimonialsWrapper {
         transition: none !important;
+    }
+
+    .heroVisual,
+    .heroContainer,
+    .section,
+    .btn,
+    .navLink,
+    .questionTab,
+    .timelineItem,
+    .faqAccordionContent,
+    .footerColumnContent,
+    .modal,
+    .errorToast {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
 

@@ -33,7 +33,7 @@ export async function submitBetaApplication(data: SubmitApplicationRequest): Pro
   }
   formData.append('resume', data.resume);
 
-  const response = await fetch(`${API_BASE_URL}/api/queries`, {
+  const response = await fetch(`${API_BASE_URL}/api/public/queries`, {
     method: 'POST',
     body: formData,
   });

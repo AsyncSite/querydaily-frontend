@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { submitBetaApplication } from '@/lib/api';
 import styles from './page.module.css';
 
 export default function HomePage() {
@@ -218,13 +219,24 @@ export default function HomePage() {
     return newErrors.length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      setShowSuccessModal(true);
-      // Reset form
-      setFormData({ email: '', name: '', resume: null });
-      setResumeFileName('');
+      try {
+        const response = await submitBetaApplication({
+          email: formData.email,
+          name: formData.name,
+          resume: formData.resume!
+        });
+
+        setShowSuccessModal(true);
+        // Reset form
+        setFormData({ email: '', name: '', resume: null });
+        setResumeFileName('');
+      } catch (error) {
+        console.error('Error submitting application:', error);
+        alert('신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 

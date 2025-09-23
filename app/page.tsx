@@ -8,6 +8,12 @@ import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackEx
 
 export default function HomePage() {
   const router = useRouter();
+
+  // Reset scroll position on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [formData, setFormData] = useState({
     email: '',
     name: '',

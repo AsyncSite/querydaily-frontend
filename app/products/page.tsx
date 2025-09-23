@@ -63,7 +63,7 @@ export default function ProductsPage() {
 
             <h1 className={styles.mainTitle}>
               면접관의 허를 찌르는<br/>
-              <span className={styles.highlight}>결정적 질문</span>을 미리 경험한다
+              <span className={styles.highlight}>결정적 질문</span>을 미리 경험해요
             </h1>
 
             <p className={styles.subtitle}>

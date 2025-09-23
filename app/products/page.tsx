@@ -62,8 +62,8 @@ export default function ProductsPage() {
             </div>
 
             <h1 className={styles.mainTitle}>
-              면접장에서 박살나기 전에<br/>
-              <span className={styles.highlight}>당신의 약점</span>을 찾아낸다
+              면접관의 허를 찌르는<br/>
+              <span className={styles.highlight}>결정적 질문</span>을 미리 경험한다
             </h1>
 
             <p className={styles.subtitle}>
@@ -104,14 +104,14 @@ export default function ProductsPage() {
               <div className={styles.transformBefore}>
                 <span className={styles.transformLabel}>지금 당신</span>
                 <div className={styles.transformBox}>
-                  "음... JPA는 편해서..."
+                  "JPA를 사용하면 반복적인 SQL 없이 객체 중심으로 개발할 수 있어 생산성이 높다고 생각합니다."
                 </div>
               </div>
               <div className={styles.transformAfter}>
                 <span className={styles.transformLabel}>해설 후</span>
                 <div className={styles.transformBox}>
                   <div className={styles.blurred}>
-                    완벽한 답변 구조
+                    JPA의 OSIV 전략과 N+1 문제의 함정, 그리고 엔티티 생명주기에 대한 깊은 이해를 바탕으로 한 답변
                   </div>
                   <span className={styles.locked}>🔒 잠김</span>
                 </div>
@@ -130,7 +130,7 @@ export default function ProductsPage() {
                 className={styles.buyBtn}
                 onClick={() => handlePurchaseClick('오늘의 쿼리 해설')}
               >
-                카톡으로 구매 상담하기 →
+                카톡으로 신청 및 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 24시간 내 환불 가능
@@ -150,7 +150,7 @@ export default function ProductsPage() {
             <div className={styles.challenge}>
               <p className={styles.challengeText}>
                 매일 당신의 한계를 시험합니다<br/>
-                준비되지 않았다면 시작하지 마세요
+                주니어의 한계를 넘어, 시니어의 시야를 경험하세요
               </p>
             </div>
 
@@ -178,7 +178,7 @@ export default function ProductsPage() {
             </div>
 
             <div className={styles.warning}>
-              ⚠️ 주니어의 한계를 넘어 시니어의 사고를 갖추세요
+              ⚠️ 주니어의 한계를 넘어, 시니어의 시야를 경험하세요
             </div>
 
             <div className={styles.priceArea}>
@@ -194,7 +194,7 @@ export default function ProductsPage() {
                 className={styles.buyBtn}
                 onClick={() => handlePurchaseClick('그로스 플랜')}
               >
-                카톡으로 구매 상담하기 →
+                카톡으로 신청 및 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 언제든 해지 가능
@@ -251,7 +251,7 @@ export default function ProductsPage() {
                 className={styles.buyBtn}
                 onClick={() => handlePurchaseClick('이력서 분석 리포트')}
               >
-                카톡으로 구매 상담하기 →
+                카톡으로 신청 및 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 24시간 내 전달
@@ -313,7 +313,7 @@ export default function ProductsPage() {
                 className={styles.buyBtn}
                 onClick={() => handlePurchaseClick('라이브 인터뷰')}
               >
-                카톡으로 구매 상담하기 →
+                카톡으로 신청 및 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 세션 녹화 제공
@@ -362,14 +362,14 @@ export default function ProductsPage() {
           {/* Final CTA */}
           <div className={styles.finalCta}>
             <h2 className={styles.ctaTitle}>
-              당신의 경쟁자는<br/>
-              <span className={styles.ctaHighlight}>이미 시작했다</span>
+              최고의 투자는<br/>
+              <span className={styles.ctaHighlight}>바로 당신의 성장입니다</span>
             </h2>
             <button
               className={styles.ctaBtn}
-              onClick={() => handlePurchaseClick('상담')}
+              onClick={() => handlePurchaseClick('상품')}
             >
-              지금 상담받기
+              지금 신청하기
             </button>
           </div>
 
@@ -384,8 +384,8 @@ export default function ProductsPage() {
             <div className={styles.modalBody}>
               <p className={styles.modalProduct}>{selectedProduct}</p>
               <p className={styles.modalText}>
-                현재 베타 기간으로 카카오톡 1:1 상담을 통해<br/>
-                결제를 진행하고 있습니다.
+                현재 베타 기간으로 카카오톡을 통해<br/>
+                신청 및 결제를 진행하고 있습니다.
               </p>
               <div className={styles.modalFeatures}>
                 <div className={styles.modalFeature}>
@@ -413,7 +413,7 @@ export default function ProductsPage() {
                 className={styles.modalConfirm}
                 onClick={confirmKakaoRedirect}
               >
-                카톡 상담 시작
+                카톡 결제 진행
               </button>
             </div>
           </div>

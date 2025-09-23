@@ -5,6 +5,8 @@ import styles from './page.module.css';
 
 export default function ProductsPage() {
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,8 +25,14 @@ export default function ProductsPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handlePurchase = () => {
+  const handlePurchaseClick = (productName: string) => {
+    setSelectedProduct(productName);
+    setShowModal(true);
+  };
+
+  const confirmKakaoRedirect = () => {
     window.open('https://open.kakao.com/o/s57VJtTh', '_blank');
+    setShowModal(false);
   };
 
   return (
@@ -62,6 +70,17 @@ export default function ProductsPage() {
               Java/Spring 백엔드 개발자를 위한<br/>
               가장 날카로운 면접 트레이닝
             </p>
+
+            {/* Beta Process Guide */}
+            <div className={styles.processGuide}>
+              <span className={styles.step}>1. 상품 선택</span>
+              <span className={styles.arrow}>→</span>
+              <span className={styles.step}>2. 카톡 상담</span>
+              <span className={styles.arrow}>→</span>
+              <span className={styles.step}>3. 결제 진행</span>
+              <span className={styles.arrow}>→</span>
+              <span className={styles.step}>4. 서비스 시작</span>
+            </div>
           </div>
 
           {/* Product 1: 오늘의 쿼리 해설 */}
@@ -104,11 +123,18 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩2,500</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩1,900</span>
-                <span className={styles.discountTag}>BETA</span>
+                <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <button className={styles.buyBtn} onClick={handlePurchase}>
-                지금 바로 해설 보기
+              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('오늘의 쿼리 해설')}
+              >
+                카톡으로 구매 상담하기 →
               </button>
+              <p className={styles.guarantee}>
+                ✅ 100% 안전 결제 · 24시간 내 환불 가능
+              </p>
             </div>
           </div>
 
@@ -161,11 +187,18 @@ export default function ProductsPage() {
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩29,900</span>
                 <span className={styles.priceUnit}>/월</span>
-                <span className={styles.discountTag}>BETA</span>
+                <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <button className={styles.buyBtn} onClick={handlePurchase}>
-                도전 시작하기
+              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('그로스 플랜')}
+              >
+                카톡으로 구매 상담하기 →
               </button>
+              <p className={styles.guarantee}>
+                ✅ 100% 안전 결제 · 언제든 해지 가능
+              </p>
             </div>
           </div>
 
@@ -211,11 +244,18 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩59,000</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩49,000</span>
-                <span className={styles.discountTag}>BETA</span>
+                <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <button className={styles.buyBtn} onClick={handlePurchase}>
-                약점 분석 받기
+              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('이력서 분석 리포트')}
+              >
+                카톡으로 구매 상담하기 →
               </button>
+              <p className={styles.guarantee}>
+                ✅ 100% 안전 결제 · 24시간 내 전달
+              </p>
             </div>
           </div>
 
@@ -266,36 +306,119 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩99,000</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩79,000</span>
-                <span className={styles.discountTag}>BETA</span>
+                <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <button className={styles.buyBtn} onClick={handlePurchase}>
-                실전 도전하기
+              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('라이브 인터뷰')}
+              >
+                카톡으로 구매 상담하기 →
               </button>
+              <p className={styles.guarantee}>
+                ✅ 100% 안전 결제 · 세션 녹화 제공
+              </p>
             </div>
           </div>
 
-          {/* Beta Notice */}
-          <div className={styles.betaNotice}>
-            <p className={styles.betaTitle}>💬 베타 운영 안내</p>
-            <p className={styles.betaText}>
-              카카오톡 1:1 상담 후 결제 진행<br/>
-              정식 오픈 시 가격 인상 예정
-            </p>
+          {/* FAQ Section */}
+          <div className={styles.faqSection}>
+            <h2 className={styles.faqTitle}>자주 묻는 질문</h2>
+
+            <div className={styles.faqItem}>
+              <h3 className={styles.faqQuestion}>Q. 왜 카톡으로 결제하나요?</h3>
+              <p className={styles.faqAnswer}>
+                현재 베타 기간으로, 사용자님의 니즈를 정확히 파악하고
+                최적의 서비스를 제공하기 위해 1:1 상담을 진행하고 있습니다.
+                정식 오픈 후에는 자동 결제 시스템이 도입될 예정입니다.
+              </p>
+            </div>
+
+            <div className={styles.faqItem}>
+              <h3 className={styles.faqQuestion}>Q. 결제는 안전한가요?</h3>
+              <p className={styles.faqAnswer}>
+                네, 100% 안전합니다. 카톡 상담 후 정식 세금계산서 발행이 가능하며,
+                카드결제 및 계좌이체 모두 가능합니다. 24시간 내 환불도 보장합니다.
+              </p>
+            </div>
+
+            <div className={styles.faqItem}>
+              <h3 className={styles.faqQuestion}>Q. 어떤 결제 수단이 가능한가요?</h3>
+              <p className={styles.faqAnswer}>
+                카드결제, 계좌이체, 토스페이 등 다양한 결제 수단을 지원합니다.
+                상담 시 편하신 방법으로 결제하실 수 있도록 안내드립니다.
+              </p>
+            </div>
+
+            <div className={styles.faqItem}>
+              <h3 className={styles.faqQuestion}>Q. 언제부터 서비스를 이용할 수 있나요?</h3>
+              <p className={styles.faqAnswer}>
+                결제 완료 즉시 서비스를 이용하실 수 있습니다.
+                이력서 분석 리포트는 24시간 내, 라이브 인터뷰는 일정 조율 후 진행됩니다.
+              </p>
+            </div>
           </div>
 
           {/* Final CTA */}
           <div className={styles.finalCta}>
             <h2 className={styles.ctaTitle}>
-              더 미루면<br/>
-              <span className={styles.ctaHighlight}>면접장에서 박살난다</span>
+              당신의 경쟁자는<br/>
+              <span className={styles.ctaHighlight}>이미 시작했다</span>
             </h2>
-            <button className={styles.ctaBtn} onClick={handlePurchase}>
-              지금 시작하기
+            <button
+              className={styles.ctaBtn}
+              onClick={() => handlePurchaseClick('상담')}
+            >
+              지금 상담받기
             </button>
           </div>
 
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>베타 기간 특별 안내</h3>
+            <div className={styles.modalBody}>
+              <p className={styles.modalProduct}>{selectedProduct}</p>
+              <p className={styles.modalText}>
+                현재 베타 기간으로 카카오톡 1:1 상담을 통해<br/>
+                결제를 진행하고 있습니다.
+              </p>
+              <div className={styles.modalFeatures}>
+                <div className={styles.modalFeature}>
+                  <span className={styles.checkIcon}>✅</span>
+                  <span>안전한 결제</span>
+                </div>
+                <div className={styles.modalFeature}>
+                  <span className={styles.checkIcon}>✅</span>
+                  <span>24시간 내 환불 가능</span>
+                </div>
+                <div className={styles.modalFeature}>
+                  <span className={styles.checkIcon}>✅</span>
+                  <span>즉시 서비스 시작</span>
+                </div>
+              </div>
+            </div>
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.modalCancel}
+                onClick={() => setShowModal(false)}
+              >
+                취소
+              </button>
+              <button
+                className={styles.modalConfirm}
+                onClick={confirmKakaoRedirect}
+              >
+                카톡 상담 시작
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

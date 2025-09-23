@@ -99,7 +99,7 @@ const privacyContent = `
 <p>서비스는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</p>
 <ol>
   <li><strong>암호화 저장</strong>: 모든 개인정보는 AWS 암호화 저장</li>
-  <li><strong>접근 권한 최소화</strong>: 개발자 2명만 접근 가능</li>
+  <li><strong>접근 권한 최소화</strong></li>
   <li><strong>보안 프로토콜</strong>: HTTPS 통신 사용</li>
   <li><strong>자동 삭제 시스템</strong>: 3일 후 자동 삭제 프로그램 운영</li>
 </ol>

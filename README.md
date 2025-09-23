@@ -52,7 +52,7 @@ npm run typecheck # TypeScript 타입 체크
 
 ## 📊 베타 테스트
 
-현재 선착순 10명 베타 테스터를 모집 중입니다.
+현재 베타 테스터 10명 한정 모집 중입니다. (조기 마감 예정)
 
 ### 지원 예정 기술 스택
 - Python/Django, FastAPI

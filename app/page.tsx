@@ -439,7 +439,7 @@ export default function HomePage() {
             <div className={styles.heroBadgeContainer}>
               <div className={styles.heroBadge}>
                 <span className={styles.badgeIcon}>🎯</span>
-                <span>선착순 <strong>10명 한정</strong> 베타 테스트</span>
+                <span><strong>조기 마감 예정</strong> - 10명 한정 베타 테스트</span>
               </div>
             </div>
 
@@ -855,7 +855,7 @@ export default function HomePage() {
                 <li>제3자 공유 절대 없음</li>
                 <li>마케팅 활용 절대 없음</li>
                 <li>AWS 암호화 저장</li>
-                <li>접근 권한 최소화 (개발자 2명만)</li>
+                <li>접근 권한 최소화</li>
               </ul>
             </div>
           </div>
@@ -972,7 +972,7 @@ export default function HomePage() {
 
                     <div className={styles.faqTip}>
                       <span className={styles.faqTipIcon}>💡</span>
-                      <p>다른 기술 스택 개발자시라면, 이메일을 남겨주시면 <strong>해당 스택 오픈 시 우선 안내</strong>해드리겠습니다.</p>
+                      <p>다른 기술 스택 개발자시라면, 베타 신청하신 <strong>이메일로 새 스택 오픈 시 안내 메일</strong>을 보내드리겠습니다.</p>
                     </div>
                   </div>
                 )
@@ -1008,7 +1008,7 @@ export default function HomePage() {
           <div className={styles.applyWrapper}>
             <div className={styles.applyInfo}>
               <h2 className={styles.applyTitle}>
-                <span style={{ color: '#c3e88d', fontSize: '1.2rem' }}>선착순 10명 모집</span><br/>
+                <span style={{ color: '#c3e88d', fontSize: '1.2rem' }}>조기 마감 예정 - 10명 한정</span><br/>
                 Java/Spring 개발자 베타 테스트
               </h2>
 
@@ -1043,7 +1043,7 @@ export default function HomePage() {
                 </div>
                 <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 남은 자리가 얼마 없습니다.</p>
                 <p className={styles.applyDesc}>
-                  선착순 10명의 Java/Spring 백엔드 개발자를 모집합니다.<br/>
+                  10명 한정 Java/Spring 백엔드 개발자를 모집합니다. (조기 마감 예정)<br/>
                   이력서 PDF를 분석하여 맞춤형 질문을 준비합니다.
                 </p>
               </div>
@@ -1199,7 +1199,6 @@ export default function HomePage() {
                   </h4>
                   <div className={`${styles.footerColumnContent} ${openFooterSection === 'service' ? styles.footerColumnContentOpen : ''}`}>
                     <a href="#how-it-works">작동 방식</a>
-                    <a href="/pricing">요금 안내</a>
                     <a href="#faq">자주 묻는 질문</a>
                   </div>
                 </div>

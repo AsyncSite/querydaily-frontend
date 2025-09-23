@@ -1256,7 +1256,7 @@ export default function HomePage() {
             <div className={styles.footerBottom}>
               <p>© 2025 QueryDaily. All rights reserved.</p>
               <div className={styles.socialLinks}>
-                <a href="https://pf.kakao.com/_zxkxmUn" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk">💬</a>
+                <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk">💬</a>
                 <a href="#" aria-label="LinkedIn" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>in</a>
                 <a href="#" aria-label="GitHub" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>⊙</a>
               </div>

@@ -163,7 +163,7 @@ export default function HomePage() {
   // Clone for infinite scroll
   const extendedTestimonials = [testimonials[testimonials.length - 1], ...testimonials, testimonials[0]];
 
-  // Auto-hide error toast after 10 seconds
+  // Auto-hide error toast after 5 seconds
   useEffect(() => {
     if (errors.length > 0) {
       // Clear any existing timeout
@@ -171,10 +171,10 @@ export default function HomePage() {
         clearTimeout(errorTimeout);
       }
 
-      // Set new timeout to clear errors after 10 seconds
+      // Set new timeout to clear errors after 5 seconds
       const timeout = setTimeout(() => {
         setErrors([]);
-      }, 10000);
+      }, 5000);
 
       setErrorTimeout(timeout);
     }
@@ -1269,6 +1269,33 @@ export default function HomePage() {
       {/* Error Toast */}
       {errors.length > 0 && (
         <div className={`${styles.errorToast} ${styles.show}`}>
+          <button
+            className={styles.errorToastClose}
+            onClick={() => setErrors([])}
+            aria-label="닫기"
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              background: 'transparent',
+              border: 'none',
+              color: '#fff',
+              fontSize: '20px',
+              cursor: 'pointer',
+              padding: '0',
+              width: '24px',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: '0.8',
+              transition: 'opacity 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+          >
+            ✕
+          </button>
           <div className={styles.errorContent}>
             <h4>⚠️ 입력 오류</h4>
             <ul>

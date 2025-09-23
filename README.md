@@ -67,4 +67,4 @@ npm run typecheck # TypeScript 타입 체크
 
 ---
 
-© 2025 QueryDaily. All rights reserved.
+© 2025 QueryDaily. All rights reserved.// Trigger rebuild at #오후

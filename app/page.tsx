@@ -476,7 +476,7 @@ export default function HomePage() {
               <p>💡 힌트: 양방향 통신의 필요성, 브라우저 호환성, 서버 부하를 고려해보세요.</p>
               <p style={{ marginTop: '15px', fontSize: '14px', color: '#999' }}>
                 ✅ 무료 체험에서는 질문만 제공됩니다. 답변 가이드가 궁금하신가요?<br/>
-                <a href="#pricing" style={{ color: '#c3e88d' }}>인터뷰 패스 알아보기 →</a>
+                <a href="#pricing" style={{ color: '#c3e88d' }}>쿼리 인사이트 알아보기 →</a>
               </p>
             </div>
           </div>
@@ -773,7 +773,7 @@ export default function HomePage() {
                     <div className={styles.faqNote}>
                       <span className={styles.faqNoteIcon}>💪</span>
                       <div>
-                        <p>답변이 궁금하다면 3일 후 '인터뷰 패스' 플랜으로 업그레이드하실 수 있습니다.</p>
+                        <p>답변이 궁금하다면 3일 후 '쿼리 인사이트' 플랜으로 업그레이드하실 수 있습니다.</p>
                         <p>하지만 <strong>먼저 스스로 생각해보는 시간</strong>이 꼭 필요합니다.</p>
                       </div>
                     </div>

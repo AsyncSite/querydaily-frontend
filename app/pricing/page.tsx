@@ -53,7 +53,7 @@ export default function PricingPage() {
 
           <div className={`${styles.card} ${styles.comingSoon}`}>
             <div className={styles.cardBadge}>COMING SOON</div>
-            <h2 className={styles.planName}>인터뷰 패스</h2>
+            <h2 className={styles.planName}>쿼리 인사이트</h2>
             <div className={styles.price}>
               <span className={styles.priceAmount}>₩29,900</span>
               <span className={styles.pricePeriod}>/ 월</span>
@@ -86,7 +86,7 @@ export default function PricingPage() {
               <tr>
                 <th>기능</th>
                 <th>3일 무료 챌린지</th>
-                <th>인터뷰 패스</th>
+                <th>쿼리 인사이트</th>
               </tr>
             </thead>
             <tbody>

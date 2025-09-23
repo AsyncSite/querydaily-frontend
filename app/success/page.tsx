@@ -104,7 +104,7 @@ function SuccessContent() {
 
               <p className={styles.memberCount}>
                 <span className={styles.onlineDot}></span>
-                현재 <strong>423명</strong>이 활동 중
+                활발한 커뮤니티에서 함께 성장하세요
               </p>
             </div>
           </div>

@@ -1160,7 +1160,6 @@ export default function HomePage() {
                       id="resume"
                       name="resume"
                       accept=".pdf"
-                      required
                       style={{ display: 'none' }}
                       onChange={handleInputChange}
                       disabled={isSubmitting}

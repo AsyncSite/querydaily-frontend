@@ -1078,7 +1078,7 @@ export default function HomePage() {
                 </div>
                 <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 조기 마감될 수 있습니다.</p>
                 <p className={styles.applyDesc}>
-                  10명 한정 Java/Spring 백엔드 개발자를 모집합니다. (조기 마감 예정)<br/>
+                  10명 한정 Java/Spring 백엔드 개발자를 모집합니다.<br/>
                   이력서 PDF를 분석하여 맞춤형 질문을 준비합니다.
                 </p>
               </div>

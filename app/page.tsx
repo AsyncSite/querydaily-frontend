@@ -27,75 +27,136 @@ export default function HomePage() {
   const testimonials = [
     {
       name: '김**',
-      role: '백엔드 2년차',
+      role: '결제 도메인 백엔드 2년차',
       avatar: '👨‍💻',
       text: '"매일 받는 질문이 실제 면접보다 더 어려웠어요. 덕분에 실제 면접에선 자신감 있게 대답할 수 있었습니다."',
-      result: '💼 네카라쿠배 합격'
+      result: '💼 네카라쿠배 중 1곳 재직중'
     },
     {
       name: '이**',
-      role: '신입 개발자',
+      role: '쇼핑몰 플랫폼 신입 개발자',
       avatar: '👩‍💻',
       text: '"왜 QueryDaily 안 했을까 후회돼요. 면접장에서 비슷한 질문이 나와서 깜짝 놀랐습니다. 이력서 기반이라 그런가봐요."',
-      result: '🏢 시리즈 B 스타트업'
+      result: '🏢 시리즈 B 스타트업 합격'
     },
     {
       name: '박**',
-      role: '전공자 졸업예정',
+      role: '컴공 졸업예정',
       avatar: '🧑‍🎓',
       text: '"학교에서 배운 것과 실무는 정말 달라요. QueryDaily 덕분에 그 갭을 줄일 수 있었습니다."',
-      result: '🎆 대기업 합격'
+      result: '🎆 대기업 IT 자회사 합격'
     },
     {
       name: '정**',
-      role: 'Spring 백엔드 4년차',
+      role: '전 N사 검색팀 개발자',
       avatar: '👩‍🏫',
       text: '"이직 준비하면서 제가 놓치고 있던 부분을 발견했어요. 왜 그렇게 했는지 설명하는 연습이 큰 도움이 됐습니다."',
-      result: '🚀 외국계 테크 회사'
+      result: '🚀 외국계 테크 회사 재직중'
     },
     {
       name: '서**',
       role: '부트캠프 수료생',
       avatar: '🥰',
       text: '"처음엔 \'내가 잘할 수 있을까\' 고민했는데, 3일 후엔 자신감이 생겼어요. 매일 받는 질문이 저를 성장시켰습니다."',
-      result: '🎯 원하는 회사 카카오'
+      result: '🎯 원하는 회사 K사 합격'
     },
     {
       name: '최**',
-      role: 'Java 백엔드 3년차',
+      role: '금융 서비스 백엔드 3년차',
       avatar: '💻',
       text: '"이력서 맞춤형이라 정말 좋았어요. 제 경험과 프로젝트를 기반으로 한 질문들이 실제 면접에서 큰 도움이 됐습니다."',
-      result: '🎉 토스 합격'
+      result: '🎉 T사 핀테크 재직중'
     },
     {
       name: '조**',
-      role: 'SI 3년차 전직',
+      role: '전 SI 3년차',
       avatar: '🔥',
       text: '"SI에서 서비스 회사로 이직하는 게 막막했는데, 제 프로젝트 경험을 어떻게 어필해야 할지 알게 됐어요."',
-      result: '🛍️ 쿠팡 합격'
+      result: '🛍️ C사 이커머스 재직중'
     },
     {
       name: '윤**',
-      role: '비전공 1년차',
+      role: '비전공 백엔드 1년차',
       avatar: '🌱',
       text: '"비전공자라 기초가 부족한 줄만 알았는데, 제가 가진 강점이 뭔지 발견했습니다. 질문이 정말 날카로웠어요."',
-      result: '🏦 금융권 IT'
+      result: '🏦 금융권 IT 재직중'
     },
     {
       name: '장**',
-      role: 'MSA 전환 경험자',
+      role: '물류 플랫폼 개발자 5년차',
       avatar: '🏗️',
       text: '"모놀리식에서 MSA 전환 프로젝트를 했는데, 그 경험을 어떻게 설명해야 할지 막막했어요. 이제는 자신있게 설명합니다."',
-      result: '🚀 라인 합격'
+      result: '🚀 L사 메신저 기업 재직중'
     },
     {
       name: '한**',
-      role: '스타트업 CTO 출신',
+      role: '전 스타트업 CTO',
       avatar: '👨‍💼',
       text: '"작은 스타트업 경험이 대기업 면접에서 통할까 걱정했는데, 오히려 강점으로 만드는 방법을 배웠습니다."',
-      result: '💳 삼성카드'
+      result: '💳 S카드사 재직중'
+    },
+    {
+      name: '강**',
+      role: '프론트→백엔드 전환 2년차',
+      avatar: '🔄',
+      text: '"React만 하다가 Spring으로 전향했는데, 면접관들이 전향 이유를 계속 물어봐요. 이제는 명확하게 답할 수 있습니다."',
+      result: '🎨 디자인 플랫폼 재직중'
+    },
+    {
+      name: '문**',
+      role: '해외 리모트 준비중',
+      avatar: '🌏',
+      text: '"영어 면접이 아니라 기술 면접이 더 걱정이었는데, QueryDaily로 한국어로 먼저 정리하니 영어 전환도 쉬웠어요."',
+      result: '🌐 글로벌 리모트 기업 최종 면접중'
+    },
+    {
+      name: '노**',
+      role: 'O2O 서비스 팀리드 10년차',
+      avatar: '👨‍👩‍👧‍👦',
+      text: '"팀장이 되니 코딩보다 매니징 질문이 많아요. 기술 리더십을 어떻게 설명할지 연습이 필요했습니다."',
+      result: '🚖 모빌리티 대기업 재직중'
+    },
+    {
+      name: '도**',
+      role: '인턴→정규직 전환 희망',
+      avatar: '🌟',
+      text: '"인턴 6개월 경험을 어떻게 어필해야 할지 막막했는데, 작은 기여도 의미있게 표현하는 법을 배웠어요."',
+      result: '🎮 게임사 정규직 전환 성공'
+    },
+    {
+      name: '류**',
+      role: '군 전역 후 복학생',
+      avatar: '🎖️',
+      text: '"2년 공백이 있어서 기술 트렌드를 못 따라갈까봐 걱정했는데, 본질적인 질문으로 기초를 다졌습니다."',
+      result: '📱 모바일 앱 개발사 인턴'
+    },
+    {
+      name: '민**',
+      role: '육아휴직 후 복직 준비',
+      avatar: '👶',
+      text: '"1년 공백 후 이직 준비가 막막했어요. 경력 단절이 아닌 경력 성숙으로 표현하는 법을 알게 됐습니다."',
+      result: '👨‍👩‍👧 가족친화 기업 재직중'
+    },
+    {
+      name: '배**',
+      role: '프리랜서 5년→정규직 희망',
+      avatar: '💼',
+      text: '"프리랜서 경험을 회사에서 어떻게 활용할지 계속 물어봐요. 다양한 프로젝트를 강점으로 만들었습니다."',
+      result: '🏢 중견기업 정규직 전환'
+    },
+    {
+      name: '손**',
+      role: 'QA 엔지니어→백엔드 전향',
+      avatar: '🔍',
+      text: '"테스트만 하다가 개발로 전향하니 시각이 다르더라고요. 품질 관점의 개발자로 포지셔닝했습니다."',
+      result: '🔧 B2B SaaS 재직중'
     }
   ];
+
+  // Dot 그룹핑을 위한 상수
+  const MAX_DOTS = 10;
+  const testimonialsPerDot = Math.ceil(testimonials.length / MAX_DOTS);
+  const totalDots = Math.min(testimonials.length, MAX_DOTS);
 
   // Clone for infinite scroll
   const extendedTestimonials = [testimonials[testimonials.length - 1], ...testimonials, testimonials[0]];
@@ -156,8 +217,10 @@ export default function HomePage() {
     setCurrentTestimonial(prev => prev - 1);
   };
 
-  const handleDotClick = (index: number) => {
-    setCurrentTestimonial(index + 1);
+  const handleDotClick = (dotIndex: number) => {
+    // 각 dot이 대표하는 첫 번째 testimonial로 이동
+    const targetIndex = dotIndex * testimonialsPerDot;
+    setCurrentTestimonial(targetIndex + 1);
   };
 
   // Touch handlers for swipe
@@ -590,7 +653,7 @@ export default function HomePage() {
       {/* Testimonials Section */}
       <div id="testimonials" className={`${styles.section} ${styles.testimonials}`}>
         <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>먼저 경험한 개발자들의 이야기</h2>
+          <h2 className={styles.sectionTitle}>이런 변화를 경험하고 있어요</h2>
 
           <div
             className={styles.testimonialsCarousel}
@@ -641,17 +704,21 @@ export default function HomePage() {
 
             {/* Carousel Dots */}
             <div className={styles.carouselDots}>
-              {testimonials.map((_, index) => {
-                let activeIndex = currentTestimonial - 1;
-                if (currentTestimonial === 0) activeIndex = testimonials.length - 1;
-                if (currentTestimonial === testimonials.length + 1) activeIndex = 0;
-                const isActive = activeIndex === index;
+              {[...Array(totalDots)].map((_, dotIndex) => {
+                // 현재 testimonial이 어느 dot 그룹에 속하는지 계산
+                let activeTestimonialIndex = currentTestimonial - 1;
+                if (currentTestimonial === 0) activeTestimonialIndex = testimonials.length - 1;
+                if (currentTestimonial === testimonials.length + 1) activeTestimonialIndex = 0;
+
+                const activeDotIndex = Math.floor(activeTestimonialIndex / testimonialsPerDot);
+                const isActive = activeDotIndex === dotIndex;
+
                 return (
                   <button
-                    key={index}
+                    key={dotIndex}
                     className={`${styles.dot} ${isActive ? styles.activeDot : ''}`}
-                    onClick={() => handleDotClick(index)}
-                    aria-label={`Go to testimonial ${index + 1}`}
+                    onClick={() => handleDotClick(dotIndex)}
+                    aria-label={`Go to testimonial group ${dotIndex + 1}`}
                   />
                 );
               })}
@@ -1072,9 +1139,9 @@ export default function HomePage() {
             <div className={styles.footerBottom}>
               <p>© 2025 QueryDaily. All rights reserved.</p>
               <div className={styles.socialLinks}>
-                <a href="#" aria-label="Twitter">𝕏</a>
-                <a href="#" aria-label="LinkedIn">in</a>
-                <a href="#" aria-label="GitHub">⊙</a>
+                <a href="https://pf.kakao.com/_zxkxmUn" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk">💬</a>
+                <a href="#" aria-label="LinkedIn" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>in</a>
+                <a href="#" aria-label="GitHub" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>⊙</a>
               </div>
             </div>
           </div>

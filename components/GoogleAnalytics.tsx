@@ -35,15 +35,9 @@ function GoogleAnalyticsInner({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_ID: string
 }
 
 export default function GoogleAnalytics() {
-  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
-
-  // Debug log
-  if (typeof window !== 'undefined') {
-    console.log('GA_MEASUREMENT_ID:', GA_MEASUREMENT_ID);
-  }
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-24SCZ7Z1E5';
 
   if (!GA_MEASUREMENT_ID) {
-    console.warn('Google Analytics ID not found. Please set NEXT_PUBLIC_GA_ID environment variable.');
     return null;
   }
 

@@ -464,7 +464,7 @@ export default function HomePage() {
               <span className={styles.emailFrom}>QueryDaily</span>
               <span className={styles.emailTime}>오전 10:00</span>
             </div>
-            <div className={styles.emailSubject}>[Day 3/7] 오늘의 면접 질문이 도착했습니다 🎯</div>
+            <div className={styles.emailSubject}>[Day 2/3] 오늘의 면접 질문이 도착했습니다 🎯</div>
             <div className={styles.emailBody}>
               <p>안녕하세요 김개발님,</p>
               <p>오늘의 질문입니다:</p>
@@ -679,11 +679,11 @@ export default function HomePage() {
               <p>챌린지 종료와 동시에 모든 데이터가 삭제됩니다</p>
               <div className={styles.deletionTimeline}>
                 <div className={styles.timelineItem}>
-                  <span className={styles.day}>Day 1-7</span>
+                  <span className={styles.day}>Day 1-3</span>
                   <span>암호화 보관</span>
                 </div>
                 <div className={styles.timelineItem}>
-                  <span className={styles.day}>Day 8</span>
+                  <span className={styles.day}>Day 4</span>
                   <span>자동 영구 삭제</span>
                 </div>
               </div>

@@ -93,8 +93,7 @@ export default function ProductsPage() {
 
             <div className={styles.challenge}>
               <p className={styles.challengeQuestion}>
-                "높은 동시성 환경에서 재고 차감이나 포인트 적립 같은 critical section을 어떻게 처리하셨나요?<br/>
-                낙관적 락, 비관적 락, 분산 락 중 어떤 걸 선택했고, 그 트레이드오프는 무엇이었나요?"
+                "높은 동시성 환경에서 재고 차감이나 포인트 적립 같은 critical section을 어떻게 처리하셨나요?"
               </p>
               <p className={styles.challengeText}>
                 이 질문에 막힌다면, 당신은 아직 주니어입니다

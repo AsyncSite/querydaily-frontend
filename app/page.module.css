@@ -2300,6 +2300,10 @@
 }
 
 @media (max-width: 768px) {
+    .hero {
+        padding: 120px 0 60px;
+    }
+
     .hamburger {
         display: flex;
     }
@@ -2737,6 +2741,10 @@
 
 /* Small Mobile Screens */
 @media (max-width: 480px) {
+    .hero {
+        padding: 100px 0 50px;
+    }
+
     .navContainer {
         padding: 0 var(--spacing-md);
     }

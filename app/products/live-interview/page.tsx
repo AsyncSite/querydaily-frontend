@@ -7,7 +7,7 @@ export default function LiveInterviewPage() {
   const [remainingSlots, setRemainingSlots] = useState(3);
 
   const handlePurchase = () => {
-    window.open('https://open.kakao.com/o/gKxyzABf', '_blank');
+    window.open('https://open.kakao.com/o/s57VJtTh', '_blank');
   };
 
   return (

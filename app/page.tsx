@@ -1033,7 +1033,7 @@ export default function HomePage() {
                     <span className={styles.footerToggleIcon}>{openFooterSection === 'support' ? '−' : '+'}</span>
                   </h4>
                   <div className={`${styles.footerColumnContent} ${openFooterSection === 'support' ? styles.footerColumnContentOpen : ''}`}>
-                    <a href="https://open.kakao.com/o/gKxyzABf" target="_blank" rel="noopener noreferrer">문의하기</a>
+                    <a href="https://open.kakao.com/o/s57VJtTh" target="_blank" rel="noopener noreferrer">문의하기</a>
                     <a href="/terms">이용약관</a>
                     <a href="/privacy">개인정보처리방침</a>
                   </div>

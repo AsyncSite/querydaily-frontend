@@ -27,7 +27,7 @@ export default function QueryInsightPage() {
   }, []);
 
   const handlePurchase = () => {
-    window.open('https://open.kakao.com/o/gKxyzABf', '_blank');
+    window.open('https://open.kakao.com/o/s57VJtTh', '_blank');
   };
 
   return (

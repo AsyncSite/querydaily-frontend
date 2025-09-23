@@ -472,7 +472,7 @@ export default function HomePage() {
           <div className={styles.emailPreview}>
             <div className={styles.emailHeader}>
               <span className={styles.emailFrom}>QueryDaily</span>
-              <span className={styles.emailTime}>오전 10:00</span>
+              <span className={styles.emailTime}>오전 09:00</span>
             </div>
             <div className={styles.emailSubject}>[Day 2/3] 오늘의 면접 질문이 도착했습니다 🎯</div>
             <div className={styles.emailBody}>
@@ -484,10 +484,6 @@ export default function HomePage() {
                 각각의 장단점과 선택 이유를 설명해주세요."
               </div>
               <p>💡 힌트: 양방향 통신의 필요성, 브라우저 호환성, 서버 부하를 고려해보세요.</p>
-              <p style={{ marginTop: '15px', fontSize: '14px', color: '#999' }}>
-                ✅ 무료 체험에서는 질문만 제공됩니다. 답변 가이드가 궁금하신가요?<br/>
-                <a href="/products" style={{ color: '#c3e88d' }}>해설 상품 보러가기 →</a>
-              </p>
             </div>
           </div>
         </div>
@@ -799,7 +795,7 @@ export default function HomePage() {
 
                     <ul className={styles.faqCheckList}>
                       <li>이력서는 준비됐지만 <strong>면접이 막막한</strong> 주니어 개발자</li>
-                      <li>특히 <strong>1-3년차 개발자</strong>분들</li>
+                      <li>특히 <strong>신입~3년차 개발자</strong>분들</li>
                       <li>코드는 잘 짜지만 <strong>왜 그렇게 짰는지</strong> 설명하기 어려우신 분</li>
                       <li>기술 선택의 이유를 <strong>논리적으로 설명</strong>하고 싶으신 분</li>
                     </ul>
@@ -1065,7 +1061,7 @@ export default function HomePage() {
                     <span className={styles.footerToggleIcon}>{openFooterSection === 'support' ? '−' : '+'}</span>
                   </h4>
                   <div className={`${styles.footerColumnContent} ${openFooterSection === 'support' ? styles.footerColumnContentOpen : ''}`}>
-                    <a href="https://open.kakao.com/o/s57VJtTh" target="_blank" rel="noopener noreferrer">문의하기</a>
+                    <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer">문의하기</a>
                     <a href="/terms">이용약관</a>
                     <a href="/privacy">개인정보처리방침</a>
                   </div>

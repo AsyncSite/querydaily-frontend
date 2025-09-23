@@ -38,7 +38,7 @@ export default function ProductsPage() {
   };
 
   const confirmKakaoRedirect = () => {
-    window.open('https://open.kakao.com/o/s57VJtTh', '_blank');
+    window.open('https://pf.kakao.com/_zxkxmUn/chat', '_blank');
     setShowModal(false);
   };
 

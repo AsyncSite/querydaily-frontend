@@ -74,7 +74,7 @@ export default function PricingPage() {
               출시 예정
             </button>
             <p className={styles.notify}>
-              출시 알림 받기: <a href="https://open.kakao.com/o/s57VJtTh" target="_blank" rel="noopener noreferrer">오픈카톡</a>
+              출시 알림 받기: <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer">카카오톡 채널</a>
             </p>
           </div>
         </div>

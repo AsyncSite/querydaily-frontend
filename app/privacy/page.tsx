@@ -104,7 +104,7 @@ const privacyContent = `
 <ul>
   <li>담당자: QueryDaily 개인정보 담당팀</li>
   <li>이메일: privacy@querydaily.com</li>
-  <li>카카오톡 오픈채팅: <a href="https://open.kakao.com/o/s57VJtTh" target="_blank">QueryDaily 문의</a></li>
+  <li>카카오톡 채널: <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank">QueryDaily 문의</a></li>
 </ul>
 
 <h2>제9조 (쿠키의 사용)</h2>

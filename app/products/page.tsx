@@ -165,7 +165,7 @@ export default function ProductsPage() {
             <div className={styles.features}>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>⚡</span>
-                <span className={styles.featureName}>매일 맞춤 질문</span>
+                <span className={styles.featureName}>매일 질문</span>
                 <span className={styles.featureValue}>월 22개</span>
               </div>
               <div className={styles.feature}>
@@ -175,18 +175,18 @@ export default function ProductsPage() {
               </div>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>🔥</span>
-                <span className={styles.featureName}>기술 트렌드</span>
+                <span className={styles.featureName}>트렌드</span>
                 <span className={styles.featureValue}>매월</span>
               </div>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>✏️</span>
-                <span className={styles.featureName}>답변 첨삭</span>
+                <span className={styles.featureName}>첨삭</span>
                 <span className={styles.featureValue}>월 1회</span>
               </div>
             </div>
 
             <div className={styles.warning}>
-              ⚠️ 주니어의 한계를 넘어, 시니어의 시야를 경험하세요
+              ⚠️ 진짜 성장을 원하는 개발자만
             </div>
 
             <div className={styles.priceArea}>

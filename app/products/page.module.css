@@ -611,6 +611,17 @@
   border-radius: 6px;
 }
 
+/* Tablet optimization */
+@media (max-width: 768px) {
+  .features {
+    gap: 14px;
+  }
+
+  .feature {
+    padding: 14px 10px;
+  }
+}
+
 /* Mobile optimization */
 @media (max-width: 480px) {
   .mainTitle {
@@ -622,11 +633,34 @@
   }
 
   .features {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .feature {
+    padding: 12px 8px;
+  }
+
+  .featureIcon {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .featureName {
+    font-size: 11px;
+  }
+
+  .featureValue {
+    font-size: 13px;
   }
 
   .timeline {
     grid-template-columns: 1fr;
+  }
+
+  .warning {
+    font-size: 12px;
+    padding: 10px 12px;
   }
 }
 

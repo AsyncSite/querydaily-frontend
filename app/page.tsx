@@ -1198,8 +1198,8 @@ export default function HomePage() {
 
                 <div className={styles.emotionalMessage}>
                   <p>
-                    "당신의 경험은 결코 평범하지 않습니다.<br/>
-                    단지, 그것을 증명하는 방법을 배우지 못했을 뿐입니다."
+                    당신의 경험은 결코 평범하지 않습니다.<br/>
+                    단지, 그것을 증명하는 방법을 배우지 못했을 뿐입니다.
                   </p>
                 </div>
 

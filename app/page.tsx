@@ -250,8 +250,31 @@ export default function HomePage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
     if (name === 'resume' && files && files[0]) {
-      setFormData({ ...formData, resume: files[0] });
-      setResumeFileName(files[0].name);
+      const file = files[0];
+
+      // 즉시 파일 검증
+      const fileErrors: string[] = [];
+
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        fileErrors.push('PDF 형식만 업로드 가능합니다');
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
+        fileErrors.push(`파일 크기가 ${sizeInMB}MB입니다. 5MB 이하로 압축해주세요.`);
+      }
+
+      if (fileErrors.length > 0) {
+        setErrors(fileErrors);
+        // 파일 선택 초기화
+        e.target.value = '';
+        return;
+      }
+
+      // 검증 통과 시 저장
+      setFormData({ ...formData, resume: file });
+      setResumeFileName(file.name);
+      setErrors([]); // 이전 에러 클리어
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -276,8 +299,8 @@ export default function HomePage() {
       newErrors.push('PDF 형식의 이력서를 업로드해주세요');
     } else if (!formData.resume.name.toLowerCase().endsWith('.pdf')) {
       newErrors.push('PDF 형식만 업로드 가능합니다');
-    } else if (formData.resume.size > 10 * 1024 * 1024) {
-      newErrors.push('파일 크기는 10MB 이하여야 합니다');
+    } else if (formData.resume.size > 5 * 1024 * 1024) {
+      newErrors.push('파일 크기는 5MB 이하여야 합니다');
     }
 
     setErrors(newErrors);
@@ -307,7 +330,44 @@ export default function HomePage() {
         router.push(`/success?email=${encodeURIComponent(formData.email)}`);
       } catch (error) {
         console.error('Error submitting application:', error);
-        setErrors(['신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.']);
+
+        const errorMessage = error instanceof Error ? error.message : '';
+
+        // 에러 타입별 사용자 친화적 메시지
+        if (errorMessage === 'FILE_TOO_LARGE' || errorMessage.includes('413')) {
+          setErrors([
+            '📎 파일 크기가 너무 큽니다.',
+            '5MB 이하의 PDF로 다시 시도해주세요.',
+            '💡 파일 압축이 필요하면 smallpdf.com 또는 ilovepdf.com을 이용해보세요.'
+          ]);
+        } else if (errorMessage === 'TOO_MANY_REQUESTS' || errorMessage.includes('429')) {
+          setErrors([
+            '⏰ 너무 많은 요청이 발생했습니다.',
+            '잠시 후 다시 시도해주세요.'
+          ]);
+        } else if (errorMessage === 'SERVER_ERROR' || errorMessage.includes('500')) {
+          setErrors([
+            '⚠️ 서버에 일시적인 문제가 발생했습니다.',
+            '잠시 후 다시 시도하거나 카카오톡 채널로 문의해주세요.'
+          ]);
+        } else if (errorMessage === 'BAD_GATEWAY' || errorMessage === 'SERVICE_UNAVAILABLE') {
+          setErrors([
+            '🔧 서비스 점검 중입니다.',
+            '잠시 후 다시 시도해주세요.',
+            '문제가 지속되면 카카오톡 채널로 문의해주세요.'
+          ]);
+        } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+          setErrors([
+            '🌐 네트워크 연결을 확인해주세요.',
+            '인터넷 연결이 안정적인지 확인 후 다시 시도해주세요.'
+          ]);
+        } else {
+          setErrors([
+            '신청 처리 중 오류가 발생했습니다.',
+            '다시 시도하시거나 카카오톡 채널로 문의해주세요.'
+          ]);
+        }
+
         setIsSubmitting(false);
       }
     }
@@ -1050,7 +1110,7 @@ export default function HomePage() {
                       {resumeFileName || '📎 PDF 파일 선택'}
                     </label>
                   </div>
-                  <p className={styles.formHint}>PDF 형식만 지원</p>
+                  <p className={styles.formHint}>PDF 형식만 지원 (최대 5MB)</p>
                 </div>
 
                 <div className={styles.formGroup}>

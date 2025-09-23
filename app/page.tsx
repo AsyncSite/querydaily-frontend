@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { submitBetaApplication } from '@/lib/api';
 import styles from './page.module.css';
+import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 
 export default function HomePage() {
   const router = useRouter();
@@ -325,6 +326,9 @@ export default function HomePage() {
       setFormData({ ...formData, resume: file });
       setResumeFileName(file.name);
       setErrors([]); // 이전 에러 클리어
+
+      // Track file upload event
+      trackFileUpload(file.size);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -369,12 +373,18 @@ export default function HomePage() {
       setIsSubmitting(true);
       setErrors([]); // Clear any previous errors
 
+      // Track signup start
+      trackBetaSignupStart();
+
       try {
         const response = await submitBetaApplication({
           email: formData.email,
           name: formData.name,
           resume: formData.resume!
         });
+
+        // Track successful signup
+        trackBetaSignupComplete();
 
         // Redirect to success page with email parameter
         router.push(`/success?email=${encodeURIComponent(formData.email)}`);
@@ -1245,7 +1255,7 @@ export default function HomePage() {
                     <span className={styles.footerToggleIcon}>{openFooterSection === 'support' ? '−' : '+'}</span>
                   </h4>
                   <div className={`${styles.footerColumnContent} ${openFooterSection === 'support' ? styles.footerColumnContentOpen : ''}`}>
-                    <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer">문의하기</a>
+                    <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" onClick={() => trackExternalLink('kakao_contact')}>문의하기</a>
                     <a href="/terms">이용약관</a>
                     <a href="/privacy">개인정보처리방침</a>
                   </div>
@@ -1256,7 +1266,7 @@ export default function HomePage() {
             <div className={styles.footerBottom}>
               <p>© 2025 QueryDaily. All rights reserved.</p>
               <div className={styles.socialLinks}>
-                <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk">💬</a>
+                <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk" onClick={() => trackExternalLink('kakao_footer')}>💬</a>
                 <a href="#" aria-label="LinkedIn" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>in</a>
                 <a href="#" aria-label="GitHub" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>⊙</a>
               </div>

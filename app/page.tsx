@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { submitBetaApplication } from '@/lib/api';
 import styles from './page.module.css';
 
 export default function HomePage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     name: '',
     resume: null as File | null,
   });
   const [resumeFileName, setResumeFileName] = useState<string>('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [currentTestimonial, setCurrentTestimonial] = useState(1);
   const [transition, setTransition] = useState(true);
@@ -230,19 +231,13 @@ export default function HomePage() {
           resume: formData.resume!
         });
 
-        setShowSuccessModal(true);
-        // Reset form
-        setFormData({ email: '', name: '', resume: null });
-        setResumeFileName('');
+        // Redirect to success page with email parameter
+        router.push(`/success?email=${encodeURIComponent(formData.email)}`);
       } catch (error) {
         console.error('Error submitting application:', error);
         alert('신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
     }
-  };
-
-  const closeModal = () => {
-    setShowSuccessModal(false);
   };
 
   return (
@@ -1072,28 +1067,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className={`${styles.modal} ${styles.active}`}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalIcon}>🎉</div>
-            <h2 className={styles.modalTitle}>신청이 완료되었습니다!</h2>
-            <p className={styles.modalText}>
-              첫 질문은 <strong>내일 오전 10시</strong>에 발송됩니다.<br />
-              스팸 메일함도 꼭 확인해주세요.
-            </p>
-            <div className={styles.modalTips}>
-              <h3>💡 준비 팁</h3>
-              <ul>
-                <li>질문을 받으면 먼저 1-2분 동안 답변 구조를 생각해보세요</li>
-                <li>STAR 기법(Situation-Task-Action-Result)을 활용해보세요</li>
-                <li>구체적인 경험과 수치를 포함하면 더욱 좋습니다</li>
-              </ul>
-            </div>
-            <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={closeModal}>확인</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

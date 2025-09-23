@@ -1,0 +1,424 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+  padding: 20px;
+}
+
+.successCard {
+  max-width: 800px;
+  width: 100%;
+  background: rgba(30, 30, 46, 0.95);
+  border-radius: 24px;
+  padding: 60px 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(195, 232, 141, 0.1);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success Icon */
+.successIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.iconCircle {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+
+.checkmark {
+  width: 100px;
+  height: 100px;
+  animation: scale 0.3s ease-in-out 0.1s both;
+}
+
+.checkmarkCircle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #c3e88d;
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmarkCheck {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke-width: 3;
+  stroke: #c3e88d;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+/* Content */
+.content {
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #c3e88d, #82aaff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.messageBox {
+  background: rgba(15, 15, 30, 0.5);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 40px;
+  border: 1px solid rgba(195, 232, 141, 0.1);
+}
+
+.thankYou {
+  font-size: 1.2rem;
+  color: #e1e8f0;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.infoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.infoIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.infoItem p {
+  color: #a0b0c0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.infoItem strong {
+  color: #c3e88d;
+}
+
+/* Discord Section */
+.discordSection {
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discordHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.waitingEmoji {
+  font-size: 1.8rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.discordHeader h2 {
+  font-size: 1.5rem;
+  color: #e1e8f0;
+  font-weight: 600;
+  margin: 0;
+}
+
+.discordCard {
+  background: linear-gradient(135deg, rgba(88, 101, 242, 0.1), rgba(88, 101, 242, 0.05));
+  border: 2px solid rgba(88, 101, 242, 0.3);
+  border-radius: 20px;
+  padding: 35px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.discordCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(88, 101, 242, 0.2);
+  border-color: rgba(88, 101, 242, 0.5);
+}
+
+.discordBadge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 75, 75, 0.1);
+  border: 1px solid rgba(255, 75, 75, 0.3);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.liveIndicator {
+  width: 8px;
+  height: 8px;
+  background: #ff4b4b;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 75, 75, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 75, 75, 0);
+  }
+}
+
+.liveText {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ff4b4b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.discordTitle {
+  font-size: 1.4rem;
+  color: #fff;
+  margin-bottom: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.companyLogos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.companyTag {
+  background: rgba(195, 232, 141, 0.1);
+  border: 1px solid rgba(195, 232, 141, 0.3);
+  color: #c3e88d;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.companyTag:hover {
+  background: rgba(195, 232, 141, 0.2);
+  transform: scale(1.05);
+}
+
+.discordDesc {
+  color: #a0b0c0;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.discordDesc strong {
+  color: #5865f2;
+}
+
+.discordFeatures {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #a0b0c0;
+  font-size: 0.95rem;
+}
+
+.featureIcon {
+  font-size: 1.2rem;
+}
+
+.discordButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #5865f2;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(88, 101, 242, 0.3);
+}
+
+.discordButton:hover {
+  background: #4752c4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(88, 101, 242, 0.4);
+}
+
+.discordIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.discordButton:hover .arrow {
+  transform: translateX(4px);
+}
+
+.memberCount {
+  margin-top: 15px;
+  color: #7289da;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.onlineDot {
+  width: 8px;
+  height: 8px;
+  background: #43b581;
+  border-radius: 50%;
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(67, 181, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(67, 181, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(67, 181, 129, 0);
+  }
+}
+
+.memberCount strong {
+  color: #fff;
+}
+
+/* Footer */
+.footer {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.homeLink {
+  color: #7289da;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.homeLink:hover {
+  color: #5865f2;
+  transform: translateX(-4px);
+}
+
+.autoRedirect {
+  margin-top: 15px;
+  color: #7289da;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .successCard {
+    padding: 40px 20px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .discordTitle {
+    font-size: 1.2rem;
+  }
+
+  .discordFeatures {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .companyLogos {
+    justify-content: flex-start;
+  }
+
+  .discordButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

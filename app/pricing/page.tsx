@@ -37,7 +37,7 @@ export default function PricingPage() {
             </p>
             <ul className={styles.features}>
               <li>✅ 맞춤형 면접 질문 3개</li>
-              <li>✅ 매일 오전 10시 이메일 발송</li>
+              <li>✅ 매일 오전 9시 이메일 발송</li>
               <li>✅ Java/Spring 특화 질문</li>
               <li>✅ 이력서 기반 개인화</li>
               <li>✅ 3일 후 데이터 자동 삭제</li>

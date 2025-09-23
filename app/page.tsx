@@ -14,6 +14,7 @@ export default function HomePage() {
   });
   const [resumeFileName, setResumeFileName] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
+  const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(1);
   const [transition, setTransition] = useState(true);
@@ -160,6 +161,29 @@ export default function HomePage() {
 
   // Clone for infinite scroll
   const extendedTestimonials = [testimonials[testimonials.length - 1], ...testimonials, testimonials[0]];
+
+  // Auto-hide error toast after 10 seconds
+  useEffect(() => {
+    if (errors.length > 0) {
+      // Clear any existing timeout
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+      }
+
+      // Set new timeout to clear errors after 10 seconds
+      const timeout = setTimeout(() => {
+        setErrors([]);
+      }, 10000);
+
+      setErrorTimeout(timeout);
+    }
+
+    return () => {
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+      }
+    };
+  }, [errors]);
 
   useEffect(() => {
     // Smooth scroll setup
@@ -505,7 +529,7 @@ export default function HomePage() {
             <div className={styles.problemCard}>
               <div className={styles.problemIcon}>😰</div>
               <h3>"긴장하면 백지"</h3>
-              <p>집에서는 잘 아는데, 면접장에서는 머릿속이 하얜집니다.</p>
+              <p>집에서는 잘 아는데, 면접장에서는 머릿속이 하얘집니다.</p>
             </div>
           </div>
         </div>
@@ -569,7 +593,7 @@ export default function HomePage() {
                 <h3 className={styles.timelineTitle}>매일 질문 수신</h3>
                 <p className={styles.timelineDesc}>3일 동안 매일 아침, 전문가가 당신을 위한 질문을 준비합니다.</p>
                 <div className={styles.timelineDetail}>
-                  <span className={styles.timelineTiming}>📅 매일 오전 10시</span>
+                  <span className={styles.timelineTiming}>📅 매일 오전 9시</span>
                   <span className={styles.timelineNote}>이메일로 편하게</span>
                 </div>
               </div>

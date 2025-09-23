@@ -93,10 +93,11 @@ export default function ProductsPage() {
 
             <div className={styles.challenge}>
               <p className={styles.challengeQuestion}>
-                "JPA N+1 문제를 해결한 경험을 설명해주세요"
+                "높은 동시성 환경에서 재고 차감이나 포인트 적립 같은 critical section을 어떻게 처리하셨나요?<br/>
+                낙관적 락, 비관적 락, 분산 락 중 어떤 걸 선택했고, 그 트레이드오프는 무엇이었나요?"
               </p>
               <p className={styles.challengeText}>
-                이 질문 하나로 당신의 실력이 다 보입니다
+                이 질문에 막힌다면, 당신은 아직 주니어입니다
               </p>
             </div>
 
@@ -104,14 +105,14 @@ export default function ProductsPage() {
               <div className={styles.transformBefore}>
                 <span className={styles.transformLabel}>지금 당신</span>
                 <div className={styles.transformBox}>
-                  "JPA를 사용하면 반복적인 SQL 없이 객체 중심으로 개발할 수 있어 생산성이 높다고 생각합니다."
+                  "동시성 문제는... synchronized 쓰거나 @Transactional 붙이면..."
                 </div>
               </div>
               <div className={styles.transformAfter}>
                 <span className={styles.transformLabel}>해설 후</span>
                 <div className={styles.transformBox}>
                   <div className={styles.blurred}>
-                    JPA의 OSIV 전략과 N+1 문제의 함정, 그리고 엔티티 생명주기에 대한 깊은 이해를 바탕으로 한 답변
+                    데이터베이스 레벨 락, 애플리케이션 레벨 락, 분산 환경에서의 Redis 기반 락, 각각의 데드락 가능성과 처리량 영향도, 그리고 Event Sourcing이나 SAGA 패턴 같은 대안적 접근까지 고려한 종합적 답변
                   </div>
                   <span className={styles.locked}>🔒 잠김</span>
                 </div>

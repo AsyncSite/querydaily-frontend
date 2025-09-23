@@ -47,7 +47,7 @@ export default function PricingPage() {
               지금 신청하기 →
             </Link>
             <p className={styles.spots}>
-              <strong>🔥 7/10명</strong> 신청 완료
+              <strong>🔥 조기 마감 예정</strong>
             </p>
           </div>
 

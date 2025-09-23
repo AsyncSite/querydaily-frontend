@@ -35,7 +35,7 @@ const termsContent = `
     <ul>
       <li>이메일 주소 (필수)</li>
       <li>이름 (선택)</li>
-      <li>이력서 파일 (필수, PDF 형식, 10MB 이하)</li>
+      <li>이력서 파일 (필수, PDF 형식, 5MB 이하)</li>
     </ul>
   </li>
 </ol>

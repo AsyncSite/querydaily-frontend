@@ -6,23 +6,6 @@ import styles from './page.module.css';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const [countdown, setCountdown] = useState(5);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          // Auto redirect to Discord after countdown
-          window.open('https://discord.gg/5XmVfNGa', '_blank');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <div className={styles.container}>
@@ -131,9 +114,6 @@ function SuccessContent() {
             <a href="/" className={styles.homeLink}>
               ← 메인으로 돌아가기
             </a>
-            <p className={styles.autoRedirect}>
-              {countdown > 0 && `${countdown}초 후 자동으로 디스코드로 이동합니다...`}
-            </p>
           </div>
         </div>
       </div>

@@ -1026,22 +1026,7 @@ export default function HomePage() {
               </div>
 
               <div className={styles.applyUrgency}>
-                <div className={styles.spotsProgress}>
-                  <div className={styles.progressBar}>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.filled}`}>✓</span>
-                    <span className={`${styles.spot} ${styles.empty}`}>○</span>
-                    <span className={`${styles.spot} ${styles.empty}`}>○</span>
-                    <span className={`${styles.spot} ${styles.empty}`}>○</span>
-                  </div>
-                  <p className={styles.progressText}><strong>7/10명</strong> 신청 완료</p>
-                </div>
-                <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 남은 자리가 얼마 없습니다.</p>
+                <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 조기 마감될 수 있습니다.</p>
                 <p className={styles.applyDesc}>
                   10명 한정 Java/Spring 백엔드 개발자를 모집합니다. (조기 마감 예정)<br/>
                   이력서 PDF를 분석하여 맞춤형 질문을 준비합니다.
@@ -1098,7 +1083,7 @@ export default function HomePage() {
                     inputMode="email"
                     disabled={isSubmitting}
                   />
-                  <p className={styles.formHint}>매일 이 이메일로 날카로운 질문을 보내드립니다</p>
+                  <p className={styles.formHint}>매일 아침 9시, 맞춤형 면접 질문을 보내드립니다</p>
                 </div>
 
                 <div className={styles.formGroup}>

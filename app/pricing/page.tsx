@@ -53,13 +53,13 @@ export default function PricingPage() {
 
           <div className={`${styles.card} ${styles.comingSoon}`}>
             <div className={styles.cardBadge}>COMING SOON</div>
-            <h2 className={styles.planName}>쿼리 인사이트</h2>
+            <h2 className={styles.planName}>그로스 플랜</h2>
             <div className={styles.price}>
               <span className={styles.priceAmount}>₩29,900</span>
               <span className={styles.pricePeriod}>/ 월</span>
             </div>
             <p className={styles.planDescription}>
-              더 깊이 있는 면접 준비를 원하시는 분들을 위한 프리미엄 플랜
+              매일 성장하는 개발자를 위한 구독형 프리미엄 플랜
             </p>
             <ul className={styles.features}>
               <li>✅ 모든 기본 기능 포함</li>
@@ -86,7 +86,7 @@ export default function PricingPage() {
               <tr>
                 <th>기능</th>
                 <th>3일 무료 챌린지</th>
-                <th>쿼리 인사이트</th>
+                <th>그로스 플랜</th>
               </tr>
             </thead>
             <tbody>

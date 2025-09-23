@@ -331,7 +331,7 @@ export default function HomePage() {
             <div className={`${styles.floatingCard} ${styles.card1}`}>
               <div className={styles.cardHeader}>오늘의 질문</div>
               <div className={styles.cardContent}>
-                "Redis 캐시 무효화 전략에서 Cache Aside와 Write Through 중 왜 그걸 선택하셨죠?"
+                "이력서에 '일평균 10만 건 처리' 라고 쓰셨는데, 피크 타임엔 몇 건까지 처리해야 했고, 그때 병목은 어디서 발생했나요?"
               </div>
             </div>
             <div className={`${styles.floatingCard} ${styles.card2}`}>
@@ -531,7 +531,7 @@ export default function HomePage() {
                   <ul>
                     <li>"왜 Spring Boot를 선택하셨나요? Express.js는 고려해보셨나요?"</li>
                     <li>"이력서에 작성하신 '성능 개선'이 정확히 어떤 지표를 개선한 건가요?"</li>
-                    <li>"Redis 도입 후 장애가 발생한 적이 있나요? 어떻게 대응하셨죠?"</li>
+                    <li>"'응답속도 50% 개선' 이라고 쓰셨는데, 200ms에서 100ms인지, 2초에서 1초인지?"</li>
                   </ul>
                 </div>
               </div>

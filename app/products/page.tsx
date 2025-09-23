@@ -104,7 +104,7 @@ export default function ProductsPage() {
                 "높은 동시성 환경에서 재고 차감이나 포인트 적립 같은 critical section을 어떻게 처리하셨나요?"
               </p>
               <p className={styles.challengeText}>
-                이 질문에 막힌다면, 당신은 아직 주니어입니다
+                주니어 10명 중 9명이 놓치는 핵심 포인트
               </p>
             </div>
 

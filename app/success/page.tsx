@@ -104,7 +104,7 @@ function SuccessContent() {
 
               <p className={styles.memberCount}>
                 <span className={styles.onlineDot}></span>
-                현재 <strong>238명</strong>이 활동 중
+                현재 <strong>423명</strong>이 활동 중
               </p>
             </div>
           </div>

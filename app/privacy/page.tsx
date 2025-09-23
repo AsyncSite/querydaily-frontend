@@ -109,7 +109,7 @@ const privacyContent = `
 <p><strong>개인정보보호책임자</strong></p>
 <ul>
   <li>담당자: QueryDaily 개인정보 담당팀</li>
-  <li>이메일: privacy@querydaily.com</li>
+  <li>이메일: official.querydaily@gmail.com</li>
   <li>카카오톡 채널: <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank">QueryDaily 문의</a></li>
 </ul>
 

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="15" fill="#4CAF50"/>
+
+  <!-- Q letter stylized as a speech bubble -->
+  <g transform="translate(16, 16)">
+    <!-- Main Q shape -->
+    <circle cx="0" cy="-2" r="7" fill="none" stroke="white" stroke-width="2.5"/>
+    <!-- Q tail -->
+    <line x1="5" y1="3" x2="8" y2="6" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Speech bubble tail to indicate daily questions -->
+    <path d="M -7 -2 L -9 -6 L -5 -5 Z" fill="white"/>
+  </g>
+
+  <!-- Daily indicator dots at bottom -->
+  <circle cx="10" cy="27" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="16" cy="27" r="1.5" fill="white"/>
+  <circle cx="22" cy="27" r="1.5" fill="white" opacity="0.7"/>
+</svg>

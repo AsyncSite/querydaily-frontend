@@ -24,6 +24,7 @@ export default function HomePage() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [openFooterSection, setOpenFooterSection] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const testimonials = [
     {
@@ -184,6 +185,31 @@ export default function HomePage() {
       }
     };
   }, [errors]);
+
+  // Beta countdown timer
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const targetDate = new Date('2025-09-27T23:59:59+09:00'); // September 27, 2025, Korean time
+      const difference = targetDate.getTime() - now.getTime();
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setTimeLeft({ days, hours, minutes, seconds });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     // Smooth scroll setup
@@ -440,6 +466,14 @@ export default function HomePage() {
               <div className={styles.heroBadge}>
                 <span className={styles.badgeIcon}>🎯</span>
                 <span><strong>조기 마감 예정</strong> - 10명 한정 베타 테스트</span>
+              </div>
+              <div className={styles.countdownBadge} style={{ marginTop: '10px', background: 'linear-gradient(135deg, #ff4444, #ff6b6b)', padding: '8px 20px', borderRadius: '20px', display: 'inline-block', animation: 'pulse 2s infinite' }}>
+                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'white' }}>
+                  🔥 베타 종료까지 {timeLeft.days > 0 && `${timeLeft.days}일 `}
+                  {String(timeLeft.hours).padStart(2, '0')}:
+                  {String(timeLeft.minutes).padStart(2, '0')}:
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                </span>
               </div>
             </div>
 
@@ -1026,6 +1060,22 @@ export default function HomePage() {
               </div>
 
               <div className={styles.applyUrgency}>
+                <div style={{
+                  background: '#ff4444',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  boxShadow: '0 4px 12px rgba(255,68,68,0.3)'
+                }}>
+                  🔥 베타 종료까지 {timeLeft.days > 0 && `${timeLeft.days}일 `}
+                  {String(timeLeft.hours).padStart(2, '0')}:
+                  {String(timeLeft.minutes).padStart(2, '0')}:
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                </div>
                 <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 조기 마감될 수 있습니다.</p>
                 <p className={styles.applyDesc}>
                   10명 한정 Java/Spring 백엔드 개발자를 모집합니다. (조기 마감 예정)<br/>

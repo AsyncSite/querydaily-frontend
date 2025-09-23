@@ -462,12 +462,12 @@ export default function HomePage() {
       <div className={styles.hero}>
         <div className={styles.heroContainer}>
           <div className={styles.heroContent}>
-            <div className={styles.heroBadgeContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+            <div className={styles.heroBadgeContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
               <div className={styles.heroBadge}>
                 <span className={styles.badgeIcon}>🎯</span>
                 <span><strong>조기 마감 예정</strong> - 10명 한정 베타 테스트</span>
               </div>
-              <div className={styles.countdownBadge} style={{ background: 'linear-gradient(135deg, #ff4444, #ff6b6b)', padding: '8px 20px', borderRadius: '20px', animation: 'pulse 2s infinite' }}>
+              <div className={styles.countdownBadge} style={{ background: 'linear-gradient(135deg, #ff4444, #ff6b6b)', padding: '8px 20px', borderRadius: '20px', display: 'inline-block', animation: 'pulse 2s infinite' }}>
                 <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'white' }}>
                   🔥 베타 종료까지 {timeLeft.days > 0 && `${timeLeft.days}일 `}
                   {String(timeLeft.hours).padStart(2, '0')}:

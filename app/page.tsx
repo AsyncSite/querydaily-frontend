@@ -14,6 +14,7 @@ export default function HomePage() {
   });
   const [resumeFileName, setResumeFileName] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(1);
   const [transition, setTransition] = useState(true);
   const [activeQuestionTab, setActiveQuestionTab] = useState(0);
@@ -223,7 +224,15 @@ export default function HomePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Prevent duplicate submissions
+    if (isSubmitting) {
+      return;
+    }
+
     if (validateForm()) {
+      setIsSubmitting(true);
+      setErrors([]); // Clear any previous errors
+
       try {
         const response = await submitBetaApplication({
           email: formData.email,
@@ -235,7 +244,8 @@ export default function HomePage() {
         router.push(`/success?email=${encodeURIComponent(formData.email)}`);
       } catch (error) {
         console.error('Error submitting application:', error);
-        alert('신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+        setErrors(['신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.']);
+        setIsSubmitting(false);
       }
     }
   };
@@ -917,6 +927,15 @@ export default function HomePage() {
             </div>
 
             <div className={styles.applyCard}>
+              {isSubmitting && (
+                <div className={styles.formLoadingOverlay}>
+                  <div className={styles.loadingContent}>
+                    <div className={styles.loadingIcon}>⏳</div>
+                    <p>신청서를 처리하고 있습니다...</p>
+                    <p className={styles.loadingSubtext}>잠시만 기다려주세요</p>
+                  </div>
+                </div>
+              )}
               <form className={styles.applicationForm} onSubmit={handleSubmit}>
                 <div className={styles.formGroup}>
                   <label htmlFor="email">이메일 <span style={{ color: '#f07178' }}>*</span></label>
@@ -930,6 +949,7 @@ export default function HomePage() {
                     onChange={handleInputChange}
                     autoComplete="email"
                     inputMode="email"
+                    disabled={isSubmitting}
                   />
                   <p className={styles.formHint}>매일 이 이메일로 날카로운 질문을 보내드립니다</p>
                 </div>
@@ -945,6 +965,7 @@ export default function HomePage() {
                     onChange={handleInputChange}
                     autoComplete="name"
                     inputMode="text"
+                    disabled={isSubmitting}
                   />
                   <p className={styles.formHint}>더 친근한 메일을 보내드릴 수 있어요</p>
                 </div>
@@ -960,8 +981,9 @@ export default function HomePage() {
                       required
                       style={{ display: 'none' }}
                       onChange={handleInputChange}
+                      disabled={isSubmitting}
                     />
-                    <label htmlFor="resume" className={styles.fileLabel}>
+                    <label htmlFor="resume" className={`${styles.fileLabel} ${isSubmitting ? styles.disabled : ''}`}>
                       {resumeFileName || '📎 PDF 파일 선택'}
                     </label>
                   </div>
@@ -970,13 +992,23 @@ export default function HomePage() {
 
                 <div className={styles.formGroup}>
                   <label className={styles.checkboxLabel}>
-                    <input type="checkbox" required />
+                    <input type="checkbox" required disabled={isSubmitting} />
                     <span>개인정보 수집 및 이용에 동의합니다</span>
                   </label>
                 </div>
 
-                <button type="submit" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSubmit}`}>
-                  🎯 베타 테스트 신청하기
+                <button
+                  type="submit"
+                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSubmit} ${isSubmitting ? styles.btnDisabled : ''}`}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className={styles.loadingSpinner}>⏳</span> 신청 처리 중...
+                    </>
+                  ) : (
+                    <>🎯 베타 테스트 신청하기</>
+                  )}
                 </button>
 
                 <p className={styles.formSimpleNote}>

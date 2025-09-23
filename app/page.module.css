@@ -2902,3 +2902,80 @@
         background-attachment: scroll;
     }
 }
+
+/* Loading States */
+.formLoadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(13, 13, 13, 0.9);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: 16px;
+}
+
+.loadingContent {
+    text-align: center;
+    color: white;
+}
+
+.loadingIcon {
+    font-size: 3rem;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.loadingContent p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.loadingSubtext {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingSpinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+/* Disabled State */
+.btnDisabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+}
+
+.btnDisabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.applyCard {
+    position: relative;
+}
+
+input:disabled,
+.fileLabel.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.checkboxLabel input:disabled {
+    cursor: not-allowed;
+}

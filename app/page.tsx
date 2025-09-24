@@ -792,12 +792,12 @@ export default function HomePage() {
           <div className={styles.failureStats}>
             <div className={styles.failureStat}>
               <div className={styles.failureNumber}>500<span>+</span></div>
-              <div className={styles.failureLabel}>번의 서류 탈락</div>
+              <div className={styles.failureLabel}>서류 탈락</div>
             </div>
             <div className={styles.failureStatDivider}></div>
             <div className={styles.failureStat}>
               <div className={styles.failureNumber}>100<span>+</span></div>
-              <div className={styles.failureLabel}>회의 면접 경험</div>
+              <div className={styles.failureLabel}>면접 경험</div>
             </div>
             <div className={styles.failureStatDivider}></div>
             <div className={styles.failureStat}>
@@ -830,7 +830,7 @@ export default function HomePage() {
                 <p className={styles.expertStory}>
                   300번의 탈락 데이터를 분석해<br/>
                   합격 공식을 찾았습니다<br/>
-                  국비생에서 2년만에 연봉 3배,<br/>그 경험을 시스템에 담았습니다
+                  국비생에서 2년만에 연봉 2배↗<br/>그 경험을 시스템에 담았습니다
                 </p>
               </div>
               <div className={styles.expertCard}>

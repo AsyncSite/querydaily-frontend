@@ -851,6 +851,238 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Who We Are Section - Team Collective Narrative */}
+      <div className={`${styles.section} ${styles.whoWeAre}`}>
+        <div className={styles.sectionContainer}>
+          <div className={styles.whoWeAreHeader}>
+            <span className={styles.whoWeAreBadge}>이 서비스를 만든 사람들</span>
+            <h2 className={styles.whoWeAreTitle}>
+              실패 데이터 500개가 만든<br/>
+              <span className={styles.whoWeAreHighlight}>합격 공식</span>
+            </h2>
+            <p className={styles.whoWeAreSubtitle}>
+              비전공자 / 국비지원 출신의 가장 평범한 개발자들이<br/>
+              직접 증명하며 만든 AI 서비스
+            </p>
+          </div>
+
+          <div className={styles.failureStats}>
+            <div className={styles.failureStat}>
+              <div className={styles.failureNumber}>500<span>+</span></div>
+              <div className={styles.failureLabel}>번의 서류 탈락</div>
+            </div>
+            <div className={styles.failureStatDivider}></div>
+            <div className={styles.failureStat}>
+              <div className={styles.failureNumber}>100<span>+</span></div>
+              <div className={styles.failureLabel}>회의 면접 경험</div>
+            </div>
+            <div className={styles.failureStatDivider}></div>
+            <div className={styles.failureStat}>
+              <div className={styles.failureNumber}>300<span>%</span></div>
+              <div className={styles.failureLabel}>평균 연봉 인상</div>
+            </div>
+          </div>
+
+          {/* 4인의 전문가 팀 */}
+          <div className={styles.expertSection}>
+            <div className={styles.expertGrid}>
+              <div className={styles.expertCard}>
+                <div className={styles.expertAvatar}>
+                  <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor:'#667eea', stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor:'#764ba2', stopOpacity:1}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad1)" opacity="0.9"/>
+                  </svg>
+                </div>
+                <div className={styles.expertBadge}>현) 판교 N사 개발자</div>
+                <div className={styles.expertJourney}>
+                  <span className={styles.journeyFrom}>국비지원 수료생</span>
+                  <span className={styles.journeyArrow}>→</span>
+                  <span className={styles.journeyTo}>판교 대기업 개발자</span>
+                </div>
+                <p className={styles.expertStory}>
+                  300번의 탈락 데이터를 분석해<br/>
+                  합격 공식을 찾았습니다<br/>
+                  국비생에서 2년만에 연봉 3배,<br/>그 경험을 시스템에 담았습니다
+                </p>
+              </div>
+              <div className={styles.expertCard}>
+                <div className={styles.expertAvatar}>
+                  <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor:'#f093fb', stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor:'#f5576c', stopOpacity:1}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad2)" opacity="0.9"/>
+                  </svg>
+                </div>
+                <div className={styles.expertBadge}>현) 유니콘 B사 개발자</div>
+                <div className={styles.expertJourney}>
+                  <span className={styles.journeyFrom}>SI 야근지옥</span>
+                  <span className={styles.journeyArrow}>→</span>
+                  <span className={styles.journeyTo}>유니콘 스타트업</span>
+                </div>
+                <p className={styles.expertStory}>
+                  SI 야근지옥에서 유니콘까지,<br/>
+                  5번의 이직으로 찾은 최적 경로<br/>
+                  100개 기업 면접에서 발견한<br/>
+                  합격 시그널을 공유합니다
+                </p>
+              </div>
+              <div className={styles.expertCard}>
+                <div className={styles.expertAvatar}>
+                  <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor:'#4facfe', stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor:'#00f2fe', stopOpacity:1}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad3)" opacity="0.9"/>
+                  </svg>
+                </div>
+                <div className={styles.expertBadge}>전) 커머스 C사 개발자</div>
+                <div className={styles.expertJourney}>
+                  <span className={styles.journeyFrom}>무명 스타트업</span>
+                  <span className={styles.journeyArrow}>→</span>
+                  <span className={styles.journeyTo}>대형 커머스</span>
+                </div>
+                <p className={styles.expertStory}>
+                  트래픽 0 → 블랙프라이데이,<br/>
+                  서버 터뜨리며 배운 대용량 처리의 정석<br/>
+                  트래픽 폭탄 맞으며 배운 진짜 개발,<br/>
+                  그 생존법으로 다져진 실무 경험으로 질문합니다
+                </p>
+              </div>
+              <div className={styles.expertCard}>
+                <div className={styles.expertAvatar}>
+                  <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor:'#fa709a', stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor:'#fee140', stopOpacity:1}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad4)" opacity="0.9"/>
+                  </svg>
+                </div>
+                <div className={styles.expertBadge}>현) 테크 기업 개발자</div>
+                <div className={styles.expertJourney}>
+                  <span className={styles.journeyFrom}>해외 CS 전공</span>
+                  <span className={styles.journeyArrow}>→</span>
+                  <span className={styles.journeyTo}>판교 테크 기업</span>
+                </div>
+                <p className={styles.expertStory}>
+                  4년간의 해외 CS 교육으로 다진 탄탄한 이론적 기반<br/>
+                  10개 이상의 시스템을 0부터 설계한 풀사이클 경험으로<br/>
+                  실무와 이론의 균형을 묻습니다
+                </p>
+              </div>
+            </div>
+            <div className={styles.teamSummary}>
+              <p className={styles.summaryMain}>
+                <span className={styles.summaryMessage}>수십 번의 탈락과 수백 번의 '삽질',<br/>그리고 실제 성공한 '데이터'로 증명합니다.</span>
+              </p>
+            </div>
+          </div>
+
+          {/* 2025년 데이터 인사이트 */}
+          <div className={styles.insightSection}>
+            <div className={styles.insightHeader}>
+              <div className={styles.insightYear}>2025</div>
+              <div className={styles.insightTitle}>최신 면접 데이터 인사이트</div>
+            </div>
+            <h3 className={styles.insightTitle}>500건의 면접 분석 결과</h3>
+            <div className={styles.insightContent}>
+              <div className={styles.insightGrid}>
+                <div className={styles.insightCard}>
+                  <div className={styles.insightNumber}>01</div>
+                  <h4 className={styles.insightQuestion}>합격의 비밀?</h4>
+                  <p className={styles.insightAnswer}>특별한 게 아니었어요</p>
+                </div>
+                <div className={styles.insightCard}>
+                  <div className={styles.insightNumber}>02</div>
+                  <h4 className={styles.insightQuestion}>불합격의 패턴?</h4>
+                  <p className={styles.insightAnswer}>놀랍도록 일정했어요</p>
+                </div>
+              </div>
+
+              <div className={styles.insightFindings}>
+                <h4>우리가 발견한 진실</h4>
+                <div className={styles.findingsGrid}>
+                  <div className={styles.findingItem}>
+                    <div className={styles.findingNumber}>1</div>
+                    <p>완벽한 답변보다<br/><strong>치명적 실수 회피</strong>가 중요</p>
+                  </div>
+                  <div className={styles.findingItem}>
+                    <div className={styles.findingNumber}>2</div>
+                    <p>가산점보다<br/><strong>감점 요소 제거</strong>가 우선</p>
+                  </div>
+                  <div className={styles.findingItem}>
+                    <div className={styles.findingNumber}>3</div>
+                    <p>돋보이려 하다가<br/><strong>망치는 경우가 대부분</strong></p>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.keyQuestions}>
+                <h4>당신의 이력서에서 합격을 좌우할 <span className={styles.highlightNumber}>단 3개</span>의 질문</h4>
+                <p className={styles.questionDesc}>
+                  면접관이 듣고 싶어하는 답변은 따로 있어요.<br/>
+                  <span className={styles.subtle}>교과서로 배울 수 없는 그것.</span>
+                </p>
+                <div className={styles.ctaMessage}>
+                  <span className={styles.warningText}>매일 3분 투자</span>로<br/>
+                  남들의 3개월 삽질을 압축합니다.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 차별화 포인트 */}
+          <div className={styles.differenceSection}>
+            <div className={styles.differenceContent}>
+              <div className={styles.differenceLeft}>
+                <h3 className={styles.differenceTitle}>우리의 접근법</h3>
+                <p className={styles.differenceText}>
+                  남들은 <span className={styles.strikethrough}>'모범 답안'</span>을 외우라고 합니다.<br/>
+                  우리는 당신 코드에서 나올 <span className={styles.highlight}>'진짜 질문'</span>을 찾습니다.
+                </p>
+              </div>
+              <div className={styles.differenceRight}>
+                <div className={styles.testimonialProof}>
+                  <div className={styles.miniTestimonialCard}>
+                    <span className={styles.testimonialIcon}>"</span>
+                    <div>
+                      <p>QueryDaily 질문이 실제 면접에 90% 나왔어요</p>
+                      <span className={styles.testerName}>- 베타 테스터 K님</span>
+                    </div>
+                  </div>
+                  <div className={styles.miniTestimonialCard}>
+                    <span className={styles.testimonialIcon}>"</span>
+                    <div>
+                      <p>'그냥 썼던' 기술에 논리를 붙이는 법 배웠어요</p>
+                      <span className={styles.testerName}>- 베타 테스터 L님</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div className={styles.finalMessage}>
+            <p>면접관도 몰랐던 <span className={styles.emphasis}>불합격 시키는 답변 패턴</span><br/>지금 얻어가세요.</p>
+          </div>
+        </div>
+      </div>
+
       {/* Privacy Trust Section */}
       <div className={`${styles.section} ${styles.privacyTrust}`}>
         <div className={styles.sectionContainer}>

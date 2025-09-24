@@ -785,7 +785,7 @@ export default function HomePage() {
             </h2>
             <p className={styles.whoWeAreSubtitle}>
               비전공자 / 국비지원 출신의 가장 평범한 개발자들이<br/>
-              직접 증명하며 만든 AI 서비스
+              직접 증명하며 만든 초밀착 코칭 서비스
             </p>
           </div>
 

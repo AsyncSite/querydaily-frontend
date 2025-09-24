@@ -774,83 +774,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Testimonials Section */}
-      <div id="testimonials" className={`${styles.section} ${styles.testimonials}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>이런 변화를 경험하고 있어요</h2>
-
-          <div
-            className={styles.testimonialsCarousel}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className={styles.testimonialsWrapper}
-              style={{
-                transform: `translateX(-${currentTestimonial * 100}%)`,
-                transition: transition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none'
-              }}
-            >
-              {extendedTestimonials.map((testimonial, index) => (
-                <div key={index} className={styles.testimonialSlide}>
-                  <div className={styles.testimonialCard}>
-                    <div className={styles.testimonialHeader}>
-                      <div className={styles.testimonialAvatar}>{testimonial.avatar}</div>
-                      <div className={styles.testimonialInfo}>
-                        <div className={styles.testimonialName}>{testimonial.name}</div>
-                        <div className={styles.testimonialRole}>{testimonial.role}</div>
-                      </div>
-                      <div className={styles.testimonialRating}>⭐⭐⭐⭐⭐</div>
-                    </div>
-                    <p className={styles.testimonialText}>{testimonial.text}</p>
-                    <div className={styles.testimonialResult}>{testimonial.result}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Carousel Controls */}
-            <button
-              className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
-              onClick={handlePrev}
-              aria-label="Previous testimonial"
-            >
-              ←
-            </button>
-            <button
-              className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
-              onClick={handleNext}
-              aria-label="Next testimonial"
-            >
-              →
-            </button>
-
-            {/* Carousel Dots */}
-            <div className={styles.carouselDots}>
-              {[...Array(totalDots)].map((_, dotIndex) => {
-                // 현재 testimonial이 어느 dot 그룹에 속하는지 계산
-                let activeTestimonialIndex = currentTestimonial - 1;
-                if (currentTestimonial === 0) activeTestimonialIndex = testimonials.length - 1;
-                if (currentTestimonial === testimonials.length + 1) activeTestimonialIndex = 0;
-
-                const activeDotIndex = Math.floor(activeTestimonialIndex / testimonialsPerDot);
-                const isActive = activeDotIndex === dotIndex;
-
-                return (
-                  <button
-                    key={dotIndex}
-                    className={`${styles.dot} ${isActive ? styles.activeDot : ''}`}
-                    onClick={() => handleDotClick(dotIndex)}
-                    aria-label={`Go to testimonial group ${dotIndex + 1}`}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Who We Are Section - Team Collective Narrative */}
       <div className={`${styles.section} ${styles.whoWeAre}`}>
         <div className={styles.sectionContainer}>
@@ -1051,8 +974,8 @@ export default function HomePage() {
               <div className={styles.differenceLeft}>
                 <h3 className={styles.differenceTitle}>우리의 접근법</h3>
                 <p className={styles.differenceText}>
-                  남들은 <span className={styles.strikethrough}>'모범 답안'</span>을 외우라고 합니다.<br/>
-                  우리는 당신 코드에서 나올 <span className={styles.highlight}>'진짜 질문'</span>을 찾습니다.
+                  어디서나 볼 수 있는 <span className={styles.strikethrough}>'모범 답안'</span> 대신<br/>
+                  당신의 경험에서 나올 <span className={styles.highlight}>'진짜 질문'</span>을 찾아드려요
                 </p>
               </div>
               <div className={styles.differenceRight}>
@@ -1060,7 +983,7 @@ export default function HomePage() {
                   <div className={styles.miniTestimonialCard}>
                     <span className={styles.testimonialIcon}>"</span>
                     <div>
-                      <p>QueryDaily 질문이 실제 면접에 90% 나왔어요</p>
+                      <p>QueryDaily 질문이 실제 면접에 5개 이상 나왔어요</p>
                       <span className={styles.testerName}>- 베타 테스터 K님</span>
                     </div>
                   </div>
@@ -1069,6 +992,13 @@ export default function HomePage() {
                     <div>
                       <p>'그냥 썼던' 기술에 논리를 붙이는 법 배웠어요</p>
                       <span className={styles.testerName}>- 베타 테스터 L님</span>
+                    </div>
+                  </div>
+                  <div className={styles.miniTestimonialCard}>
+                    <span className={styles.testimonialIcon}>"</span>
+                    <div>
+                      <p>가이드 답변대로 했더니 면접관이 고개 끄덕이더라고요</p>
+                      <span className={styles.testerName}>- 베타 테스터 P님</span>
                     </div>
                   </div>
                 </div>
@@ -1139,6 +1069,83 @@ export default function HomePage() {
               당신의 프로젝트와 경험을 깊이 이해한 후에만 나올 수 있는<br/>
               <span style={{ color: '#c3e88d' }}>진짜 날카로운 맞춤형 질문</span>을 만들기 위해서입니다.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div id="testimonials" className={`${styles.section} ${styles.testimonials}`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={styles.sectionTitle}>이런 변화를 경험하고 있어요</h2>
+
+          <div
+            className={styles.testimonialsCarousel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div
+              className={styles.testimonialsWrapper}
+              style={{
+                transform: `translateX(-${currentTestimonial * 100}%)`,
+                transition: transition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none'
+              }}
+            >
+              {extendedTestimonials.map((testimonial, index) => (
+                <div key={index} className={styles.testimonialSlide}>
+                  <div className={styles.testimonialCard}>
+                    <div className={styles.testimonialHeader}>
+                      <div className={styles.testimonialAvatar}>{testimonial.avatar}</div>
+                      <div className={styles.testimonialInfo}>
+                        <div className={styles.testimonialName}>{testimonial.name}</div>
+                        <div className={styles.testimonialRole}>{testimonial.role}</div>
+                      </div>
+                      <div className={styles.testimonialRating}>⭐⭐⭐⭐⭐</div>
+                    </div>
+                    <p className={styles.testimonialText}>{testimonial.text}</p>
+                    <div className={styles.testimonialResult}>{testimonial.result}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Carousel Controls */}
+            <button
+              className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
+              onClick={handlePrev}
+              aria-label="Previous testimonial"
+            >
+              ←
+            </button>
+            <button
+              className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
+              onClick={handleNext}
+              aria-label="Next testimonial"
+            >
+              →
+            </button>
+
+            {/* Carousel Dots */}
+            <div className={styles.carouselDots}>
+              {[...Array(totalDots)].map((_, dotIndex) => {
+                // 현재 testimonial이 어느 dot 그룹에 속하는지 계산
+                let activeTestimonialIndex = currentTestimonial - 1;
+                if (currentTestimonial === 0) activeTestimonialIndex = testimonials.length - 1;
+                if (currentTestimonial === testimonials.length + 1) activeTestimonialIndex = 0;
+
+                const activeDotIndex = Math.floor(activeTestimonialIndex / testimonialsPerDot);
+                const isActive = activeDotIndex === dotIndex;
+
+                return (
+                  <button
+                    key={dotIndex}
+                    className={`${styles.dot} ${isActive ? styles.activeDot : ''}`}
+                    onClick={() => handleDotClick(dotIndex)}
+                    aria-label={`Go to testimonial group ${dotIndex + 1}`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

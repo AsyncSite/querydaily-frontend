@@ -910,7 +910,7 @@ export default function HomePage() {
             </div>
             <div className={styles.teamSummary}>
               <p className={styles.summaryMain}>
-                <span className={styles.summaryMessage}>수십 번의 탈락과 수백 번의 '삽질',<br/>그리고 실제 성공한 '데이터'로 증명합니다.</span>
+                <span className={styles.summaryMessage}>수십 번의 탈락과 수백 번의 <span className={styles.highlight}>삽질</span>,<br/>그리고 실제 성공한 <span className={styles.highlight}>데이터</span>로 증명합니다.</span>
               </p>
             </div>
           </div>
@@ -941,11 +941,11 @@ export default function HomePage() {
                 <div className={styles.findingsGrid}>
                   <div className={styles.findingItem}>
                     <div className={styles.findingNumber}>1</div>
-                    <p>완벽한 답변보다<br/><strong>치명적 실수 회피</strong>가 중요</p>
+                    <p>완벽한 답변보다<br/><strong>치명적 실수 회피</strong></p>
                   </div>
                   <div className={styles.findingItem}>
                     <div className={styles.findingNumber}>2</div>
-                    <p>가산점보다<br/><strong>감점 요소 제거</strong>가 우선</p>
+                    <p>가산점보다<br/><strong>감점 요소 제거</strong></p>
                   </div>
                   <div className={styles.findingItem}>
                     <div className={styles.findingNumber}>3</div>

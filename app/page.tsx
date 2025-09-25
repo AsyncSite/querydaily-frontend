@@ -6,6 +6,7 @@ import { submitBetaApplication } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import CountdownTimer from '@/components/CountdownTimer';
+import FloatingResumeHint from '@/components/FloatingResumeHint';
 
 export default function HomePage() {
   const router = useRouter();
@@ -1547,6 +1548,9 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* Floating Resume Hint - Subtle & Non-intrusive */}
+      <FloatingResumeHint />
 
     </div>
   );

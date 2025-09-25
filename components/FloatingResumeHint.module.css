@@ -1,0 +1,257 @@
+.floatingContainer {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Minimized State */
+.minimized {
+  width: auto;
+  height: auto;
+}
+
+.minimizedContent {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #c3e88d, #a8d378);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(195, 232, 141, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.minimizedContent:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 30px rgba(195, 232, 141, 0.6);
+}
+
+.iconBadge {
+  font-size: 24px;
+  filter: grayscale(0);
+}
+
+.minimizedText {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: rgba(195, 232, 141, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Expanded State */
+.expandedContent {
+  background: #1a1a1a;
+  border: 1px solid rgba(195, 232, 141, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  animation: expandIn 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes expandIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #707070;
+  font-size: 24px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.hintHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.emoji {
+  font-size: 32px;
+}
+
+.badge {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hintBody {
+  color: #ffffff;
+}
+
+.hintTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.hintText {
+  font-size: 14px;
+  color: #a0a0a0;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.waitingCount {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #ffcb6b;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.hintCta {
+  width: 100%;
+  background: transparent;
+  border: 2px solid #c3e88d;
+  color: #c3e88d;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hintCta:hover {
+  background: #c3e88d;
+  color: #0d0d0d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(195, 232, 141, 0.4);
+}
+
+.hintNote {
+  font-size: 11px;
+  color: #707070;
+  text-align: center;
+  margin: 8px 0 0 0;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .floatingContainer {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .expandedContent {
+    width: 280px;
+    padding: 16px;
+  }
+
+  .hintTitle {
+    font-size: 16px;
+  }
+
+  .hintText {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floatingContainer {
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .minimized {
+    width: auto;
+    height: auto;
+  }
+
+  .minimizedContent {
+    padding: 8px 15px;
+  }
+
+  .iconBadge {
+    font-size: 20px;
+  }
+
+  .minimizedText {
+    font-size: 12px;
+  }
+
+  .expandedContent {
+    width: calc(100vw - 30px);
+    max-width: 320px;
+    right: 15px;
+  }
+}

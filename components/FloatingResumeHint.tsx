@@ -8,18 +8,17 @@ export default function FloatingResumeHint() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const [hasScrolledPast, setHasScrolledPast] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Check if user has already dismissed
-    const dismissed = localStorage.getItem('resumeHintDismissed');
-    if (dismissed === 'true') {
-      setIsDismissed(true);
-      return;
-    }
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
 
     const handleScroll = () => {
-      if (isDismissed) return;
-
       const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
 
       // Show when scrolled past 40%
@@ -35,13 +34,16 @@ export default function FloatingResumeHint() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isDismissed, hasScrolledPast]);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, [hasScrolledPast]);
 
   const handleDismiss = () => {
     setIsVisible(false);
     setIsDismissed(true);
-    localStorage.setItem('resumeHintDismissed', 'true');
+    // localStorage.setItem('resumeHintDismissed', 'true'); // 제거 - 항상 띄우기
   };
 
   const handleClick = () => {
@@ -69,8 +71,15 @@ export default function FloatingResumeHint() {
       onMouseEnter={() => setIsMinimized(false)}
       onMouseLeave={() => setIsMinimized(true)}
     >
-      {/* Minimized State - Text Banner */}
-      {isMinimized && (
+      {/* Minimized State - Mobile: Icon Only, PC: Text Banner */}
+      {isMinimized && isMobile && (
+        <div className={styles.miniIconContent} onClick={handleClick}>
+          <span className={styles.iconBadge}>📝</span>
+          <span className={styles.pulse}></span>
+        </div>
+      )}
+
+      {isMinimized && !isMobile && (
         <div className={styles.minimizedContent} onClick={handleClick}>
           <span className={styles.iconBadge}>📝</span>
           <span className={styles.minimizedText}>

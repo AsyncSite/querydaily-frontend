@@ -486,12 +486,12 @@ export default function HomePage() {
 
             <h1 className={styles.heroTitle}>
               <span className={styles.heroTitleMain}>성장의 '자극'을</span><br/>
-              <span className={styles.textGradient}>매일 아침 배달해 드립니다</span>
+              <span className={styles.textGradient}>매일 아침 배달해 드려요</span>
             </h1>
 
             <p className={styles.heroSubtitle}>
-              매일 아침, 당신의 <strong>Java/Spring 프로젝트</strong>에서 가장 날카로운 질문 하나를 꺼내드립니다.<br/>
-              <strong>3일 뒤,</strong> 당신은 스스로의 경험을 증명하는 법을 알게 됩니다.
+              매일 아침, 당신의 <strong>Java/Spring 프로젝트</strong>에서 가장 날카로운 질문 하나를 꺼내드릴게요.<br/>
+              <strong>3일 뒤,</strong> 당신은 스스로의 경험을 증명하는 법을 알게 될 거예요.
             </p>
 
             <div className={styles.heroStats}>
@@ -517,7 +517,7 @@ export default function HomePage() {
                 <span className={styles.btnArrow}>→</span>
               </a>
               <p className={styles.ctaNote}>
-                <span className={styles.noteIcon}>✓</span> 신용카드 불필요
+                <span className={styles.noteIcon}>✓</span> 100% 무료!
                 <span className={styles.noteDivider}>•</span>
                 <span className={styles.noteIcon}>✓</span> 언제든 취소 가능
               </p>
@@ -555,22 +555,22 @@ export default function HomePage() {
             <div className={styles.problemCard}>
               <div className={styles.problemIcon}>🤔</div>
               <h3>"왜 썼죠?"</h3>
-              <p>분명 내가 사용한 기술인데, '왜?'라는 질문 앞에서는 말문이 막힙니다.</p>
+              <p>분명 내가 사용한 기술인데, '왜?'라는 질문 앞에서는 말문이 막혀요.</p>
             </div>
             <div className={styles.problemCard}>
               <div className={styles.problemIcon}>🤯</div>
               <h3>"그래서 뭘 했죠?"</h3>
-              <p>내 프로젝트는 너무 평범해서, 뭘 어떻게 어필해야 할지 모르겠습니다.</p>
+              <p>내 프로젝트는 너무 평범해서, 뭘 어떻게 어필해야 할지 모르겠어요.</p>
             </div>
             <div className={styles.problemCard}>
               <div className={styles.problemIcon}>📚</div>
               <h3>"어떻게 다르죠?"</h3>
-              <p>분명 Spring의 동작 원리는 아는데, 이걸 제 프로젝트 경험과 연결하지 못하겠습니다.</p>
+              <p>분명 Spring의 동작 원리는 아는데, 이걸 제 프로젝트 경험과 연결하지 못하겠어요.</p>
             </div>
             <div className={styles.problemCard}>
               <div className={styles.problemIcon}>😰</div>
               <h3>"긴장하면 백지"</h3>
-              <p>집에서는 잘 아는데, 면접장에서는 머릿속이 하얘집니다.</p>
+              <p>집에서는 잘 아는데, 면접장에서는 머릿속이 하얘져요.</p>
             </div>
           </div>
         </div>
@@ -592,7 +592,7 @@ export default function HomePage() {
             <div className={styles.valueItem}>
               <div className={styles.valueIcon}>💪</div>
               <h3>매일 만드는 실전 감각</h3>
-              <p>거창한 계획은 필요 없습니다. 매일 단 하나의 질문에 답을 고민하는 것만으로 '면접 근육'이 자연스럽게 단련됩니다.</p>
+              <p>거창한 계획은 필요 없어요. 매일 단 하나의 질문에 답을 고민하는 것만으로 '면접 근육'이 자연스럽게 단련돼요.</p>
             </div>
             <div className={styles.valueItem}>
               <div className={styles.valueIcon}>🧭</div>
@@ -632,7 +632,7 @@ export default function HomePage() {
               </div>
               <div className={styles.timelineContent}>
                 <h3 className={styles.timelineTitle}>매일 질문 수신</h3>
-                <p className={styles.timelineDesc}>3일 동안 매일 아침, 전문가가 당신을 위한 질문을 준비합니다.</p>
+                <p className={styles.timelineDesc}>3일 동안 매일 아침, 전문가가 당신을 위한 질문을 준비해요.</p>
                 <div className={styles.timelineDetail}>
                   <span className={styles.timelineTiming}>📅 매일 오전 9시</span>
                   <span className={styles.timelineNote}>이메일로 편하게</span>
@@ -662,7 +662,7 @@ export default function HomePage() {
               <span className={styles.emailFrom}>QueryDaily</span>
               <span className={styles.emailTime}>오전 09:00</span>
             </div>
-            <div className={styles.emailSubject}>[Day 2/3] 오늘의 면접 질문이 도착했습니다 🎯</div>
+            <div className={styles.emailSubject}>[Day 2/3] 오늘의 면접 질문이 도착했어요 🎯</div>
             <div className={styles.emailBody}>
               <p>안녕하세요 김개발님,</p>
               <p>오늘의 질문입니다:</p>
@@ -830,8 +830,8 @@ export default function HomePage() {
                 </div>
                 <p className={styles.expertStory}>
                   300번의 탈락 데이터를 분석해<br/>
-                  합격 공식을 찾았습니다<br/>
-                  국비생에서 2년만에 연봉 2배↗<br/>그 경험을 시스템에 담았습니다
+                  합격 공식을 찾았어요<br/>
+                  국비생에서 2년만에 연봉 2배↗<br/>그 경험을 시스템에 담았어요
                 </p>
               </div>
               <div className={styles.expertCard}>
@@ -856,7 +856,7 @@ export default function HomePage() {
                   SI 야근지옥에서 유니콘까지,<br/>
                   5번의 이직으로 찾은 최적 경로<br/>
                   100개 기업 면접에서 발견한<br/>
-                  합격 시그널을 공유합니다
+                  합격 시그널을 공유해요
                 </p>
               </div>
               <div className={styles.expertCard}>
@@ -881,7 +881,7 @@ export default function HomePage() {
                   트래픽 0 → 블랙프라이데이,<br/>
                   서버 터뜨리며 배운 대용량 처리의 정석<br/>
                   트래픽 폭탄 맞으며 배운 진짜 개발,<br/>
-                  그 생존법으로 다져진 실무 경험으로 질문합니다
+                  그 생존법으로 다져진 실무 경험으로 질문해요
                 </p>
               </div>
               <div className={styles.expertCard}>
@@ -898,14 +898,14 @@ export default function HomePage() {
                 </div>
                 <div className={styles.expertBadge}>현) 테크 기업 개발자</div>
                 <div className={styles.expertJourney}>
-                  <span className={styles.journeyFrom}>해외 CS 전공</span>
+                  <span className={styles.journeyFrom}>아이비리스 구준 CS 전공</span>
                   <span className={styles.journeyArrow}>→</span>
                   <span className={styles.journeyTo}>판교 테크 기업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  4년간의 해외 CS 교육으로 다진 탄탄한 이론적 기반<br/>
+                  탄탄한 이론적 기반과<br/>
                   10개 이상의 시스템을 0부터 설계한 풀사이클 경험으로<br/>
-                  실무와 이론의 균형을 묻습니다
+                  실무와 이론의 균형을 잡아드려요
                 </p>
               </div>
             </div>
@@ -963,7 +963,7 @@ export default function HomePage() {
                 </p>
                 <div className={styles.ctaMessage}>
                   <span className={styles.warningText}>매일 3분 투자</span>로<br/>
-                  남들의 3개월 삽질을 압축합니다.
+                  남들의 3개월 시행착오를 압축해요.
                 </div>
               </div>
             </div>
@@ -1024,7 +1024,7 @@ export default function HomePage() {
             <div className={styles.privacyCard}>
               <div className={styles.cardIcon}>🎯</div>
               <h3>오직 면접 질문 생성</h3>
-              <p>이력서는 단 하나의 목적으로만 사용됩니다:<br/>
+              <p>이력서는 단 하나의 목적으로만 사용돼요<br/>
               <strong>당신만을 위한 맞춤형 면접 질문 생성</strong></p>
               <ul>
                 <li>프로젝트 경험 분석</li>
@@ -1036,7 +1036,7 @@ export default function HomePage() {
             <div className={styles.privacyCard}>
               <div className={styles.cardIcon}>⏱️</div>
               <h3>3일 후 완전 삭제</h3>
-              <p>챌린지 종료와 동시에 모든 데이터가 삭제됩니다</p>
+              <p>챌린지 종료와 동시에 모든 데이터가 삭제돼요</p>
               <div className={styles.deletionTimeline}>
                 <div className={styles.timelineItem}>
                   <span className={styles.day}>Day 1-3</span>
@@ -1053,7 +1053,7 @@ export default function HomePage() {
             <div className={styles.privacyCard}>
               <div className={styles.cardIcon}>🛡️</div>
               <h3>철저한 보안</h3>
-              <p>당신의 정보를 지키는 우리의 약속:</p>
+              <p>당신의 정보를 지키는 우리의 약속</p>
               <ul>
                 <li>제3자 공유 절대 없음</li>
                 <li>마케팅 활용 절대 없음</li>
@@ -1319,10 +1319,10 @@ export default function HomePage() {
                 }}>
                   🔥 베타 종료까지 <CountdownTimer />
                 </div>
-                <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 조기 마감될 수 있습니다.</p>
+                <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 조기 마감될 수 있어요!</p>
                 <p className={styles.applyDesc}>
-                  10명 한정 Java/Spring 백엔드 개발자를 모집합니다.<br/>
-                  이력서 PDF를 분석하여 맞춤형 질문을 준비합니다.
+                  10명 한정 Java/Spring 백엔드 개발자를 모집해요.<br/>
+                  이력서 PDF를 분석하여 맞춤형 질문을 드려요.
                 </p>
               </div>
 
@@ -1376,7 +1376,7 @@ export default function HomePage() {
                     inputMode="email"
                     disabled={isSubmitting}
                   />
-                  <p className={styles.formHint}>매일 아침 9시, 맞춤형 면접 질문을 보내드립니다</p>
+                  <p className={styles.formHint}>매일 아침 9시, 맞춤형 면접 질문을 보내드려요</p>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -1441,8 +1441,8 @@ export default function HomePage() {
 
                 <div className={styles.emotionalMessage}>
                   <p>
-                    당신의 경험은 결코 평범하지 않습니다.<br/>
-                    단지, 그것을 증명하는 방법을 배우지 못했을 뿐입니다.
+                    당신의 경험은 결코 평범하지 않아요.<br/>
+                    단지, 증명하는 방법을 배우지 못했을 뿐이에요.
                   </p>
                 </div>
 

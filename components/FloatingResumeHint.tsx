@@ -93,27 +93,33 @@ export default function FloatingResumeHint() {
 
           <div className={styles.hintHeader}>
             <span className={styles.emoji}>✍️</span>
-            <span className={styles.badge}>NEW</span>
+            <span className={styles.badge}>이력서 → 면접</span>
           </div>
 
           <div className={styles.hintBody}>
             <h4 className={styles.hintTitle}>
-              이력서가 막막하신가요?
+              AI 이력서 컨설팅 (준비중)
             </h4>
             <p className={styles.hintText}>
-              AI가 당신의 이력서를 분석하고<br/>
-              개선점을 찾아드립니다
+              이력서가 준비되지 않아<br/>
+              면접 연습을 미루고 계신가요?
             </p>
 
+            <div className={styles.features}>
+              <span>• 현직자가 검토하는 것처럼 꼼꼼한 피드백</span>
+              <span>• 직무별 맞춤 키워드 추천</span>
+              <span>• 합격률 높은 구조로 재구성</span>
+            </div>
+
             <div className={styles.waitingCount}>
-              🔥 423명이 기다리는 중
+              🔥 100명 이상이 대기중
             </div>
 
             <button
               className={styles.hintCta}
               onClick={handleClick}
             >
-              출시 알림 받기 →
+              이력서 컨설팅 출시 알림받기
             </button>
 
             <p className={styles.hintNote}>

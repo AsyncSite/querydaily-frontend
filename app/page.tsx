@@ -898,7 +898,7 @@ export default function HomePage() {
                 </div>
                 <div className={styles.expertBadge}>현) 테크 기업 개발자</div>
                 <div className={styles.expertJourney}>
-                  <span className={styles.journeyFrom}>아이비리스 구준 CS 전공</span>
+                  <span className={styles.journeyFrom}>아이비리그 수준 CS 전공</span>
                   <span className={styles.journeyArrow}>→</span>
                   <span className={styles.journeyTo}>판교 테크 기업</span>
                 </div>

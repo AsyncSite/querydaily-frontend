@@ -6,7 +6,13 @@ import styles from './page.module.css';
 
 export default function PaymentPage() {
   const router = useRouter();
-  const [orderData, setOrderData] = useState<any>(null);
+  const [orderData, setOrderData] = useState<{
+    orderId: string;
+    product: string;
+    price: string;
+    name: string;
+    email: string;
+  } | null>(null);
   const [copySuccess, setCopySuccess] = useState('');
   const [depositorName, setDepositorName] = useState('');
 
@@ -103,12 +109,15 @@ export default function PaymentPage() {
                   {copySuccess === 'name' ? '✓ 복사됨' : '복사'}
                 </button>
               </div>
+              <p className={styles.depositNameHint}>
+                ⚠️ 실제 입금하실 분의 이름으로 수정 가능합니다
+              </p>
             </div>
           </div>
 
           <div className={styles.notice}>
             <p className={styles.noticeItem}>
-              ⚠️ 반드시 <strong>입금자명</strong>을 정확히 입력해주세요
+              ⚠️ 반드시 위의 <strong>입금자명</strong>과 동일하게 입금해주세요
             </p>
             <p className={styles.noticeItem}>
               📌 입금 확인 후 24시간 내에 상품이 이메일로 발송됩니다

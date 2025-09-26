@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const product = searchParams.get('product') || '';
@@ -17,16 +17,46 @@ export default function CheckoutPage() {
     company: '',
     position: '',
     experience: '',
-    resumeUrl: ''
+    resume: null as File | null
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [resumeFileName, setResumeFileName] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+
+    // 파일 입력 처리
+    if (name === 'resume' && e.target instanceof HTMLInputElement) {
+      const files = e.target.files;
+      if (files && files[0]) {
+        const file = files[0];
+
+        // 파일 검증
+        if (!file.name.toLowerCase().endsWith('.pdf')) {
+          setErrors(prev => ({ ...prev, resume: 'PDF 형식만 업로드 가능합니다' }));
+          e.target.value = '';
+          return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
+          setErrors(prev => ({ ...prev, resume: `파일 크기가 ${sizeInMB}MB입니다. 5MB 이하로 압축해주세요.` }));
+          e.target.value = '';
+          return;
+        }
+
+        setFormData(prev => ({ ...prev, resume: file }));
+        setResumeFileName(file.name);
+        if (errors.resume) {
+          setErrors(prev => ({ ...prev, resume: '' }));
+        }
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+      if (errors[name]) {
+        setErrors(prev => ({ ...prev, [name]: '' }));
+      }
     }
   };
 
@@ -43,9 +73,7 @@ export default function CheckoutPage() {
       newErrors.phone = '올바른 휴대폰 번호 형식이 아닙니다';
     }
 
-    if (product === '크리티컬 히트' || product === '이력서 분석 리포트') {
-      if (!formData.resumeUrl) newErrors.resumeUrl = '이력서 URL을 입력해주세요';
-    }
+    // 이력서는 선택사항이므로 검증하지 않음
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -56,9 +84,15 @@ export default function CheckoutPage() {
 
     if (!validate()) return;
 
-    // 주문 정보를 localStorage에 저장
+    // 주문 정보를 localStorage에 저장 (파일 정보는 파일명만 저장)
     const orderData = {
-      ...formData,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      company: formData.company,
+      position: formData.position,
+      experience: formData.experience,
+      resumeFileName: resumeFileName || '',
       product,
       price,
       orderDate: new Date().toISOString(),
@@ -179,24 +213,33 @@ export default function CheckoutPage() {
 
           {(product === '크리티컬 히트' || product === '이력서 분석 리포트') && (
             <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>이력서 정보</h3>
+              <h3 className={styles.sectionTitle}>
+                이력서/포트폴리오 <span className={styles.optional}>(선택)</span>
+              </h3>
+
+              <div className={styles.infoBox}>
+                💡 이미 베타 신청 시 제출하셨다면 다시 제출하지 않으셔도 됩니다.
+                <br />
+                최신 이력서로 업데이트하고 싶으신 경우에만 업로드해주세요.
+              </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>
-                  이력서 URL <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="url"
-                  name="resumeUrl"
-                  value={formData.resumeUrl}
-                  onChange={handleChange}
-                  className={styles.input}
-                  placeholder="https://notion.so/... 또는 Google Docs URL"
-                />
-                {errors.resumeUrl && <span className={styles.error}>{errors.resumeUrl}</span>}
-                <p className={styles.hint}>
-                  Notion, Google Docs, PDF 링크 등을 입력해주세요
-                </p>
+                <label className={styles.label}>이력서/포트폴리오 PDF</label>
+                <div className={styles.fileUpload}>
+                  <input
+                    type="file"
+                    id="resume"
+                    name="resume"
+                    accept=".pdf"
+                    onChange={handleChange}
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="resume" className={styles.fileLabel}>
+                    {resumeFileName || '📎 PDF 파일 선택'}
+                  </label>
+                </div>
+                {errors.resume && <span className={styles.error}>{errors.resume}</span>}
+                <p className={styles.hint}>PDF 형식만 지원 (최대 5MB)</p>
               </div>
             </div>
           )}
@@ -207,5 +250,23 @@ export default function CheckoutPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#ffffff'
+      }}>
+        로딩 중...
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }

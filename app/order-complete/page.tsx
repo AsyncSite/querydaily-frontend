@@ -6,7 +6,12 @@ import styles from './page.module.css';
 
 export default function OrderCompletePage() {
   const router = useRouter();
-  const [orderData, setOrderData] = useState<any>(null);
+  const [orderData, setOrderData] = useState<{
+    orderId: string;
+    product: string;
+    price: string;
+    email: string;
+  } | null>(null);
 
   useEffect(() => {
     // localStorage에서 주문 정보 가져오기

@@ -1,15 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 export default function ProductsPage() {
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState('');
+  const [showBusinessInfo, setShowBusinessInfo] = useState(false);
 
-  const handlePurchaseClick = (productName: string) => {
-    setSelectedProduct(productName);
-    setShowModal(true);
+  const handlePurchaseClick = (productName: string, price: string) => {
+    // checkout 페이지로 이동하면서 상품 정보 전달
+    router.push(`/checkout?product=${encodeURIComponent(productName)}&price=${encodeURIComponent(price)}`);
   };
 
   const confirmKakaoRedirect = () => {
@@ -52,65 +55,80 @@ export default function ProductsPage() {
             <div className={styles.processGuide}>
               <span className={styles.step}>1. 상품 선택</span>
               <span className={styles.arrow}>→</span>
-              <span className={styles.step}>2. 카톡 상담</span>
+              <span className={styles.step}>2. 주문 정보 입력</span>
               <span className={styles.arrow}>→</span>
-              <span className={styles.step}>3. 결제 진행</span>
+              <span className={styles.step}>3. 무통장입금</span>
               <span className={styles.arrow}>→</span>
               <span className={styles.step}>4. 서비스 시작</span>
             </div>
           </div>
 
-          {/* Product 1: 오늘의 쿼리 해설 */}
+          {/* Product 1: 단건 면접 질문 */}
           <div className={styles.product}>
             <div className={styles.productHeader}>
-              <span className={styles.productLabel}>오늘 질문에 답 못하셨죠?</span>
-              <h2 className={styles.productName}>오늘의 쿼리 해설</h2>
-              <span className={styles.productEn}>Query Insight</span>
+              <span className={styles.productLabel}>단 하나의 질문으로 당락이 결정될 때</span>
+              <h2 className={styles.productName}>크리티컬 히트</h2>
+              <span className={styles.productEn}>Critical Hit</span>
             </div>
 
             <div className={styles.challenge}>
-              <p className={styles.challengeQuestion}>
-                "높은 동시성 환경에서 재고 차감이나 포인트 적립 같은 critical section을 어떻게 처리하셨나요?"
-              </p>
               <p className={styles.challengeText}>
-                주니어 10명 중 9명이 놓치는 핵심 포인트
+                면접관이 가장 궁금해하는 그 질문<br/>
+                24시간 내 이력서 분석 후 급소를 찌릅니다
               </p>
             </div>
 
-            <div className={styles.transform}>
-              <div className={styles.transformBefore}>
-                <span className={styles.transformLabel}>지금 당신</span>
-                <div className={styles.transformBox}>
-                  "동시성 문제는... synchronized 쓰거나 @Transactional 붙이면..."
-                </div>
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🎯</span>
+                <span className={styles.featureName}>핵심 질문</span>
+                <span className={styles.featureValue}>1개</span>
               </div>
-              <div className={styles.transformAfter}>
-                <span className={styles.transformLabel}>해설 후</span>
-                <div className={styles.transformBox}>
-                  <div className={styles.blurred}>
-                    데이터베이스 레벨 락, 애플리케이션 레벨 락, 분산 환경에서의 Redis 기반 락, 각각의 데드락 가능성과 처리량 영향도, 그리고 Event Sourcing이나 SAGA 패턴 같은 대안적 접근까지 고려한 종합적 답변
-                  </div>
-                  <span className={styles.locked}>🔒 잠김</span>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🔗</span>
+                <span className={styles.featureName}>꼬리 질문</span>
+                <span className={styles.featureValue}>3개</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>📝</span>
+                <span className={styles.featureName}>답변 가이드</span>
+                <span className={styles.featureValue}>상세</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>⚠️</span>
+                <span className={styles.featureName}>함정 포인트</span>
+                <span className={styles.featureValue}>체크</span>
+              </div>
+            </div>
+
+            <div className={styles.sampleBox}>
+              <div className={styles.sampleLabel}>실제 예시</div>
+              <div className={styles.sampleContent}>
+                <div className={styles.blurred}>
+                  Q: "Redis를 캐시로 사용하셨는데, 캐시 무효화 전략은 어떻게 가져가셨나요? Cache Aside와 Write Through의 차이점과 선택 이유를 설명해주세요."
+                  <br/><br/>
+                  A: [상세 답변 가이드 포함]
                 </div>
+                <span className={styles.locked}>🔒 구매 후 확인</span>
               </div>
             </div>
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩2,500</span>
+                <span className={styles.originalPrice}>₩5,500</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩1,900</span>
+                <span className={styles.currentPrice}>₩2,900</span>
                 <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('오늘의 쿼리 해설')}
+                onClick={() => handlePurchaseClick('크리티컬 히트', '₩2,900')}
               >
-                카톡으로 신청 및 결제하기 →
+                무통장입금으로 결제하기 →
               </button>
               <p className={styles.guarantee}>
-                ✅ 100% 안전 결제 · 24시간 내 환불 가능
+                ✅ 100% 안전 결제 · 24시간 내 전달
               </p>
             </div>
           </div>
@@ -119,38 +137,38 @@ export default function ProductsPage() {
           <div className={styles.product}>
             <div className={styles.bestBadge}>MOST BRUTAL</div>
             <div className={styles.productHeader}>
-              <span className={styles.productLabel}>3일 챌린지만으론 부족하다</span>
+              <span className={styles.productLabel}>크리티컬 히트 × 22일</span>
               <h2 className={styles.productName}>그로스 플랜</h2>
               <span className={styles.productEn}>Growth Plan</span>
             </div>
 
             <div className={styles.challenge}>
               <p className={styles.challengeText}>
-                매일 당신의 한계를 시험합니다<br/>
-                주니어의 한계를 넘어, 시니어의 시야를 경험하세요
+                매일 급소를 찌르는 질문 폭격<br/>
+                22일 동안 당신의 약점을 모두 제거합니다
               </p>
             </div>
 
             <div className={styles.features}>
               <div className={styles.feature}>
-                <span className={styles.featureIcon}>⚡</span>
-                <span className={styles.featureName}>매일 질문</span>
-                <span className={styles.featureValue}>월 22개</span>
+                <span className={styles.featureIcon}>🎯</span>
+                <span className={styles.featureName}>크리티컬 히트</span>
+                <span className={styles.featureValue}>매일</span>
               </div>
               <div className={styles.feature}>
-                <span className={styles.featureIcon}>📊</span>
-                <span className={styles.featureName}>시스템 설계</span>
-                <span className={styles.featureValue}>매주</span>
+                <span className={styles.featureIcon}>📅</span>
+                <span className={styles.featureName}>제공 일수</span>
+                <span className={styles.featureValue}>22일</span>
               </div>
               <div className={styles.feature}>
-                <span className={styles.featureIcon}>🔥</span>
-                <span className={styles.featureName}>트렌드</span>
-                <span className={styles.featureValue}>매월</span>
+                <span className={styles.featureIcon}>🏢</span>
+                <span className={styles.featureName}>실제 기출</span>
+                <span className={styles.featureValue}>포함</span>
               </div>
               <div className={styles.feature}>
-                <span className={styles.featureIcon}>✏️</span>
-                <span className={styles.featureName}>첨삭</span>
-                <span className={styles.featureValue}>월 1회</span>
+                <span className={styles.featureIcon}>📝</span>
+                <span className={styles.featureName}>모범 답안</span>
+                <span className={styles.featureValue}>전체</span>
               </div>
             </div>
 
@@ -160,18 +178,18 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩39,900</span>
+                <span className={styles.originalPrice}>₩121,000</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩29,900</span>
+                <span className={styles.currentPrice}>₩49,900</span>
                 <span className={styles.priceUnit}>/월</span>
                 <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('그로스 플랜')}
+                onClick={() => handlePurchaseClick('그로스 플랜', '₩49,900')}
               >
-                카톡으로 신청 및 결제하기 →
+                무통장입금으로 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 언제든 해지 가능
@@ -223,12 +241,12 @@ export default function ProductsPage() {
                 <span className={styles.currentPrice}>₩49,000</span>
                 <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('이력서 분석 리포트')}
+                onClick={() => handlePurchaseClick('이력서 분석 리포트', '₩9,900')}
               >
-                카톡으로 신청 및 결제하기 →
+                무통장입금으로 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 24시간 내 전달
@@ -285,12 +303,12 @@ export default function ProductsPage() {
                 <span className={styles.currentPrice}>₩79,000</span>
                 <span className={styles.discountTag}>베타 한정가</span>
               </div>
-              <p className={styles.betaPaymentNotice}>* 카톡 상담 후 결제 진행</p>
+              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('라이브 인터뷰')}
+                onClick={() => handlePurchaseClick('라이브 인터뷰', '₩79,900')}
               >
-                카톡으로 신청 및 결제하기 →
+                무통장입금으로 결제하기 →
               </button>
               <p className={styles.guarantee}>
                 ✅ 100% 안전 결제 · 세션 녹화 제공
@@ -303,35 +321,34 @@ export default function ProductsPage() {
             <h2 className={styles.faqTitle}>자주 묻는 질문</h2>
 
             <div className={styles.faqItem}>
-              <h3 className={styles.faqQuestion}>Q. 왜 카톡으로 결제하나요?</h3>
+              <h3 className={styles.faqQuestion}>Q. 무통장입금은 언제 확인되나요?</h3>
               <p className={styles.faqAnswer}>
-                현재 베타 기간으로, 사용자님의 니즈를 정확히 파악하고
-                최적의 서비스를 제공하기 위해 1:1 상담을 진행하고 있습니다.
-                정식 오픈 후에는 자동 결제 시스템이 도입될 예정입니다.
+                영업일 기준 1-2시간 내에 확인됩니다.
+                입금 확인 후 24시간 내에 등록하신 이메일로 상품을 발송해드립니다.
               </p>
             </div>
 
             <div className={styles.faqItem}>
-              <h3 className={styles.faqQuestion}>Q. 결제는 안전한가요?</h3>
+              <h3 className={styles.faqQuestion}>Q. 환불은 가능한가요?</h3>
               <p className={styles.faqAnswer}>
-                네, 100% 안전합니다. 카톡 상담 후 정식 세금계산서 발행이 가능하며,
-                카드결제 및 계좌이체 모두 가능합니다. 24시간 내 환불도 보장합니다.
+                크리티컬 히트와 이력서 분석 리포트는 작업 시작 전 100% 환불 가능합니다.
+                그로스 플랜은 7일 이내 환불 가능하며, 일할 계산하여 환불해드립니다.
               </p>
             </div>
 
             <div className={styles.faqItem}>
-              <h3 className={styles.faqQuestion}>Q. 어떤 결제 수단이 가능한가요?</h3>
+              <h3 className={styles.faqQuestion}>Q. 세금계산서 발행이 가능한가요?</h3>
               <p className={styles.faqAnswer}>
-                카드결제, 계좌이체, 토스페이 등 다양한 결제 수단을 지원합니다.
-                상담 시 편하신 방법으로 결제하실 수 있도록 안내드립니다.
+                네, 가능합니다. 입금 확인 후 사업자 등록 번호로
+                정식 세금계산서를 발행해드립니다.
               </p>
             </div>
 
             <div className={styles.faqItem}>
-              <h3 className={styles.faqQuestion}>Q. 언제부터 서비스를 이용할 수 있나요?</h3>
+              <h3 className={styles.faqQuestion}>Q. 이력서는 어떻게 전달하나요?</h3>
               <p className={styles.faqAnswer}>
-                결제 완료 즉시 서비스를 이용하실 수 있습니다.
-                이력서 분석 리포트는 24시간 내, 라이브 인터뷰는 일정 조율 후 진행됩니다.
+                주문 시 Notion, Google Docs, PDF 링크 등을 입력해주시면 됩니다.
+                크리티컬 히트와 이력서 분석 리포트 상품에만 필요합니다.
               </p>
             </div>
           </div>
@@ -344,14 +361,37 @@ export default function ProductsPage() {
             </h2>
             <button
               className={styles.ctaBtn}
-              onClick={() => handlePurchaseClick('상품')}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              지금 신청하기
+              상품 보러가기 ↑
             </button>
           </div>
 
         </div>
       </div>
+
+      {/* Business Info Footer - 작고 간결하게 */}
+      <footer className={styles.businessInfo}>
+        <div className={styles.businessInfoContent}>
+          <div className={styles.businessInfoFooter}>
+            <div className={styles.footerLinks}>
+              <a href="/terms" className={styles.footerLink}>이용약관</a>
+              <span className={styles.divider}>|</span>
+              <a href="/privacy" className={styles.footerLink}>개인정보처리방침</a>
+              <span className={styles.divider}>|</span>
+              <a href="/refund-policy" className={styles.footerLink}>환불정책</a>
+              <span className={styles.divider}>|</span>
+              <button
+                className={styles.footerLinkBtn}
+                onClick={() => setShowBusinessInfo(true)}
+              >
+                사업자정보
+              </button>
+            </div>
+            <p className={styles.copyright}>© 2025 QueryDaily. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
 
       {/* Modal */}
       {showModal && (
@@ -392,6 +432,47 @@ export default function ProductsPage() {
               >
                 카톡 결제 진행
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Business Info Modal */}
+      {showBusinessInfo && (
+        <div className={styles.modalOverlay} onClick={() => setShowBusinessInfo(false)}>
+          <div className={styles.businessModal} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.modalClose}
+              onClick={() => setShowBusinessInfo(false)}
+            >
+              ×
+            </button>
+            <h3 className={styles.businessModalTitle}>사업자 정보</h3>
+            <div className={styles.businessModalContent}>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>상호명</span>
+                <span className={styles.businessValue}>어싱크사이트</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>대표자</span>
+                <span className={styles.businessValue}>최보임</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>사업자등록번호</span>
+                <span className={styles.businessValue}>456-12-02771</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>사업장 주소</span>
+                <span className={styles.businessValue}>경기도 화성시 동탄대로4길 18</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>대표전화</span>
+                <span className={styles.businessValue}>010-8120-4131</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>이메일</span>
+                <span className={styles.businessValue}>official.querydaily@gmail.com</span>
+              </div>
             </div>
           </div>
         </div>

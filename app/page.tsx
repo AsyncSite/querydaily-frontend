@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { submitBetaApplication } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
-import CountdownTimer from '@/components/CountdownTimer';
 import FloatingResumeHint from '@/components/FloatingResumeHint';
 
 export default function HomePage() {
@@ -473,14 +472,9 @@ export default function HomePage() {
         <div className={styles.heroContainer}>
           <div className={styles.heroContent}>
             <div className={styles.heroBadgeContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-              <div className={styles.countdownBadge} style={{ background: 'linear-gradient(135deg, #ff4444, #ff6b6b)', padding: '8px 20px', borderRadius: '20px', display: 'inline-block', animation: 'pulse 2s infinite' }}>
-                <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'white' }}>
-                  🔥 베타 종료까지 <CountdownTimer />
-                </span>
-              </div>
               <div className={styles.heroBadge}>
-                <span className={styles.badgeIcon}>🎯</span>
-                <span><strong>조기 마감 예정</strong> - 10명 한정 베타 테스트</span>
+                <span className={styles.badgeIcon}>✅</span>
+                <span><strong>조기마감 완료!</strong> 정식 오픈을 기다려주세요!</span>
               </div>
             </div>
 
@@ -512,14 +506,19 @@ export default function HomePage() {
             </div>
 
             <div className={styles.heroCta}>
-              <a href="#apply" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}>
-                <span>3일 무료 챌린지, 지금 시작하기</span>
+              <a
+                href="https://forms.gle/iN5GE3aNDxLiKhyU8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}
+              >
+                <span>대기자 등록하기</span>
                 <span className={styles.btnArrow}>→</span>
               </a>
               <p className={styles.ctaNote}>
-                <span className={styles.noteIcon}>✓</span> 100% 무료!
+                <span className={styles.noteIcon}>✓</span> 베타 마감
                 <span className={styles.noteDivider}>•</span>
-                <span className={styles.noteIcon}>✓</span> 언제든 취소 가능
+                <span className={styles.noteIcon}>✓</span> 정식 오픈 알림
               </p>
             </div>
           </div>
@@ -1307,7 +1306,7 @@ export default function HomePage() {
 
               <div className={styles.applyUrgency}>
                 <div style={{
-                  background: '#ff4444',
+                  background: '#666',
                   color: 'white',
                   padding: '12px 24px',
                   borderRadius: '8px',
@@ -1315,14 +1314,14 @@ export default function HomePage() {
                   textAlign: 'center',
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  boxShadow: '0 4px 12px rgba(255,68,68,0.3)'
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                 }}>
-                  🔥 베타 종료까지 <CountdownTimer />
+                  ✅ 베타 테스트 조기 마감 완료
                 </div>
-                <p className={styles.urgencyMessage}>🔥 <strong>마감 임박!</strong> 조기 마감될 수 있어요!</p>
+                <p className={styles.urgencyMessage}>🎉 <strong>감사합니다!</strong> 10명 정원이 모두 마감되었습니다.</p>
                 <p className={styles.applyDesc}>
-                  10명 한정 Java/Spring 백엔드 개발자를 모집해요.<br/>
-                  이력서 PDF를 분석하여 맞춤형 질문을 드려요.
+                  정식 오픈 알림을 받고 싶으시면 아래 대기자 등록을 해주세요.<br/>
+                  가장 먼저 서비스 오픈 소식을 전해드리겠습니다.
                 </p>
               </div>
 
@@ -1362,7 +1361,7 @@ export default function HomePage() {
                 </div>
               )}
               <form className={styles.applicationForm} onSubmit={handleSubmit}>
-                <div className={styles.formGroup}>
+                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
                   <label htmlFor="email">이메일 <span style={{ color: '#f07178' }}>*</span></label>
                   <input
                     type="email"
@@ -1374,12 +1373,12 @@ export default function HomePage() {
                     onChange={handleInputChange}
                     autoComplete="email"
                     inputMode="email"
-                    disabled={isSubmitting}
+                    disabled={true}
                   />
-                  <p className={styles.formHint}>매일 아침 9시, 맞춤형 면접 질문을 보내드려요</p>
+                  <p className={styles.formHint}>베타 테스트가 마감되었습니다</p>
                 </div>
 
-                <div className={styles.formGroup}>
+                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
                   <label htmlFor="name">이름 <span style={{ color: '#707070', fontSize: '0.9rem' }}>(선택)</span></label>
                   <input
                     type="text"
@@ -1390,12 +1389,12 @@ export default function HomePage() {
                     onChange={handleInputChange}
                     autoComplete="name"
                     inputMode="text"
-                    disabled={isSubmitting}
+                    disabled={true}
                   />
-                  <p className={styles.formHint}>더 친근한 메일을 보내드릴 수 있어요</p>
+                  <p className={styles.formHint}>대기자 등록은 아래 버튼을 클릭해주세요</p>
                 </div>
 
-                <div className={styles.formGroup}>
+                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
                   <label htmlFor="resume">이력서/포트폴리오 PDF <span style={{ color: '#f07178' }}>*</span></label>
                   <div className={styles.fileUpload}>
                     <input
@@ -1405,38 +1404,35 @@ export default function HomePage() {
                       accept=".pdf"
                       style={{ display: 'none' }}
                       onChange={handleInputChange}
-                      disabled={isSubmitting}
+                      disabled={true}
                     />
-                    <label htmlFor="resume" className={`${styles.fileLabel} ${isSubmitting ? styles.disabled : ''}`}>
-                      {resumeFileName || '📎 PDF 파일 선택'}
+                    <label htmlFor="resume" className={`${styles.fileLabel} ${styles.disabled}`} style={{ cursor: 'not-allowed' }}>
+                      {resumeFileName || '📎 베타 마감'}
                     </label>
                   </div>
-                  <p className={styles.formHint}>PDF 형식만 지원 (최대 5MB)</p>
+                  <p className={styles.formHint}>정식 오픈 시 다시 안내드리겠습니다</p>
                 </div>
 
-                <div className={styles.formGroup}>
+                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
                   <label className={styles.checkboxLabel}>
-                    <input type="checkbox" required disabled={isSubmitting} />
+                    <input type="checkbox" required disabled={true} />
                     <span>개인정보 수집 및 이용에 동의합니다</span>
                   </label>
                 </div>
 
                 <button
-                  type="submit"
-                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSubmit} ${isSubmitting ? styles.btnDisabled : ''}`}
-                  disabled={isSubmitting}
+                  type="button"
+                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSubmit}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open('https://forms.gle/iN5GE3aNDxLiKhyU8', '_blank');
+                  }}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <span className={styles.loadingSpinner}>⏳</span> 신청 처리 중...
-                    </>
-                  ) : (
-                    <>🎯 베타 테스트 신청하기</>
-                  )}
+                  🔔 대기자 등록하기
                 </button>
 
                 <p className={styles.formSimpleNote}>
-                  💡 <strong>30초면 충분!</strong> 추가 정보는 시작 후 이메일로 안내드려요.
+                  💡 <strong>정식 오픈 알림을 받으세요!</strong> 가장 먼저 소식을 전해드립니다.
                 </p>
 
                 <div className={styles.emotionalMessage}>

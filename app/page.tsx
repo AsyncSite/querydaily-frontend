@@ -2,10 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
+
+declare global {
+  interface Window {
+    IMP?: {
+      init: (merchantId: string) => void;
+      request_pay: (params: any, callback: (response: any) => void) => void;
+    };
+  }
+}
 
 export default function HomePage() {
   const router = useRouter();
@@ -27,6 +37,20 @@ export default function HomePage() {
     return () => {
       if ('scrollRestoration' in history) {
         history.scrollRestoration = 'auto';
+      }
+    };
+  }, []);
+
+  // Load Portone SDK
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.iamport.kr/v1/iamport.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
       }
     };
   }, []);
@@ -62,6 +86,7 @@ export default function HomePage() {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
   const [purchasePhone, setPurchasePhone] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
   const [freeTrialVerificationSent, setFreeTrialVerificationSent] = useState(false);
@@ -409,6 +434,68 @@ export default function HomePage() {
     if (isRightSwipe) {
       handlePrev();
     }
+  };
+
+  const handleCardPayment = () => {
+    if (!window.IMP) {
+      alert('\uacb0\uc81c \ubaa8\ub4c8\uc774 \ub85c\ub4dc\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.');
+      return;
+    }
+
+    // Initialize Portone with test MID
+    window.IMP.init('imp87281350'); // \uc774\ub2c8\uc2dc\uc2a4 \ud14c\uc2a4\ud2b8 \uac00\ub9f9\uc810 \uc2dd\ubcc4\ucf54\ub4dc
+
+    // \uc0c1\ud488\uba85\uacfc \uac00\uaca9 \ub9e4\ud551
+    const productNames: Record<string, string> = {
+      'critical-hit': '\ud06c\ub9ac\ud2f0\uceec \ud788\ud2b8',
+      'growth-plan': '\uadf8\ub85c\uc2a4 \ud50c\ub79c',
+      'real-interview': '\ub9ac\uc5bc \uc778\ud130\ubdf0',
+      'resume-analytics': '\ub77c\uc2a4\ud2b8 \uccb4\ud06c'
+    };
+
+    const productPrices: Record<string, number> = {
+      'critical-hit': 1900,
+      'growth-plan': 34900,
+      'real-interview': 129000,
+      'resume-analytics': 19900
+    };
+
+    const orderData = {
+      pg: 'html5_inicis.INIBillTst', // \uc774\ub2c8\uc2dc\uc2a4 \ud14c\uc2a4\ud2b8 \uacb0\uc81c
+      pay_method: 'card',
+      merchant_uid: `QD${Date.now()}`,
+      name: productNames[selectedPurchaseProduct || ''] || '',
+      amount: productPrices[selectedPurchaseProduct || ''] || 0,
+      buyer_email: profileData.email,
+      buyer_name: purchaseName || profileData.email.split('@')[0],
+      buyer_tel: purchasePhone || '010-0000-0000',
+      custom_data: {
+        product: selectedPurchaseProduct
+      }
+    };
+
+    window.IMP.request_pay(orderData, (response: any) => {
+      if (response.success) {
+        // Store order data
+        const orderInfo = {
+          orderId: response.merchant_uid,
+          productName: orderData.name,
+          price: orderData.amount,
+          paymentMethod: 'card',
+          email: profileData.email,
+          name: purchaseName || profileData.email.split('@')[0],
+          phone: purchasePhone || '',
+          paymentId: response.imp_uid,
+          paidAt: new Date().toISOString(),
+        };
+        localStorage.setItem('orderData', JSON.stringify(orderInfo));
+
+        // Redirect to success page
+        window.location.href = '/order-complete';
+      } else {
+        alert(`\uacb0\uc81c\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4: ${response.error_msg}`);
+      }
+    });
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -2189,30 +2276,66 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className={styles.modalActions}>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setPurchaseModalStep(1)}
-                    >
-                      이전
-                    </button>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
-                      onClick={() => {
-                        if (!isEmailVerified) {
-                          alert('이메일 인증을 완료해주세요');
-                        } else {
-                          setPurchaseModalStep(3);
-                        }
-                      }}
-                      disabled={!isEmailVerified}
-                    >
-                      다음 단계로
-                    </button>
-                  </div>
+                  {!isEmailVerified ? (
+                    <div className={styles.modalActions}>
+                      <button
+                        className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                        onClick={() => setPurchaseModalStep(1)}
+                      >
+                        이전
+                      </button>
+                      <button
+                        className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                        onClick={() => alert('이메일 인증을 완료해주세요')}
+                        disabled={true}
+                      >
+                        다음 단계로
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className={styles.paymentMethodTitle}>
+                        결제 방법을 선택해주세요
+                      </div>
+                      <div className={styles.paymentMethodButtons}>
+                        <button
+                          className={`${styles.paymentMethodBtn} ${styles.bankTransferBtn}`}
+                          onClick={() => {
+                            setPaymentMethod('bank');
+                            setPurchaseModalStep(3);
+                          }}
+                        >
+                          <span className={styles.paymentMethodIcon}>🏦</span>
+                          <span className={styles.paymentMethodText}>
+                            <strong>무통장입금</strong>
+                            <small>계좌이체로 안전하게 결제</small>
+                          </span>
+                        </button>
+                        <button
+                          className={`${styles.paymentMethodBtn} ${styles.cardPaymentBtn}`}
+                          onClick={() => {
+                            setPaymentMethod('card');
+                            handleCardPayment();
+                          }}
+                        >
+                          <span className={styles.paymentMethodIcon}>💳</span>
+                          <span className={styles.paymentMethodText}>
+                            <strong>카드결제</strong>
+                            <small>신용/체크카드로 간편 결제</small>
+                          </span>
+                        </button>
+                      </div>
+                      <button
+                        className={`${styles.modalBtn} ${styles.modalBtnSecondary} ${styles.modalBtnBack}`}
+                        onClick={() => setPurchaseModalStep(1)}
+                      >
+                        이전으로
+                      </button>
+                    </>
+                  )}
 
                   <p className={styles.modalHint}>
-                    💡 결제 전 이메일 인증으로 정확한 전달을 보장합니다
+                    💡 {!isEmailVerified ? '결제 전 이메일 인증으로 정확한 전달을 보장합니다' : '원하시는 결제 방법을 선택해주세요'}
                   </p>
                 </div>
               )}

@@ -6397,6 +6397,97 @@
   font-family: inherit;
 }
 
+/* Payment Method Selection Styles */
+.paymentMethodTitle {
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.paymentMethodButtons {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.paymentMethodBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.paymentMethodBtn:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.paymentMethodBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.paymentMethodBtn:hover:before {
+  opacity: 1;
+}
+
+.bankTransferBtn {
+  background: linear-gradient(135deg, #1a2f4e 0%, #2a4066 100%);
+}
+
+.cardPaymentBtn {
+  background: linear-gradient(135deg, #4a1a4e 0%, #6a2a66 100%);
+}
+
+.paymentMethodIcon {
+  font-size: 32px;
+  display: block;
+}
+
+.paymentMethodText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+.paymentMethodText strong {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.paymentMethodText small {
+  color: #b0b0c0;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.modalBtnBack {
+  width: 100%;
+  margin-top: 15px;
+}
+
 .footerLinkBtn:hover {
   color: #c3e88d;
 }

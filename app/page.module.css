@@ -2919,6 +2919,12 @@
     color: var(--color-text-tertiary);
 }
 
+.footerLegalInfo {
+    font-size: 0.75rem !important;
+    color: #666 !important;
+    margin-top: 4px;
+}
+
 .socialLinks {
     display: flex;
     gap: var(--spacing-lg);
@@ -5394,6 +5400,38 @@
     margin-top: 2px;
 }
 
+.productServiceInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8125rem;
+}
+
+.serviceInfoItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.serviceInfoLabel {
+    color: #888;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.serviceInfoValue {
+    color: #ccc;
+    text-align: right;
+    flex: 1;
+    font-size: 0.75rem;
+}
+
 .productPrice {
     display: flex;
     align-items: baseline;
@@ -5648,6 +5686,15 @@
 /* Modal Form Elements */
 .modalFormGroup {
     margin-bottom: 30px;
+}
+
+.modalLabel {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.3px;
 }
 
 .modalInput {
@@ -6282,5 +6329,97 @@
   .notification {
     min-width: auto;
     max-width: none;
+  }
+}
+
+/* Business Info Modal Styles */
+.businessModal {
+  background: #1a1a1a;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(195, 232, 141, 0.1);
+}
+
+.businessModalTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #c3e88d;
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+.businessModalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.businessRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.businessRow:last-child {
+  border-bottom: none;
+}
+
+.businessLabel {
+  font-size: 14px;
+  color: #888;
+  font-weight: 500;
+}
+
+.businessValue {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 400;
+  text-align: right;
+  max-width: 60%;
+}
+
+.footerLinkBtn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  text-align: left;
+  transition: color 0.3s ease;
+  font-family: inherit;
+}
+
+.footerLinkBtn:hover {
+  color: #c3e88d;
+}
+
+@media (max-width: 768px) {
+  .businessModal {
+    padding: 30px 20px;
+    width: 95%;
+  }
+
+  .businessModalTitle {
+    font-size: 20px;
+    margin-bottom: 25px;
+  }
+
+  .businessRow {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .businessValue {
+    text-align: left;
+    max-width: 100%;
   }
 }

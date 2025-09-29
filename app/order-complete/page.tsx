@@ -22,8 +22,8 @@ export default function OrderCompletePage() {
       // 주문 완료 후 localStorage 클리어 (선택사항)
       // localStorage.removeItem('orderData');
     } else {
-      // 주문 정보가 없으면 products 페이지로 리다이렉트
-      router.push('/products');
+      // 주문 정보가 없으면 메인 페이지로 리다이렉트
+      router.push('/');
     }
   }, [router]);
 
@@ -118,9 +118,9 @@ export default function OrderCompletePage() {
         <div className={styles.actions}>
           <button
             className={styles.primaryBtn}
-            onClick={() => router.push('/products')}
+            onClick={() => router.push('/')}
           >
-            다른 상품 보기
+            메인으로 돌아가기
           </button>
 
           <a

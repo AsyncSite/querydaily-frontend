@@ -60,11 +60,14 @@ export default function HomePage() {
   const [purchaseFile, setPurchaseFile] = useState<File | null>(null);
   const [verificationCode, setVerificationCode] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [purchaseName, setPurchaseName] = useState('');
+  const [purchasePhone, setPurchasePhone] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
   const [freeTrialVerificationSent, setFreeTrialVerificationSent] = useState(false);
   const [verificationTimer, setVerificationTimer] = useState(0);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [showBusinessInfo, setShowBusinessInfo] = useState(false);
 
   // Calculate days remaining until Oct 31
   const calculateDaysRemaining = () => {
@@ -341,6 +344,10 @@ export default function HomePage() {
     setShowVerificationInput(false);
     setVerificationCode('');
     setSentVerificationCode('');
+    // Reset purchase info
+    setPurchaseName('');
+    setPurchasePhone('');
+    setPurchaseFile(null);
   };
 
   // Send verification email
@@ -469,7 +476,7 @@ export default function HomePage() {
         // 선택된 상품 정보를 포함하여 무료 체험 시작
         const trialData = {
           ...profileData,
-          selectedProduct: selectedProduct // 선택된 상품 ID 추가
+          selectedProduct: selectedProduct || undefined // null을 undefined로 변환
         };
         const response = await startFreeTrial(trialData);
 
@@ -586,12 +593,12 @@ export default function HomePage() {
             </div>
 
             <h1 className={styles.heroTitle}>
-              <span className={styles.heroTitleMain}>당신의 이력서에서 나올</span><br/>
+              <span className={styles.heroTitleMain}>이력서에서 나올</span><br/>
               <span className={styles.textGradient}>그 질문, 미리 준비하세요</span>
             </h1>
 
             <p className={styles.heroSubtitle}>
-              면접관이 당신의 <strong>프로젝트 경험</strong>에서 꺼낼 날카로운 질문들.<br/>
+              면접관이 <strong>프로젝트 경험</strong>에서 꺼낼 날카로운 질문들.<br/>
               AI가 분석해 미리 준비하고, 자신 있게 답변하세요.
             </p>
 
@@ -754,6 +761,16 @@ export default function HomePage() {
                   <span>모범 답안 제공</span>
                 </div>
               </div>
+              <div className={styles.productServiceInfo}>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>제공 기간</span>
+                  <span className={styles.serviceInfoValue}>20일간 매일 발송</span>
+                </div>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>환불 규정</span>
+                  <span className={styles.serviceInfoValue}>첫 질문 발송 전 100%, 이후 일할 계산</span>
+                </div>
+              </div>
               <div className={styles.productPrice}>
                 <span className={styles.priceOriginal}>₩99,000</span>
                 <span className={styles.priceCurrent}>₩34,900</span>
@@ -781,11 +798,21 @@ export default function HomePage() {
                 </div>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>📹</span>
-                  <span>녹화 영상 + 상세 피드백 리포트</span>
+                  <span>상세 피드백 리포트</span>
                 </div>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>💬</span>
                   <span>즉시 교정 가능한 개선점 코칭</span>
+                </div>
+              </div>
+              <div className={styles.productServiceInfo}>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>제공 기간</span>
+                  <span className={styles.serviceInfoValue}>90분 모의면접 1회</span>
+                </div>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>환불 규정</span>
+                  <span className={styles.serviceInfoValue}>면접 3일 전 100%, 1-2일 전 50%, 당일 불가</span>
                 </div>
               </div>
               <div className={styles.productPrice}>
@@ -821,6 +848,16 @@ export default function HomePage() {
                   <span>상세 답변 가이드</span>
                 </div>
               </div>
+              <div className={styles.productServiceInfo}>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>제공 기간</span>
+                  <span className={styles.serviceInfoValue}>구매 즉시 제공</span>
+                </div>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>환불 규정</span>
+                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
+                </div>
+              </div>
               <div className={styles.productPrice}>
                 <span className={styles.priceOriginal}>₩4,900</span>
                 <span className={styles.priceCurrent}>₩1,900</span>
@@ -852,6 +889,16 @@ export default function HomePage() {
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🎯</span>
                   <span>즉시 사용 가능한 답변 템플릿</span>
+                </div>
+              </div>
+              <div className={styles.productServiceInfo}>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>제공 기간</span>
+                  <span className={styles.serviceInfoValue}>구매 즉시 제공</span>
+                </div>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>환불 규정</span>
+                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
                 </div>
               </div>
               <div className={styles.productPrice}>
@@ -1596,13 +1643,25 @@ export default function HomePage() {
                     <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" onClick={() => trackExternalLink('kakao_contact')}>문의하기</a>
                     <a href="/terms">이용약관</a>
                     <a href="/privacy">개인정보처리방침</a>
+                    <a href="/refund-policy">환불정책</a>
+                    <button
+                      className={styles.footerLinkBtn}
+                      onClick={() => setShowBusinessInfo(true)}
+                    >
+                      사업자정보
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className={styles.footerBottom}>
-              <p>© 2025 QueryDaily. All rights reserved.</p>
+              <div>
+                <p>© 2025 QueryDaily. All rights reserved.</p>
+                <p className={styles.footerLegalInfo}>
+                  어싱크사이트 | 사업자등록번호: 456-12-02771 | 통신판매업: 제 2025-화성동탄-0001호
+                </p>
+              </div>
               <div className={styles.socialLinks}>
                 <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk" onClick={() => trackExternalLink('kakao_footer')}>💬</a>
                 <a href="#" aria-label="LinkedIn" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>in</a>
@@ -1887,7 +1946,7 @@ export default function HomePage() {
                         <span className={styles.modalSummaryValue}>{profileData.experience}</span>
                       </div>
                     )}
-                    {profileData.techStack?.length > 0 && (
+                    {profileData.techStack && profileData.techStack.length > 0 && (
                       <div className={styles.modalSummaryItem}>
                         <span className={styles.modalSummaryLabel}>기술</span>
                         <span className={styles.modalSummaryValue}>
@@ -1954,7 +2013,7 @@ export default function HomePage() {
             <div className={styles.modalContent}>
               {/* Progress Indicator */}
               <div className={styles.modalProgress}>
-                {[1, 2, 3].map((step) => (
+                {[1, 2, 3, 4].map((step) => (
                   <div
                     key={step}
                     className={`${styles.modalProgressDot} ${
@@ -2140,10 +2199,10 @@ export default function HomePage() {
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
                       onClick={() => {
-                        if (isEmailVerified) {
-                          setPurchaseModalStep(3);
-                        } else {
+                        if (!isEmailVerified) {
                           alert('이메일 인증을 완료해주세요');
+                        } else {
+                          setPurchaseModalStep(3);
                         }
                       }}
                       disabled={!isEmailVerified}
@@ -2158,12 +2217,78 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* Step 3: Payment */}
+              {/* Step 3: Order Information */}
               {purchaseModalStep === 3 && (
                 <div className={styles.modalStep}>
                   <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>📝</span>
+                    주문자 정보 입력
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    결제를 위한 정보를 입력해주세요
+                  </p>
+
+                  {/* 이름 입력 */}
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>이름 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <input
+                      type="text"
+                      placeholder="홍길동"
+                      className={styles.modalInput}
+                      value={purchaseName}
+                      onChange={(e) => setPurchaseName(e.target.value)}
+                      autoFocus
+                    />
+                  </div>
+
+                  {/* 연락처 입력 */}
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>연락처 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <input
+                      type="tel"
+                      placeholder="010-1234-5678"
+                      className={styles.modalInput}
+                      value={purchasePhone}
+                      onChange={(e) => setPurchasePhone(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setPurchaseModalStep(2)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => {
+                        if (!purchaseName.trim()) {
+                          alert('이름을 입력해주세요');
+                        } else if (!purchasePhone.trim()) {
+                          alert('연락처를 입력해주세요');
+                        } else {
+                          setPurchaseModalStep(4);
+                        }
+                      }}
+                      disabled={!purchaseName.trim() || !purchasePhone.trim()}
+                    >
+                      다음 단계로
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    💡 입금자명 확인을 위해 정확한 정보를 입력해주세요
+                  </p>
+                </div>
+              )}
+
+              {/* Step 4: Payment */}
+              {purchaseModalStep === 4 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
                     <span className={styles.modalEmoji}>💳</span>
-                    결제 정보 입력
+                    무통장입금 안내
                   </h2>
                   <p className={styles.modalSubtitle}>
                     안전한 결제를 진행합니다
@@ -2200,50 +2325,58 @@ export default function HomePage() {
                   </div>
 
                   <div className={styles.modalHighlight}>
-                    <p>✅ 즉시 서비스 이용 가능</p>
-                    <p>✅ 24시간 내 100% 환불</p>
+                    <p>✅ 무통장입금으로 안전한 결제</p>
+                    <p>✅ 입금 확인 후 24시간 내 발송</p>
                     <p>✅ 이메일로 결과 전송</p>
                   </div>
 
                   <div className={styles.modalActions}>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setPurchaseModalStep(2)}
+                      onClick={() => setPurchaseModalStep(3)}
                     >
                       이전
                     </button>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
-                      onClick={async () => {
-                        setIsSubmitting(true);
-                        try {
-                          // TODO: Implement purchase API
-                          const formData = new FormData();
-                          formData.append('email', profileData.email);
-                          formData.append('product', selectedPurchaseProduct || '');
-                          if (purchaseFile) {
-                            formData.append('resume', purchaseFile);
-                          }
+                      onClick={() => {
+                        // 상품명과 가격 매핑
+                        const productNames: Record<string, string> = {
+                          'critical-hit': '크리티컬 히트',
+                          'growth-plan': '그로스 플랜',
+                          'real-interview': '리얼 인터뷰',
+                          'resume-analytics': '라스트 체크'
+                        };
 
-                          const response = await submitBetaApplication({
-                            email: profileData.email,
-                            resume: purchaseFile!
-                          });
+                        const productPrices: Record<string, string> = {
+                          'critical-hit': '₩1,900',
+                          'growth-plan': '₩34,900',
+                          'real-interview': '₩129,000',
+                          'resume-analytics': '₩19,900'
+                        };
 
-                          if (response.success) {
-                            setPurchaseModalOpen(false);
-                            router.push(`/purchase-complete?product=${selectedPurchaseProduct}&email=${encodeURIComponent(profileData.email)}`);
-                          }
-                        } catch (error) {
-                          setErrors([error instanceof Error ? error.message : '구매 처리 중 오류가 발생했습니다']);
-                          setTimeout(() => setErrors([]), 5000);
-                        } finally {
-                          setIsSubmitting(false);
-                        }
+                        // 주문 정보를 localStorage에 저장
+                        const orderData = {
+                          name: purchaseName || profileData.email.split('@')[0],
+                          email: profileData.email,
+                          phone: purchasePhone || '',
+                          company: '',
+                          position: '',
+                          experience: profileData.experience || '',
+                          resumeFileName: purchaseFile?.name || '',
+                          product: productNames[selectedPurchaseProduct || ''] || '',
+                          price: productPrices[selectedPurchaseProduct || ''] || '',
+                          orderDate: new Date().toISOString(),
+                          orderId: `QD${Date.now()}`
+                        };
+
+                        localStorage.setItem('orderData', JSON.stringify(orderData));
+
+                        // 무통장입금 안내 페이지로 이동
+                        router.push('/payment');
                       }}
-                      disabled={isSubmitting}
                     >
-                      {isSubmitting ? '결제 처리 중...' : '결제하기'}
+                      무통장입금으로 결제하기
                     </button>
                   </div>
 
@@ -2252,6 +2385,51 @@ export default function HomePage() {
                   </p>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Business Info Modal */}
+      {showBusinessInfo && (
+        <div className={styles.modalOverlay} onClick={() => setShowBusinessInfo(false)}>
+          <div className={styles.businessModal} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.modalClose}
+              onClick={() => setShowBusinessInfo(false)}
+            >
+              ×
+            </button>
+            <h3 className={styles.businessModalTitle}>사업자 정보</h3>
+            <div className={styles.businessModalContent}>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>상호명</span>
+                <span className={styles.businessValue}>어싱크사이트</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>대표자</span>
+                <span className={styles.businessValue}>최보임</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>사업자등록번호</span>
+                <span className={styles.businessValue}>456-12-02771</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>통신판매번호</span>
+                <span className={styles.businessValue}>제 2025-화성동탄-0001호</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>사업장 주소</span>
+                <span className={styles.businessValue}>경기도 화성시 동탄대로4길 18</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>대표전화</span>
+                <span className={styles.businessValue}>010-8120-4131</span>
+              </div>
+              <div className={styles.businessRow}>
+                <span className={styles.businessLabel}>이메일</span>
+                <span className={styles.businessValue}>official.querydaily@gmail.com</span>
+              </div>
             </div>
           </div>
         </div>

@@ -424,6 +424,8 @@
     padding: 0 var(--spacing-xl);
 }
 
+/* Products section uses default container width */
+
 .sectionTitle {
     font-size: var(--font-size-4xl);
     font-weight: 700;
@@ -2341,6 +2343,345 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
+}
+
+/* Selected Product Indicator */
+.selectedProductIndicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.selectedProductLabel {
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.selectedProductName {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.selectedProductBadge {
+    margin-left: auto;
+    background: linear-gradient(135deg, #c3e88d 0%, #82b1ff 100%);
+    color: #1a1a1a;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Trust Indicators Section */
+.trustSection {
+    padding: 3rem 0;
+    background: linear-gradient(180deg, rgba(24, 24, 24, 0.5) 0%, rgba(18, 18, 18, 0) 100%);
+}
+
+.trustContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.trustStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.trustStat {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.trustStat:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.trustNumber {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #c3e88d 0%, #82b1ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.trustLabel {
+    display: block;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.trustLogos {
+    text-align: center;
+}
+
+.trustLogoLabel {
+    display: block;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+.logoStrip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.companyLogo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.3s ease;
+}
+
+.companyLogo:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Sample Questions Section */
+.sampleSection {
+    padding: 5rem 0;
+    background: rgba(18, 18, 18, 0.5);
+}
+
+.sampleGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.sampleCard {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.sampleCard:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(195, 232, 141, 0.3);
+    transform: translateY(-4px);
+}
+
+.sampleBadge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, rgba(195, 232, 141, 0.2) 0%, rgba(130, 177, 255, 0.2) 100%);
+    border: 1px solid rgba(195, 232, 141, 0.3);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #c3e88d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.sampleQuestion {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.sampleContext {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.contextLabel {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.contextValue {
+    font-size: 0.875rem;
+    color: #82b1ff;
+}
+
+.sampleCta {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.sampleCtaText {
+    font-size: 1.125rem;
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+}
+
+/* Trial Quick Start in Products Section */
+.trialQuickStart {
+    margin-top: 4rem;
+    padding-top: 3rem;
+}
+
+.trialDivider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dividerLine {
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dividerText {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.trialStartCard {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, rgba(195, 232, 141, 0.05) 0%, rgba(130, 177, 255, 0.05) 100%);
+    border: 1px solid rgba(195, 232, 141, 0.2);
+    border-radius: 20px;
+}
+
+.trialStartTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.trialStartSubtitle {
+    font-size: 1.125rem;
+    color: #9ca3af;
+    margin-bottom: 2rem;
+}
+
+.trialNote {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-top: 1.5rem;
+}
+
+.trialProgressSteps {
+    padding: 2rem;
+}
+
+.stepIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stepNumber {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #c3e88d;
+}
+
+.stepLabel {
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+/* Simplified Apply Section */
+.applySubtitle {
+    font-size: 1.125rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+}
+
+/* Progressive Form Steps */
+.formStepHeader {
+    margin-bottom: 2rem;
+}
+
+.formStep {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, rgba(195, 232, 141, 0.1) 0%, rgba(130, 177, 255, 0.1) 100%);
+    border: 1px solid rgba(195, 232, 141, 0.2);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #c3e88d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.formStepTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+/* File Upload Styles */
+.fileUpload {
+    position: relative;
+}
+
+.fileUpload input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.fileUploadLabel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 2px dashed rgba(195, 232, 141, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.fileUploadLabel:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(195, 232, 141, 0.5);
+}
+
+.uploadIcon {
+    font-size: 1.5rem;
 }
 
 .formGroup {
@@ -4639,4 +4980,1307 @@
     .valueProposition strong {
         font-size: 1.1rem;
     }
+}
+
+/* Progressive Disclosure Profile Form Styles */
+.profileFormHeader {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.profileFormTitle {
+    font-size: 1.4rem;
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.profileCompleteness {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.profileCompleteLabel {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+.profileProgressBar {
+    width: 200px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.profileProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #c3e88d 0%, #89ddff 100%);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.profileCompletePercent {
+    font-size: 0.9rem;
+    color: #c3e88d;
+    font-weight: 600;
+}
+
+/* Experience Buttons */
+.experienceButtons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.experienceBtn {
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 100px;
+}
+
+.experienceBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(195, 232, 141, 0.5);
+}
+
+.experienceBtnActive {
+    background: rgba(195, 232, 141, 0.2);
+    border-color: #c3e88d;
+    color: #c3e88d;
+}
+
+/* Tech Stack Grid */
+.techStackGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.techCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.techCheckbox:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(195, 232, 141, 0.5);
+}
+
+.techCheckbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #c3e88d;
+}
+
+.techCheckbox span {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+.techCheckbox input[type="checkbox"]:checked + span {
+    color: #c3e88d;
+}
+
+/* Interest Tags */
+.interestTags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.interestTag {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.interestTag:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(195, 232, 141, 0.5);
+    transform: translateY(-2px);
+}
+
+.interestTagActive {
+    background: rgba(195, 232, 141, 0.2);
+    border-color: #c3e88d;
+    color: #c3e88d;
+}
+
+/* Form Input */
+.formInput {
+    width: 100%;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: #c3e88d;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.formInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Form Buttons */
+.formButtons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btnSecondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 16px 30px;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+}
+
+.btnSecondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.formLabel {
+    display: block;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.formErrors {
+    background: rgba(240, 113, 120, 0.1);
+    border: 1px solid rgba(240, 113, 120, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.errorMessage {
+    color: #f07178;
+    font-size: 0.95rem;
+    margin: 5px 0;
+}
+
+/* Responsive adjustments for profile form */
+@media (max-width: 768px) {
+    .experienceButtons {
+        flex-direction: column;
+    }
+
+    .experienceBtn {
+        width: 100%;
+    }
+
+    .techStackGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .formButtons {
+        flex-direction: column;
+    }
+
+    .profileProgressBar {
+        width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .techStackGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .profileCompleteness {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .profileProgressBar {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+/* Products Section Styles */
+.productsSection {
+    background: var(--color-bg-primary);
+    padding: var(--spacing-3xl) 0;
+}
+
+.productsSection .sectionTitle {
+    color: var(--color-primary);
+    margin-bottom: 10px;
+}
+
+.productsSection .sectionSubtitle {
+    color: var(--color-text-secondary);
+    margin-bottom: 50px;
+    font-size: 1.1rem;
+}
+
+/* Promotion Banner */
+.promotionBanner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px 24px;
+    margin: 30px auto;
+    max-width: 600px;
+    background: linear-gradient(135deg, rgba(195, 232, 141, 0.1) 0%, rgba(130, 170, 255, 0.1) 100%);
+    border: 1px solid rgba(195, 232, 141, 0.2);
+    border-radius: 16px;
+}
+
+.promotionIcon {
+    font-size: 2rem;
+}
+
+.promotionText {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.promotionTitle {
+    font-size: 0.875rem;
+    color: #c3e88d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.promotionDesc {
+    font-size: 1.125rem;
+    color: white;
+    font-weight: 600;
+}
+
+.productsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin: 0 auto 40px;
+    max-width: 800px;
+}
+
+.productCard {
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.productCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.productBadge {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    background: linear-gradient(135deg, #c3e88d 0%, #89ddff 100%);
+    color: #1e1e1e;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.productHeader {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.productLabel {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    display: block;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+.productName {
+    font-size: 1.25rem;
+    color: white;
+    margin-bottom: 2px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.productEn {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: normal;
+}
+
+.productFeatures {
+    flex: 1;
+    margin-bottom: 16px;
+    padding: 12px 0;
+}
+
+.productFeature {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.productFeature:last-child {
+    margin-bottom: 0;
+}
+
+.featureIcon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.productPrice {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 12px 0;
+    margin-bottom: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.priceOriginal {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8125rem;
+}
+
+.priceCurrent {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Product CTA Button Styles */
+.btnProductCta {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: auto;
+    text-align: center;
+}
+
+.btnProductCta:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.btnProductCtaPrimary {
+    background: linear-gradient(135deg, #c3e88d 0%, #82aaff 100%);
+    border: none;
+    color: #1e1e1e;
+    font-weight: 700;
+}
+
+.btnProductCtaPrimary:hover {
+    background: linear-gradient(135deg, #82aaff 0%, #c3e88d 100%);
+    box-shadow: 0 4px 16px rgba(195, 232, 141, 0.3);
+    transform: translateY(-1px);
+}
+
+.productsCta {
+    margin-top: 48px;
+    text-align: center;
+}
+
+/* Price Notice Chip */
+.priceNoticeChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    margin: 0 auto;
+    position: relative;
+    animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.15);
+    }
+}
+
+.chipIcon {
+    font-size: 1rem;
+    animation: tick 2s ease-in-out infinite;
+}
+
+@keyframes tick {
+    0%, 100% {
+        transform: rotate(-5deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+.chipText {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.chipText strong {
+    color: #f59e0b;
+    font-weight: 700;
+    font-size: 0.925rem;
+}
+
+.btnOutline {
+    background: transparent;
+    border: 2px solid rgba(195, 232, 141, 0.5);
+    color: #c3e88d;
+    padding: 16px 32px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btnOutline:hover {
+    background: rgba(195, 232, 141, 0.1);
+    border-color: #c3e88d;
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments for products section */
+@media (max-width: 768px) {
+    .productsGrid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .productCard {
+        padding: 20px 15px;
+    }
+
+    .productName {
+        font-size: 1.4rem;
+    }
+}
+
+/* Modal Styles - Progressive Disclosure Free Trial */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+    padding: 20px;
+}
+
+.modalContainer {
+    background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+    border-radius: 20px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+.modalClose {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--color-text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalClose:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.modalContent {
+    padding: 50px 40px 40px;
+}
+
+/* Modal Progress Indicator */
+.modalProgress {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.modalProgressDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.modalProgressDotActive {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: scale(1.3);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+}
+
+/* Modal Step Content */
+.modalStep {
+    text-align: center;
+    animation: fadeInUp 0.3s ease;
+}
+
+.modalTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.modalEmoji {
+    font-size: 2.2rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.modalSubtitle {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 35px;
+    line-height: 1.5;
+}
+
+/* Modal Form Elements */
+.modalFormGroup {
+    margin-bottom: 30px;
+}
+
+.modalInput {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.modalInput:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.modalInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Modal Options Grid */
+.modalOptions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.modalOption {
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modalOption:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.modalOptionActive {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+}
+
+/* Modal Tech Grid */
+.modalTechGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.modalTechItem {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modalTechItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.modalTechItemActive {
+    background: linear-gradient(135deg, #c3e88d 0%, #82b1ff 100%);
+    border-color: transparent;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Modal Actions */
+.modalActions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.modalBtn {
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.modalBtnPrimary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modalBtnPrimary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.modalBtnPrimary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modalBtnSecondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modalBtnSecondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.modalBtnLarge {
+    padding: 16px 40px;
+    font-size: 1.1rem;
+}
+
+/* Modal Hint */
+.modalHint {
+    font-size: 0.9rem;
+    color: var(--color-text-tertiary);
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: rgba(195, 232, 141, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #c3e88d;
+}
+
+/* Modal Summary */
+.modalSummary {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modalSummaryItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modalSummaryItem:last-child {
+    border-bottom: none;
+}
+
+.modalSummaryLabel {
+    color: var(--color-text-tertiary);
+    font-size: 0.95rem;
+}
+
+.modalSummaryValue {
+    color: white;
+    font-weight: 500;
+}
+
+/* Modal Highlight Box */
+.modalHighlight {
+    background: linear-gradient(135deg, rgba(195, 232, 141, 0.1) 0%, rgba(130, 177, 255, 0.1) 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    border: 1px solid rgba(195, 232, 141, 0.2);
+}
+
+.modalHighlight p {
+    margin: 8px 0;
+    color: #c3e88d;
+    font-weight: 500;
+}
+
+/* Modal Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modal Responsive */
+@media (max-width: 768px) {
+    .modalContent {
+        padding: 40px 25px 30px;
+    }
+
+    .modalTitle {
+        font-size: 1.5rem;
+    }
+
+    .modalEmoji {
+        font-size: 1.8rem;
+    }
+
+    .modalTechGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modalOptions {
+        grid-template-columns: 1fr;
+    }
+
+    .modalActions {
+        flex-direction: column;
+    }
+
+    .modalBtn {
+        width: 100%;
+    }
+}
+
+/* Modal Free Trial Info Boxes */
+.modalFreeTrialInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 25px 0;
+}
+
+.modalInfoBox {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    border-radius: 14px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    text-align: left;
+}
+
+.modalInfoIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.modalInfoTitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.modalInfoDesc {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+}
+
+.modalInfoDesc strong {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Email Verification Styles */
+.modalEmailRow {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.modalEmailRow .modalInput {
+    flex: 1;
+}
+
+.modalBtnVerify {
+    padding: 16px 24px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none !important;
+    color: white !important;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.modalBtnVerify:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3) !important;
+    cursor: not-allowed;
+}
+
+.modalVerificationRow {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.modalVerificationRow .modalInput {
+    flex: 1;
+}
+
+.modalBtnConfirm {
+    padding: 16px 24px !important;
+    background: #48bb78;
+    border: none !important;
+    color: white !important;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+.modalBtnConfirm:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3) !important;
+    cursor: not-allowed;
+}
+
+.modalVerifiedMessage {
+    padding: 14px 20px;
+    background: rgba(72, 187, 120, 0.15);
+    border: 1px solid rgba(72, 187, 120, 0.3);
+    border-radius: 12px;
+    color: #48bb78;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modalVerificationNotice {
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* Purchase Modal Additional Styles */
+.selectedProductInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modalProductBadge {
+    font-weight: 600;
+    color: #c3e88d;
+}
+
+.modalProductPrice {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.fileUploadArea {
+    margin: 20px 0;
+}
+
+.fileUploadBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.fileUploadBox:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #667eea;
+}
+
+.uploadIcon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.uploadedIcon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.uploadText {
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.uploadHint {
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+}
+
+.uploadedFileName {
+    font-weight: 600;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.uploadedSize {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+.modalOrderSummary {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modalOrderItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modalOrderItem:last-child {
+    border-bottom: none;
+    padding-top: 15px;
+}
+
+.modalPaymentSecurity {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-text-tertiary);
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 8px;
+}
+
+/* Product Card Responsive Styles */
+@media (max-width: 768px) {
+    .promotionBanner {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px 20px;
+    }
+
+    .promotionIcon {
+        font-size: 1.5rem;
+    }
+
+    .promotionDesc {
+        font-size: 1rem;
+    }
+
+    .productsGrid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        max-width: 100%;
+    }
+
+    .productCard {
+        min-height: auto;
+        padding: 20px 16px;
+    }
+
+    .priceNoticeChip {
+        padding: 10px 20px;
+        animation-duration: 4s;
+    }
+
+    .chipIcon {
+        animation-duration: 3s;
+    }
+
+    .chipText {
+        font-size: 0.8125rem;
+    }
+
+    .chipText strong {
+        font-size: 0.875rem;
+    }
+
+    .productHeader {
+        text-align: left;
+    }
+
+    .productName {
+        font-size: 1.125rem;
+    }
+
+    .productPrice {
+        justify-content: flex-start;
+    }
+
+    .btnProductCta {
+        padding: 14px 20px;
+        font-size: 0.9375rem;
+    }
+}
+
+/* Notification Modal */
+.notificationContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  border-left: 4px solid;
+}
+
+.notificationSuccess {
+  border-left-color: #c3e88d;
+  background: #f8fdf5;
+}
+
+.notificationError {
+  border-left-color: #f07178;
+  background: #fef5f5;
+}
+
+.notificationInfo {
+  border-left-color: #82aaff;
+  background: #f5f8ff;
+}
+
+.notificationMessage {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  font-weight: 500;
+}
+
+.notificationClose {
+  margin-left: 16px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationClose:hover {
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .notificationContainer {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .notification {
+    min-width: auto;
+    max-width: none;
+  }
 }

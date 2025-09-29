@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { submitBetaApplication } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
-import FloatingResumeHint from '@/components/FloatingResumeHint';
+import FloatingFreeTrial from '@/components/FloatingFreeTrial';
 
 export default function HomePage() {
   const router = useRouter();
@@ -31,12 +31,15 @@ export default function HomePage() {
     };
   }, []);
 
-  const [formData, setFormData] = useState({
+  const [profileData, setProfileData] = useState<UserProfile>({
     email: '',
-    name: '',
-    resume: null as File | null,
+    experience: undefined,
+    techStack: [],
+    interests: [],
+    targetCompany: undefined,
   });
-  const [resumeFileName, setResumeFileName] = useState<string>('');
+  const [showProfileForm, setShowProfileForm] = useState(false);
+  const [profileCompleteness, setProfileCompleteness] = useState(0);
   const [errors, setErrors] = useState<string[]>([]);
   const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,8 +49,63 @@ export default function HomePage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [touchEnd, setTouchEnd] = useState(0);
   const [openFooterSection, setOpenFooterSection] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStep, setModalStep] = useState(1);
+  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
+  const [purchaseModalStep, setPurchaseModalStep] = useState(1);
+  const [selectedPurchaseProduct, setSelectedPurchaseProduct] = useState<string | null>(null);
+  const [purchaseFile, setPurchaseFile] = useState<File | null>(null);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [showVerificationInput, setShowVerificationInput] = useState(false);
+  const [sentVerificationCode, setSentVerificationCode] = useState('');
+  const [freeTrialVerificationSent, setFreeTrialVerificationSent] = useState(false);
+  const [verificationTimer, setVerificationTimer] = useState(0);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  // Calculate days remaining until Oct 31
+  const calculateDaysRemaining = () => {
+    const today = new Date();
+    const endDate = new Date(today.getFullYear(), 9, 31); // October 31
+    const timeDiff = endDate.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    return daysRemaining > 0 ? daysRemaining : 0;
+  };
+
+  const [daysRemaining] = useState(calculateDaysRemaining());
+
+  // Timer effect for email verification
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (verificationTimer > 0) {
+      interval = setInterval(() => {
+        setVerificationTimer(prev => {
+          if (prev <= 1) {
+            setShowVerificationInput(false);
+            setSentVerificationCode('');
+            setNotification({ message: '인증 시간이 초과되었습니다. 다시 시도해주세요.', type: 'error' });
+            setTimeout(() => setNotification(null), 3000);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [verificationTimer]);
+
+  // Auto-dismiss notifications after 5 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   const testimonials = [
     {
@@ -273,6 +331,55 @@ export default function HomePage() {
     setCurrentTestimonial(targetIndex + 1);
   };
 
+  // Handle product selection
+  const handleProductSelect = (productId: string) => {
+    setSelectedPurchaseProduct(productId);
+    setPurchaseModalOpen(true);
+    setPurchaseModalStep(1);
+    // Reset email verification state
+    setIsEmailVerified(false);
+    setShowVerificationInput(false);
+    setVerificationCode('');
+    setSentVerificationCode('');
+  };
+
+  // Send verification email
+  const handleSendVerification = () => {
+    if (!profileData.email || !profileData.email.includes('@')) {
+      setNotification({ message: '올바른 이메일 주소를 입력해주세요', type: 'error' });
+      setTimeout(() => setNotification(null), 3000);
+      return;
+    }
+
+    // Generate 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setSentVerificationCode(code);
+    setShowVerificationInput(true);
+    setVerificationTimer(180); // 3 minutes = 180 seconds
+
+    // Mock: In real implementation, send email via backend API
+    console.log(`Verification code sent to ${profileData.email}: ${code}`);
+    setNotification({
+      message: `인증 코드가 ${profileData.email}로 전송되었습니다. (테스트: ${code})`,
+      type: 'info'
+    });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  // Verify the code
+  const handleVerifyCode = () => {
+    if (verificationCode === sentVerificationCode) {
+      setIsEmailVerified(true);
+      setShowVerificationInput(false);
+      setVerificationTimer(0);
+      setNotification({ message: '이메일 인증이 완료되었습니다!', type: 'success' });
+      setTimeout(() => setNotification(null), 3000);
+    } else {
+      setNotification({ message: '인증 코드가 일치하지 않습니다. 다시 확인해주세요.', type: 'error' });
+      setTimeout(() => setNotification(null), 3000);
+    }
+  };
+
   // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
@@ -297,63 +404,46 @@ export default function HomePage() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
-    if (name === 'resume' && files && files[0]) {
-      const file = files[0];
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      // 즉시 파일 검증
-      const fileErrors: string[] = [];
-
-      if (!file.name.toLowerCase().endsWith('.pdf')) {
-        fileErrors.push('PDF 형식만 업로드 가능합니다');
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
-        fileErrors.push(`파일 크기가 ${sizeInMB}MB입니다. 5MB 이하로 압축해주세요.`);
-      }
-
-      if (fileErrors.length > 0) {
-        setErrors(fileErrors);
-        // 파일 선택 초기화
-        e.target.value = '';
-        return;
-      }
-
-      // 검증 통과 시 저장
-      setFormData({ ...formData, resume: file });
-      setResumeFileName(file.name);
-      setErrors([]); // 이전 에러 클리어
-
-      // Track file upload event
-      trackFileUpload(file.size);
-    } else {
-      setFormData({ ...formData, [name]: value });
+    if (!profileData.email || !emailRegex.test(profileData.email)) {
+      setErrors(['올바른 이메일 주소를 입력해주세요']);
+      return;
     }
+
+    setErrors([]);
+    setShowProfileForm(true);
+    calculateProfileCompleteness();
+  };
+
+  const calculateProfileCompleteness = () => {
+    let score = 20; // 이메일 입력 시 기본 20%
+    if (profileData.experience) score += 20;
+    if (profileData.techStack && profileData.techStack.length > 0) score += 20;
+    if (profileData.interests && profileData.interests.length > 0) score += 20;
+    if (profileData.targetCompany) score += 20;
+    setProfileCompleteness(score);
+  };
+
+  const handleProfileUpdate = (field: keyof UserProfile, value: any) => {
+    setProfileData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // 프로필 완성도 재계산
+    setTimeout(calculateProfileCompleteness, 100);
   };
 
   const validateForm = () => {
     const newErrors: string[] = [];
 
-    // Email validation
+    // Email validation (이메일만 필수)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailRegex.test(formData.email)) {
+    if (!profileData.email || !emailRegex.test(profileData.email)) {
       newErrors.push('올바른 이메일 주소를 입력해주세요');
-    }
-
-    // Name validation (optional but if provided, min 2 chars)
-    if (formData.name && formData.name.trim().length < 2) {
-      newErrors.push('이름은 2글자 이상 입력해주세요');
-    }
-
-    // Resume validation
-    if (!formData.resume) {
-      newErrors.push('PDF 형식의 이력서를 업로드해주세요');
-    } else if (!formData.resume.name.toLowerCase().endsWith('.pdf')) {
-      newErrors.push('PDF 형식만 업로드 가능합니다');
-    } else if (formData.resume.size > 5 * 1024 * 1024) {
-      newErrors.push('파일 크기는 5MB 이하여야 합니다');
     }
 
     setErrors(newErrors);
@@ -376,17 +466,18 @@ export default function HomePage() {
       trackBetaSignupStart();
 
       try {
-        const response = await submitBetaApplication({
-          email: formData.email,
-          name: formData.name,
-          resume: formData.resume!
-        });
+        // 선택된 상품 정보를 포함하여 무료 체험 시작
+        const trialData = {
+          ...profileData,
+          selectedProduct: selectedProduct // 선택된 상품 ID 추가
+        };
+        const response = await startFreeTrial(trialData);
 
         // Track successful signup
         trackBetaSignupComplete();
 
         // Redirect to success page with email parameter
-        router.push(`/success?email=${encodeURIComponent(formData.email)}`);
+        router.push(`/success?email=${encodeURIComponent(profileData.email)}`);
       } catch (error) {
         console.error('Error submitting application:', error);
 
@@ -434,6 +525,22 @@ export default function HomePage() {
 
   return (
     <div className={styles.container}>
+      {/* Notification Modal */}
+      {notification && (
+        <div className={styles.notificationContainer}>
+          <div className={`${styles.notification} ${styles[`notification${notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}`]}`}>
+            <span className={styles.notificationMessage}>{notification.message}</span>
+            <button
+              className={styles.notificationClose}
+              onClick={() => setNotification(null)}
+              aria-label="닫기"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.navContainer}>
@@ -459,7 +566,7 @@ export default function HomePage() {
               <a href="#how-it-works" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>작동 방식</a>
               <a href="#testimonials" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>후기</a>
               <a href="#apply" className={`${styles.navLink} ${styles.navLinkCta}`} onClick={() => setMobileMenuOpen(false)}>
-                <span>무료 시작</span>
+                <span>시작하기</span>
                 <span className={styles.navArrow}>→</span>
               </a>
             </nav>
@@ -473,52 +580,56 @@ export default function HomePage() {
           <div className={styles.heroContent}>
             <div className={styles.heroBadgeContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
               <div className={styles.heroBadge}>
-                <span className={styles.badgeIcon}>✅</span>
-                <span><strong>조기마감 완료!</strong> 정식 오픈을 기다려주세요!</span>
+                <span className={styles.badgeIcon}>🎯</span>
+                <span><strong>이력서 맞춤형</strong> 면접 질문 서비스</span>
               </div>
             </div>
 
             <h1 className={styles.heroTitle}>
-              <span className={styles.heroTitleMain}>성장의 '자극'을</span><br/>
-              <span className={styles.textGradient}>매일 아침 배달해 드려요</span>
+              <span className={styles.heroTitleMain}>당신의 이력서에서 나올</span><br/>
+              <span className={styles.textGradient}>그 질문, 미리 준비하세요</span>
             </h1>
 
             <p className={styles.heroSubtitle}>
-              매일 아침, 당신의 <strong>Java/Spring 프로젝트</strong>에서 가장 날카로운 질문 하나를 꺼내드릴게요.<br/>
-              <strong>3일 뒤,</strong> 당신은 스스로의 경험을 증명하는 법을 알게 될 거예요.
+              면접관이 당신의 <strong>프로젝트 경험</strong>에서 꺼낼 날카로운 질문들.<br/>
+              AI가 분석해 미리 준비하고, 자신 있게 답변하세요.
             </p>
 
             <div className={styles.heroStats}>
               <div className={styles.statItem}>
-                <div className={styles.statNumber}>3일</div>
-                <div className={styles.statLabel}>무료 챌린지</div>
+                <div className={styles.statNumber}>87%</div>
+                <div className={styles.statLabel}>기술 면접 질문으로<br/>떨어지는 개발자</div>
               </div>
               <div className={styles.statDivider}></div>
               <div className={styles.statItem}>
-                <div className={styles.statNumber}>89%</div>
-                <div className={styles.statLabel}>베타 참여자<br/>'매우 만족'</div>
+                <div className={styles.statNumber}>500+</div>
+                <div className={styles.statLabel}>실제 면접 데이터로<br/>학습한 AI</div>
               </div>
               <div className={styles.statDivider}></div>
               <div className={styles.statItem}>
-                <div className={styles.statNumber}>3분</div>
-                <div className={styles.statLabel}>하루 투자</div>
+                <div className={styles.statNumber}>즉시</div>
+                <div className={styles.statLabel}>AI 이력서<br/>분석 시작</div>
               </div>
             </div>
 
             <div className={styles.heroCta}>
-              <a
-                href="https://forms.gle/iN5GE3aNDxLiKhyU8"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}
-              >
-                <span>대기자 등록하기</span>
-                <span className={styles.btnArrow}>→</span>
-              </a>
+              <div className={styles.heroCtaButtons}>
+                <a
+                  href="#products"
+                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  <span>상품 선택하기</span>
+                  <span className={styles.btnArrow}>→</span>
+                </a>
+              </div>
               <p className={styles.ctaNote}>
-                <span className={styles.noteIcon}>✓</span> 베타 마감
+                <span className={styles.noteIcon}>✓</span> 즉시 시작 가능
                 <span className={styles.noteDivider}>•</span>
-                <span className={styles.noteIcon}>✓</span> 정식 오픈 알림
+                <span className={styles.noteIcon}>✓</span> 지하철, 버스 어디서든 가능
               </p>
             </div>
           </div>
@@ -602,6 +713,171 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Products Section */}
+      <div id="products" className={`${styles.section} ${styles.productsSection}`}>
+        <div className={styles.sectionContainer}>
+          <h2 className={styles.sectionTitle}>
+            면접 준비를 위한 프리미엄 서비스
+          </h2>
+          <p className={styles.sectionSubtitle}>
+            당신의 경력과 목표에 맞는 상품을 선택하세요
+          </p>
+
+          <div className={styles.promotionBanner}>
+            <span className={styles.promotionIcon}>🚀</span>
+            <div className={styles.promotionText}>
+              <span className={styles.promotionTitle}>정식 오픈 기념</span>
+              <span className={styles.promotionDesc}>지금 전 상품 최대 65% 할인가 제공 중!</span>
+            </div>
+          </div>
+
+          <div className={styles.productsGrid}>
+            {/* 그로스 플랜 */}
+            <div className={styles.productCard}>
+              <div className={styles.productBadge}>MOST POPULAR</div>
+              <div className={styles.productHeader}>
+                <span className={styles.productLabel}>20일 집중 훈련</span>
+                <h3 className={styles.productName}>그로스 플랜</h3>
+                <span className={styles.productEn}>Growth Plan</span>
+              </div>
+              <div className={styles.productFeatures}>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>📅</span>
+                  <span>매일 맞춤 질문</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🏢</span>
+                  <span>실제 기출 포함</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>📚</span>
+                  <span>모범 답안 제공</span>
+                </div>
+              </div>
+              <div className={styles.productPrice}>
+                <span className={styles.priceOriginal}>₩99,000</span>
+                <span className={styles.priceCurrent}>₩34,900</span>
+              </div>
+              <button
+                className={`${styles.btn} ${styles.btnProductCta} ${styles.btnProductCtaPrimary}`}
+                onClick={() => handleProductSelect('growth-plan')}
+              >
+                지금 시작하기
+              </button>
+            </div>
+
+            {/* 리얼 인터뷰 - 모의면접 */}
+            <div className={styles.productCard}>
+              <div className={styles.productBadge}>PREMIUM</div>
+              <div className={styles.productHeader}>
+                <span className={styles.productLabel}>1:2 실전 모의면접</span>
+                <h3 className={styles.productName}>리얼 인터뷰</h3>
+                <span className={styles.productEn}>Real Interview</span>
+              </div>
+              <div className={styles.productFeatures}>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>👥</span>
+                  <span>현직 면접관 2명과 90분 실전</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>📹</span>
+                  <span>녹화 영상 + 상세 피드백 리포트</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>💬</span>
+                  <span>즉시 교정 가능한 개선점 코칭</span>
+                </div>
+              </div>
+              <div className={styles.productPrice}>
+                <span className={styles.priceOriginal}>₩179,000</span>
+                <span className={styles.priceCurrent}>₩129,000</span>
+              </div>
+              <button
+                className={`${styles.btn} ${styles.btnProductCta}`}
+                onClick={() => handleProductSelect('real-interview')}
+              >
+                지금 시작하기
+              </button>
+            </div>
+
+            {/* 크리티컬 히트 */}
+            <div className={styles.productCard}>
+              <div className={styles.productHeader}>
+                <span className={styles.productLabel}>단 하나의 결정적 질문</span>
+                <h3 className={styles.productName}>크리티컬 히트</h3>
+                <span className={styles.productEn}>Critical Hit</span>
+              </div>
+              <div className={styles.productFeatures}>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🎯</span>
+                  <span>이력서 맞춤 핵심 질문 1개</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🔗</span>
+                  <span>꼬리 질문 3개</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>📝</span>
+                  <span>상세 답변 가이드</span>
+                </div>
+              </div>
+              <div className={styles.productPrice}>
+                <span className={styles.priceOriginal}>₩4,900</span>
+                <span className={styles.priceCurrent}>₩1,900</span>
+              </div>
+              <button
+                className={`${styles.btn} ${styles.btnProductCta}`}
+                onClick={() => handleProductSelect('critical-hit')}
+              >
+                지금 시작하기
+              </button>
+            </div>
+
+            {/* 라스트 체크 */}
+            <div className={styles.productCard}>
+              <div className={styles.productHeader}>
+                <span className={styles.productLabel}>면접 D-1 긴급 대비</span>
+                <h3 className={styles.productName}>라스트 체크</h3>
+                <span className={styles.productEn}>Last Check</span>
+              </div>
+              <div className={styles.productFeatures}>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🚨</span>
+                  <span>핵심 질문 15개 (1시간 완벽 대비)</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🗣️</span>
+                  <span>막힐 때 쓰는 만능 답변</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🎯</span>
+                  <span>즉시 사용 가능한 답변 템플릿</span>
+                </div>
+              </div>
+              <div className={styles.productPrice}>
+                <span className={styles.priceOriginal}>₩29,900</span>
+                <span className={styles.priceCurrent}>₩19,900</span>
+              </div>
+              <button
+                className={`${styles.btn} ${styles.btnProductCta}`}
+                onClick={() => handleProductSelect('resume-analytics')}
+              >
+                지금 시작하기
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.productsCta}>
+            <div className={styles.priceNoticeChip}>
+              <span className={styles.chipIcon}>⏰</span>
+              <span className={styles.chipText}>
+                10월 특가 <strong>D-{daysRemaining}</strong> · 이후 정가 전환
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* How It Works Section - Vertical Timeline */}
       <div id="how-it-works" className={`${styles.section} ${styles.howItWorks}`}>
         <div className={styles.sectionContainer}>
@@ -612,14 +888,14 @@ export default function HomePage() {
             <div className={styles.timelineItem}>
               <div className={styles.timelineMarker}>
                 <div className={styles.timelineNumber}>1</div>
-                <div className={styles.timelineIcon}>📄</div>
+                <div className={styles.timelineIcon}>✉️</div>
               </div>
               <div className={styles.timelineContent}>
-                <h3 className={styles.timelineTitle}>이력서 제출</h3>
-                <p className={styles.timelineDesc}>당신의 경험이 세상에 하나뿐인 면접 질문지가 됩니다.</p>
+                <h3 className={styles.timelineTitle}>이메일로 시작</h3>
+                <p className={styles.timelineDesc}>이메일만 입력하면 바로 시작! 경력과 기술을 알려주시면 더 정확한 질문을 보내드려요.</p>
                 <div className={styles.timelineDetail}>
                   <span className={styles.timelineTiming}>⏱ 소요 시간: 30초</span>
-                  <span className={styles.timelineNote}>PDF 파일로 간단하게</span>
+                  <span className={styles.timelineNote}>회원가입 없이 바로</span>
                 </div>
               </div>
             </div>
@@ -673,6 +949,7 @@ export default function HomePage() {
               <p>💡 힌트: 양방향 통신의 필요성, 브라우저 호환성, 서버 부하를 고려해보세요.</p>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -1281,175 +1558,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Application Form Section */}
-      <div id="apply" className={`${styles.section} ${styles.apply}`}>
-        <div className={styles.applyContainer}>
-          <div className={styles.applyWrapper}>
-            <div className={styles.applyInfo}>
-              <h2 className={styles.applyTitle}>
-                <span style={{ color: '#c3e88d', fontSize: '1.2rem' }}>조기 마감 예정 - 10명 한정</span><br/>
-                Java/Spring 개발자 베타 테스트
-              </h2>
-
-              {/* 타겟 안내 */}
-              <div className={styles.targetNotice}>
-                <div className={styles.comingSoon}>
-                  <strong>🚀 곧 지원 예정:</strong>
-                  <div className={styles.techTags}>
-                    <span className={styles.techTag}>Python/Django</span>
-                    <span className={styles.techTag}>Node.js/Express</span>
-                    <span className={styles.techTag}>Go</span>
-                    <span className={styles.techTag}>Ruby on Rails</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.applyUrgency}>
-                <div style={{
-                  background: '#666',
-                  color: 'white',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  marginBottom: '16px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                }}>
-                  ✅ 베타 테스트 조기 마감 완료
-                </div>
-                <p className={styles.urgencyMessage}>🎉 <strong>감사합니다!</strong> 10명 정원이 모두 마감되었습니다.</p>
-                <p className={styles.applyDesc}>
-                  정식 오픈 알림을 받고 싶으시면 아래 대기자 등록을 해주세요.<br/>
-                  가장 먼저 서비스 오픈 소식을 전해드리겠습니다.
-                </p>
-              </div>
-
-              <div className={styles.applyFeatures}>
-                <div className={styles.applyFeature}>
-                  <span className={styles.featureCheck}>✓</span>
-                  <div>
-                    <strong>3일 무료 챌린지</strong>
-                    <p>날카로운 질문으로 시작하는 성장</p>
-                  </div>
-                </div>
-                <div className={styles.applyFeature}>
-                  <span className={styles.featureCheck}>✓</span>
-                  <div>
-                    <strong>신용카드 불필요</strong>
-                    <p>결제 정보 없이 바로 시작</p>
-                  </div>
-                </div>
-                <div className={styles.applyFeature}>
-                  <span className={styles.featureCheck}>✓</span>
-                  <div>
-                    <strong>언제든 취소 가능</strong>
-                    <p>원할 때 자유롭게 중단</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.applyCard}>
-              {isSubmitting && (
-                <div className={styles.formLoadingOverlay}>
-                  <div className={styles.loadingContent}>
-                    <div className={styles.loadingIcon}>⏳</div>
-                    <p>신청서를 처리하고 있습니다...</p>
-                    <p className={styles.loadingSubtext}>잠시만 기다려주세요</p>
-                  </div>
-                </div>
-              )}
-              <form className={styles.applicationForm} onSubmit={handleSubmit}>
-                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
-                  <label htmlFor="email">이메일 <span style={{ color: '#f07178' }}>*</span></label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    placeholder="example@gmail.com"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    autoComplete="email"
-                    inputMode="email"
-                    disabled={true}
-                  />
-                  <p className={styles.formHint}>베타 테스트가 마감되었습니다</p>
-                </div>
-
-                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
-                  <label htmlFor="name">이름 <span style={{ color: '#707070', fontSize: '0.9rem' }}>(선택)</span></label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="홍길동"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    autoComplete="name"
-                    inputMode="text"
-                    disabled={true}
-                  />
-                  <p className={styles.formHint}>대기자 등록은 아래 버튼을 클릭해주세요</p>
-                </div>
-
-                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
-                  <label htmlFor="resume">이력서/포트폴리오 PDF <span style={{ color: '#f07178' }}>*</span></label>
-                  <div className={styles.fileUpload}>
-                    <input
-                      type="file"
-                      id="resume"
-                      name="resume"
-                      accept=".pdf"
-                      style={{ display: 'none' }}
-                      onChange={handleInputChange}
-                      disabled={true}
-                    />
-                    <label htmlFor="resume" className={`${styles.fileLabel} ${styles.disabled}`} style={{ cursor: 'not-allowed' }}>
-                      {resumeFileName || '📎 베타 마감'}
-                    </label>
-                  </div>
-                  <p className={styles.formHint}>정식 오픈 시 다시 안내드리겠습니다</p>
-                </div>
-
-                <div className={styles.formGroup} style={{ opacity: 0.5 }}>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" required disabled={true} />
-                    <span>개인정보 수집 및 이용에 동의합니다</span>
-                  </label>
-                </div>
-
-                <button
-                  type="button"
-                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSubmit}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.open('https://forms.gle/iN5GE3aNDxLiKhyU8', '_blank');
-                  }}
-                >
-                  🔔 대기자 등록하기
-                </button>
-
-                <p className={styles.formSimpleNote}>
-                  💡 <strong>정식 오픈 알림을 받으세요!</strong> 가장 먼저 소식을 전해드립니다.
-                </p>
-
-                <div className={styles.emotionalMessage}>
-                  <p>
-                    당신의 경험은 결코 평범하지 않아요.<br/>
-                    단지, 증명하는 방법을 배우지 못했을 뿐이에요.
-                  </p>
-                </div>
-
-                <p className={styles.formFooter}>
-                  가입 시 <a href="/terms">서비스 이용약관</a>과 <a href="/privacy">개인정보처리방침</a>에 동의하게 됩니다.
-                </p>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Removed beta application section - using modals now */}
 
       {/* Footer */}
       <footer className={styles.footer}>
@@ -1545,8 +1654,616 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Floating Resume Hint - Subtle & Non-intrusive */}
-      <FloatingResumeHint />
+      {/* Free Trial Modal */}
+      {modalOpen && (
+        <div className={styles.modalOverlay} onClick={() => setModalOpen(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.modalClose}
+              onClick={() => setModalOpen(false)}
+              aria-label="Close modal"
+            >
+              ✕
+            </button>
+
+            <div className={styles.modalContent}>
+              {/* Progress Indicator */}
+              <div className={styles.modalProgress}>
+                {[1, 2, 3, 4].map((step) => (
+                  <div
+                    key={step}
+                    className={`${styles.modalProgressDot} ${
+                      modalStep >= step ? styles.modalProgressDotActive : ''
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Step 1: Email */}
+              {modalStep === 1 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>📧</span>
+                    이메일 주소를 알려주세요
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    구매 전 품질을 확인하실 수 있는 기회입니다
+                  </p>
+
+                  <div className={styles.modalFreeTrialInfo}>
+                    <div className={styles.modalInfoBox}>
+                      <span className={styles.modalInfoIcon}>🆓</span>
+                      <div>
+                        <p className={styles.modalInfoTitle}>품질 확인용 샘플</p>
+                        <p className={styles.modalInfoDesc}>실제 서비스와 동일한 품질의 <strong>면접 질문 3개</strong>를 무료로 체험하세요</p>
+                      </div>
+                    </div>
+                    <div className={styles.modalInfoBox}>
+                      <span className={styles.modalInfoIcon}>💎</span>
+                      <div>
+                        <p className={styles.modalInfoTitle}>유료 상품에서는</p>
+                        <p className={styles.modalInfoDesc}>당신의 <strong>이력서를 분석</strong>해 맞춤형 심화 질문을 생성합니다</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.modalFormGroup}>
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      className={styles.modalInput}
+                      value={profileData.email}
+                      onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => {
+                        if (profileData.email && profileData.email.includes('@')) {
+                          // Send verification email in background (non-blocking)
+                          if (!freeTrialVerificationSent) {
+                            const code = Math.floor(100000 + Math.random() * 900000).toString();
+                            setSentVerificationCode(code);
+                            setFreeTrialVerificationSent(true);
+
+                            // Mock: In real implementation, send email via backend API
+                            console.log(`Verification code sent (non-blocking) to ${profileData.email}: ${code}`);
+                          }
+
+                          setModalStep(2);
+                        } else {
+                          setErrors(['올바른 이메일 주소를 입력해주세요']);
+                          setTimeout(() => setErrors([]), 3000);
+                        }
+                      }}
+                      disabled={!profileData.email}
+                    >
+                      다음 단계로
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    💡 이메일은 필수 정보예요. 나머지는 선택사항입니다.
+                  </p>
+                </div>
+              )}
+
+              {/* Step 2: Experience Level (Optional) */}
+              {modalStep === 2 && (
+                <div className={styles.modalStep}>
+                  {freeTrialVerificationSent && (
+                    <div className={styles.modalVerificationNotice}>
+                      📬 인증 이메일을 {profileData.email}로 보냈습니다
+                      <br />
+                      <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>나중에 확인하셔도 무료 체험은 정상 진행됩니다</span>
+                    </div>
+                  )}
+
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>📊</span>
+                    경력 수준을 선택해주세요
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    더 정확한 질문을 생성하는데 도움이 돼요 (선택)
+                  </p>
+
+                  <div className={styles.modalOptions}>
+                    {['신입', '1-3년', '3-5년', '5년+'].map((exp) => (
+                      <button
+                        key={exp}
+                        className={`${styles.modalOption} ${
+                          profileData.experience === exp ? styles.modalOptionActive : ''
+                        }`}
+                        onClick={() => setProfileData({ ...profileData, experience: exp })}
+                      >
+                        {exp}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setModalStep(1)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => setModalStep(3)}
+                    >
+                      {profileData.experience ? '다음 단계로' : '건너뛰기'}
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    💡 건너뛰어도 체험 시작에 문제없어요
+                  </p>
+                </div>
+              )}
+
+              {/* Step 3: Tech Stack (Optional) */}
+              {modalStep === 3 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>🛠️</span>
+                    주력 기술 스택을 선택해주세요
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    맞춤형 질문 생성에 도움이 돼요 (선택, 복수 선택 가능)
+                  </p>
+
+                  <div className={styles.modalTechGrid}>
+                    {[
+                      'Spring Boot', 'JPA', 'MyBatis', 'MSA',
+                      'Kafka', 'Redis', 'Docker', 'Kubernetes',
+                      'React', 'Vue', 'Node.js', 'MongoDB'
+                    ].map((tech) => (
+                      <button
+                        key={tech}
+                        className={`${styles.modalTechItem} ${
+                          profileData.techStack?.includes(tech) ? styles.modalTechItemActive : ''
+                        }`}
+                        onClick={() => {
+                          const currentStack = profileData.techStack || [];
+                          if (currentStack.includes(tech)) {
+                            setProfileData({
+                              ...profileData,
+                              techStack: currentStack.filter(t => t !== tech)
+                            });
+                          } else {
+                            setProfileData({
+                              ...profileData,
+                              techStack: [...currentStack, tech]
+                            });
+                          }
+                        }}
+                      >
+                        {tech}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setModalStep(2)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => setModalStep(4)}
+                    >
+                      {profileData.techStack?.length ? '다음 단계로' : '건너뛰기'}
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    💡 선택하지 않아도 기본 질문을 받을 수 있어요
+                  </p>
+                </div>
+              )}
+
+              {/* Step 4: Confirmation */}
+              {modalStep === 4 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>👍</span>
+                    품질 확인 준비 완료!
+                  </h2>
+
+                  <div className={styles.modalSummary}>
+                    <div className={styles.modalSummaryItem}>
+                      <span className={styles.modalSummaryLabel}>이메일</span>
+                      <span className={styles.modalSummaryValue}>{profileData.email}</span>
+                    </div>
+                    {profileData.experience && (
+                      <div className={styles.modalSummaryItem}>
+                        <span className={styles.modalSummaryLabel}>경력</span>
+                        <span className={styles.modalSummaryValue}>{profileData.experience}</span>
+                      </div>
+                    )}
+                    {profileData.techStack?.length > 0 && (
+                      <div className={styles.modalSummaryItem}>
+                        <span className={styles.modalSummaryLabel}>기술</span>
+                        <span className={styles.modalSummaryValue}>
+                          {profileData.techStack.join(', ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.modalHighlight}>
+                    <p>✅ 실제 서비스와 동일한 품질</p>
+                    <p>✅ 마음에 들면 그때 구매</p>
+                    <p>✅ 스팸 없음, 강요 없음</p>
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setModalStep(3)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
+                      onClick={async () => {
+                        setIsSubmitting(true);
+                        try {
+                          const response = await startFreeTrial(profileData);
+                          if (response.success) {
+                            setModalOpen(false);
+                            router.push(`/trial-started?email=${encodeURIComponent(profileData.email)}`);
+                          }
+                        } catch (error) {
+                          setErrors([error instanceof Error ? error.message : '체험 시작 중 오류가 발생했습니다']);
+                          setTimeout(() => setErrors([]), 5000);
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? '처리 중...' : '무료로 품질 확인하기'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Purchase Modal for Paid Products */}
+      {purchaseModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => setPurchaseModalOpen(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.modalClose}
+              onClick={() => setPurchaseModalOpen(false)}
+              aria-label="Close modal"
+            >
+              ✕
+            </button>
+
+            <div className={styles.modalContent}>
+              {/* Progress Indicator */}
+              <div className={styles.modalProgress}>
+                {[1, 2, 3].map((step) => (
+                  <div
+                    key={step}
+                    className={`${styles.modalProgressDot} ${
+                      purchaseModalStep >= step ? styles.modalProgressDotActive : ''
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Step 1: Resume Upload */}
+              {purchaseModalStep === 1 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>📄</span>
+                    이력서를 업로드해주세요
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    {selectedPurchaseProduct === 'critical-hit' && '맞춤형 핵심 질문 생성을 위해 필요합니다'}
+                    {selectedPurchaseProduct === 'growth-plan' && '20일 성장 계획 수립을 위해 필요합니다'}
+                    {selectedPurchaseProduct === 'real-interview' && '모의면접 준비를 위해 필요합니다'}
+                    {selectedPurchaseProduct === 'resume-analytics' && '면접 D-1 긴급 대비를 위해 필요합니다'}
+                  </p>
+
+                  <div className={styles.selectedProductInfo}>
+                    <span className={styles.modalProductBadge}>
+                      {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
+                      {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
+                      {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
+                      {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
+                    </span>
+                    <span className={styles.modalProductPrice}>
+                      {selectedPurchaseProduct === 'critical-hit' && '₩1,900'}
+                      {selectedPurchaseProduct === 'growth-plan' && '₩34,900'}
+                      {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                      {selectedPurchaseProduct === 'resume-analytics' && '₩19,900'}
+                    </span>
+                  </div>
+
+                  <div className={styles.modalFormGroup}>
+                    <div className={styles.fileUploadArea}>
+                      <input
+                        type="file"
+                        id="purchaseResume"
+                        accept=".pdf"
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (file.size > 10 * 1024 * 1024) {
+                              setErrors(['파일 크기는 10MB 이하여야 합니다']);
+                              setTimeout(() => setErrors([]), 3000);
+                              return;
+                            }
+                            setPurchaseFile(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="purchaseResume" className={styles.fileUploadBox}>
+                        {purchaseFile ? (
+                          <>
+                            <span className={styles.uploadedIcon}>✅</span>
+                            <span className={styles.uploadedFileName}>{purchaseFile.name}</span>
+                            <span className={styles.uploadedSize}>
+                              ({(purchaseFile.size / 1024 / 1024).toFixed(2)} MB)
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className={styles.uploadIcon}>📤</span>
+                            <span className={styles.uploadText}>PDF 파일을 선택하거나 드래그하세요</span>
+                            <span className={styles.uploadHint}>최대 10MB</span>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setPurchaseModalOpen(false)}
+                    >
+                      취소
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => {
+                        if (purchaseFile) {
+                          setPurchaseModalStep(2);
+                        } else {
+                          setErrors(['이력서 파일을 선택해주세요']);
+                          setTimeout(() => setErrors([]), 3000);
+                        }
+                      }}
+                      disabled={!purchaseFile}
+                    >
+                      다음 단계로
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    💡 이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
+                  </p>
+                </div>
+              )}
+
+              {/* Step 2: Email Input */}
+              {purchaseModalStep === 2 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>📧</span>
+                    결과를 받을 이메일 주소
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    분석 결과와 질문을 이메일로 보내드립니다
+                  </p>
+
+                  <div className={styles.modalFormGroup}>
+                    <div className={styles.modalEmailRow}>
+                      <input
+                        type="email"
+                        placeholder="your@email.com"
+                        className={styles.modalInput}
+                        value={profileData.email}
+                        onChange={(e) => {
+                          setProfileData({ ...profileData, email: e.target.value });
+                          setIsEmailVerified(false);
+                          setShowVerificationInput(false);
+                        }}
+                        disabled={isEmailVerified}
+                        autoFocus
+                      />
+                      <button
+                        className={`${styles.modalBtn} ${styles.modalBtnVerify}`}
+                        onClick={handleSendVerification}
+                        disabled={isEmailVerified || !profileData.email || !profileData.email.includes('@')}
+                      >
+                        {isEmailVerified ? '인증완료' : '인증하기'}
+                      </button>
+                    </div>
+
+                    {showVerificationInput && !isEmailVerified && (
+                      <>
+                        <div className={styles.modalVerificationRow}>
+                          <input
+                            type="text"
+                            placeholder="인증코드 6자리"
+                            className={styles.modalInput}
+                            value={verificationCode}
+                            onChange={(e) => setVerificationCode(e.target.value)}
+                            maxLength={6}
+                          />
+                          <button
+                            className={`${styles.modalBtn} ${styles.modalBtnConfirm}`}
+                            onClick={handleVerifyCode}
+                            disabled={verificationCode.length !== 6}
+                          >
+                            확인
+                          </button>
+                        </div>
+                        {verificationTimer > 0 && (
+                          <div className={styles.verificationTimer}>
+                            ⏱ 남은 시간: {Math.floor(verificationTimer / 60)}분 {verificationTimer % 60}초
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {isEmailVerified && (
+                      <div className={styles.modalVerifiedMessage}>
+                        ✓ 이메일 인증이 완료되었습니다
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setPurchaseModalStep(1)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => {
+                        if (isEmailVerified) {
+                          setPurchaseModalStep(3);
+                        } else {
+                          alert('이메일 인증을 완료해주세요');
+                        }
+                      }}
+                      disabled={!isEmailVerified}
+                    >
+                      다음 단계로
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    💡 결제 전 이메일 인증으로 정확한 전달을 보장합니다
+                  </p>
+                </div>
+              )}
+
+              {/* Step 3: Payment */}
+              {purchaseModalStep === 3 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    <span className={styles.modalEmoji}>💳</span>
+                    결제 정보 입력
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    안전한 결제를 진행합니다
+                  </p>
+
+                  <div className={styles.modalOrderSummary}>
+                    <div className={styles.modalOrderItem}>
+                      <span>상품</span>
+                      <span>
+                        {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
+                        {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
+                        {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
+                        {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
+                      </span>
+                    </div>
+                    <div className={styles.modalOrderItem}>
+                      <span>가격</span>
+                      <span>
+                        {selectedPurchaseProduct === 'critical-hit' && '₩1,900'}
+                        {selectedPurchaseProduct === 'growth-plan' && '₩34,900'}
+                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                        {selectedPurchaseProduct === 'resume-analytics' && '₩19,900'}
+                      </span>
+                    </div>
+                    <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
+                      <span>결제 금액</span>
+                      <span style={{ color: '#c3e88d' }}>
+                        {selectedPurchaseProduct === 'critical-hit' && '₩1,900'}
+                        {selectedPurchaseProduct === 'growth-plan' && '₩34,900'}
+                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                        {selectedPurchaseProduct === 'resume-analytics' && '₩19,900'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={styles.modalHighlight}>
+                    <p>✅ 즉시 서비스 이용 가능</p>
+                    <p>✅ 24시간 내 100% 환불</p>
+                    <p>✅ 이메일로 결과 전송</p>
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setPurchaseModalStep(2)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
+                      onClick={async () => {
+                        setIsSubmitting(true);
+                        try {
+                          // TODO: Implement purchase API
+                          const formData = new FormData();
+                          formData.append('email', profileData.email);
+                          formData.append('product', selectedPurchaseProduct || '');
+                          if (purchaseFile) {
+                            formData.append('resume', purchaseFile);
+                          }
+
+                          const response = await submitBetaApplication({
+                            email: profileData.email,
+                            resume: purchaseFile!
+                          });
+
+                          if (response.success) {
+                            setPurchaseModalOpen(false);
+                            router.push(`/purchase-complete?product=${selectedPurchaseProduct}&email=${encodeURIComponent(profileData.email)}`);
+                          }
+                        } catch (error) {
+                          setErrors([error instanceof Error ? error.message : '구매 처리 중 오류가 발생했습니다']);
+                          setTimeout(() => setErrors([]), 5000);
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? '결제 처리 중...' : '결제하기'}
+                    </button>
+                  </div>
+
+                  <p className={styles.modalPaymentSecurity}>
+                    🔒 결제 정보는 암호화되어 안전하게 처리됩니다
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Free Trial - Subtle & Non-intrusive */}
+      <FloatingFreeTrial onOpenModal={() => {
+        setModalOpen(true);
+        setModalStep(1);
+        setFreeTrialVerificationSent(false);
+        setSentVerificationCode('');
+      }} />
 
     </div>
   );

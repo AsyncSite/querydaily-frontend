@@ -6,6 +6,27 @@ export interface SubmitApplicationRequest {
   resume: File;
 }
 
+export interface UserProfile {
+  email: string;
+  experience?: string; // 신입 | 1-3년 | 3-5년 | 5년+
+  techStack?: string[]; // Spring Boot, JPA, MSA, Kafka 등
+  interests?: string[]; // 성능 최적화, 아키텍처, 트러블슈팅 등
+  targetCompany?: string; // 네카라쿠배, 쿠토 등
+  selectedProduct?: string; // critical-hit | growth-plan | resume-analytics
+}
+
+export interface StartFreeTrialResponse {
+  success: boolean;
+  data: {
+    id: number;
+    email: string;
+    profile?: Partial<UserProfile>;
+    trialStartDate: string;
+    trialEndDate: string;
+  };
+  message: string;
+}
+
 export interface SubmitApplicationResponse {
   success: boolean;
   data: {
@@ -63,6 +84,27 @@ export async function submitBetaApplication(data: SubmitApplicationRequest): Pro
       };
 
       throw new Error(statusMessages[response.status] || `HTTP_ERROR_${response.status}`);
+    }
+  }
+
+  return response.json();
+}
+
+export async function startFreeTrial(data: UserProfile): Promise<StartFreeTrialResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/public/queries/start-trial`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    try {
+      const errorData: ApiError = await response.json();
+      throw new Error(errorData.message || '무료 체험 시작 중 오류가 발생했습니다');
+    } catch (jsonError) {
+      throw new Error(`무료 체험 시작 실패: ${response.status}`);
     }
   }
 

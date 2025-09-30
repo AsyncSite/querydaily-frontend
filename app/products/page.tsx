@@ -158,7 +158,7 @@ export default function ProductsPage() {
             <div className={styles.experts}>
               <span className={styles.expertsLabel}>면접관</span>
               <div className={styles.expertsList}>
-                현직 시니어 개발자 2명이 실제 면접처럼 진행
+                대기업 & 스타트업 현직 개발자 2명이 실전 면접 시뮬레이션
               </div>
             </div>
 

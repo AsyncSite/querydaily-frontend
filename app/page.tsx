@@ -443,7 +443,7 @@ export default function HomePage() {
     }
 
     // Initialize Portone with test MID
-    window.IMP.init('imp87281350'); // \uc774\ub2c8\uc2dc\uc2a4 \ud14c\uc2a4\ud2b8 \uac00\ub9f9\uc810 \uc2dd\ubcc4\ucf54\ub4dc
+    window.IMP.init('iamport'); // 포트원 공식 테스트용 가맹점 식별코드
 
     // \uc0c1\ud488\uba85\uacfc \uac00\uaca9 \ub9e4\ud551
     const productNames: Record<string, string> = {
@@ -461,7 +461,7 @@ export default function HomePage() {
     };
 
     const orderData = {
-      pg: 'html5_inicis.INIBillTst', // \uc774\ub2c8\uc2dc\uc2a4 \ud14c\uc2a4\ud2b8 \uacb0\uc81c
+      pg: 'html5_inicis', // 이니시스 웹표준 결제 (테스트)
       pay_method: 'card',
       merchant_uid: `QD${Date.now()}`,
       name: productNames[selectedPurchaseProduct || ''] || '',

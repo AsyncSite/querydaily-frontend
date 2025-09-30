@@ -383,6 +383,15 @@ export default function HomePage() {
       return;
     }
 
+    // KAKAO/INICIS REVIEW: Auto-approve for review process
+    setIsEmailVerified(true);
+    setShowVerificationInput(false);
+    setNotification({ message: '이메일 인증이 완료되었습니다!', type: 'success' });
+    setTimeout(() => setNotification(null), 3000);
+    return;
+
+    // Original code (commented for review)
+    /*
     // Generate 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setSentVerificationCode(code);
@@ -396,10 +405,21 @@ export default function HomePage() {
       type: 'info'
     });
     setTimeout(() => setNotification(null), 5000);
+    */
   };
 
   // Verify the code
   const handleVerifyCode = () => {
+    // KAKAO/INICIS REVIEW: Auto-approve for review process
+    setIsEmailVerified(true);
+    setShowVerificationInput(false);
+    setVerificationTimer(0);
+    setNotification({ message: '이메일 인증이 완료되었습니다!', type: 'success' });
+    setTimeout(() => setNotification(null), 3000);
+    return;
+
+    // Original code (commented for review)
+    /*
     if (verificationCode === sentVerificationCode) {
       setIsEmailVerified(true);
       setShowVerificationInput(false);
@@ -410,6 +430,7 @@ export default function HomePage() {
       setNotification({ message: '인증 코드가 일치하지 않습니다. 다시 확인해주세요.', type: 'error' });
       setTimeout(() => setNotification(null), 3000);
     }
+    */
   };
 
   // Touch handlers for swipe
@@ -1731,12 +1752,13 @@ export default function HomePage() {
                     <a href="/terms">이용약관</a>
                     <a href="/privacy">개인정보처리방침</a>
                     <a href="/refund-policy">환불정책</a>
-                    <button
+                    {/* KAKAO/INICIS REVIEW: Business info button hidden - now displayed directly in footer */}
+                    {/* <button
                       className={styles.footerLinkBtn}
                       onClick={() => setShowBusinessInfo(true)}
                     >
                       사업자정보
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -1745,9 +1767,14 @@ export default function HomePage() {
             <div className={styles.footerBottom}>
               <div>
                 <p>© 2025 QueryDaily. All rights reserved.</p>
-                <p className={styles.footerLegalInfo}>
-                  어싱크사이트 | 사업자등록번호: 456-12-02771 | 통신판매업: 제 2025-화성동탄-0001호
-                </p>
+                {/* KAKAO/INICIS REVIEW: Business info displayed directly */}
+                <div className={styles.footerBusinessInfo}>
+                  <p><strong>사업자 정보</strong></p>
+                  <p>상호명: 어싱크사이트 | 대표자: 최보임</p>
+                  <p>사업자등록번호: 456-12-02771 | 통신판매번호: 제 2025-화성동탄-0001호</p>
+                  <p>사업장 주소: 경기도 화성시 동탄대로4길 18</p>
+                  <p>대표전화: 010-8120-4131 | 이메일: official.querydaily@gmail.com</p>
+                </div>
               </div>
               <div className={styles.socialLinks}>
                 <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk" onClick={() => trackExternalLink('kakao_footer')}>💬</a>

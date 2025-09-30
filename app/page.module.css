@@ -6488,6 +6488,29 @@
   margin-top: 15px;
 }
 
+.footerBusinessInfo {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footerBusinessInfo p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #b0b0c0;
+  line-height: 1.6;
+}
+
+.footerBusinessInfo p strong {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+}
+
 .footerLinkBtn:hover {
   color: #c3e88d;
 }

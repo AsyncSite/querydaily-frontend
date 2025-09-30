@@ -27,7 +27,6 @@ export default function ProductsPage() {
         <header className={styles.header}>
           <a href="/" className={styles.logo}>
             <span className={styles.logoText}>Query<span className={styles.logoAccent}>Daily</span></span>
-            <span className={styles.betaTag}>BETA</span>
           </a>
         </header>
 
@@ -37,8 +36,8 @@ export default function ProductsPage() {
           {/* Hero */}
           <div className={styles.hero}>
             <div className={styles.urgentBadge}>
-              <span className={styles.fire}>🔥</span>
-              <span>베타 테스트 한정 특가</span>
+              <span className={styles.fire}>🚀</span>
+              <span>정식 오픈 기념</span>
             </div>
 
             <h1 className={styles.mainTitle}>
@@ -63,10 +62,130 @@ export default function ProductsPage() {
             </div>
           </div>
 
-          {/* Product 1: 단건 면접 질문 */}
+          {/* Product 1: 그로스 플랜 */}
+          <div className={styles.product}>
+            <div className={styles.bestBadge}>MOST POPULAR</div>
+            <div className={styles.productHeader}>
+              <span className={styles.productLabel}>20일 집중 훈련</span>
+              <h2 className={styles.productName}>그로스 플랜</h2>
+              <span className={styles.productEn}>Growth Plan</span>
+            </div>
+
+            <div className={styles.challenge}>
+              <p className={styles.challengeText}>
+                매일 새로운 맞춤 질문으로<br/>
+                20일 동안 면접 실력을 완성합니다
+              </p>
+            </div>
+
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>📅</span>
+                <span className={styles.featureName}>매일 맞춤 질문</span>
+                <span className={styles.featureValue}>20일</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🏢</span>
+                <span className={styles.featureName}>실제 기출 포함</span>
+                <span className={styles.featureValue}>제공</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>📚</span>
+                <span className={styles.featureName}>모범 답안 제공</span>
+                <span className={styles.featureValue}>전체</span>
+              </div>
+            </div>
+
+            <div className={styles.warning}>
+              ⚠️ 진짜 성장을 원하는 개발자만
+            </div>
+
+            <div className={styles.priceArea}>
+              <div className={styles.priceRow}>
+                <span className={styles.originalPrice}>₩99,000</span>
+                <span className={styles.arrow}>→</span>
+                <span className={styles.currentPrice}>₩34,900</span>
+                <span className={styles.discountTag}>오픈 기념 특가</span>
+              </div>
+              <p className={styles.betaPaymentNotice}>* 20일간 매일 발송</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('그로스 플랜', '₩34,900')}
+              >
+                무통장입금으로 결제하기 →
+              </button>
+              <p className={styles.guarantee}>
+                ✅ 첫 질문 발송 전 100%, 이후 일할 계산
+              </p>
+            </div>
+          </div>
+
+          {/* Product 2: 리얼 인터뷰 */}
+          <div className={styles.product}>
+            <div className={styles.limitBadge}>PREMIUM</div>
+            <div className={styles.productHeader}>
+              <span className={styles.productLabel}>1:2 실전 모의면접</span>
+              <h2 className={styles.productName}>리얼 인터뷰</h2>
+              <span className={styles.productEn}>Real Interview</span>
+            </div>
+
+            <div className={styles.challenge}>
+              <p className={styles.challengeText}>
+                현직 면접관 2명과<br/>
+                <span className={styles.emphasis}>90분간 실전 모의면접</span>
+              </p>
+            </div>
+
+            <div className={styles.timeline}>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineTime}>30분</span>
+                <span className={styles.timelineDesc}>기술 면접</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineTime}>30분</span>
+                <span className={styles.timelineDesc}>프로젝트 심층 질문</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineTime}>20분</span>
+                <span className={styles.timelineDesc}>시스템 설계</span>
+              </div>
+              <div className={styles.timelineItem}>
+                <span className={styles.timelineTime}>10분</span>
+                <span className={styles.timelineDesc}>즉시 피드백</span>
+              </div>
+            </div>
+
+            <div className={styles.experts}>
+              <span className={styles.expertsLabel}>면접관</span>
+              <div className={styles.expertsList}>
+                현직 시니어 개발자 2명이 실제 면접처럼 진행
+              </div>
+            </div>
+
+            <div className={styles.priceArea}>
+              <div className={styles.priceRow}>
+                <span className={styles.originalPrice}>₩179,000</span>
+                <span className={styles.arrow}>→</span>
+                <span className={styles.currentPrice}>₩129,000</span>
+                <span className={styles.discountTag}>오픈 기념 특가</span>
+              </div>
+              <p className={styles.betaPaymentNotice}>* 90분 모의면접 1회</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('리얼 인터뷰', '₩129,000')}
+              >
+                무통장입금으로 결제하기 →
+              </button>
+              <p className={styles.guarantee}>
+                ✅ 면접 3일 전 100%, 1-2일 전 50%, 당일 불가
+              </p>
+            </div>
+          </div>
+
+          {/* Product 3: 크리티컬 히트 */}
           <div className={styles.product}>
             <div className={styles.productHeader}>
-              <span className={styles.productLabel}>단 하나의 질문으로 당락이 결정될 때</span>
+              <span className={styles.productLabel}>단 하나의 결정적 질문</span>
               <h2 className={styles.productName}>크리티컬 히트</h2>
               <span className={styles.productEn}>Critical Hit</span>
             </div>
@@ -74,14 +193,14 @@ export default function ProductsPage() {
             <div className={styles.challenge}>
               <p className={styles.challengeText}>
                 면접관이 가장 궁금해하는 그 질문<br/>
-                24시간 내 이력서 분석 후 급소를 찌릅니다
+                이력서 맞춤으로 핵심을 찌릅니다
               </p>
             </div>
 
             <div className={styles.features}>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>🎯</span>
-                <span className={styles.featureName}>핵심 질문</span>
+                <span className={styles.featureName}>이력서 맞춤 핵심 질문</span>
                 <span className={styles.featureValue}>1개</span>
               </div>
               <div className={styles.feature}>
@@ -91,13 +210,8 @@ export default function ProductsPage() {
               </div>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>📝</span>
-                <span className={styles.featureName}>답변 가이드</span>
-                <span className={styles.featureValue}>상세</span>
-              </div>
-              <div className={styles.feature}>
-                <span className={styles.featureIcon}>⚠️</span>
-                <span className={styles.featureName}>함정 포인트</span>
-                <span className={styles.featureValue}>체크</span>
+                <span className={styles.featureName}>상세 답변 가이드</span>
+                <span className={styles.featureValue}>포함</span>
               </div>
             </div>
 
@@ -115,100 +229,36 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩5,500</span>
+                <span className={styles.originalPrice}>₩4,900</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩2,900</span>
-                <span className={styles.discountTag}>베타 한정가</span>
+                <span className={styles.currentPrice}>₩1,900</span>
+                <span className={styles.discountTag}>오픈 기념 특가</span>
               </div>
-              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
+              <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('크리티컬 히트', '₩2,900')}
+                onClick={() => handlePurchaseClick('크리티컬 히트', '₩1,900')}
               >
                 무통장입금으로 결제하기 →
               </button>
               <p className={styles.guarantee}>
-                ✅ 100% 안전 결제 · 24시간 내 전달
+                ✅ 콘텐츠 열람 전 100% 환불
               </p>
             </div>
           </div>
 
-          {/* Product 2: 그로스 플랜 */}
+          {/* Product 4: 라스트 체크 */}
           <div className={styles.product}>
-            <div className={styles.bestBadge}>MOST BRUTAL</div>
             <div className={styles.productHeader}>
-              <span className={styles.productLabel}>크리티컬 히트 × 22일</span>
-              <h2 className={styles.productName}>그로스 플랜</h2>
-              <span className={styles.productEn}>Growth Plan</span>
+              <span className={styles.productLabel}>면접 D-1 긴급 대비</span>
+              <h2 className={styles.productName}>라스트 체크</h2>
+              <span className={styles.productEn}>Last Check</span>
             </div>
 
             <div className={styles.challenge}>
               <p className={styles.challengeText}>
-                매일 급소를 찌르는 질문 폭격<br/>
-                22일 동안 당신의 약점을 모두 제거합니다
-              </p>
-            </div>
-
-            <div className={styles.features}>
-              <div className={styles.feature}>
-                <span className={styles.featureIcon}>🎯</span>
-                <span className={styles.featureName}>크리티컬 히트</span>
-                <span className={styles.featureValue}>매일</span>
-              </div>
-              <div className={styles.feature}>
-                <span className={styles.featureIcon}>📅</span>
-                <span className={styles.featureName}>제공 일수</span>
-                <span className={styles.featureValue}>22일</span>
-              </div>
-              <div className={styles.feature}>
-                <span className={styles.featureIcon}>🏢</span>
-                <span className={styles.featureName}>실제 기출</span>
-                <span className={styles.featureValue}>포함</span>
-              </div>
-              <div className={styles.feature}>
-                <span className={styles.featureIcon}>📝</span>
-                <span className={styles.featureName}>모범 답안</span>
-                <span className={styles.featureValue}>전체</span>
-              </div>
-            </div>
-
-            <div className={styles.warning}>
-              ⚠️ 진짜 성장을 원하는 개발자만
-            </div>
-
-            <div className={styles.priceArea}>
-              <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩121,000</span>
-                <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩49,900</span>
-                <span className={styles.priceUnit}>/월</span>
-                <span className={styles.discountTag}>베타 한정가</span>
-              </div>
-              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
-              <button
-                className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('그로스 플랜', '₩49,900')}
-              >
-                무통장입금으로 결제하기 →
-              </button>
-              <p className={styles.guarantee}>
-                ✅ 100% 안전 결제 · 언제든 해지 가능
-              </p>
-            </div>
-          </div>
-
-          {/* Product 3: 이력서 분석 리포트 */}
-          <div className={styles.product}>
-            <div className={styles.productHeader}>
-              <span className={styles.productLabel}>면접 1주일 전 필수</span>
-              <h2 className={styles.productName}>이력서 분석 리포트</h2>
-              <span className={styles.productEn}>Resume Analytics</span>
-            </div>
-
-            <div className={styles.challenge}>
-              <p className={styles.challengeText}>
-                당신의 이력서에서 나올<br/>
-                <span className={styles.emphasis}>모든 공격 포인트 50개</span>를 예측
+                내일이 면접인데 준비가 부족하다면<br/>
+                <span className={styles.emphasis}>핵심 질문 15개로 1시간 완벽 대비</span>
               </p>
             </div>
 
@@ -216,102 +266,58 @@ export default function ProductsPage() {
               <div className={styles.previewItem}>
                 <span className={styles.qNum}>Q1</span>
                 <div className={styles.qContent}>
-                  <span className={styles.qCat}>MSA 전환</span>
-                  <p className={styles.qText}>가장 큰 도전과제는?</p>
+                  <span className={styles.qCat}>기술 스택</span>
+                  <p className={styles.qText}>왜 이 기술을 선택했나요?</p>
                   <span className={styles.qKeywords}>핵심키워드: 🔒</span>
                 </div>
               </div>
               <div className={styles.previewItem}>
                 <span className={styles.qNum}>Q2</span>
                 <div className={styles.qContent}>
-                  <span className={styles.qCat}>Spring Boot</span>
-                  <p className={styles.qText}>선택 이유와 장단점?</p>
+                  <span className={styles.qCat}>프로젝트</span>
+                  <p className={styles.qText}>가장 큰 도전과제는?</p>
                   <span className={styles.qKeywords}>핵심키워드: 🔒</span>
                 </div>
               </div>
               <div className={styles.moreBox}>
-                + 48개 추가 질문
+                + 13개 추가 질문
+              </div>
+            </div>
+
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🚨</span>
+                <span className={styles.featureName}>핵심 질문 15개</span>
+                <span className={styles.featureValue}>1시간 완벽 대비</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🗣️</span>
+                <span className={styles.featureName}>막힐 때 쓰는 만능 답변</span>
+                <span className={styles.featureValue}>포함</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🎯</span>
+                <span className={styles.featureName}>즉시 사용 가능한 답변 템플릿</span>
+                <span className={styles.featureValue}>제공</span>
               </div>
             </div>
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩59,000</span>
+                <span className={styles.originalPrice}>₩29,900</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩49,000</span>
-                <span className={styles.discountTag}>베타 한정가</span>
+                <span className={styles.currentPrice}>₩19,900</span>
+                <span className={styles.discountTag}>오픈 기념 특가</span>
               </div>
-              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
+              <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('이력서 분석 리포트', '₩9,900')}
+                onClick={() => handlePurchaseClick('라스트 체크', '₩19,900')}
               >
                 무통장입금으로 결제하기 →
               </button>
               <p className={styles.guarantee}>
-                ✅ 100% 안전 결제 · 24시간 내 전달
-              </p>
-            </div>
-          </div>
-
-          {/* Product 4: 라이브 인터뷰 */}
-          <div className={styles.product}>
-            <div className={styles.limitBadge}>⚠️ 3자리 남음</div>
-            <div className={styles.productHeader}>
-              <span className={styles.productLabel}>진짜 실전</span>
-              <h2 className={styles.productName}>라이브 인터뷰</h2>
-              <span className={styles.productEn}>Live Interview</span>
-            </div>
-
-            <div className={styles.challenge}>
-              <p className={styles.challengeText}>
-                현직 시니어 개발자와<br/>
-                <span className={styles.emphasis}>45분간 진검승부</span>
-              </p>
-            </div>
-
-            <div className={styles.timeline}>
-              <div className={styles.timelineItem}>
-                <span className={styles.timelineTime}>10분</span>
-                <span className={styles.timelineDesc}>이력서 압박 질문</span>
-              </div>
-              <div className={styles.timelineItem}>
-                <span className={styles.timelineTime}>20분</span>
-                <span className={styles.timelineDesc}>실전 코딩 테스트</span>
-              </div>
-              <div className={styles.timelineItem}>
-                <span className={styles.timelineTime}>10분</span>
-                <span className={styles.timelineDesc}>시스템 설계</span>
-              </div>
-              <div className={styles.timelineItem}>
-                <span className={styles.timelineTime}>5분</span>
-                <span className={styles.timelineDesc}>즉석 피드백</span>
-              </div>
-            </div>
-
-            <div className={styles.experts}>
-              <span className={styles.expertsLabel}>면접관</span>
-              <div className={styles.expertsList}>
-                N사 시니어 · K사 테크리드 · T사 아키텍트
-              </div>
-            </div>
-
-            <div className={styles.priceArea}>
-              <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩99,000</span>
-                <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩79,000</span>
-                <span className={styles.discountTag}>베타 한정가</span>
-              </div>
-              <p className={styles.betaPaymentNotice}>* 무통장입금 결제 후 24시간 내 제공</p>
-              <button
-                className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('라이브 인터뷰', '₩79,900')}
-              >
-                무통장입금으로 결제하기 →
-              </button>
-              <p className={styles.guarantee}>
-                ✅ 100% 안전 결제 · 세션 녹화 제공
+                ✅ 콘텐츠 열람 전 100% 환불
               </p>
             </div>
           </div>
@@ -331,8 +337,9 @@ export default function ProductsPage() {
             <div className={styles.faqItem}>
               <h3 className={styles.faqQuestion}>Q. 환불은 가능한가요?</h3>
               <p className={styles.faqAnswer}>
-                크리티컬 히트와 이력서 분석 리포트는 작업 시작 전 100% 환불 가능합니다.
-                그로스 플랜은 7일 이내 환불 가능하며, 일할 계산하여 환불해드립니다.
+                크리티컬 히트와 라스트 체크는 콘텐츠 열람 전 100% 환불 가능합니다.
+                그로스 플랜은 첫 질문 발송 전 100% 환불, 이후 일할 계산하여 환불해드립니다.
+                리얼 인터뷰는 면접 3일 전 100%, 1-2일 전 50%, 당일 환불 불가입니다.
               </p>
             </div>
 
@@ -348,7 +355,7 @@ export default function ProductsPage() {
               <h3 className={styles.faqQuestion}>Q. 이력서는 어떻게 전달하나요?</h3>
               <p className={styles.faqAnswer}>
                 주문 시 Notion, Google Docs, PDF 링크 등을 입력해주시면 됩니다.
-                크리티컬 히트와 이력서 분석 리포트 상품에만 필요합니다.
+                크리티컬 히트 상품에만 필요합니다.
               </p>
             </div>
           </div>

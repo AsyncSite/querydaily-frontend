@@ -86,6 +86,7 @@ export default function HomePage() {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
   const [purchasePhone, setPurchasePhone] = useState('');
+  const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
@@ -372,6 +373,7 @@ export default function HomePage() {
     // Reset purchase info
     setPurchaseName('');
     setPurchasePhone('');
+    setPurchaseEmail(''); // KAKAO/INICIS REVIEW: Reset email
     setPurchaseFile(null);
   };
 
@@ -487,8 +489,8 @@ export default function HomePage() {
       merchant_uid: `QD${Date.now()}`,
       name: productNames[selectedPurchaseProduct || ''] || '',
       amount: productPrices[selectedPurchaseProduct || ''] || 0,
-      buyer_email: profileData.email,
-      buyer_name: purchaseName || profileData.email.split('@')[0],
+      buyer_email: purchaseEmail || 'test@example.com',
+      buyer_name: purchaseName || 'Guest',
       buyer_tel: purchasePhone || '010-0000-0000',
       custom_data: {
         product: selectedPurchaseProduct
@@ -503,8 +505,8 @@ export default function HomePage() {
           productName: orderData.name,
           price: orderData.amount,
           paymentMethod: 'card',
-          email: profileData.email,
-          name: purchaseName || profileData.email.split('@')[0],
+          email: purchaseEmail,
+          name: purchaseName,
           phone: purchasePhone || '',
           paymentId: response.imp_uid,
           paidAt: new Date().toISOString(),
@@ -2205,121 +2207,8 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className={styles.modalActions}>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setPurchaseModalOpen(false)}
-                    >
-                      취소
-                    </button>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
-                      onClick={() => {
-                        if (purchaseFile) {
-                          setPurchaseModalStep(2);
-                        } else {
-                          setErrors(['이력서 파일을 선택해주세요']);
-                          setTimeout(() => setErrors([]), 3000);
-                        }
-                      }}
-                      disabled={!purchaseFile}
-                    >
-                      다음 단계로
-                    </button>
-                  </div>
-
-                  <p className={styles.modalHint}>
-                    💡 이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
-                  </p>
-                </div>
-              )}
-
-              {/* Step 2: Email Input */}
-              {purchaseModalStep === 2 && (
-                <div className={styles.modalStep}>
-                  <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>📧</span>
-                    결과를 받을 이메일 주소
-                  </h2>
-                  <p className={styles.modalSubtitle}>
-                    분석 결과와 질문을 이메일로 보내드립니다
-                  </p>
-
-                  <div className={styles.modalFormGroup}>
-                    <div className={styles.modalEmailRow}>
-                      <input
-                        type="email"
-                        placeholder="your@email.com"
-                        className={styles.modalInput}
-                        value={profileData.email}
-                        onChange={(e) => {
-                          setProfileData({ ...profileData, email: e.target.value });
-                          setIsEmailVerified(false);
-                          setShowVerificationInput(false);
-                        }}
-                        disabled={isEmailVerified}
-                        autoFocus
-                      />
-                      <button
-                        className={`${styles.modalBtn} ${styles.modalBtnVerify}`}
-                        onClick={handleSendVerification}
-                        disabled={isEmailVerified || !profileData.email || !profileData.email.includes('@')}
-                      >
-                        {isEmailVerified ? '인증완료' : '인증하기'}
-                      </button>
-                    </div>
-
-                    {showVerificationInput && !isEmailVerified && (
-                      <>
-                        <div className={styles.modalVerificationRow}>
-                          <input
-                            type="text"
-                            placeholder="인증코드 6자리"
-                            className={styles.modalInput}
-                            value={verificationCode}
-                            onChange={(e) => setVerificationCode(e.target.value)}
-                            maxLength={6}
-                          />
-                          <button
-                            className={`${styles.modalBtn} ${styles.modalBtnConfirm}`}
-                            onClick={handleVerifyCode}
-                            disabled={verificationCode.length !== 6}
-                          >
-                            확인
-                          </button>
-                        </div>
-                        {verificationTimer > 0 && (
-                          <div className={styles.verificationTimer}>
-                            ⏱ 남은 시간: {Math.floor(verificationTimer / 60)}분 {verificationTimer % 60}초
-                          </div>
-                        )}
-                      </>
-                    )}
-
-                    {isEmailVerified && (
-                      <div className={styles.modalVerifiedMessage}>
-                        ✓ 이메일 인증이 완료되었습니다
-                      </div>
-                    )}
-                  </div>
-
-                  {!isEmailVerified ? (
-                    <div className={styles.modalActions}>
-                      <button
-                        className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                        onClick={() => setPurchaseModalStep(1)}
-                      >
-                        이전
-                      </button>
-                      <button
-                        className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
-                        onClick={() => alert('이메일 인증을 완료해주세요')}
-                        disabled={true}
-                      >
-                        다음 단계로
-                      </button>
-                    </div>
-                  ) : (
+                  {/* KAKAO/INICIS REVIEW: Skip email step, show payment methods directly */}
+                  {purchaseFile && (
                     <>
                       <div className={styles.paymentMethodTitle}>
                         결제 방법을 선택해주세요
@@ -2329,7 +2218,7 @@ export default function HomePage() {
                           className={`${styles.paymentMethodBtn} ${styles.bankTransferBtn}`}
                           onClick={() => {
                             setPaymentMethod('bank');
-                            setPurchaseModalStep(3);
+                            setPurchaseModalStep(2);
                           }}
                         >
                           <span className={styles.paymentMethodIcon}>🏦</span>
@@ -2342,7 +2231,7 @@ export default function HomePage() {
                           className={`${styles.paymentMethodBtn} ${styles.cardPaymentBtn}`}
                           onClick={() => {
                             setPaymentMethod('card');
-                            handleCardPayment();
+                            setPurchaseModalStep(2); // KAKAO/INICIS REVIEW: Go to order info first
                           }}
                         >
                           <span className={styles.paymentMethodIcon}>💳</span>
@@ -2352,23 +2241,30 @@ export default function HomePage() {
                           </span>
                         </button>
                       </div>
-                      <button
-                        className={`${styles.modalBtn} ${styles.modalBtnSecondary} ${styles.modalBtnBack}`}
-                        onClick={() => setPurchaseModalStep(1)}
-                      >
-                        이전으로
-                      </button>
                     </>
                   )}
 
+                  {!purchaseFile && (
+                    <div className={styles.modalActions}>
+                      <button
+                        className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                        onClick={() => setPurchaseModalOpen(false)}
+                      >
+                        취소
+                      </button>
+                    </div>
+                  )}
+
                   <p className={styles.modalHint}>
-                    💡 {!isEmailVerified ? '결제 전 이메일 인증으로 정확한 전달을 보장합니다' : '원하시는 결제 방법을 선택해주세요'}
+                    💡 이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
                   </p>
                 </div>
               )}
 
-              {/* Step 3: Order Information */}
-              {purchaseModalStep === 3 && (
+              {/* KAKAO/INICIS REVIEW: Email step removed for review */}
+
+              {/* Step 2: Order Information (was Step 3) */}
+              {purchaseModalStep === 2 && (
                 <div className={styles.modalStep}>
                   <h2 className={styles.modalTitle}>
                     <span className={styles.modalEmoji}>📝</span>
@@ -2377,6 +2273,19 @@ export default function HomePage() {
                   <p className={styles.modalSubtitle}>
                     결제를 위한 정보를 입력해주세요
                   </p>
+
+                  {/* 이메일 입력 - KAKAO/INICIS REVIEW: Moved from Step 2 */}
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>이메일 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      className={styles.modalInput}
+                      value={purchaseEmail}
+                      onChange={(e) => setPurchaseEmail(e.target.value)}
+                      autoFocus
+                    />
+                  </div>
 
                   {/* 이름 입력 */}
                   <div className={styles.modalFormGroup}>
@@ -2387,7 +2296,6 @@ export default function HomePage() {
                       className={styles.modalInput}
                       value={purchaseName}
                       onChange={(e) => setPurchaseName(e.target.value)}
-                      autoFocus
                     />
                   </div>
 
@@ -2406,22 +2314,29 @@ export default function HomePage() {
                   <div className={styles.modalActions}>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setPurchaseModalStep(2)}
+                      onClick={() => setPurchaseModalStep(1)}
                     >
                       이전
                     </button>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
                       onClick={() => {
-                        if (!purchaseName.trim()) {
+                        if (!purchaseEmail.trim() || !purchaseEmail.includes('@')) {
+                          alert('올바른 이메일을 입력해주세요');
+                        } else if (!purchaseName.trim()) {
                           alert('이름을 입력해주세요');
                         } else if (!purchasePhone.trim()) {
                           alert('연락처를 입력해주세요');
                         } else {
-                          setPurchaseModalStep(4);
+                          // KAKAO/INICIS REVIEW: Handle different payment methods
+                          if (paymentMethod === 'card') {
+                            handleCardPayment();
+                          } else {
+                            setPurchaseModalStep(3); // Go to bank transfer info
+                          }
                         }
                       }}
-                      disabled={!purchaseName.trim() || !purchasePhone.trim()}
+                      disabled={!purchaseEmail.includes('@') || !purchaseName.trim() || !purchasePhone.trim()}
                     >
                       다음 단계로
                     </button>
@@ -2433,8 +2348,8 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* Step 4: Payment */}
-              {purchaseModalStep === 4 && (
+              {/* Step 3: Payment (was Step 4) */}
+              {purchaseModalStep === 3 && (
                 <div className={styles.modalStep}>
                   <h2 className={styles.modalTitle}>
                     <span className={styles.modalEmoji}>💳</span>
@@ -2483,7 +2398,7 @@ export default function HomePage() {
                   <div className={styles.modalActions}>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setPurchaseModalStep(3)}
+                      onClick={() => setPurchaseModalStep(2)}
                     >
                       이전
                     </button>
@@ -2507,8 +2422,8 @@ export default function HomePage() {
 
                         // 주문 정보를 localStorage에 저장
                         const orderData = {
-                          name: purchaseName || profileData.email.split('@')[0],
-                          email: profileData.email,
+                          name: purchaseName,
+                          email: purchaseEmail,
                           phone: purchasePhone || '',
                           company: '',
                           position: '',

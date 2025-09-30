@@ -3,6 +3,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 export interface SubmitApplicationRequest {
   email: string;
   name?: string;
+  phone?: string;
+  productType?: string;
   resume: File;
 }
 
@@ -35,6 +37,7 @@ export interface SubmitApplicationResponse {
     name: string;
     resumeFileName: string;
     resumeAssetId: string;
+    memberId?: string;
     createdAt: string;
   };
   message: string;
@@ -51,6 +54,12 @@ export async function submitBetaApplication(data: SubmitApplicationRequest): Pro
   formData.append('email', data.email);
   if (data.name) {
     formData.append('name', data.name);
+  }
+  if (data.phone) {
+    formData.append('phone', data.phone);
+  }
+  if (data.productType) {
+    formData.append('productType', data.productType);
   }
   formData.append('resume', data.resume);
 

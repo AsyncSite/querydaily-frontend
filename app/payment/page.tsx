@@ -8,10 +8,12 @@ export default function PaymentPage() {
   const router = useRouter();
   const [orderData, setOrderData] = useState<{
     orderId: string;
+    memberId?: string;
     product: string;
-    price: string;
+    price?: string;
     name: string;
     email: string;
+    phone?: string;
   } | null>(null);
   const [copySuccess, setCopySuccess] = useState('');
   const [depositorName, setDepositorName] = useState('');
@@ -56,6 +58,12 @@ export default function PaymentPage() {
         {/* 주문 정보 */}
         <div className={styles.orderInfo}>
           <h3 className={styles.sectionTitle}>주문 정보</h3>
+          {orderData.memberId && (
+            <div className={styles.infoRow}>
+              <span className={styles.label}>회원번호</span>
+              <span className={styles.value}>{orderData.memberId}</span>
+            </div>
+          )}
           <div className={styles.infoRow}>
             <span className={styles.label}>주문번호</span>
             <span className={styles.value}>{orderData.orderId}</span>
@@ -64,10 +72,12 @@ export default function PaymentPage() {
             <span className={styles.label}>상품명</span>
             <span className={styles.value}>{orderData.product}</span>
           </div>
-          <div className={styles.infoRow}>
-            <span className={styles.label}>결제금액</span>
-            <span className={styles.value}>{orderData.price}</span>
-          </div>
+          {orderData.price && (
+            <div className={styles.infoRow}>
+              <span className={styles.label}>결제금액</span>
+              <span className={styles.value}>{orderData.price}</span>
+            </div>
+          )}
         </div>
 
         {/* 입금 계좌 정보 */}

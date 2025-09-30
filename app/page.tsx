@@ -2404,44 +2404,60 @@ export default function HomePage() {
                     </button>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
-                      onClick={() => {
-                        // 상품명과 가격 매핑
-                        const productNames: Record<string, string> = {
-                          'critical-hit': '크리티컬 히트',
-                          'growth-plan': '그로스 플랜',
-                          'real-interview': '리얼 인터뷰',
-                          'resume-analytics': '라스트 체크'
-                        };
+                      onClick={async () => {
+                        if (!purchaseFile || !purchaseName || !purchaseEmail || !purchasePhone) {
+                          setErrors(['모든 필수 정보를 입력해주세요.']);
+                          return;
+                        }
 
-                        const productPrices: Record<string, string> = {
-                          'critical-hit': '₩1,900',
-                          'growth-plan': '₩34,900',
-                          'real-interview': '₩129,000',
-                          'resume-analytics': '₩19,900'
-                        };
+                        setIsSubmitting(true);
+                        try {
+                          // productType 매핑
+                          const productTypeMap: Record<string, string> = {
+                            'critical-hit': 'CRITICAL_HIT',
+                            'growth-plan': 'SQL_MASTER',
+                            'real-interview': 'SYSTEM_DESIGN',
+                            'resume-analytics': 'DATA_ALGO'
+                          };
 
-                        // 주문 정보를 localStorage에 저장
-                        const orderData = {
-                          name: purchaseName,
-                          email: purchaseEmail,
-                          phone: purchasePhone || '',
-                          company: '',
-                          position: '',
-                          experience: profileData.experience || '',
-                          resumeFileName: purchaseFile?.name || '',
-                          product: productNames[selectedPurchaseProduct || ''] || '',
-                          price: productPrices[selectedPurchaseProduct || ''] || '',
-                          orderDate: new Date().toISOString(),
-                          orderId: `QD${Date.now()}`
-                        };
+                          // API 호출
+                          const response = await submitBetaApplication({
+                            email: purchaseEmail,
+                            name: purchaseName,
+                            phone: purchasePhone,
+                            productType: productTypeMap[selectedPurchaseProduct || ''] || 'SQL_MASTER',
+                            resume: purchaseFile
+                          });
 
-                        localStorage.setItem('orderData', JSON.stringify(orderData));
+                          if (response.success && response.data.memberId) {
+                            // 주문 정보를 localStorage에 저장
+                            const orderData = {
+                              memberId: response.data.memberId,
+                              name: purchaseName,
+                              email: purchaseEmail,
+                              phone: purchasePhone,
+                              product: selectedPurchaseProduct || '',
+                              orderDate: new Date().toISOString(),
+                              orderId: `QD${Date.now()}`
+                            };
 
-                        // 무통장입금 안내 페이지로 이동
-                        router.push('/payment');
+                            localStorage.setItem('orderData', JSON.stringify(orderData));
+
+                            // 무통장입금 안내 페이지로 이동
+                            router.push('/payment');
+                          } else {
+                            setErrors(['신청 처리 중 오류가 발생했습니다.']);
+                          }
+                        } catch (error) {
+                          console.error('Error submitting application:', error);
+                          setErrors(['신청 처리 중 오류가 발생했습니다.']);
+                        } finally {
+                          setIsSubmitting(false);
+                        }
                       }}
+                      disabled={isSubmitting}
                     >
-                      무통장입금으로 결제하기
+                      {isSubmitting ? '처리중...' : '무통장입금으로 결제하기'}
                     </button>
                   </div>
 

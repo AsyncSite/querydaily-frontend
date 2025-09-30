@@ -37,7 +37,7 @@ export default function ProductsPage() {
           <div className={styles.hero}>
             <div className={styles.urgentBadge}>
               <span className={styles.fire}>🚀</span>
-              <span>정식 오픈 기념</span>
+              <span>베타 테스터 한정 특가</span>
             </div>
 
             <h1 className={styles.mainTitle}>
@@ -105,7 +105,7 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩99,000</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩34,900</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 20일간 매일 발송</p>
               <button
@@ -167,7 +167,7 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩179,000</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩129,000</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 90분 모의면접 1회</p>
               <button
@@ -232,7 +232,7 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩4,900</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩1,900</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
@@ -307,7 +307,7 @@ export default function ProductsPage() {
                 <span className={styles.originalPrice}>₩29,900</span>
                 <span className={styles.arrow}>→</span>
                 <span className={styles.currentPrice}>₩19,900</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button

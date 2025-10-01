@@ -1773,7 +1773,7 @@ export default function HomePage() {
                 <div className={styles.footerBusinessInfo}>
                   <p><strong>사업자 정보</strong></p>
                   <p>상호명: 어싱크사이트 | 대표자: 최보임</p>
-                  <p>사업자등록번호: 456-12-02771</p>
+                  <p>사업자등록번호: 456-12-02771 | 통신판매업: 2025-화성동탄-3939</p>
                   <p>사업장 주소: 경기도 화성시 동탄대로4길 18</p>
                   <p>대표전화: 010-8120-4131 | 이메일: official.querydaily@gmail.com</p>
                 </div>

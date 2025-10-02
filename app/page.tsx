@@ -874,7 +874,7 @@ export default function HomePage() {
               <div className={styles.productServiceInfo}>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>20일간 매일 발송</span>
+                  <span className={styles.serviceInfoValue}>결제 후 30일 이내 완료 (평일 기준 20일간 매일 발송)</span>
                 </div>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>환불 규정</span>
@@ -918,7 +918,7 @@ export default function HomePage() {
               <div className={styles.productServiceInfo}>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>90분 모의면접 1회</span>
+                  <span className={styles.serviceInfoValue}>결제 후 90일 이내 일정 조율 및 진행 (90분 모의면접 1회)</span>
                 </div>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>환불 규정</span>
@@ -961,7 +961,7 @@ export default function HomePage() {
               <div className={styles.productServiceInfo}>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>구매 즉시 제공</span>
+                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
                 </div>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>환불 규정</span>
@@ -1004,7 +1004,7 @@ export default function HomePage() {
               <div className={styles.productServiceInfo}>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>구매 즉시 제공</span>
+                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
                 </div>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>환불 규정</span>

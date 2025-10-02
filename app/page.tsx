@@ -2093,7 +2093,7 @@ export default function HomePage() {
                           const response = await startFreeTrial(profileData);
                           if (response.success) {
                             setModalOpen(false);
-                            router.push(`/trial-started?email=${encodeURIComponent(profileData.email)}`);
+                            router.push('/success');
                           }
                         } catch (error) {
                           setErrors([error instanceof Error ? error.message : '체험 시작 중 오류가 발생했습니다']);

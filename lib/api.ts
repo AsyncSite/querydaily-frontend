@@ -111,10 +111,11 @@ export interface ApiError {
 // ============================================================================
 
 /**
- * 무료 체험 신청 (POST /api/v1/public/leads)
+ * 무료 체험 신청 (POST /api/query-daily/leads)
+ * Gateway를 통해 라우팅: /api/query-daily/leads → /api/v1/public/leads
  */
 export async function createLead(request: CreateLeadRequest): Promise<ApiResponse<LeadResponse>> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/public/leads`, {
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/leads`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -130,7 +131,8 @@ export async function createLead(request: CreateLeadRequest): Promise<ApiRespons
 }
 
 /**
- * 유료 주문 생성 (POST /api/v1/public/orders)
+ * 유료 주문 생성 (POST /api/query-daily/orders)
+ * Gateway를 통해 라우팅: /api/query-daily/orders → /api/v1/public/orders
  */
 export async function createOrder(request: CreateOrderRequest): Promise<ApiResponse<OrderResponse>> {
   const formData = new FormData();
@@ -172,7 +174,7 @@ export async function createOrder(request: CreateOrderRequest): Promise<ApiRespo
     }
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/public/orders`, {
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/orders`, {
     method: 'POST',
     body: formData,
   });

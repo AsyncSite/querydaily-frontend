@@ -1,121 +1,325 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
 
-export interface SubmitApplicationRequest {
+// ============================================================================
+// Enums (Backend와 동일)
+// ============================================================================
+
+export enum CareerLevel {
+  JUNIOR = 'JUNIOR',
+  MIDDLE = 'MIDDLE',
+  SENIOR = 'SENIOR'
+}
+
+export enum ProductCode {
+  TRIAL = 'TRIAL',
+  GROWTH_PLAN = 'GROWTH_PLAN',
+  CRITICAL_HIT = 'CRITICAL_HIT',
+  REAL_INTERVIEW = 'REAL_INTERVIEW',
+  LAST_CHECK = 'LAST_CHECK'
+}
+
+// ============================================================================
+// Lead API (무료 체험 신청)
+// ============================================================================
+
+/**
+ * 무료 체험 신청 요청 (Backend CreateLeadRequest)
+ */
+export interface CreateLeadRequest {
   email: string;
-  name?: string;
-  phone?: string;
-  productType?: string;
-  resume: File;
+  name: string;
+  profile: {
+    careerLevel: CareerLevel;
+    techStack?: string[];
+    interests?: string[];
+    desiredCompanies?: string[];
+    timezone?: string;
+  };
 }
 
-export interface UserProfile {
+/**
+ * 무료 체험 신청 응답 (Backend LeadResponse)
+ */
+export interface LeadResponse {
+  memberId: string;
   email: string;
-  experience?: string; // 신입 | 1-3년 | 3-5년 | 5년+
-  techStack?: string[]; // Spring Boot, JPA, MSA, Kafka 등
-  interests?: string[]; // 성능 최적화, 아키텍처, 트러블슈팅 등
-  targetCompany?: string; // 네카라쿠배, 쿠토 등
-  selectedProduct?: string; // critical-hit | growth-plan | resume-analytics
+  name: string;
+  trial: {
+    purchaseId: string;
+    productCode: ProductCode;
+    maxDeliveries: number;
+    startedAt: string; // ISO 8601 format
+    firstDeliveryAt: string;
+    expiresAt: string;
+  };
 }
 
-export interface StartFreeTrialResponse {
-  success: boolean;
-  data: {
-    id: number;
-    email: string;
-    profile?: Partial<UserProfile>;
-    trialStartDate: string;
-    trialEndDate: string;
-  };
-  message: string;
+// ============================================================================
+// Order API (유료 주문 생성)
+// ============================================================================
+
+/**
+ * 유료 주문 생성 요청 (Backend CreateOrderRequest)
+ * Note: MultipartFile이므로 FormData로 전송
+ */
+export interface CreateOrderRequest {
+  email: string;
+  name: string;
+  productCode: ProductCode;
+  resume?: File; // 선택사항
+  profile?: {
+    careerLevel?: CareerLevel;
+    techStack?: string[];
+    interests?: string[];
+    desiredCompanies?: string[];
+    timezone?: string;
+  }; // 선택사항
 }
 
-export interface SubmitApplicationResponse {
+/**
+ * 유료 주문 응답 (Backend OrderResponse)
+ */
+export interface OrderResponse {
+  orderId: string; // checkoutId
+  memberId: string;
+  productCode: ProductCode;
+  amount: number;
+  checkoutUrl: string;
+  expiresAt: string; // ISO 8601 format
+}
+
+// ============================================================================
+// Common Response Wrapper (Backend ApiResponse<T>)
+// ============================================================================
+
+export interface ApiResponse<T> {
   success: boolean;
-  data: {
-    id: number;
-    email: string;
-    name: string;
-    resumeFileName: string;
-    resumeAssetId: string;
-    memberId?: string;
-    createdAt: string;
-  };
-  message: string;
+  data?: T;
+  message?: string;
+  errorCode?: string;
 }
 
 export interface ApiError {
   success: false;
   message: string;
+  errorCode?: string;
   errors?: string[];
 }
 
-export async function submitBetaApplication(data: SubmitApplicationRequest): Promise<SubmitApplicationResponse> {
-  const formData = new FormData();
-  formData.append('email', data.email);
-  if (data.name) {
-    formData.append('name', data.name);
-  }
-  if (data.phone) {
-    formData.append('phone', data.phone);
-  }
-  if (data.productType) {
-    formData.append('productType', data.productType);
-  }
-  formData.append('resume', data.resume);
+// ============================================================================
+// API Functions
+// ============================================================================
 
-  const response = await fetch(`${API_BASE_URL}/api/public/queries`, {
+/**
+ * 무료 체험 신청 (POST /api/v1/public/leads)
+ */
+export async function createLead(request: CreateLeadRequest): Promise<ApiResponse<LeadResponse>> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/public/leads`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  return response.json();
+}
+
+/**
+ * 유료 주문 생성 (POST /api/v1/public/orders)
+ */
+export async function createOrder(request: CreateOrderRequest): Promise<ApiResponse<OrderResponse>> {
+  const formData = new FormData();
+  formData.append('email', request.email);
+  formData.append('name', request.name);
+  formData.append('productCode', request.productCode);
+
+  if (request.resume) {
+    formData.append('resume', request.resume);
+  }
+
+  if (request.profile) {
+    // profile은 JSON string으로 전송 (multipart/form-data 내에서)
+    // 또는 개별 필드로 전송 (Backend Controller에서 @ModelAttribute로 받는 경우)
+    // Backend가 @Valid ProfileInfo profile로 받으므로 중첩 객체를 평탄화해야 할 수 있음
+    // 현재 Backend는 @ModelAttribute CreateOrderRequest를 받으므로 필드명을 맞춰야 함
+
+    // 중첩 객체를 평탄화: profile.careerLevel → profile[careerLevel]
+    if (request.profile.careerLevel) {
+      formData.append('profile.careerLevel', request.profile.careerLevel);
+    }
+    if (request.profile.techStack) {
+      request.profile.techStack.forEach((tech, index) => {
+        formData.append(`profile.techStack[${index}]`, tech);
+      });
+    }
+    if (request.profile.interests) {
+      request.profile.interests.forEach((interest, index) => {
+        formData.append(`profile.interests[${index}]`, interest);
+      });
+    }
+    if (request.profile.desiredCompanies) {
+      request.profile.desiredCompanies.forEach((company, index) => {
+        formData.append(`profile.desiredCompanies[${index}]`, company);
+      });
+    }
+    if (request.profile.timezone) {
+      formData.append('profile.timezone', request.profile.timezone);
+    }
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/public/orders`, {
     method: 'POST',
     body: formData,
   });
 
   if (!response.ok) {
-    // 상태 코드별 특별 처리
-    if (response.status === 413) {
-      throw new Error('FILE_TOO_LARGE');
-    }
-
-    // JSON 파싱 시도 (실패할 수 있음)
-    try {
-      const errorData: ApiError = await response.json();
-      throw new Error(errorData.message || '신청 처리 중 오류가 발생했습니다');
-    } catch (jsonError) {
-      // JSON 파싱 실패 시 상태 코드 기반 메시지
-      const statusMessages: Record<number, string> = {
-        400: 'BAD_REQUEST',
-        401: 'UNAUTHORIZED',
-        403: 'FORBIDDEN',
-        404: 'NOT_FOUND',
-        413: 'FILE_TOO_LARGE',
-        429: 'TOO_MANY_REQUESTS',
-        500: 'SERVER_ERROR',
-        502: 'BAD_GATEWAY',
-        503: 'SERVICE_UNAVAILABLE'
-      };
-
-      throw new Error(statusMessages[response.status] || `HTTP_ERROR_${response.status}`);
-    }
+    await handleApiError(response);
   }
 
   return response.json();
 }
 
-export async function startFreeTrial(data: UserProfile): Promise<StartFreeTrialResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/public/queries/start-trial`, {
-    method: 'POST',
+/**
+ * 주문 상태 조회 (GET /api/v1/orders/{orderId}/status)
+ * Note: 인증 필요
+ */
+export async function getOrderStatus(orderId: string): Promise<ApiResponse<any>> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/orders/${orderId}/status`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      // Authorization header 필요 시 추가
     },
-    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    try {
-      const errorData: ApiError = await response.json();
-      throw new Error(errorData.message || '무료 체험 시작 중 오류가 발생했습니다');
-    } catch (jsonError) {
-      throw new Error(`무료 체험 시작 실패: ${response.status}`);
-    }
+    await handleApiError(response);
   }
 
   return response.json();
 }
+
+// ============================================================================
+// Error Handling
+// ============================================================================
+
+async function handleApiError(response: Response): Promise<never> {
+  // 상태 코드별 특별 처리
+  if (response.status === 413) {
+    throw new Error('FILE_TOO_LARGE');
+  }
+
+  // JSON 파싱 시도
+  try {
+    const errorData: ApiError = await response.json();
+    throw new Error(errorData.message || errorData.errorCode || '요청 처리 중 오류가 발생했습니다');
+  } catch (jsonError) {
+    // JSON 파싱 실패 시 상태 코드 기반 메시지
+    const statusMessages: Record<number, string> = {
+      400: 'BAD_REQUEST',
+      401: 'UNAUTHORIZED',
+      403: 'FORBIDDEN',
+      404: 'NOT_FOUND',
+      413: 'FILE_TOO_LARGE',
+      429: 'TOO_MANY_REQUESTS',
+      500: 'SERVER_ERROR',
+      502: 'BAD_GATEWAY',
+      503: 'SERVICE_UNAVAILABLE'
+    };
+
+    throw new Error(statusMessages[response.status] || `HTTP_ERROR_${response.status}`);
+  }
+}
+
+// ============================================================================
+// Legacy Compatibility (기존 코드와의 호환성을 위한 별칭)
+// ============================================================================
+
+/**
+ * @deprecated Use createLead instead
+ */
+export async function startFreeTrial(data: UserProfile): Promise<ApiResponse<LeadResponse>> {
+  // experience를 CareerLevel로 매핑
+  let careerLevel: CareerLevel = CareerLevel.JUNIOR;
+  if (data.experience?.includes('3-5년') || data.experience?.includes('4년') || data.experience?.includes('중급')) {
+    careerLevel = CareerLevel.MIDDLE;
+  } else if (data.experience?.includes('5년+') || data.experience?.includes('8년') || data.experience?.includes('시니어')) {
+    careerLevel = CareerLevel.SENIOR;
+  }
+
+  const request: CreateLeadRequest = {
+    email: data.email,
+    name: data.name || data.email.split('@')[0], // 이메일에서 이름 추출
+    profile: {
+      careerLevel,
+      techStack: data.techStack,
+      interests: data.interests,
+      desiredCompanies: data.targetCompany ? [data.targetCompany] : undefined,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+  };
+
+  return createLead(request);
+}
+
+/**
+ * @deprecated Use createOrder instead
+ */
+export async function submitBetaApplication(data: {
+  email: string;
+  name?: string;
+  phone?: string;
+  productType?: string;
+  resume: File;
+}): Promise<ApiResponse<OrderResponse>> {
+  // productType을 ProductCode로 매핑
+  let productCode: ProductCode = ProductCode.GROWTH_PLAN;
+  if (data.productType === 'CRITICAL_HIT') {
+    productCode = ProductCode.CRITICAL_HIT;
+  } else if (data.productType === 'REAL_INTERVIEW') {
+    productCode = ProductCode.REAL_INTERVIEW;
+  } else if (data.productType === 'LAST_CHECK') {
+    productCode = ProductCode.LAST_CHECK;
+  }
+
+  const request: CreateOrderRequest = {
+    email: data.email,
+    name: data.name || data.email.split('@')[0],
+    productCode,
+    resume: data.resume,
+  };
+
+  return createOrder(request);
+}
+
+// ============================================================================
+// Type Aliases for Legacy Code
+// ============================================================================
+
+/**
+ * Legacy UserProfile 타입 (기존 코드 호환성)
+ */
+export type UserProfile = {
+  email: string;
+  name?: string;
+  experience?: string; // "신입 | 1-3년 | 3-5년 | 5년+"
+  techStack?: string[];
+  interests?: string[];
+  targetCompany?: string;
+  selectedProduct?: string;
+};
+
+export type SubmitApplicationRequest = {
+  email: string;
+  name?: string;
+  phone?: string;
+  productType?: string;
+  resume: File;
+};
+export type StartFreeTrialResponse = ApiResponse<LeadResponse>;
+export type SubmitApplicationResponse = ApiResponse<OrderResponse>;

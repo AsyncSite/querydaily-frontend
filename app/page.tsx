@@ -2429,10 +2429,10 @@ export default function HomePage() {
                             resume: purchaseFile
                           });
 
-                          if (response.success && response.data.memberId) {
+                          if (response.success && response.data?.memberId) {
                             // 주문 정보를 localStorage에 저장
                             const orderData = {
-                              memberId: response.data.memberId,
+                              memberId: response.data?.memberId,
                               name: purchaseName,
                               email: purchaseEmail,
                               phone: purchasePhone,

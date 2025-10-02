@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile, createPaymentOrder, ProductCode } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
@@ -459,66 +459,99 @@ export default function HomePage() {
     }
   };
 
-  const handleCardPayment = () => {
-    if (!window.IMP) {
-      alert('\uacb0\uc81c \ubaa8\ub4c8\uc774 \ub85c\ub4dc\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.');
-      return;
-    }
+  const handleCardPayment = async () => {
+    setIsSubmitting(true);
 
-    // Initialize Portone with test MID
-    window.IMP.init('iamport'); // 포트원 공식 테스트용 가맹점 식별코드
+    try {
+      // ProductCode 매핑
+      const productCodeMap: Record<string, ProductCode> = {
+        'critical-hit': ProductCode.CRITICAL_HIT,
+        'growth-plan': ProductCode.GROWTH_PLAN,
+        'real-interview': ProductCode.REAL_INTERVIEW,
+        'resume-analytics': ProductCode.LAST_CHECK
+      };
 
-    // \uc0c1\ud488\uba85\uacfc \uac00\uaca9 \ub9e4\ud551
-    const productNames: Record<string, string> = {
-      'critical-hit': '\ud06c\ub9ac\ud2f0\uceec \ud788\ud2b8',
-      'growth-plan': '\uadf8\ub85c\uc2a4 \ud50c\ub79c',
-      'real-interview': '\ub9ac\uc5bc \uc778\ud130\ubdf0',
-      'resume-analytics': '\ub77c\uc2a4\ud2b8 \uccb4\ud06c'
-    };
-
-    const productPrices: Record<string, number> = {
-      'critical-hit': 1900,
-      'growth-plan': 34900,
-      'real-interview': 129000,
-      'resume-analytics': 19900
-    };
-
-    const orderData = {
-      pg: 'html5_inicis', // 이니시스 웹표준 결제 (테스트)
-      pay_method: 'card',
-      merchant_uid: `QD${Date.now()}`,
-      name: productNames[selectedPurchaseProduct || ''] || '',
-      amount: productPrices[selectedPurchaseProduct || ''] || 0,
-      buyer_email: purchaseEmail || 'test@example.com',
-      buyer_name: purchaseName || 'Guest',
-      buyer_tel: purchasePhone || '010-0000-0000',
-      custom_data: {
-        product: selectedPurchaseProduct
+      const productCode = productCodeMap[selectedPurchaseProduct || ''];
+      if (!productCode) {
+        alert('상품을 선택해주세요.');
+        return;
       }
-    };
 
-    window.IMP.request_pay(orderData, (response: any) => {
-      if (response.success) {
-        // Store order data
+      // Query Daily Service를 통한 주문 생성 (Checkout Service 호출)
+      const response = await createPaymentOrder({
+        email: purchaseEmail || 'test@example.com',
+        name: purchaseName || 'Guest',
+        phone: purchasePhone,
+        productCode
+      });
+
+      if (response.success && response.data) {
+        // 주문 정보 저장
         const orderInfo = {
-          orderId: response.merchant_uid,
-          productName: orderData.name,
-          price: orderData.amount,
-          paymentMethod: 'card',
+          orderId: response.data.orderId,
+          productName: selectedPurchaseProduct,
+          price: response.data.amount,
+          paymentMethod: 'inicis',
           email: purchaseEmail,
           name: purchaseName,
           phone: purchasePhone || '',
-          paymentId: response.imp_uid,
-          paidAt: new Date().toISOString(),
+          checkoutUrl: response.data.checkoutUrl,
         };
         localStorage.setItem('orderData', JSON.stringify(orderInfo));
 
-        // Redirect to success page
-        window.location.href = '/order-complete';
+        // SDK 모드인 경우 PortOne SDK 호출
+        if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
+          const IMP = (window as any).IMP;
+          if (!IMP) {
+            alert('결제 SDK 로딩 중 오류가 발생했습니다. 페이지를 새로고침해주세요.');
+            return;
+          }
+            // IMP.init() 호출
+            IMP.init('iamport');
+          const payload = response.data.portOneSdkPayload;
+
+          // PortOne SDK Payload를 IMP.request_pay 형식으로 매핑
+          const orderData = {
+                pg: `${payload.method?.type || 'card'}.${payload.channelKey}`, // 예: card.channel-key-xxx
+                pay_method: payload.method?.type || payload.payMethod || 'card',
+                merchant_uid: payload.paymentId,
+                name: payload.orderName,
+                amount: payload.amount?.total || payload.totalAmount,
+                buyer_email: purchaseEmail || 'test@example.com',
+                buyer_name: purchaseName || 'Guest',
+                buyer_tel: purchasePhone || '010-0000-0000',
+                custom_data: {
+                    product: selectedPurchaseProduct,
+                    storeId: payload.storeId,
+                    channelKey: payload.channelKey
+                }
+          };
+
+          IMP.request_pay(orderData, (paymentResponse: any) => {
+            if (paymentResponse.success) {
+              // 성공 페이지로 이동
+              window.location.href = '/order-complete';
+            } else {
+              // 결제 실패 또는 취소
+              alert(`결제에 실패했습니다: ${paymentResponse.error_msg || '알 수 없는 오류'}`);
+            }
+          });
+        } else if (response.data.checkoutUrl) {
+          // URL 모드인 경우 체크아웃 URL로 리다이렉트
+          window.location.href = response.data.checkoutUrl;
+        } else {
+          // URL도 없고 SDK도 아닌 경우
+          window.location.href = '/order-complete';
+        }
       } else {
-        alert(`\uacb0\uc81c\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4: ${response.error_msg}`);
+        alert(`주문 생성에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
       }
-    });
+    } catch (error: any) {
+      console.error('Payment order error:', error);
+      alert(`주문 처리 중 오류가 발생했습니다: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {

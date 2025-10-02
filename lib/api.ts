@@ -84,8 +84,23 @@ export interface OrderResponse {
   memberId: string;
   productCode: ProductCode;
   amount: number;
-  checkoutUrl: string;
+  checkoutUrl: string | null;
   expiresAt: string; // ISO 8601 format
+  resumeId?: string;
+
+  // Checkout Service response fields
+  userId?: string;
+  domain?: string;
+  domainId?: string;
+  reservations?: Record<string, string>;
+  status?: string;
+  totalAmount?: number;
+  createdAt?: string;
+  correlationId?: string;
+  requestId?: string;
+  transactionId?: string;
+  invocationType?: 'SDK' | 'URL';
+  portOneSdkPayload?: Record<string, any>;
 }
 
 // ============================================================================
@@ -197,6 +212,49 @@ export async function getOrderStatus(orderId: string): Promise<ApiResponse<any>>
       'Content-Type': 'application/json',
       // Authorization header 필요 시 추가
     },
+  });
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  return response.json();
+}
+
+// ============================================================================
+// Payment Helper (간편 결제 함수)
+// ============================================================================
+
+/**
+ * 간편 카드 결제 (Query Daily Service를 통한 주문 생성)
+ * Query Daily → Checkout → Payment Core 플로우
+ */
+export async function createPaymentOrder(data: {
+  email: string;
+  name: string;
+  phone?: string;
+  productCode: ProductCode;
+}): Promise<ApiResponse<OrderResponse>> {
+  // OrderController는 @RequestPart("order")로 받으므로 JSON Blob으로 전송
+  const orderRequest = {
+    email: data.email,
+    name: data.name,
+    phone: data.phone,
+    productCode: data.productCode,
+  };
+
+  // FormData 생성
+  const formData = new FormData();
+
+  // JSON을 Blob으로 변환하여 'order' part로 추가
+  const orderBlob = new Blob([JSON.stringify(orderRequest)], {
+    type: 'application/json'
+  });
+  formData.append('order', orderBlob);
+
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/orders`, {
+    method: 'POST',
+    body: formData,
   });
 
   if (!response.ok) {

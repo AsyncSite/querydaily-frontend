@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { createTransferOrder } from '@/lib/api';
 import styles from './page.module.css';
 
 function CheckoutContent() {
@@ -22,6 +23,7 @@ function CheckoutContent() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [resumeFileName, setResumeFileName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -73,36 +75,63 @@ function CheckoutContent() {
       newErrors.phone = '올바른 휴대폰 번호 형식이 아닙니다';
     }
 
-    // 이력서는 선택사항이므로 검증하지 않음
+    // 이력서 필수 검증
+    if (!formData.resume) newErrors.resume = '이력서/포트폴리오를 업로드해주세요';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) return;
+    if (isSubmitting) return; // 중복 제출 방지
 
-    // 주문 정보를 localStorage에 저장 (파일 정보는 파일명만 저장)
-    const orderData = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      company: formData.company,
-      position: formData.position,
-      experience: formData.experience,
-      resumeFileName: resumeFileName || '',
-      product,
-      price,
-      orderDate: new Date().toISOString(),
-      orderId: `QD${Date.now()}`
-    };
+    setIsSubmitting(true);
+    setErrors({}); // 기존 에러 클리어
 
-    localStorage.setItem('orderData', JSON.stringify(orderData));
+    try {
+      // 백엔드 API 호출 (계좌이체 주문 생성)
+      const response = await createTransferOrder({
+        email: formData.email,
+        name: formData.name,
+        productCode: 'GROWTH_PLAN', // TODO: product 파라미터를 ProductCode로 매핑
+        resume: formData.resume || undefined
+      });
 
-    // 무통장입금 안내 페이지로 이동
-    router.push('/payment');
+      if (response.success && response.data) {
+        // 주문 정보를 localStorage에 저장
+        const orderData = {
+          orderId: response.data.orderId,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          product,
+          price,
+          orderDate: new Date().toISOString()
+        };
+
+        localStorage.setItem('orderData', JSON.stringify(orderData));
+
+        // 무통장입금 안내 페이지로 이동
+        router.push('/payment');
+      }
+    } catch (error) {
+      console.error('Order creation failed:', error);
+
+      const errorMessage = error instanceof Error ? error.message : '주문 처리 중 오류가 발생했습니다';
+
+      // 409 에러 (중복 신청) 처리
+      if (errorMessage.includes('409') || errorMessage === 'CONFLICT') {
+        alert('이미 신청 내역이 있습니다.\n현재 결제 확인 중이니 잠시만 기다려 주세요.\n\n문의사항이 있으시면 카카오톡으로 문의해 주세요.');
+        return;
+      }
+
+      setErrors({ email: errorMessage });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -169,6 +198,30 @@ function CheckoutContent() {
           </div>
 
           <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              이력서/포트폴리오 <span className={styles.required}>*</span>
+            </h3>
+
+            <div className={styles.formGroup}>
+              <div className={styles.fileUpload}>
+                <input
+                  type="file"
+                  id="resume"
+                  name="resume"
+                  accept=".pdf"
+                  onChange={handleChange}
+                  style={{ display: 'none' }}
+                />
+                <label htmlFor="resume" className={styles.fileLabel}>
+                  {resumeFileName || '📎 PDF 파일 선택'}
+                </label>
+              </div>
+              {errors.resume && <span className={styles.error}>{errors.resume}</span>}
+              <p className={styles.hint}>PDF 형식만 지원 (최대 5MB)</p>
+            </div>
+          </div>
+
+          <div className={styles.section}>
             <h3 className={styles.sectionTitle}>추가 정보</h3>
 
             <div className={styles.formGroup}>
@@ -211,41 +264,8 @@ function CheckoutContent() {
             </div>
           </div>
 
-          {(product === '크리티컬 히트' || product === '이력서 분석 리포트') && (
-            <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                이력서/포트폴리오 <span className={styles.optional}>(선택)</span>
-              </h3>
-
-              <div className={styles.infoBox}>
-                💡 이미 베타 신청 시 제출하셨다면 다시 제출하지 않으셔도 됩니다.
-                <br />
-                최신 이력서로 업데이트하고 싶으신 경우에만 업로드해주세요.
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.label}>이력서/포트폴리오 PDF</label>
-                <div className={styles.fileUpload}>
-                  <input
-                    type="file"
-                    id="resume"
-                    name="resume"
-                    accept=".pdf"
-                    onChange={handleChange}
-                    style={{ display: 'none' }}
-                  />
-                  <label htmlFor="resume" className={styles.fileLabel}>
-                    {resumeFileName || '📎 PDF 파일 선택'}
-                  </label>
-                </div>
-                {errors.resume && <span className={styles.error}>{errors.resume}</span>}
-                <p className={styles.hint}>PDF 형식만 지원 (최대 5MB)</p>
-              </div>
-            </div>
-          )}
-
-          <button type="submit" className={styles.submitBtn}>
-            무통장입금 진행하기 →
+          <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+            {isSubmitting ? '처리 중...' : '무통장입금 진행하기 →'}
           </button>
         </form>
       </div>

@@ -68,3 +68,73 @@ export async function submitBetaApplication(data: SubmitApplicationRequest): Pro
 
   return response.json();
 }
+
+// 계좌이체 주문 생성 (무통장 입금)
+export interface TransferOrderRequest {
+  email: string;
+  name: string;
+  productCode: 'GROWTH_PLAN' | 'CRITICAL_HIT' | 'REAL_INTERVIEW' | 'LAST_CHECK';
+  resume?: File;
+}
+
+export interface TransferOrderResponse {
+  success: boolean;
+  data: {
+    orderId: string;
+    memberId: string;
+    productCode: string;
+    amount: number;
+    status: string;
+  };
+}
+
+export async function createTransferOrder(data: TransferOrderRequest): Promise<TransferOrderResponse> {
+  const formData = new FormData();
+
+  // JSON Blob for order data
+  const orderBlob = new Blob([JSON.stringify({
+    email: data.email,
+    name: data.name,
+    productCode: data.productCode,
+    paymentMethod: 'transfer'
+  })], { type: 'application/json' });
+
+  formData.append('order', orderBlob);
+
+  // Resume file (optional)
+  if (data.resume) {
+    formData.append('resume', data.resume);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/orders`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    if (response.status === 413) {
+      throw new Error('FILE_TOO_LARGE');
+    }
+
+    try {
+      const errorData: ApiError = await response.json();
+      throw new Error(errorData.message || '주문 처리 중 오류가 발생했습니다');
+    } catch (jsonError) {
+      const statusMessages: Record<number, string> = {
+        400: 'BAD_REQUEST',
+        401: 'UNAUTHORIZED',
+        403: 'FORBIDDEN',
+        404: 'NOT_FOUND',
+        413: 'FILE_TOO_LARGE',
+        429: 'TOO_MANY_REQUESTS',
+        500: 'SERVER_ERROR',
+        502: 'BAD_GATEWAY',
+        503: 'SERVICE_UNAVAILABLE'
+      };
+
+      throw new Error(statusMessages[response.status] || `HTTP_ERROR_${response.status}`);
+    }
+  }
+
+  return response.json();
+}

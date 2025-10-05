@@ -85,7 +85,6 @@ export default function HomePage() {
   const [verificationCode, setVerificationCode] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
-  const [purchasePhone, setPurchasePhone] = useState('');
   const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
@@ -481,7 +480,6 @@ export default function HomePage() {
       const response = await createPaymentOrder({
         email: purchaseEmail || 'test@example.com',
         name: purchaseName || 'Guest',
-        phone: purchasePhone,
         productCode
       });
 
@@ -494,7 +492,6 @@ export default function HomePage() {
           paymentMethod: 'inicis',
           email: purchaseEmail,
           name: purchaseName,
-          phone: purchasePhone || '',
           checkoutUrl: response.data.checkoutUrl,
         };
         localStorage.setItem('orderData', JSON.stringify(orderInfo));
@@ -519,7 +516,7 @@ export default function HomePage() {
                 amount: payload.amount?.total || payload.totalAmount,
                 buyer_email: purchaseEmail || 'test@example.com',
                 buyer_name: purchaseName || 'Guest',
-                buyer_tel: purchasePhone || '010-0000-0000',
+                buyer_tel: '010-0000-0000',
                 custom_data: {
                     product: selectedPurchaseProduct,
                     storeId: payload.storeId,
@@ -2332,18 +2329,6 @@ export default function HomePage() {
                     />
                   </div>
 
-                  {/* 연락처 입력 */}
-                  <div className={styles.modalFormGroup}>
-                    <label className={styles.modalLabel}>연락처 <span style={{ color: '#ff6b6b' }}>*</span></label>
-                    <input
-                      type="tel"
-                      placeholder="010-1234-5678"
-                      className={styles.modalInput}
-                      value={purchasePhone}
-                      onChange={(e) => setPurchasePhone(e.target.value)}
-                    />
-                  </div>
-
                   <div className={styles.modalActions}>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
@@ -2358,8 +2343,6 @@ export default function HomePage() {
                           alert('올바른 이메일을 입력해주세요');
                         } else if (!purchaseName.trim()) {
                           alert('이름을 입력해주세요');
-                        } else if (!purchasePhone.trim()) {
-                          alert('연락처를 입력해주세요');
                         } else {
                           // KAKAO/INICIS REVIEW: Handle different payment methods
                           if (paymentMethod === 'card') {
@@ -2369,7 +2352,7 @@ export default function HomePage() {
                           }
                         }
                       }}
-                      disabled={!purchaseEmail.includes('@') || !purchaseName.trim() || !purchasePhone.trim()}
+                      disabled={!purchaseEmail.includes('@') || !purchaseName.trim()}
                     >
                       다음 단계로
                     </button>
@@ -2438,7 +2421,7 @@ export default function HomePage() {
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
                       onClick={async () => {
-                        if (!purchaseFile || !purchaseName || !purchaseEmail || !purchasePhone) {
+                        if (!purchaseFile || !purchaseName || !purchaseEmail) {
                           setErrors(['모든 필수 정보를 입력해주세요.']);
                           return;
                         }
@@ -2457,7 +2440,6 @@ export default function HomePage() {
                           const response = await submitBetaApplication({
                             email: purchaseEmail,
                             name: purchaseName,
-                            phone: purchasePhone,
                             productType: productTypeMap[selectedPurchaseProduct || ''] || 'SQL_MASTER',
                             resume: purchaseFile
                           });
@@ -2468,7 +2450,6 @@ export default function HomePage() {
                               memberId: response.data?.memberId,
                               name: purchaseName,
                               email: purchaseEmail,
-                              phone: purchasePhone,
                               product: selectedPurchaseProduct || '',
                               orderDate: new Date().toISOString(),
                               orderId: `QD${Date.now()}`

@@ -65,7 +65,9 @@ export interface LeadResponse {
 export interface CreateOrderRequest {
   email: string;
   name: string;
+  phone?: string; // 선택사항
   productCode: ProductCode;
+  paymentMethod?: 'card' | 'transfer'; // 결제 방법 (기본값: transfer)
   resume?: File; // 선택사항
   profile?: {
     careerLevel?: CareerLevel;
@@ -151,42 +153,26 @@ export async function createLead(request: CreateLeadRequest): Promise<ApiRespons
  */
 export async function createOrder(request: CreateOrderRequest): Promise<ApiResponse<OrderResponse>> {
   const formData = new FormData();
-  formData.append('email', request.email);
-  formData.append('name', request.name);
-  formData.append('productCode', request.productCode);
 
+  // OrderController는 @RequestPart("order")로 받으므로 JSON Blob으로 전송
+  const orderRequest = {
+    email: request.email,
+    name: request.name,
+    phone: request.phone || undefined,
+    productCode: request.productCode,
+    paymentMethod: request.paymentMethod || 'transfer', // 기본값: 계좌이체
+    profile: request.profile || undefined,
+  };
+
+  // JSON을 Blob으로 변환하여 'order' part로 추가
+  const orderBlob = new Blob([JSON.stringify(orderRequest)], {
+    type: 'application/json'
+  });
+  formData.append('order', orderBlob);
+
+  // resume 파일 추가 (선택사항)
   if (request.resume) {
     formData.append('resume', request.resume);
-  }
-
-  if (request.profile) {
-    // profile은 JSON string으로 전송 (multipart/form-data 내에서)
-    // 또는 개별 필드로 전송 (Backend Controller에서 @ModelAttribute로 받는 경우)
-    // Backend가 @Valid ProfileInfo profile로 받으므로 중첩 객체를 평탄화해야 할 수 있음
-    // 현재 Backend는 @ModelAttribute CreateOrderRequest를 받으므로 필드명을 맞춰야 함
-
-    // 중첩 객체를 평탄화: profile.careerLevel → profile[careerLevel]
-    if (request.profile.careerLevel) {
-      formData.append('profile.careerLevel', request.profile.careerLevel);
-    }
-    if (request.profile.techStack) {
-      request.profile.techStack.forEach((tech, index) => {
-        formData.append(`profile.techStack[${index}]`, tech);
-      });
-    }
-    if (request.profile.interests) {
-      request.profile.interests.forEach((interest, index) => {
-        formData.append(`profile.interests[${index}]`, interest);
-      });
-    }
-    if (request.profile.desiredCompanies) {
-      request.profile.desiredCompanies.forEach((company, index) => {
-        formData.append(`profile.desiredCompanies[${index}]`, company);
-      });
-    }
-    if (request.profile.timezone) {
-      formData.append('profile.timezone', request.profile.timezone);
-    }
   }
 
   const response = await fetch(`${API_BASE_URL}/api/query-daily/orders`, {
@@ -241,6 +227,7 @@ export async function createPaymentOrder(data: {
     name: data.name,
     phone: data.phone,
     productCode: data.productCode,
+    paymentMethod: 'card', // 카드결제
   };
 
   // FormData 생성
@@ -350,6 +337,7 @@ export async function submitBetaApplication(data: {
   const request: CreateOrderRequest = {
     email: data.email,
     name: data.name || data.email.split('@')[0],
+    phone: data.phone,
     productCode,
     resume: data.resume,
   };

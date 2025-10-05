@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile, createPaymentOrder, ProductCode } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile, createOrder, ProductCode } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
@@ -478,11 +478,13 @@ export default function HomePage() {
       }
 
       // Query Daily Service를 통한 주문 생성 (Checkout Service 호출)
-      const response = await createPaymentOrder({
+      const response = await createOrder({
         email: purchaseEmail || 'test@example.com',
         name: purchaseName || 'Guest',
         phone: purchasePhone,
-        productCode
+        productCode,
+        paymentMethod: 'card', // 카드결제
+        resume: purchaseFile || undefined
       });
 
       if (response.success && response.data) {
@@ -491,7 +493,7 @@ export default function HomePage() {
           orderId: response.data.orderId,
           productName: selectedPurchaseProduct,
           price: response.data.amount,
-          paymentMethod: 'inicis',
+          paymentMethod: 'INICIS', // 카드결제
           email: purchaseEmail,
           name: purchaseName,
           checkoutUrl: response.data.checkoutUrl,
@@ -2481,11 +2483,12 @@ export default function HomePage() {
                             // 주문 정보를 localStorage에 저장
                             const orderData = {
                               memberId: response.data?.memberId,
+                              orderId: response.data?.orderId || `QD${Date.now()}`,
                               name: purchaseName,
                               email: purchaseEmail,
                               product: selectedPurchaseProduct || '',
-                              orderDate: new Date().toISOString(),
-                              orderId: `QD${Date.now()}`
+                              paymentMethod: 'ACCOUNT_TRANSFER', // 계좌이체
+                              orderDate: new Date().toISOString()
                             };
 
                             localStorage.setItem('orderData', JSON.stringify(orderData));

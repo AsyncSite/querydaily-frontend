@@ -86,6 +86,7 @@ export default function HomePage() {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
   const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
+  const [purchasePhone, setPurchasePhone] = useState(''); // buyer_tel
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
@@ -480,6 +481,7 @@ export default function HomePage() {
       const response = await createPaymentOrder({
         email: purchaseEmail || 'test@example.com',
         name: purchaseName || 'Guest',
+        phone: purchasePhone,
         productCode
       });
 
@@ -496,43 +498,60 @@ export default function HomePage() {
         };
         localStorage.setItem('orderData', JSON.stringify(orderInfo));
 
-        // SDK 모드인 경우 PortOne SDK 호출
+        // SDK 모드인 경우 PortOne V2 SDK 호출
         if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
-          const IMP = (window as any).IMP;
-          if (!IMP) {
-            alert('결제 SDK 로딩 중 오류가 발생했습니다. 페이지를 새로고침해주세요.');
-            return;
-          }
-            // IMP.init() 호출
-            IMP.init('iamport');
           const payload = response.data.portOneSdkPayload;
 
-          // PortOne SDK Payload를 IMP.request_pay 형식으로 매핑
-          const orderData = {
-                pg: `${payload.method?.type || 'card'}.${payload.channelKey}`, // 예: card.channel-key-xxx
-                pay_method: payload.method?.type || payload.payMethod || 'card',
-                merchant_uid: payload.paymentId,
-                name: payload.orderName,
-                amount: payload.amount?.total || payload.totalAmount,
-                buyer_email: purchaseEmail || 'test@example.com',
-                buyer_name: purchaseName || 'Guest',
-                buyer_tel: '010-0000-0000',
-                custom_data: {
-                    product: selectedPurchaseProduct,
-                    storeId: payload.storeId,
-                    channelKey: payload.channelKey
-                }
+          // 결제 요청 직전 페이로드 로깅 (민감정보 마스킹)
+          const masked = {
+            ...payload,
+            channelKey: payload.channelKey ? `*${payload.channelKey.slice(-6)}` : undefined,
+            storeId: payload.storeId ? `*${payload.storeId.slice(-6)}` : undefined,
           };
+          console.info('[PortOne SDK] requestPayment payload', masked);
 
-          IMP.request_pay(orderData, (paymentResponse: any) => {
-            if (paymentResponse.success) {
-              // 성공 페이지로 이동
-              window.location.href = '/order-complete';
-            } else {
-              // 결제 실패 또는 취소
-              alert(`결제에 실패했습니다: ${paymentResponse.error_msg || '알 수 없는 오류'}`);
+          try {
+            // PortOne V2 SDK 동적 import
+            const PortOne = await import('@portone/browser-sdk/v2');
+
+            // 백엔드가 보내준 payload 그대로 전달
+            const sdkResponse = await PortOne.requestPayment(payload);
+
+            // 응답 존재 확인
+            if (!sdkResponse) {
+              alert('결제 응답을 받지 못했습니다.');
+              return;
             }
-          });
+
+            // SDK 응답 체크 (문서 기반)
+            if (sdkResponse.code !== undefined) {
+              // 오류 발생 (취소, 실패 등)
+              console.log('[PortOne SDK] Payment cancelled or failed:', {
+                code: sdkResponse.code,
+                message: sdkResponse.message
+              });
+
+              // 사용자 친화적 메시지로 변환
+              let userMessage = '결제를 처리할 수 없습니다.';
+              if (sdkResponse.code === 'USER_CANCEL' || sdkResponse.message?.includes('취소')) {
+                userMessage = '결제가 취소되었습니다.';
+              } else if (sdkResponse.code === 'NETWORK_ERROR') {
+                userMessage = '네트워크 연결을 확인해 주세요.';
+              } else if (sdkResponse.message) {
+                userMessage = sdkResponse.message;
+              }
+
+              alert(userMessage);
+              return;
+            }
+
+            // 성공한 경우
+            console.log('[PortOne SDK] Payment request succeeded, paymentId:', sdkResponse.paymentId);
+            window.location.href = '/order-complete';
+          } catch (error: any) {
+            console.error('[PortOne SDK] Unexpected error:', error);
+            alert(`결제 SDK 오류: ${error.message || '알 수 없는 오류'}`);
+          }
         } else if (response.data.checkoutUrl) {
           // URL 모드인 경우 체크아웃 URL로 리다이렉트
           window.location.href = response.data.checkoutUrl;
@@ -2329,6 +2348,18 @@ export default function HomePage() {
                     />
                   </div>
 
+                  {/* 전화번호 입력 */}
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>전화번호 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <input
+                      type="tel"
+                      placeholder="010-1234-5678"
+                      className={styles.modalInput}
+                      value={purchasePhone}
+                      onChange={(e) => setPurchasePhone(e.target.value)}
+                    />
+                  </div>
+
                   <div className={styles.modalActions}>
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
@@ -2343,6 +2374,8 @@ export default function HomePage() {
                           alert('올바른 이메일을 입력해주세요');
                         } else if (!purchaseName.trim()) {
                           alert('이름을 입력해주세요');
+                        } else if (!purchasePhone.trim()) {
+                          alert('전화번호를 입력해주세요');
                         } else {
                           // KAKAO/INICIS REVIEW: Handle different payment methods
                           if (paymentMethod === 'card') {
@@ -2352,7 +2385,7 @@ export default function HomePage() {
                           }
                         }
                       }}
-                      disabled={!purchaseEmail.includes('@') || !purchaseName.trim()}
+                      disabled={!purchaseEmail.includes('@') || !purchaseName.trim() || !purchasePhone.trim()}
                     >
                       다음 단계로
                     </button>

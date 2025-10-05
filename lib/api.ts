@@ -75,6 +75,13 @@ export interface TransferOrderRequest {
   name: string;
   productCode: 'GROWTH_PLAN' | 'CRITICAL_HIT' | 'REAL_INTERVIEW' | 'LAST_CHECK';
   resume?: File;
+  profile?: {
+    careerLevel?: string;
+    techStack?: string[];
+    interests?: string[];
+    desiredCompanies?: string[];
+    timezone?: string;
+  };
 }
 
 export interface TransferOrderResponse {
@@ -96,7 +103,8 @@ export async function createTransferOrder(data: TransferOrderRequest): Promise<T
     email: data.email,
     name: data.name,
     productCode: data.productCode,
-    paymentMethod: 'transfer'
+    paymentMethod: 'transfer',
+    profile: data.profile || {}
   })], { type: 'application/json' });
 
   formData.append('order', orderBlob);

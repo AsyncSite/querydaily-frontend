@@ -14,7 +14,6 @@ function CheckoutContent() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     company: '',
     position: '',
     experience: '',
@@ -70,10 +69,6 @@ function CheckoutContent() {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = '올바른 이메일 형식이 아닙니다';
     }
-    if (!formData.phone) newErrors.phone = '연락처를 입력해주세요';
-    else if (!/^010-?\d{3,4}-?\d{4}$/.test(formData.phone.replace(/-/g, ''))) {
-      newErrors.phone = '올바른 휴대폰 번호 형식이 아닙니다';
-    }
 
     // 이력서 필수 검증
     if (!formData.resume) newErrors.resume = '이력서/포트폴리오를 업로드해주세요';
@@ -97,7 +92,11 @@ function CheckoutContent() {
         email: formData.email,
         name: formData.name,
         productCode: 'GROWTH_PLAN', // TODO: product 파라미터를 ProductCode로 매핑
-        resume: formData.resume || undefined
+        resume: formData.resume || undefined,
+        profile: {
+          careerLevel: formData.experience || undefined,
+          // techStack, interests 등은 추후 확장 가능
+        }
       });
 
       if (response.success && response.data) {
@@ -106,7 +105,6 @@ function CheckoutContent() {
           orderId: response.data.orderId,
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
           product,
           price,
           orderDate: new Date().toISOString()
@@ -181,20 +179,6 @@ function CheckoutContent() {
               {errors.email && <span className={styles.error}>{errors.email}</span>}
             </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                연락처 <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className={styles.input}
-                placeholder="010-1234-5678"
-              />
-              {errors.phone && <span className={styles.error}>{errors.phone}</span>}
-            </div>
           </div>
 
           <div className={styles.section}>
@@ -258,7 +242,7 @@ function CheckoutContent() {
               >
                 <option value="">선택해주세요</option>
                 <option value="junior">신입 ~ 3년</option>
-                <option value="mid">4년 ~ 7년</option>
+                <option value="middle">4년 ~ 7년</option>
                 <option value="senior">8년 이상</option>
               </select>
             </div>

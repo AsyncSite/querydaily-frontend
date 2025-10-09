@@ -502,7 +502,10 @@ export default function HomePage() {
 
         // SDK 모드인 경우 PortOne V2 SDK 호출
         if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
-          const payload = response.data.portOneSdkPayload;
+          // PortOne V2 SDK 동적 import
+          const PortOne = await import('@portone/browser-sdk/v2');
+
+          const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
 
           // 결제 요청 직전 페이로드 로깅 (민감정보 마스킹)
           const masked = {
@@ -513,9 +516,6 @@ export default function HomePage() {
           console.info('[PortOne SDK] requestPayment payload', masked);
 
           try {
-            // PortOne V2 SDK 동적 import
-            const PortOne = await import('@portone/browser-sdk/v2');
-
             // 백엔드가 보내준 payload 그대로 전달
             const sdkResponse = await PortOne.requestPayment(payload);
 

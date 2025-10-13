@@ -1,14 +1,51 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import { getAllProducts, ProductInfo, ApiResponse, ProductListResponse } from '@/lib/api';
 
 export default function ProductsPage() {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [showBusinessInfo, setShowBusinessInfo] = useState(false);
+  const [products, setProducts] = useState<Record<string, ProductInfo>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response: ApiResponse<ProductListResponse> = await getAllProducts();
+
+        if (response.success && response.data) {
+          // Convert array to map for easy lookup by productCode
+          const productMap: Record<string, ProductInfo> = {};
+          response.data.products.forEach(product => {
+            productMap[product.productCode] = product;
+          });
+          setProducts(productMap);
+        } else {
+          setError('상품 정보를 불러올 수 없습니다');
+        }
+      } catch (err) {
+        console.error('Failed to fetch products:', err);
+        setError('상품 정보 로드 중 오류가 발생했습니다');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Helper function to format price
+  const formatPrice = (price: number): string => {
+    return `₩${price.toLocaleString('ko-KR')}`;
+  };
 
   const handlePurchaseClick = (productName: string, price: string) => {
     // checkout 페이지로 이동하면서 상품 정보 전달
@@ -19,6 +56,58 @@ export default function ProductsPage() {
     window.open('https://pf.kakao.com/_zxkxmUn/chat', '_blank');
     setShowModal(false);
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.mobileContainer}>
+          <header className={styles.header}>
+            <a href="/" className={styles.logo}>
+              <span className={styles.logoText}>Query<span className={styles.logoAccent}>Daily</span></span>
+            </a>
+          </header>
+          <div className={styles.content}>
+            <div style={{ textAlign: 'center', padding: '50px 20px' }}>
+              <p style={{ fontSize: '18px', color: '#666' }}>상품 정보를 불러오는 중...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.mobileContainer}>
+          <header className={styles.header}>
+            <a href="/" className={styles.logo}>
+              <span className={styles.logoText}>Query<span className={styles.logoAccent}>Daily</span></span>
+            </a>
+          </header>
+          <div className={styles.content}>
+            <div style={{ textAlign: 'center', padding: '50px 20px' }}>
+              <p style={{ fontSize: '18px', color: '#ff4444' }}>{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                style={{ marginTop: '20px', padding: '10px 20px', fontSize: '16px' }}
+              >
+                다시 시도
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get product data with fallback
+  const growthPlan = products['GROWTH_PLAN'] || { basePrice: 99000, currentPrice: 79000, discountPercent: 20 };
+  const realInterview = products['REAL_INTERVIEW'] || { basePrice: 179000, currentPrice: 129000, discountPercent: 28 };
+  const criticalHit = products['CRITICAL_HIT'] || { basePrice: 4900, currentPrice: 1900, discountPercent: 61 };
+  const lastCheck = products['LAST_CHECK'] || { basePrice: 29900, currentPrice: 19900, discountPercent: 33 };
 
   return (
     <div className={styles.container}>
@@ -102,15 +191,17 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩99,000</span>
+                <span className={styles.originalPrice}>{formatPrice(growthPlan.basePrice)}</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩34,900</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.currentPrice}>{formatPrice(growthPlan.currentPrice)}</span>
+                {growthPlan.hasDiscount && (
+                  <span className={styles.discountTag}>{growthPlan.discountPercent}% 할인</span>
+                )}
               </div>
               <p className={styles.betaPaymentNotice}>* 20일간 매일 발송</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('그로스 플랜', '₩34,900')}
+                onClick={() => handlePurchaseClick('그로스 플랜', formatPrice(growthPlan.currentPrice))}
               >
                 무통장입금으로 결제하기 →
               </button>
@@ -164,15 +255,17 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩179,000</span>
+                <span className={styles.originalPrice}>{formatPrice(realInterview.basePrice)}</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩129,000</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.currentPrice}>{formatPrice(realInterview.currentPrice)}</span>
+                {realInterview.hasDiscount && (
+                  <span className={styles.discountTag}>{realInterview.discountPercent}% 할인</span>
+                )}
               </div>
               <p className={styles.betaPaymentNotice}>* 90분 모의면접 1회</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('리얼 인터뷰', '₩129,000')}
+                onClick={() => handlePurchaseClick('리얼 인터뷰', formatPrice(realInterview.currentPrice))}
               >
                 무통장입금으로 결제하기 →
               </button>
@@ -229,15 +322,17 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩4,900</span>
+                <span className={styles.originalPrice}>{formatPrice(criticalHit.basePrice)}</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩1,900</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.currentPrice}>{formatPrice(criticalHit.currentPrice)}</span>
+                {criticalHit.hasDiscount && (
+                  <span className={styles.discountTag}>{criticalHit.discountPercent}% 할인</span>
+                )}
               </div>
               <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('크리티컬 히트', '₩1,900')}
+                onClick={() => handlePurchaseClick('크리티컬 히트', formatPrice(criticalHit.currentPrice))}
               >
                 무통장입금으로 결제하기 →
               </button>
@@ -304,15 +399,17 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩29,900</span>
+                <span className={styles.originalPrice}>{formatPrice(lastCheck.basePrice)}</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩19,900</span>
-                <span className={styles.discountTag}>오픈 기념 특가</span>
+                <span className={styles.currentPrice}>{formatPrice(lastCheck.currentPrice)}</span>
+                {lastCheck.hasDiscount && (
+                  <span className={styles.discountTag}>{lastCheck.discountPercent}% 할인</span>
+                )}
               </div>
               <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('라스트 체크', '₩19,900')}
+                onClick={() => handlePurchaseClick('라스트 체크', formatPrice(lastCheck.currentPrice))}
               >
                 무통장입금으로 결제하기 →
               </button>

@@ -107,6 +107,34 @@ export interface OrderResponse {
 }
 
 // ============================================================================
+// Product API (상품 목록 조회)
+// ============================================================================
+
+/**
+ * 개별 상품 정보 (Backend ProductListResponse.ProductInfo)
+ */
+export interface ProductInfo {
+  productCode: string;      // "GROWTH_PLAN"
+  displayName: string;       // "그로스 플랜 (30일)"
+  description: string;       // "매일 맞춤 질문으로..."
+  basePrice: number;         // 99000 (정가)
+  currentPrice: number;      // 79000 (현재가)
+  hasDiscount: boolean;      // true
+  discountPercent: number;   // 20 (할인율 %)
+  category: string;          // "SUBSCRIPTION"
+  active: boolean;           // true
+  thumbnailUrl?: string;     // 썸네일 URL (nullable)
+  displayOrder: number;      // 정렬 순서
+}
+
+/**
+ * 상품 목록 응답 (Backend ProductListResponse)
+ */
+export interface ProductListResponse {
+  products: ProductInfo[];
+}
+
+// ============================================================================
 // Common Response Wrapper (Backend ApiResponse<T>)
 // ============================================================================
 
@@ -202,6 +230,26 @@ export async function getOrderStatus(orderId: string): Promise<ApiResponse<any>>
     headers: {
       'Content-Type': 'application/json',
       // Authorization header 필요 시 추가
+    },
+  });
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  return response.json();
+}
+
+/**
+ * 전체 상품 목록 조회 (GET /api/query-daily/products)
+ * Gateway를 통해 라우팅: /api/query-daily/products → /api/v1/public/products
+ * 인증 불필요 (Public API)
+ */
+export async function getAllProducts(): Promise<ApiResponse<ProductListResponse>> {
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/products`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
     },
   });
 

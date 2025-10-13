@@ -76,6 +76,7 @@ export interface CreateOrderRequest {
     desiredCompanies?: string[];
     timezone?: string;
   }; // 선택사항
+  idempotencyKey?: string; // 멱등성 키 (자동 생성되므로 선택사항)
 }
 
 /**
@@ -154,6 +155,9 @@ export async function createLead(request: CreateLeadRequest): Promise<ApiRespons
 export async function createOrder(request: CreateOrderRequest): Promise<ApiResponse<OrderResponse>> {
   const formData = new FormData();
 
+  // Idempotency Key 생성 (각 결제 시도마다 새로운 UUID)
+  const idempotencyKey = crypto.randomUUID();
+
   // OrderController는 @RequestPart("order")로 받으므로 JSON Blob으로 전송
   const orderRequest = {
     email: request.email,
@@ -162,6 +166,7 @@ export async function createOrder(request: CreateOrderRequest): Promise<ApiRespo
     productCode: request.productCode,
     paymentMethod: request.paymentMethod || 'transfer', // 기본값: 계좌이체
     profile: request.profile || undefined,
+    idempotencyKey, // 멱등성 키 추가
   };
 
   // JSON을 Blob으로 변환하여 'order' part로 추가
@@ -221,6 +226,9 @@ export async function createPaymentOrder(data: {
   phone?: string;
   productCode: ProductCode;
 }): Promise<ApiResponse<OrderResponse>> {
+  // Idempotency Key 생성 (각 결제 시도마다 새로운 UUID)
+  const idempotencyKey = crypto.randomUUID();
+
   // OrderController는 @RequestPart("order")로 받으므로 JSON Blob으로 전송
   const orderRequest = {
     email: data.email,
@@ -228,6 +236,7 @@ export async function createPaymentOrder(data: {
     phone: data.phone,
     productCode: data.productCode,
     paymentMethod: 'card', // 카드결제
+    idempotencyKey, // 멱등성 키 추가
   };
 
   // FormData 생성

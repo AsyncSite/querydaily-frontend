@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile, createOrder, ProductCode } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile, createOrder, ProductCode, getAllProducts, ProductInfo, ApiResponse, ProductListResponse } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
@@ -94,6 +94,8 @@ export default function HomePage() {
   const [verificationTimer, setVerificationTimer] = useState(0);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [showBusinessInfo, setShowBusinessInfo] = useState(false);
+  const [products, setProducts] = useState<Record<string, ProductInfo>>({});
+  const [productsLoading, setProductsLoading] = useState(true);
 
   // Calculate days remaining until Oct 31
   const calculateDaysRemaining = () => {
@@ -135,6 +137,35 @@ export default function HomePage() {
       return () => clearTimeout(timer);
     }
   }, [notification]);
+
+  // Fetch products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setProductsLoading(true);
+        const response: ApiResponse<ProductListResponse> = await getAllProducts();
+
+        if (response.success && response.data) {
+          const productMap: Record<string, ProductInfo> = {};
+          response.data.products.forEach(product => {
+            productMap[product.productCode] = product;
+          });
+          setProducts(productMap);
+        }
+      } catch (err) {
+        console.error('Failed to fetch products:', err);
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Helper function to format price
+  const formatPrice = (price: number): string => {
+    return `₩${price.toLocaleString('ko-KR')}`;
+  };
 
   const testimonials = [
     {
@@ -933,8 +964,14 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩99,000</span>
-                <span className={styles.priceCurrent}>₩34,900</span>
+                {productsLoading ? (
+                  <span className={styles.priceCurrent}>로딩 중...</span>
+                ) : (
+                  <>
+                    <span className={styles.priceOriginal}>{formatPrice(products['GROWTH_PLAN']?.basePrice || 99000)}</span>
+                    <span className={styles.priceCurrent}>{formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}</span>
+                  </>
+                )}
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta} ${styles.btnProductCtaPrimary}`}
@@ -2212,10 +2249,10 @@ export default function HomePage() {
                       {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
                     </span>
                     <span className={styles.modalProductPrice}>
-                      {selectedPurchaseProduct === 'critical-hit' && '₩1,900'}
-                      {selectedPurchaseProduct === 'growth-plan' && '₩34,900'}
-                      {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
-                      {selectedPurchaseProduct === 'resume-analytics' && '₩19,900'}
+                      {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 49000)}
+                      {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
+                      {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
+                      {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 29900)}
                     </span>
                   </div>
 
@@ -2423,19 +2460,19 @@ export default function HomePage() {
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
                       <span>
-                        {selectedPurchaseProduct === 'critical-hit' && '₩1,900'}
-                        {selectedPurchaseProduct === 'growth-plan' && '₩34,900'}
-                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
-                        {selectedPurchaseProduct === 'resume-analytics' && '₩19,900'}
+                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
+                        {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
+                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 29900)}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
                       <span>결제 금액</span>
                       <span style={{ color: '#c3e88d' }}>
-                        {selectedPurchaseProduct === 'critical-hit' && '₩1,900'}
-                        {selectedPurchaseProduct === 'growth-plan' && '₩34,900'}
-                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
-                        {selectedPurchaseProduct === 'resume-analytics' && '₩19,900'}
+                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
+                        {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
+                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 29900)}
                       </span>
                     </div>
                   </div>

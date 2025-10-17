@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './FloatingResumeHint.module.css';
+import styles from './FloatingFreeTrial.module.css';
 
-export default function FloatingResumeHint() {
+export default function FloatingFreeTrial({ onOpenModal }: { onOpenModal: () => void }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
@@ -49,15 +49,15 @@ export default function FloatingResumeHint() {
   const handleClick = () => {
     // Track event
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'click_resume_hint_floating', {
-        event_category: 'Resume Service',
-        event_label: 'Floating Hint Click',
+      window.gtag('event', 'click_free_trial_floating', {
+        event_category: 'Free Trial',
+        event_label: 'Floating Free Trial Click',
         minimized: isMinimized
       });
     }
 
-    // Open Google Form
-    window.open('https://forms.gle/iN5GE3aNDxLiKhyU8', '_blank');
+    // Open free trial modal
+    onOpenModal();
 
     // Optionally dismiss after click
     // handleDismiss();
@@ -71,20 +71,29 @@ export default function FloatingResumeHint() {
       onMouseEnter={() => setIsMinimized(false)}
       onMouseLeave={() => setIsMinimized(true)}
     >
-      {/* Minimized State - Mobile: Icon Only, PC: Text Banner */}
+      {/* Minimized State - Mobile: Compact Banner */}
       {isMinimized && isMobile && (
         <div className={styles.miniIconContent} onClick={handleClick}>
-          <span className={styles.iconBadge}>📝</span>
+          <span className={styles.hotBadgeMini}>HOT</span>
+          <span className={styles.iconBadge}>💬</span>
+          <span className={styles.miniText}>면접 기출</span>
           <span className={styles.pulse}></span>
         </div>
       )}
 
       {isMinimized && !isMobile && (
         <div className={styles.minimizedContent} onClick={handleClick}>
-          <span className={styles.iconBadge}>📝</span>
-          <span className={styles.minimizedText}>
-            혹시 아직<br/>이력서가 준비되지 않으셨나요?
-          </span>
+          <span className={styles.hotBadge}>🔥 HOT</span>
+          <span className={styles.iconBadge}>💬</span>
+          <div className={styles.minimizedTextWrapper}>
+            <span className={styles.minimizedText}>
+              2025년 최신 면접 기출
+            </span>
+            <span className={styles.minimizedSubtext}>
+              3문제 무료
+            </span>
+          </div>
+          <span className={styles.ctaArrow}>→</span>
           <span className={styles.pulse}></span>
         </div>
       )}
@@ -101,38 +110,38 @@ export default function FloatingResumeHint() {
           </button>
 
           <div className={styles.hintHeader}>
-            <span className={styles.emoji}>✍️</span>
-            <span className={styles.badge}>이력서 → 면접</span>
+            <span className={styles.emoji}>💬</span>
+            <span className={styles.badge}>2025 최신</span>
           </div>
 
           <div className={styles.hintBody}>
             <h4 className={styles.hintTitle}>
-              AI 이력서 컨설팅 (준비중)
+              실제로 나온 면접 질문들
             </h4>
             <p className={styles.hintText}>
-              이력서가 준비되지 않아<br/>
-              면접 연습을 미루고 계신가요?
+              네카라쿠배 2025년 상반기 기출<br/>
+              실제 면접 질문 3개 무료 제공
             </p>
 
             <div className={styles.features}>
-              <span>• 현직자가 검토하는 것처럼 꼼꼼한 피드백</span>
-              <span>• 직무별 맞춤 키워드 추천</span>
-              <span>• 합격률 높은 구조로 재구성</span>
+              <span>• "어제 K사에서 받은 질문이에요" - 김**님</span>
+              <span>• 이번 달 가장 많이 나온 TOP 3</span>
+              <span>• 모범 답안 방향까지 제공</span>
             </div>
 
             <div className={styles.waitingCount}>
-              🔥 100명 이상이 대기중
+              ⚡ 지금 바로 시작 가능
             </div>
 
             <button
               className={styles.hintCta}
               onClick={handleClick}
             >
-              이력서 컨설팅 출시 알림받기
+              무료로 받아보기
             </button>
 
             <p className={styles.hintNote}>
-              10초면 등록 완료
+              카드 등록 불필요 • 30초 시작
             </p>
           </div>
         </div>

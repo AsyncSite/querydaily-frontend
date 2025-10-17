@@ -1,12 +1,10 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import styles from './page.module.css';
 import { trackExternalLink } from '@/components/GoogleAnalytics';
 
 function SuccessContent() {
-  const searchParams = useSearchParams();
 
   return (
     <div className={styles.container}>

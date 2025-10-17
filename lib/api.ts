@@ -15,7 +15,8 @@ export enum ProductCode {
   GROWTH_PLAN = 'GROWTH_PLAN',
   CRITICAL_HIT = 'CRITICAL_HIT',
   REAL_INTERVIEW = 'REAL_INTERVIEW',
-  LAST_CHECK = 'LAST_CHECK'
+  LAST_CHECK = 'LAST_CHECK',
+  RESUME_FIT = 'RESUME_FIT'
 }
 
 // ============================================================================

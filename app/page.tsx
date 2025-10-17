@@ -1014,8 +1014,14 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩179,000</span>
-                <span className={styles.priceCurrent}>₩129,000</span>
+                {productsLoading ? (
+                  <span className={styles.priceCurrent}>로딩 중...</span>
+                ) : (
+                  <>
+                    <span className={styles.priceOriginal}>{formatPrice(products['REAL_INTERVIEW']?.basePrice || 39000)}</span>
+                    <span className={styles.priceCurrent}>{formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}</span>
+                  </>
+                )}
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
@@ -1028,14 +1034,14 @@ export default function HomePage() {
             {/* 크리티컬 히트 */}
             <div className={styles.productCard}>
               <div className={styles.productHeader}>
-                <span className={styles.productLabel}>단 하나의 결정적 질문</span>
+                <span className={styles.productLabel}>3가지 결정적 질문</span>
                 <h3 className={styles.productName}>크리티컬 히트</h3>
                 <span className={styles.productEn}>Critical Hit</span>
               </div>
               <div className={styles.productFeatures}>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🎯</span>
-                  <span>이력서 맞춤 핵심 질문 1개</span>
+                  <span>이력서 맞춤 핵심 질문 3개</span>
                 </div>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🔗</span>
@@ -1057,8 +1063,14 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩4,900</span>
-                <span className={styles.priceCurrent}>₩1,900</span>
+                {productsLoading ? (
+                  <span className={styles.priceCurrent}>로딩 중...</span>
+                ) : (
+                  <>
+                    <span className={styles.priceOriginal}>{formatPrice(products['CRITICAL_HIT']?.basePrice || 15900)}</span>
+                    <span className={styles.priceCurrent}>{formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}</span>
+                  </>
+                )}
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
@@ -1100,12 +1112,67 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩29,900</span>
-                <span className={styles.priceCurrent}>₩19,900</span>
+                {productsLoading ? (
+                  <span className={styles.priceCurrent}>로딩 중...</span>
+                ) : (
+                  <>
+                    <span className={styles.priceOriginal}>{formatPrice(products['LAST_CHECK']?.basePrice || 49000)}</span>
+                    <span className={styles.priceCurrent}>{formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}</span>
+                  </>
+                )}
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
                 onClick={() => handleProductSelect('resume-analytics')}
+              >
+                지금 시작하기
+              </button>
+            </div>
+
+            {/* 레주메 핏 */}
+            <div className={styles.productCard}>
+              <div className={styles.productHeader}>
+                <span className={styles.productLabel}>이력서 전문가 분석</span>
+                <h3 className={styles.productName}>레주메 핏</h3>
+                <span className={styles.productEn}>Resume Fit</span>
+              </div>
+              <div className={styles.productFeatures}>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>📄</span>
+                  <span>전문가의 이력서 분석</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>✨</span>
+                  <span>맞춤 개선 가이드</span>
+                </div>
+                <div className={styles.productFeature}>
+                  <span className={styles.featureIcon}>🎯</span>
+                  <span>실전 피드백</span>
+                </div>
+              </div>
+              <div className={styles.productServiceInfo}>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>제공 기간</span>
+                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
+                </div>
+                <div className={styles.serviceInfoItem}>
+                  <span className={styles.serviceInfoLabel}>환불 규정</span>
+                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
+                </div>
+              </div>
+              <div className={styles.productPrice}>
+                {productsLoading ? (
+                  <span className={styles.priceCurrent}>로딩 중...</span>
+                ) : (
+                  <>
+                    <span className={styles.priceOriginal}>{formatPrice(products['RESUME_FIT']?.basePrice || 59000)}</span>
+                    <span className={styles.priceCurrent}>{formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}</span>
+                  </>
+                )}
+              </div>
+              <button
+                className={`${styles.btn} ${styles.btnProductCta}`}
+                onClick={() => handleProductSelect('resume-fit')}
               >
                 지금 시작하기
               </button>
@@ -2249,10 +2316,10 @@ export default function HomePage() {
                       {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
                     </span>
                     <span className={styles.modalProductPrice}>
-                      {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 49000)}
+                      {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
                       {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
                       {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                      {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 29900)}
+                      {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
                     </span>
                   </div>
 
@@ -2460,19 +2527,19 @@ export default function HomePage() {
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
                       <span>
-                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
                         {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
                         {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 29900)}
+                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
                       <span>결제 금액</span>
                       <span style={{ color: '#c3e88d' }}>
-                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
                         {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
                         {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 29900)}
+                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
                       </span>
                     </div>
                   </div>

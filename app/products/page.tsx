@@ -104,10 +104,11 @@ export default function ProductsPage() {
   }
 
   // Get product data with fallback
-  const growthPlan = products['GROWTH_PLAN'] || { basePrice: 99000, currentPrice: 79000, discountPercent: 20 };
-  const realInterview = products['REAL_INTERVIEW'] || { basePrice: 179000, currentPrice: 129000, discountPercent: 28 };
-  const criticalHit = products['CRITICAL_HIT'] || { basePrice: 4900, currentPrice: 1900, discountPercent: 61 };
-  const lastCheck = products['LAST_CHECK'] || { basePrice: 29900, currentPrice: 19900, discountPercent: 33 };
+  const growthPlan = products['GROWTH_PLAN'] || { basePrice: 99000, currentPrice: 79000, discountPercent: 20, hasDiscount: true };
+  const realInterview = products['REAL_INTERVIEW'] || { basePrice: 39000, currentPrice: 39000, discountPercent: 0, hasDiscount: false };
+  const criticalHit = products['CRITICAL_HIT'] || { basePrice: 15900, currentPrice: 9900, discountPercent: 38, hasDiscount: true };
+  const lastCheck = products['LAST_CHECK'] || { basePrice: 49000, currentPrice: 49000, discountPercent: 0, hasDiscount: false };
+  const resumeFit = products['RESUME_FIT'] || { basePrice: 59000, currentPrice: 59000, discountPercent: 0, hasDiscount: false };
 
   return (
     <div className={styles.container}>
@@ -278,15 +279,15 @@ export default function ProductsPage() {
           {/* Product 3: 크리티컬 히트 */}
           <div className={styles.product}>
             <div className={styles.productHeader}>
-              <span className={styles.productLabel}>단 하나의 결정적 질문</span>
+              <span className={styles.productLabel}>3가지 결정적 질문</span>
               <h2 className={styles.productName}>크리티컬 히트</h2>
               <span className={styles.productEn}>Critical Hit</span>
             </div>
 
             <div className={styles.challenge}>
               <p className={styles.challengeText}>
-                면접관이 가장 궁금해하는 그 질문<br/>
-                이력서 맞춤으로 핵심을 찌릅니다
+                면접관이 가장 궁금해하는 핵심 질문<br/>
+                이력서 맞춤으로 3가지를 정확히 찌릅니다
               </p>
             </div>
 
@@ -294,12 +295,12 @@ export default function ProductsPage() {
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>🎯</span>
                 <span className={styles.featureName}>이력서 맞춤 핵심 질문</span>
-                <span className={styles.featureValue}>1개</span>
+                <span className={styles.featureValue}>3개</span>
               </div>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>🔗</span>
                 <span className={styles.featureName}>꼬리 질문</span>
-                <span className={styles.featureValue}>3개</span>
+                <span className={styles.featureValue}>각 3개</span>
               </div>
               <div className={styles.feature}>
                 <span className={styles.featureIcon}>📝</span>
@@ -415,6 +416,74 @@ export default function ProductsPage() {
               </button>
               <p className={styles.guarantee}>
                 ✅ 콘텐츠 열람 전 100% 환불
+              </p>
+            </div>
+          </div>
+
+          {/* Product 5: 레주메 핏 */}
+          <div className={styles.product}>
+            <div className={styles.productHeader}>
+              <span className={styles.productLabel}>이력서 전문가 분석</span>
+              <h2 className={styles.productName}>레주메 핏</h2>
+              <span className={styles.productEn}>Resume Fit</span>
+            </div>
+
+            <div className={styles.challenge}>
+              <p className={styles.challengeText}>
+                합격하는 이력서의 비밀<br/>
+                <span className={styles.emphasis}>전문가의 맞춤 피드백으로 완성하세요</span>
+              </p>
+            </div>
+
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>📄</span>
+                <span className={styles.featureName}>이력서 심층 분석</span>
+                <span className={styles.featureValue}>1:1 맞춤</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>✍️</span>
+                <span className={styles.featureName}>구체적 개선 가이드</span>
+                <span className={styles.featureValue}>제공</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🎯</span>
+                <span className={styles.featureName}>강점 극대화 전략</span>
+                <span className={styles.featureValue}>포함</span>
+              </div>
+            </div>
+
+            <div className={styles.sampleBox}>
+              <div className={styles.sampleLabel}>피드백 예시</div>
+              <div className={styles.sampleContent}>
+                <div className={styles.blurred}>
+                  "프로젝트 설명에서 기술 스택 나열보다 문제 해결 과정을 강조하세요.
+                  예: 'Redis 캐시 도입으로 응답 시간 40% 개선' → 구체적 수치와 비즈니스 임팩트 추가"
+                  <br/><br/>
+                  [상세 개선안 및 예시 포함]
+                </div>
+                <span className={styles.locked}>🔒 구매 후 확인</span>
+              </div>
+            </div>
+
+            <div className={styles.priceArea}>
+              <div className={styles.priceRow}>
+                <span className={styles.originalPrice}>{formatPrice(resumeFit.basePrice)}</span>
+                <span className={styles.arrow}>→</span>
+                <span className={styles.currentPrice}>{formatPrice(resumeFit.currentPrice)}</span>
+                {resumeFit.hasDiscount && (
+                  <span className={styles.discountTag}>{resumeFit.discountPercent}% 할인</span>
+                )}
+              </div>
+              <p className={styles.betaPaymentNotice}>* 이력서 제출 후 3일 내 제공</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('레주메 핏', formatPrice(resumeFit.currentPrice))}
+              >
+                무통장입금으로 결제하기 →
+              </button>
+              <p className={styles.guarantee}>
+                ✅ 피드백 전달 전 100% 환불
               </p>
             </div>
           </div>

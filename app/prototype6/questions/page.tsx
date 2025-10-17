@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function QuestionsPage() {
+function QuestionsContent() {
   const searchParams = useSearchParams();
   const category = searchParams.get('category') || 'spring';
 
@@ -130,5 +131,13 @@ export default function QuestionsPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function QuestionsPage() {
+  return (
+    <Suspense fallback={<div className="px-6 py-8">Loading...</div>}>
+      <QuestionsContent />
+    </Suspense>
   );
 }

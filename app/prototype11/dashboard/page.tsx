@@ -82,25 +82,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Insights - Simple */}
-        <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-200">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">💎</span>
-            <div>
-              <div className="text-sm text-gray-500">보유 인사이트</div>
-              <div className="text-xl font-bold text-indigo-600">150</div>
-            </div>
-          </div>
-          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-3 border border-indigo-200">
-            <div className="text-sm font-medium text-gray-900 mb-1">
-              답변 공유로 인사이트 획득
-            </div>
-            <div className="text-xs text-indigo-700">
-              다음 공유 시 +10 💎
-            </div>
-          </div>
-        </div>
-
         {/* Quick Category Access */}
         <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-200">
           <div className="flex items-center justify-between mb-4">

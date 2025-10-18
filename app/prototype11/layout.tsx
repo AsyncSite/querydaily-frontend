@@ -2,6 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import LogoVersion15 from './components/LogoVersion15';
+import LogoDesign2 from './components/LogoDesign2';
+import LogoDesign6 from './components/LogoDesign6';
+import LogoInspired1 from './components/LogoInspired1';
+import { Raleway } from 'next/font/google';
+
+const raleway = Raleway({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
 
 export default function Prototype11Layout({
   children,
@@ -18,14 +25,20 @@ export default function Prototype11Layout({
         {/* Header - 로그인 후에만 */}
         {!isLandingPage && (
           <header className="fixed top-0 left-0 right-0 max-w-md mx-auto bg-white border-b border-gray-200 px-6 py-4 z-10">
-            <div className="font-bold text-lg tracking-tight text-gray-900">
-              쿼리데일리
+            <div className="flex items-center justify-between">
+              <LogoDesign2 />
+              <button className="text-gray-600 hover:text-gray-900 transition-colors">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
             </div>
           </header>
         )}
 
         {/* Content */}
-        <main className={!isLandingPage ? 'pt-16 pb-20' : ''}>
+        <main className={!isLandingPage ? 'pt-20 pb-20' : ''}>
           {children}
         </main>
 

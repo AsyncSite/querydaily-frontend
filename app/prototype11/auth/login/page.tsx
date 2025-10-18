@@ -53,13 +53,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Why Kakao Only */}
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
-            🇰🇷 한국 개발자를 위한 가장 빠른 방법입니다
-          </p>
-        </div>
-
         {/* Back Link */}
         <div className="mt-8 text-center">
           <Link href="/prototype11" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">

@@ -67,10 +67,6 @@ export default function Prototype11Landing() {
           카카오톡으로 3초 만에 시작하기
         </button>
 
-        <p className="text-center text-xs text-gray-500 mb-8">
-          🇰🇷 한국 개발자를 위한 가장 빠른 방법
-        </p>
-
         {/* Footer */}
         <p className="text-center text-sm text-gray-400 mt-12">
           v11: 초심플 훔쳐보기 루틴

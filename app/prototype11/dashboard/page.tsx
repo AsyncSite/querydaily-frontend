@@ -1,6 +1,10 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
   const todayQuestions = [
     {
       id: 1,
@@ -135,6 +139,94 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Premium Feature - Unlimited Peek */}
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 shadow-md border-2 border-amber-300">
+          <div className="flex items-start gap-4 mb-4">
+            <div className="text-4xl">🔒</div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="font-bold text-gray-900">무제한 훔쳐보기</h3>
+                <span className="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-full">
+                  PREMIUM
+                </span>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">
+                오늘의 3문제 외에도 모든 질문을 무제한으로 훔쳐볼 수 있어요
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <span className="text-lg">💎</span>
+                  <span className="text-sm font-bold text-gray-900">50 필요</span>
+                </div>
+                <div className="text-gray-400">·</div>
+                <div className="text-sm text-gray-600">24시간 이용권</div>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowUnlockModal(true)}
+            className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+          >
+            잠금 해제하기
+          </button>
+        </div>
+
+        {/* Unlock Modal */}
+        {showUnlockModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50" onClick={() => setShowUnlockModal(false)}>
+            <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">🔒</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  무제한 훔쳐보기
+                </h2>
+                <p className="text-sm text-gray-600">
+                  24시간 동안 모든 질문의 답변을 무제한으로 볼 수 있어요
+                </p>
+              </div>
+
+              <div className="bg-gray-50 rounded-2xl p-5 mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-gray-600">필요한 인사이트</span>
+                  <span className="text-lg font-bold text-gray-900">50 💎</span>
+                </div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm text-gray-600">보유 인사이트</span>
+                  <span className="text-lg font-bold text-red-600">0 💎</span>
+                </div>
+                <div className="border-t border-gray-200 pt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">부족</span>
+                    <span className="text-lg font-bold text-red-600">-50 💎</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-indigo-50 rounded-xl p-4 mb-6 border border-indigo-200">
+                <p className="text-sm text-gray-700 text-center">
+                  💡 답변을 공유하면 <strong className="text-indigo-700">+10 💎</strong>씩 받을 수 있어요<br/>
+                  <span className="text-xs text-gray-500">5개 답변 = 50 인사이트</span>
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowUnlockModal(false)}
+                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+                >
+                  닫기
+                </button>
+                <Link
+                  href="/prototype11/questions/1"
+                  className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-center hover:shadow-lg transition-all"
+                >
+                  답변 공유하러 가기
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Simple Tips */}
         <div className="bg-blue-50 rounded-2xl p-5 shadow-sm border border-blue-300">

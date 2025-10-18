@@ -61,12 +61,36 @@ export default function MyPage() {
           </div>
 
           <div className="bg-white/60 rounded-xl p-4 border border-indigo-200">
-            <div className="text-sm font-medium text-gray-900 mb-1">
-              답변 공유로 티어 상승
+            <div className="text-sm font-medium text-gray-900 mb-2">
+              티어별 혜택
             </div>
-            <div className="text-xs text-gray-600 space-y-1">
-              <div>• 답변 공유 1개당 +10 💎</div>
-              <div>• 🔥 기여자까지 50 남음</div>
+            <div className="text-xs text-gray-600 space-y-1.5">
+              <div className="flex items-start gap-2">
+                <span className="text-base">🌱</span>
+                <div>
+                  <div className="font-medium text-gray-700">새싹 (0-49)</div>
+                  <div className="text-gray-500">오늘의 3문제 무료</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-base">🔥</span>
+                <div>
+                  <div className="font-medium text-gray-700">기여자 (50-149)</div>
+                  <div className="text-gray-500">무제한 훔쳐보기 24시간</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-base">⭐</span>
+                <div>
+                  <div className="font-medium text-gray-700">전문가 (150+)</div>
+                  <div className="text-gray-500">심화 질문 팩 접근</div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-indigo-100">
+              <div className="text-xs text-indigo-700">
+                💡 답변 공유 1개당 +10 💎 획득
+              </div>
             </div>
           </div>
         </div>

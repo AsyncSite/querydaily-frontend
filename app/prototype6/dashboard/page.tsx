@@ -31,16 +31,10 @@ export default function DashboardPage() {
             <div className="text-sm opacity-90 mb-1">내 인사이트</div>
             <div className="text-4xl font-bold">230 💎</div>
           </div>
-          <Link
-            href="/products"
-            className="px-4 py-2 bg-white text-emerald-600 rounded-xl font-medium hover:bg-emerald-50 transition-colors text-sm"
-          >
-            PC 할인받기 →
-          </Link>
         </div>
         <div className="bg-white/20 rounded-xl p-3">
-          <div className="text-sm font-medium mb-1">💰 그로스 플랜 ₩100,000 → ₩77,000</div>
-          <div className="text-xs opacity-90">인사이트로 ₩23,000 할인 가능</div>
+          <div className="text-sm font-medium mb-1">답변 공유로 인사이트 획득</div>
+          <div className="text-xs opacity-90">공유한 답변 1개당 +10 💎</div>
         </div>
       </div>
 
@@ -168,7 +162,7 @@ export default function DashboardPage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">3.</span>
-            <span><strong>내 답변을 공유</strong>하면 인사이트를 받아 PC 상품 할인받을 수 있어요</span>
+            <span><strong>내 답변을 공유</strong>하면 인사이트를 받을 수 있어요</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">4.</span>

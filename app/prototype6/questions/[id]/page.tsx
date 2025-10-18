@@ -348,7 +348,7 @@ export default function QuestionDetailPage() {
                   내 답변을 공유하고 인사이트를 받으세요
                 </div>
                 <div className="text-sm text-emerald-700">
-                  공유 시 <strong>+10 인사이트</strong> (PC 상품 구매 시 할인)
+                  공유 시 <strong>+10 인사이트</strong>
                 </div>
               </div>
             </div>

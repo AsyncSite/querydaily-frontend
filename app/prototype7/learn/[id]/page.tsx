@@ -259,7 +259,7 @@ export default function LearnQuestionPage({ params }: { params: { id: string } }
                     내 답변도 커뮤니티에 공유하시겠어요?
                   </div>
                   <div className="text-sm text-emerald-700 mb-3">
-                    공유하면 <strong>+10 인사이트 💎</strong> 를 받고, PC 상품 구매 시 할인받을 수 있어요
+                    공유하면 <strong>+10 인사이트 💎</strong> 를 받을 수 있어요
                   </div>
                   <button
                     onClick={() => setWantsToShare(true)}

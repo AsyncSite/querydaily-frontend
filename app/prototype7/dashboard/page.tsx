@@ -12,27 +12,19 @@ export default function DashboardPage() {
 
       {/* Insight Points */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">💎</span>
-            <div>
-              <div className="text-xs text-gray-500">보유 인사이트</div>
-              <div className="text-2xl font-bold text-emerald-600">150</div>
-            </div>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-2xl">💎</span>
+          <div>
+            <div className="text-xs text-gray-500">보유 인사이트</div>
+            <div className="text-2xl font-bold text-emerald-600">150</div>
           </div>
-          <Link
-            href="/products"
-            className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all"
-          >
-            PC 할인받기
-          </Link>
         </div>
         <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-3 border border-emerald-200">
           <div className="text-sm font-medium text-gray-900 mb-1">
-            💰 그로스 플랜 ₩100,000 → ₩85,000
+            답변 공유로 인사이트 획득
           </div>
           <div className="text-xs text-emerald-700">
-            답변 공유로 인사이트 적립 중 • 다음 공유 시 +10 💎
+            다음 공유 시 +10 💎
           </div>
         </div>
       </div>
@@ -160,7 +152,7 @@ export default function DashboardPage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">•</span>
-            <span>답변을 공유하면 인사이트를 받아 PC 상품 할인받을 수 있어요</span>
+            <span>답변을 공유하면 인사이트를 받을 수 있어요</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">•</span>

@@ -21,16 +21,11 @@ export default function MyPage() {
         {/* Insight Points Summary */}
         <div className="bg-white/60 rounded-xl p-4 border border-indigo-200">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex-1">
               <div className="text-xs text-gray-600 mb-1">보유 인사이트</div>
               <div className="text-2xl font-bold text-emerald-600">230 💎</div>
+              <div className="text-xs text-gray-600 mt-1">답변 공유로 적립 중</div>
             </div>
-            <Link
-              href="/products"
-              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all"
-            >
-              PC 할인받기
-            </Link>
           </div>
         </div>
       </div>

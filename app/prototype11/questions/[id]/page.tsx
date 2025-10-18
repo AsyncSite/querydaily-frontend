@@ -82,7 +82,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         </div>
 
         {/* Question */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex gap-2 mb-4">
             <span className="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">
               {question.category}
@@ -110,7 +110,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         {/* My Answer */}
         {!submitted && (
           <>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
               <label className="block mb-3">
                 <span className="font-semibold text-gray-900">내 답변</span>
                 <span className="text-sm text-gray-400 ml-2">(선택)</span>
@@ -137,7 +137,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         {submitted && (
           <>
             {/* Peek Header */}
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 shadow-sm border border-purple-300">
               <div className="flex items-start gap-3">
                 <span className="text-3xl">👀</span>
                 <div>
@@ -156,7 +156,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
               {othersAnswers.map((answer) => (
                 <div
                   key={answer.id}
-                  className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                  className="bg-white rounded-2xl p-6 shadow-md border border-gray-200"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
@@ -204,7 +204,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
 
             {/* Share My Answer */}
             {myAnswer.trim() && !shared && (
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-200">
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 shadow-sm border border-emerald-300">
                 <div className="flex items-start gap-3 mb-3">
                   <span className="text-2xl">✍️</span>
                   <div className="flex-1">
@@ -226,7 +226,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
             )}
 
             {shared && (
-              <div className="bg-emerald-100 rounded-2xl p-5 border border-emerald-300 text-center">
+              <div className="bg-emerald-100 rounded-2xl p-5 shadow-sm border border-emerald-400 text-center">
                 <div className="text-3xl mb-2">✅</div>
                 <div className="font-semibold text-gray-900 mb-1">
                   공유 완료!

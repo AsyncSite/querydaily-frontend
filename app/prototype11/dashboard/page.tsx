@@ -57,7 +57,7 @@ export default function DashboardPage() {
               <Link
                 key={question.id}
                 href={`/prototype11/questions/${question.id}`}
-                className="block bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:border-indigo-300 hover:shadow-md transition-all"
+                className="block bg-white rounded-2xl p-5 shadow-md border border-gray-200 hover:border-indigo-400 hover:shadow-lg transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
@@ -94,7 +94,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Insights - Simple */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-2xl">💎</span>
@@ -118,7 +118,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Simple Tips */}
-        <div className="bg-blue-50 rounded-2xl p-5 border border-blue-200">
+        <div className="bg-blue-50 rounded-2xl p-5 shadow-sm border border-blue-300">
           <div className="flex items-start gap-3">
             <span className="text-xl">💡</span>
             <div className="flex-1">

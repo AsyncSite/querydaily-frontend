@@ -13,7 +13,7 @@ export default function MyPage() {
         </div>
 
         {/* Profile */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
               홍
@@ -26,7 +26,7 @@ export default function MyPage() {
         </div>
 
         {/* Streak History */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-4">🔥 학습 스트릭</h3>
 
           <div className="text-center mb-6">
@@ -53,7 +53,7 @@ export default function MyPage() {
         </div>
 
         {/* Insights */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-200">
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 shadow-sm border border-indigo-300">
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-sm text-gray-600 mb-1">보유 인사이트</div>
@@ -82,11 +82,11 @@ export default function MyPage() {
         </div>
 
         {/* My Shared Answers */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-4">✍️ 공유한 답변</h3>
 
           <div className="space-y-3">
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <div className="bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-300">
               <div className="text-sm font-medium text-gray-900 mb-2">
                 Spring AOP의 동작 원리를 설명하세요
               </div>
@@ -97,7 +97,7 @@ export default function MyPage() {
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <div className="bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-300">
               <div className="text-sm font-medium text-gray-900 mb-2">
                 JPA N+1 문제와 해결 방법
               </div>
@@ -108,7 +108,7 @@ export default function MyPage() {
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <div className="bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-300">
               <div className="text-sm font-medium text-gray-900 mb-2">
                 HTTP와 HTTPS의 차이
               </div>
@@ -129,7 +129,7 @@ export default function MyPage() {
 
         {/* Simple Settings */}
         <div className="space-y-2">
-          <button className="w-full py-3 bg-white text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
+          <button className="w-full py-3 bg-white text-gray-700 rounded-xl shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
             설정
           </button>
           <button className="w-full py-3 text-gray-500 hover:text-gray-700 transition-colors">

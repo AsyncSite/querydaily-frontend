@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Prototype11Landing() {
   const router = useRouter();
@@ -68,6 +69,27 @@ export default function Prototype11Landing() {
           </svg>
           카카오톡으로 3초 만에 시작하기
         </button>
+
+        {/* Prototype Testing Links */}
+        <div className="space-y-3 mb-8">
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-300">
+            <p className="text-xs text-gray-500 mb-3 text-center font-semibold">🔬 프로토타입 테스트</p>
+            <div className="space-y-2">
+              <Link
+                href="/prototype11/compare"
+                className="block w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-semibold text-sm transition-all text-center shadow-md hover:shadow-lg"
+              >
+                📊 3가지 옵션 비교 (첫 방문)
+              </Link>
+              <Link
+                href="/prototype11/compare-next-day"
+                className="block w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-semibold text-sm transition-all text-center shadow-md hover:shadow-lg"
+              >
+                📅 3가지 옵션 비교 (2일차)
+              </Link>
+            </div>
+          </div>
+        </div>
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-400 mt-12">

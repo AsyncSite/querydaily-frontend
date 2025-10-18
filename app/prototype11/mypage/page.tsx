@@ -6,7 +6,7 @@ export default function MyPage() {
         {/* Profile */}
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
               홍
             </div>
             <div>
@@ -25,7 +25,7 @@ export default function MyPage() {
             <div className="text-sm text-gray-500">첫 질문을 풀어보세요!</div>
           </div>
 
-          <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200 text-center">
+          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200 text-center">
             <p className="text-sm text-gray-700">
               💡 매일 질문을 풀면 스트릭이 쌓여요
             </p>
@@ -33,7 +33,7 @@ export default function MyPage() {
         </div>
 
         {/* Insights & Tier */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 shadow-sm border border-indigo-300">
+        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 shadow-sm border border-emerald-300">
           {/* Current Tier */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -44,7 +44,7 @@ export default function MyPage() {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-indigo-600">0 💎</div>
+              <div className="text-2xl font-bold text-emerald-600">0 💎</div>
               <div className="text-xs text-gray-500">보유중</div>
             </div>
           </div>
@@ -52,7 +52,7 @@ export default function MyPage() {
           {/* Progress Bar */}
           <div className="mb-4">
             <div className="h-2 bg-white/60 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500" style={{ width: '0%' }}></div>
+              <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500" style={{ width: '0%' }}></div>
             </div>
             <div className="flex justify-between mt-2 text-xs text-gray-600">
               <span>🌱 새싹</span>
@@ -60,7 +60,7 @@ export default function MyPage() {
             </div>
           </div>
 
-          <div className="bg-white/60 rounded-xl p-4 border border-indigo-200">
+          <div className="bg-white/60 rounded-xl p-4 border border-emerald-200">
             <div className="text-sm font-medium text-gray-900 mb-2">
               티어별 혜택
             </div>
@@ -87,8 +87,8 @@ export default function MyPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-indigo-100">
-              <div className="text-xs text-indigo-700">
+            <div className="mt-3 pt-3 border-t border-emerald-100">
+              <div className="text-xs text-emerald-700">
                 💡 답변 공유 1개당 +10 💎 획득
               </div>
             </div>

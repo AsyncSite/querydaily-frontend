@@ -52,7 +52,7 @@ export default function Prototype11Layout({
             {/* Notification Dropdown */}
             {showNotifications && (
               <div className="absolute top-16 right-6 w-80 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-20">
-                <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
+                <div className="px-4 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-gray-200">
                   <h3 className="font-semibold text-gray-900">알림</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
@@ -85,7 +85,7 @@ export default function Prototype11Layout({
                 </div>
                 {notifications.length > 0 && (
                   <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 text-center">
-                    <button className="text-sm text-indigo-600 hover:underline">
+                    <button className="text-sm text-emerald-600 hover:underline">
                       모두 읽음으로 표시
                     </button>
                   </div>
@@ -109,7 +109,7 @@ export default function Prototype11Layout({
                 href="/prototype11/dashboard"
                 className={`flex flex-col items-center gap-1 transition-colors ${
                   pathname === '/prototype11/dashboard'
-                    ? 'text-indigo-600'
+                    ? 'text-emerald-600'
                     : 'text-gray-400'
                 }`}
               >
@@ -123,7 +123,7 @@ export default function Prototype11Layout({
                 href="/prototype11/categories"
                 className={`flex flex-col items-center gap-1 transition-colors ${
                   pathname === '/prototype11/categories' || pathname?.startsWith('/prototype11/questions')
-                    ? 'text-indigo-600'
+                    ? 'text-emerald-600'
                     : 'text-gray-400'
                 }`}
               >
@@ -139,7 +139,7 @@ export default function Prototype11Layout({
               >
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${
                   pathname === '/prototype11/mypage'
-                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600 ring-2 ring-indigo-600 ring-offset-2'
+                    ? 'bg-gradient-to-br from-emerald-500 to-teal-600 ring-2 ring-emerald-600 ring-offset-2'
                     : 'bg-gradient-to-br from-gray-400 to-gray-500'
                 }`}>
                   나

@@ -32,10 +32,10 @@ export default function DashboardPage() {
   return (
     <div className="px-6 py-8 space-y-6">
         {/* Streak */}
-        <div className="bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl p-8 text-white text-center shadow-lg">
+        <div className="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl p-8 text-white text-center shadow-lg">
           <div className="text-6xl mb-3">👋</div>
           <div className="text-3xl font-bold mb-2">첫 방문을 환영합니다!</div>
-          <div className="text-indigo-100 text-sm">오늘부터 시작해보세요</div>
+          <div className="text-emerald-50 text-sm">오늘부터 시작해보세요</div>
         </div>
 
         {/* Today's 3 Questions */}
@@ -50,7 +50,7 @@ export default function DashboardPage() {
               <Link
                 key={question.id}
                 href={`/prototype11/questions/${question.id}`}
-                className="block bg-white rounded-2xl p-5 shadow-md border border-gray-200 hover:border-indigo-400 hover:shadow-lg transition-all"
+                className="block bg-white rounded-2xl p-5 shadow-md border border-gray-200 hover:border-emerald-400 hover:shadow-lg transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
@@ -65,7 +65,7 @@ export default function DashboardPage() {
                       {question.title}
                     </h3>
                     <div className="flex gap-2">
-                      <span className="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs rounded-full">
                         {question.category}
                       </span>
                       <span className={`px-2 py-1 text-xs rounded-full ${
@@ -90,64 +90,64 @@ export default function DashboardPage() {
         <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900">📂 카테고리별 질문</h3>
-            <Link href="/prototype11/categories" className="text-sm text-indigo-600 hover:underline">
+            <Link href="/prototype11/categories" className="text-sm text-emerald-600 hover:underline">
               전체보기 →
             </Link>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <Link
               href="/prototype11/questions?category=spring"
-              className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+              className="bg-white rounded-xl p-3 text-center border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
             >
               <div className="text-2xl mb-1">🌱</div>
-              <div className="text-xs font-medium">Spring</div>
+              <div className="text-xs font-medium text-gray-900">Spring</div>
             </Link>
             <Link
               href="/prototype11/questions?category=jpa"
-              className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+              className="bg-white rounded-xl p-3 text-center border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
             >
               <div className="text-2xl mb-1">💾</div>
-              <div className="text-xs font-medium">JPA</div>
+              <div className="text-xs font-medium text-gray-900">JPA</div>
             </Link>
             <Link
               href="/prototype11/questions?category=react"
-              className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+              className="bg-white rounded-xl p-3 text-center border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
             >
               <div className="text-2xl mb-1">⚛️</div>
-              <div className="text-xs font-medium">React</div>
+              <div className="text-xs font-medium text-gray-900">React</div>
             </Link>
             <Link
               href="/prototype11/questions?category=database"
-              className="bg-gradient-to-br from-teal-400 to-green-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+              className="bg-white rounded-xl p-3 text-center border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
             >
               <div className="text-2xl mb-1">🗄️</div>
-              <div className="text-xs font-medium">DB</div>
+              <div className="text-xs font-medium text-gray-900">DB</div>
             </Link>
             <Link
               href="/prototype11/questions?category=network"
-              className="bg-gradient-to-br from-indigo-400 to-blue-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+              className="bg-white rounded-xl p-3 text-center border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
             >
               <div className="text-2xl mb-1">🌐</div>
-              <div className="text-xs font-medium">Network</div>
+              <div className="text-xs font-medium text-gray-900">Network</div>
             </Link>
             <Link
               href="/prototype11/questions?category=algorithm"
-              className="bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+              className="bg-white rounded-xl p-3 text-center border-2 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
             >
               <div className="text-2xl mb-1">🧮</div>
-              <div className="text-xs font-medium">알고리즘</div>
+              <div className="text-xs font-medium text-gray-900">알고리즘</div>
             </Link>
           </div>
         </div>
 
         {/* Premium Feature - Unlimited Peek */}
-        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 shadow-md border-2 border-amber-300">
+        <div className="bg-gradient-to-r from-[#ffcb6b]/10 to-[#ffcb6b]/5 rounded-2xl p-6 shadow-md border-2 border-[#ffcb6b]/30">
           <div className="flex items-start gap-4 mb-4">
             <div className="text-4xl">🔒</div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="font-bold text-gray-900">무제한 훔쳐보기</h3>
-                <span className="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-full">
+                <span className="px-2 py-0.5 bg-[#ffcb6b] text-gray-900 text-xs font-bold rounded-full">
                   PREMIUM
                 </span>
               </div>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={() => setShowUnlockModal(true)}
-            className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+            className="w-full py-3 bg-[#ffcb6b] text-gray-900 rounded-xl font-semibold hover:shadow-lg transition-all"
           >
             잠금 해제하기
           </button>
@@ -203,9 +203,9 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="bg-indigo-50 rounded-xl p-4 mb-6 border border-indigo-200">
+              <div className="bg-emerald-50 rounded-xl p-4 mb-6 border border-emerald-200">
                 <p className="text-sm text-gray-700 text-center">
-                  💡 답변을 공유하면 <strong className="text-indigo-700">+10 💎</strong>씩 받을 수 있어요<br/>
+                  💡 답변을 공유하면 <strong className="text-emerald-700">+10 💎</strong>씩 받을 수 있어요<br/>
                   <span className="text-xs text-gray-500">5개 답변 = 50 인사이트</span>
                 </p>
               </div>
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                 </button>
                 <Link
                   href="/prototype11/questions/1"
-                  className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-center hover:shadow-lg transition-all"
+                  className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold text-center hover:shadow-lg transition-all"
                 >
                   답변 공유하러 가기
                 </Link>
@@ -229,7 +229,7 @@ export default function DashboardPage() {
         )}
 
         {/* Simple Tips */}
-        <div className="bg-blue-50 rounded-2xl p-5 shadow-sm border border-blue-300">
+        <div className="bg-emerald-50 rounded-2xl p-5 shadow-sm border border-emerald-200">
           <div className="flex items-start gap-3">
             <span className="text-xl">💡</span>
             <div className="flex-1">

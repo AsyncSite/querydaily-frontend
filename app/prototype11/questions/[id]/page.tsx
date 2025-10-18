@@ -118,7 +118,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         {/* Question */}
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex gap-2 mb-4">
-            <span className="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">
+            <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs rounded-full">
               {question.category}
             </span>
             <span className="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded-full">
@@ -160,7 +160,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
 
             <button
               onClick={handleSubmit}
-              className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+              className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
             >
               제출하고 다른 사람들 보기 👀
             </button>
@@ -171,7 +171,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         {submitted && (
           <>
             {/* Peek Header */}
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 shadow-sm border border-purple-300">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 shadow-sm border border-emerald-300">
               <div className="flex items-start gap-3">
                 <span className="text-3xl">👀</span>
                 <div>
@@ -193,7 +193,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
                   onClick={() => setSortBy('popular')}
                   className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                     sortBy === 'popular'
-                      ? 'bg-indigo-600 text-white font-medium'
+                      ? 'bg-emerald-600 text-white font-medium'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -203,7 +203,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
                   onClick={() => setSortBy('recent')}
                   className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                     sortBy === 'recent'
-                      ? 'bg-indigo-600 text-white font-medium'
+                      ? 'bg-emerald-600 text-white font-medium'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -220,7 +220,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
                   className="bg-white rounded-2xl p-6 shadow-md border border-gray-200"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
                       {answer.author.name[0]}
                     </div>
                     <div className="flex-1">
@@ -303,14 +303,14 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
               {prevId && (
                 <button
                   onClick={handlePrev}
-                  className="flex-1 py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-semibold hover:border-indigo-400 hover:bg-gray-50 transition-all"
+                  className="flex-1 py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-semibold hover:border-emerald-400 hover:bg-gray-50 transition-all"
                 >
                   ← 이전 질문
                 </button>
               )}
               <button
                 onClick={handleNext}
-                className={`${prevId ? 'flex-1' : 'w-full'} py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all`}
+                className={`${prevId ? 'flex-1' : 'w-full'} py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all`}
               >
                 {nextId ? '다음 질문 →' : '완료하고 돌아가기'}
               </button>

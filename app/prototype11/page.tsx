@@ -18,7 +18,7 @@ export default function Prototype11Landing() {
         <div className="text-center mb-12">
           <div className="text-6xl mb-4">👀</div>
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            면접톡
+            쿼리데일리
           </h1>
           <p className="text-gray-600 text-lg">
             매일 3문제, 다른 사람의 생각 엿보기

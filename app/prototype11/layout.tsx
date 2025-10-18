@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import LogoVersion15 from './components/LogoVersion15';
@@ -17,6 +18,15 @@ export default function Prototype11Layout({
 }) {
   const pathname = usePathname();
   const isLandingPage = pathname === '/prototype11';
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const notifications = [
+    { id: 1, text: '김철수님이 회원님의 답변을 좋아합니다', time: '5분 전', unread: true },
+    { id: 2, text: '연속 7일 학습 달성! 🔥', time: '2시간 전', unread: true },
+    { id: 3, text: '새로운 Spring 질문이 올라왔어요', time: '1일 전', unread: false },
+  ];
+
+  const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -27,13 +37,54 @@ export default function Prototype11Layout({
           <header className="fixed top-0 left-0 right-0 max-w-md mx-auto bg-white border-b border-gray-200 px-6 py-4 z-10">
             <div className="flex items-center justify-between">
               <LogoDesign2 />
-              <button className="text-gray-600 hover:text-gray-900 transition-colors">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative text-gray-600 hover:text-gray-900 transition-colors"
+              >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             </div>
+
+            {/* Notification Dropdown */}
+            {showNotifications && (
+              <div className="absolute top-16 right-6 w-80 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-20">
+                <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
+                  <h3 className="font-semibold text-gray-900">알림</h3>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                        notification.unread ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {notification.unread && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-900">{notification.text}</p>
+                          <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 text-center">
+                  <button className="text-sm text-indigo-600 hover:underline">
+                    모두 읽음으로 표시
+                  </button>
+                </div>
+              </div>
+            )}
           </header>
         )}
 

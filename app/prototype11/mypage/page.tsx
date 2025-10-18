@@ -3,14 +3,6 @@ import Link from 'next/link';
 export default function MyPage() {
   return (
     <div className="px-6 py-8 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">마이페이지</h1>
-          <Link href="/prototype11/dashboard" className="text-gray-500">
-            ← 홈
-          </Link>
-        </div>
-
         {/* Profile */}
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex items-center gap-4">

@@ -6,7 +6,9 @@ export default function Prototype11Landing() {
   const router = useRouter();
 
   const handleKakaoStart = () => {
-    router.push('/prototype11/auth/signup');
+    // 실제로는 카카오 OAuth 호출
+    // 프로토타입에서는 바로 대시보드로 이동
+    router.push('/prototype11/dashboard');
   };
 
   return (

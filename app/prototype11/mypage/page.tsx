@@ -60,24 +60,14 @@ export default function MyPage() {
             </div>
           </div>
 
-          <div className="bg-white/60 rounded-xl p-4 border border-indigo-200 mb-4">
+          <div className="bg-white/60 rounded-xl p-4 border border-indigo-200">
             <div className="text-sm font-medium text-gray-900 mb-1">
-              💰 그로스 플랜 ₩100,000
-            </div>
-            <div className="text-2xl font-bold text-indigo-600 mb-1">
-              → ₩85,000
+              답변 공유로 인사이트 획득
             </div>
             <div className="text-xs text-gray-600">
-              150 인사이트로 ₩15,000 할인 적용
+              공유한 답변 1개당 +10 💎
             </div>
           </div>
-
-          <Link
-            href="/products"
-            className="block w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-center rounded-xl font-semibold hover:shadow-lg transition-all"
-          >
-            PC 상품 보러가기
-          </Link>
         </div>
 
         {/* My Shared Answers */}
@@ -122,6 +112,49 @@ export default function MyPage() {
           <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="text-sm text-gray-600 text-center">
               총 <strong className="text-indigo-600">15개 답변</strong> 공유 · <strong className="text-indigo-600">150 인사이트</strong> 획득
+            </div>
+          </div>
+        </div>
+
+        {/* Bookmarked Questions */}
+        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
+          <h3 className="font-semibold text-gray-900 mb-4">⭐️ 북마크한 질문</h3>
+
+          <div className="space-y-3">
+            <Link href="/prototype11/questions/1" className="block bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-300 hover:border-yellow-400 transition-colors">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                Spring AOP의 동작 원리를 설명하세요
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-1 bg-indigo-100 text-indigo-600 rounded-full">Spring</span>
+                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-600 rounded-full">중급</span>
+              </div>
+            </Link>
+
+            <Link href="/prototype11/questions/2" className="block bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-300 hover:border-yellow-400 transition-colors">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                JPA N+1 문제와 해결 방법
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-1 bg-purple-100 text-purple-600 rounded-full">JPA</span>
+                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-600 rounded-full">중급</span>
+              </div>
+            </Link>
+
+            <Link href="/prototype11/questions/3" className="block bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-300 hover:border-yellow-400 transition-colors">
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                HTTP와 HTTPS의 차이
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">Network</span>
+                <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full">초급</span>
+              </div>
+            </Link>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="text-sm text-gray-600 text-center">
+              총 <strong className="text-yellow-600">5개 질문</strong> 북마크
             </div>
           </div>
         </div>

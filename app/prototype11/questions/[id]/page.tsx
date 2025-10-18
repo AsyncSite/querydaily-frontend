@@ -10,6 +10,8 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
   const [submitted, setSubmitted] = useState(false);
   const [shared, setShared] = useState(false);
   const [likedAnswers, setLikedAnswers] = useState<number[]>([]);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [sortBy, setSortBy] = useState<'popular' | 'recent'>('popular');
 
   const question = {
     id: params.id,
@@ -22,7 +24,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     hint: '💡 JDK Dynamic Proxy와 CGLIB의 차이를 생각해보세요. 같은 클래스 내부 호출 시 주의점도 있습니다.'
   };
 
-  const othersAnswers = [
+  const answersData = [
     {
       id: 1,
       author: {
@@ -32,7 +34,8 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
       },
       content: 'Spring AOP는 프록시 패턴으로 동작합니다. 인터페이스가 있으면 JDK Dynamic Proxy, 없으면 CGLIB를 사용해요.\n\n런타임에 위빙이 이루어지며, @Aspect로 정의한 Advice가 조인포인트에서 실행됩니다.\n\n주의할 점은 같은 클래스 내부 메서드 호출 시 프록시를 거치지 않아 AOP가 동작하지 않는다는 거예요.',
       likes: 127,
-      timeAgo: '2시간 전'
+      timeAgo: '2시간 전',
+      timestamp: Date.now() - 2 * 60 * 60 * 1000
     },
     {
       id: 2,
@@ -43,9 +46,19 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
       },
       content: '면접에서 실제로 "같은 클래스 내부 호출 시 왜 AOP가 안 되는지" 물어봤어요.\n\n프록시를 거치지 않기 때문이라고 답했고, 이 경우 self-injection이나 리팩토링으로 해결할 수 있다고 추가 설명했습니다!',
       likes: 89,
-      timeAgo: '1일 전'
+      timeAgo: '1일 전',
+      timestamp: Date.now() - 24 * 60 * 60 * 1000
     }
   ];
+
+  // 정렬 로직
+  const othersAnswers = [...answersData].sort((a, b) => {
+    if (sortBy === 'popular') {
+      return b.likes - a.likes; // 좋아요 많은 순
+    } else {
+      return b.timestamp - a.timestamp; // 최신순
+    }
+  });
 
   const handleSubmit = () => {
     setSubmitted(true);
@@ -75,9 +88,17 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
           <Link href="/prototype11/dashboard" className="text-gray-500">
             ← 뒤로
           </Link>
-          <span className="text-sm font-medium text-gray-500">
-            {question.number}/3
-          </span>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setBookmarked(!bookmarked)}
+              className="text-2xl transition-transform hover:scale-110"
+            >
+              {bookmarked ? '⭐️' : '☆'}
+            </button>
+            <span className="text-sm font-medium text-gray-500">
+              {question.number}/3
+            </span>
+          </div>
         </div>
 
         {/* Question */}
@@ -147,6 +168,33 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
                     현직자와 합격자의 실제 답변입니다
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Sort Toggle */}
+            <div className="flex items-center justify-between bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+              <span className="text-sm text-gray-600">정렬</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSortBy('popular')}
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                    sortBy === 'popular'
+                      ? 'bg-indigo-600 text-white font-medium'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  인기순
+                </button>
+                <button
+                  onClick={() => setSortBy('recent')}
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                    sortBy === 'recent'
+                      ? 'bg-indigo-600 text-white font-medium'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  최신순
+                </button>
               </div>
             </div>
 

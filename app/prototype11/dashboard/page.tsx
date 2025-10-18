@@ -94,25 +94,74 @@ export default function DashboardPage() {
 
         {/* Insights - Simple */}
         <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">💎</span>
-              <div>
-                <div className="text-sm text-gray-500">보유 인사이트</div>
-                <div className="text-xl font-bold text-indigo-600">150</div>
-              </div>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">💎</span>
+            <div>
+              <div className="text-sm text-gray-500">보유 인사이트</div>
+              <div className="text-xl font-bold text-indigo-600">150</div>
             </div>
-            <Link
-              href="/products"
-              className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors"
-            >
-              PC 할인
+          </div>
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-3 border border-indigo-200">
+            <div className="text-sm font-medium text-gray-900 mb-1">
+              답변 공유로 인사이트 획득
+            </div>
+            <div className="text-xs text-indigo-700">
+              다음 공유 시 +10 💎
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Category Access */}
+        <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-gray-900">📂 카테고리별 질문</h3>
+            <Link href="/prototype11/categories" className="text-sm text-indigo-600 hover:underline">
+              전체보기 →
             </Link>
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
-              답변 공유 시 +10 💎 · PC 상품 구매 시 할인
-            </p>
+          <div className="grid grid-cols-3 gap-2">
+            <Link
+              href="/prototype11/questions?category=spring"
+              className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+            >
+              <div className="text-2xl mb-1">🌱</div>
+              <div className="text-xs font-medium">Spring</div>
+            </Link>
+            <Link
+              href="/prototype11/questions?category=jpa"
+              className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+            >
+              <div className="text-2xl mb-1">💾</div>
+              <div className="text-xs font-medium">JPA</div>
+            </Link>
+            <Link
+              href="/prototype11/questions?category=react"
+              className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+            >
+              <div className="text-2xl mb-1">⚛️</div>
+              <div className="text-xs font-medium">React</div>
+            </Link>
+            <Link
+              href="/prototype11/questions?category=database"
+              className="bg-gradient-to-br from-teal-400 to-green-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+            >
+              <div className="text-2xl mb-1">🗄️</div>
+              <div className="text-xs font-medium">DB</div>
+            </Link>
+            <Link
+              href="/prototype11/questions?category=network"
+              className="bg-gradient-to-br from-indigo-400 to-blue-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+            >
+              <div className="text-2xl mb-1">🌐</div>
+              <div className="text-xs font-medium">Network</div>
+            </Link>
+            <Link
+              href="/prototype11/questions?category=algorithm"
+              className="bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl p-3 text-white text-center hover:shadow-lg transition-all"
+            >
+              <div className="text-2xl mb-1">🧮</div>
+              <div className="text-xs font-medium">알고리즘</div>
+            </Link>
           </div>
         </div>
 

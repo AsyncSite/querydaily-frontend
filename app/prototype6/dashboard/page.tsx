@@ -24,6 +24,54 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* Insight Points Banner */}
+      <div className="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl p-6 text-white shadow-lg">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <div className="text-sm opacity-90 mb-1">내 인사이트</div>
+            <div className="text-4xl font-bold">230 💎</div>
+          </div>
+          <Link
+            href="/products"
+            className="px-4 py-2 bg-white text-emerald-600 rounded-xl font-medium hover:bg-emerald-50 transition-colors text-sm"
+          >
+            PC 할인받기 →
+          </Link>
+        </div>
+        <div className="bg-white/20 rounded-xl p-3">
+          <div className="text-sm font-medium mb-1">💰 그로스 플랜 ₩100,000 → ₩77,000</div>
+          <div className="text-xs opacity-90">인사이트로 ₩23,000 할인 가능</div>
+        </div>
+      </div>
+
+      {/* Community Stats */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 className="font-semibold text-gray-900 mb-4">👥 내 커뮤니티 활동</h3>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-indigo-600 mb-1">5</div>
+            <div className="text-xs text-gray-600">공유한 답변</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-pink-600 mb-1">23</div>
+            <div className="text-xs text-gray-600">받은 좋아요</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600 mb-1">7</div>
+            <div className="text-xs text-gray-600">받은 댓글</div>
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">다음 레벨까지</span>
+            <span className="font-semibold text-gray-900">50 인사이트 필요</span>
+          </div>
+          <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full" style={{ width: '82%' }}></div>
+          </div>
+        </div>
+      </div>
+
       {/* Stats */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-200">
         <div className="flex items-center justify-between">
@@ -116,11 +164,15 @@ export default function DashboardPage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">2.</span>
-            <span>팀 작성 샘플 답변을 참고해서 내 답변을 준비하세요</span>
+            <span>팀 샘플과 <strong>커뮤니티 답변을 엿보며</strong> 다양한 관점을 배우세요</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">3.</span>
-            <span>내 메모 기능으로 핵심 키워드를 정리하세요</span>
+            <span><strong>내 답변을 공유</strong>하면 인사이트를 받아 PC 상품 할인받을 수 있어요</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-500 mt-0.5">4.</span>
+            <span>좋은 답변에 좋아요를 눌러주면 작성자에게 큰 동기부여가 됩니다</span>
           </li>
         </ul>
       </div>

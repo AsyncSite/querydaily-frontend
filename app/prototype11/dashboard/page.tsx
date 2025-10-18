@@ -26,8 +26,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto px-6 py-8 space-y-6">
+    <div className="px-6 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">오늘의 학습</h1>
@@ -129,7 +128,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

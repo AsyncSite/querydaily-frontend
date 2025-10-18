@@ -69,8 +69,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto px-6 py-8 space-y-6">
+    <div className="px-6 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Link href="/prototype11/dashboard" className="text-gray-500">
@@ -246,7 +245,6 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
             </button>
           </>
         )}
-      </div>
     </div>
   );
 }

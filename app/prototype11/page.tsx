@@ -79,13 +79,19 @@ export default function Prototype11Landing() {
                 href="/prototype11/compare"
                 className="block w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-semibold text-sm transition-all text-center shadow-md hover:shadow-lg"
               >
-                📊 3가지 옵션 비교 (첫 방문)
+                📊 3가지 옵션 비교 (Day 1)
               </Link>
               <Link
                 href="/prototype11/compare-next-day"
                 className="block w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-semibold text-sm transition-all text-center shadow-md hover:shadow-lg"
               >
-                📅 3가지 옵션 비교 (2일차)
+                📅 3가지 옵션 비교 (Day 2)
+              </Link>
+              <Link
+                href="/prototype11/compare-day3"
+                className="block w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold text-sm transition-all text-center shadow-md hover:shadow-lg"
+              >
+                🎉 3가지 옵션 비교 (Day 3)
               </Link>
             </div>
           </div>

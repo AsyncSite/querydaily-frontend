@@ -28,10 +28,10 @@ export default function DashboardPage() {
   return (
     <div className="px-6 py-8 space-y-6">
         {/* Streak */}
-        <div className="bg-gradient-to-r from-orange-400 to-red-500 rounded-2xl p-8 text-white text-center shadow-lg">
-          <div className="text-6xl mb-3">🔥</div>
-          <div className="text-5xl font-bold mb-2">7일</div>
-          <div className="text-orange-100 text-sm">연속 학습 중!</div>
+        <div className="bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl p-8 text-white text-center shadow-lg">
+          <div className="text-6xl mb-3">👋</div>
+          <div className="text-3xl font-bold mb-2">첫 방문을 환영합니다!</div>
+          <div className="text-indigo-100 text-sm">오늘부터 시작해보세요</div>
         </div>
 
         {/* Today's 3 Questions */}

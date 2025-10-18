@@ -20,11 +20,8 @@ export default function Prototype11Layout({
   const isLandingPage = pathname === '/prototype11';
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const notifications = [
-    { id: 1, text: '김철수님이 회원님의 답변을 좋아합니다', time: '5분 전', unread: true },
-    { id: 2, text: '연속 7일 학습 달성! 🔥', time: '2시간 전', unread: true },
-    { id: 3, text: '새로운 Spring 질문이 올라왔어요', time: '1일 전', unread: false },
-  ];
+  // 신규 유저는 알림 없음
+  const notifications: { id: number; text: string; time: string; unread: boolean }[] = [];
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
@@ -59,30 +56,40 @@ export default function Prototype11Layout({
                   <h3 className="font-semibold text-gray-900">알림</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                        notification.unread ? 'bg-blue-50' : ''
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        {notification.unread && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
-                        )}
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-900">{notification.text}</p>
-                          <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-12 text-center">
+                      <div className="text-4xl mb-3">🔔</div>
+                      <p className="text-sm text-gray-500">아직 알림이 없습니다</p>
+                      <p className="text-xs text-gray-400 mt-1">답변을 공유하면 알림을 받을 수 있어요</p>
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                          notification.unread ? 'bg-blue-50' : ''
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          {notification.unread && (
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
+                          )}
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-900">{notification.text}</p>
+                            <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
-                <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 text-center">
-                  <button className="text-sm text-indigo-600 hover:underline">
-                    모두 읽음으로 표시
-                  </button>
-                </div>
+                {notifications.length > 0 && (
+                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 text-center">
+                    <button className="text-sm text-indigo-600 hover:underline">
+                      모두 읽음으로 표시
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </header>

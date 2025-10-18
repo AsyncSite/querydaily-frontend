@@ -20,44 +20,53 @@ export default function MyPage() {
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-4">🔥 학습 스트릭</h3>
 
-          <div className="text-center mb-6">
-            <div className="text-5xl font-bold text-orange-500 mb-2">7일</div>
-            <div className="text-sm text-gray-500">연속 학습 중 · 최고 기록!</div>
+          <div className="text-center mb-4">
+            <div className="text-5xl font-bold text-gray-400 mb-2">0일</div>
+            <div className="text-sm text-gray-500">첫 질문을 풀어보세요!</div>
           </div>
 
-          {/* Simple Calendar */}
-          <div className="grid grid-cols-7 gap-2">
-            {['월', '화', '수', '목', '금', '토', '일'].map((day) => (
-              <div key={day} className="text-center text-xs text-gray-400 pb-1">
-                {day}
-              </div>
-            ))}
-            {[...Array(7)].map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square rounded-lg bg-orange-100 flex items-center justify-center"
-              >
-                <span className="text-orange-500">🔥</span>
-              </div>
-            ))}
+          <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200 text-center">
+            <p className="text-sm text-gray-700">
+              💡 매일 질문을 풀면 스트릭이 쌓여요
+            </p>
           </div>
         </div>
 
-        {/* Insights */}
+        {/* Insights & Tier */}
         <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 shadow-sm border border-indigo-300">
+          {/* Current Tier */}
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-sm text-gray-600 mb-1">보유 인사이트</div>
-              <div className="text-4xl font-bold text-indigo-600">150 💎</div>
+            <div className="flex items-center gap-3">
+              <div className="text-5xl">🌱</div>
+              <div>
+                <div className="text-lg font-bold text-gray-900">새싹</div>
+                <div className="text-sm text-gray-600">0 / 50 인사이트</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-indigo-600">0 💎</div>
+              <div className="text-xs text-gray-500">보유중</div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-4">
+            <div className="h-2 bg-white/60 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500" style={{ width: '0%' }}></div>
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-gray-600">
+              <span>🌱 새싹</span>
+              <span>🔥 기여자 (50)</span>
             </div>
           </div>
 
           <div className="bg-white/60 rounded-xl p-4 border border-indigo-200">
             <div className="text-sm font-medium text-gray-900 mb-1">
-              답변 공유로 인사이트 획득
+              답변 공유로 티어 상승
             </div>
-            <div className="text-xs text-gray-600">
-              공유한 답변 1개당 +10 💎
+            <div className="text-xs text-gray-600 space-y-1">
+              <div>• 답변 공유 1개당 +10 💎</div>
+              <div>• 🔥 기여자까지 50 남음</div>
             </div>
           </div>
         </div>
@@ -66,45 +75,10 @@ export default function MyPage() {
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-4">✍️ 공유한 답변</h3>
 
-          <div className="space-y-3">
-            <div className="bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-300">
-              <div className="text-sm font-medium text-gray-900 mb-2">
-                Spring AOP의 동작 원리를 설명하세요
-              </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <span>❤️ 12 좋아요</span>
-                <span>+10 💎</span>
-                <span>2일 전</span>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-300">
-              <div className="text-sm font-medium text-gray-900 mb-2">
-                JPA N+1 문제와 해결 방법
-              </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <span>❤️ 8 좋아요</span>
-                <span>+10 💎</span>
-                <span>5일 전</span>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 rounded-xl p-4 shadow-sm border border-blue-300">
-              <div className="text-sm font-medium text-gray-900 mb-2">
-                HTTP와 HTTPS의 차이
-              </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <span>❤️ 15 좋아요</span>
-                <span>+10 💎</span>
-                <span>7일 전</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="text-sm text-gray-600 text-center">
-              총 <strong className="text-indigo-600">15개 답변</strong> 공유 · <strong className="text-indigo-600">150 인사이트</strong> 획득
-            </div>
+          <div className="py-12 text-center">
+            <div className="text-5xl mb-3">📝</div>
+            <p className="text-sm text-gray-600 mb-1">아직 공유한 답변이 없습니다</p>
+            <p className="text-xs text-gray-400">답변을 공유하면 인사이트를 받을 수 있어요</p>
           </div>
         </div>
 
@@ -112,42 +86,10 @@ export default function MyPage() {
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-4">⭐️ 북마크한 질문</h3>
 
-          <div className="space-y-3">
-            <Link href="/prototype11/questions/1" className="block bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-300 hover:border-yellow-400 transition-colors">
-              <div className="text-sm font-medium text-gray-900 mb-2">
-                Spring AOP의 동작 원리를 설명하세요
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 bg-indigo-100 text-indigo-600 rounded-full">Spring</span>
-                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-600 rounded-full">중급</span>
-              </div>
-            </Link>
-
-            <Link href="/prototype11/questions/2" className="block bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-300 hover:border-yellow-400 transition-colors">
-              <div className="text-sm font-medium text-gray-900 mb-2">
-                JPA N+1 문제와 해결 방법
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 bg-purple-100 text-purple-600 rounded-full">JPA</span>
-                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-600 rounded-full">중급</span>
-              </div>
-            </Link>
-
-            <Link href="/prototype11/questions/3" className="block bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-300 hover:border-yellow-400 transition-colors">
-              <div className="text-sm font-medium text-gray-900 mb-2">
-                HTTP와 HTTPS의 차이
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">Network</span>
-                <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full">초급</span>
-              </div>
-            </Link>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="text-sm text-gray-600 text-center">
-              총 <strong className="text-yellow-600">5개 질문</strong> 북마크
-            </div>
+          <div className="py-12 text-center">
+            <div className="text-5xl mb-3">⭐</div>
+            <p className="text-sm text-gray-600 mb-1">아직 북마크한 질문이 없습니다</p>
+            <p className="text-xs text-gray-400">질문 상세 페이지에서 ⭐를 눌러 북마크하세요</p>
           </div>
         </div>
 

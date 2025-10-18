@@ -77,8 +77,22 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     );
   };
 
+  const currentId = parseInt(params.id);
+  const nextId = currentId < 3 ? currentId + 1 : null;
+  const prevId = currentId > 1 ? currentId - 1 : null;
+
   const handleNext = () => {
-    router.push('/prototype11/dashboard');
+    if (nextId) {
+      router.push(`/prototype11/questions/${nextId}`);
+    } else {
+      router.push('/prototype11/dashboard');
+    }
+  };
+
+  const handlePrev = () => {
+    if (prevId) {
+      router.push(`/prototype11/questions/${prevId}`);
+    }
   };
 
   return (
@@ -284,13 +298,23 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
               </div>
             )}
 
-            {/* Next Button */}
-            <button
-              onClick={handleNext}
-              className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-            >
-              다음 질문으로 →
-            </button>
+            {/* Navigation Buttons */}
+            <div className="flex gap-3">
+              {prevId && (
+                <button
+                  onClick={handlePrev}
+                  className="flex-1 py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-semibold hover:border-indigo-400 hover:bg-gray-50 transition-all"
+                >
+                  ← 이전 질문
+                </button>
+              )}
+              <button
+                onClick={handleNext}
+                className={`${prevId ? 'flex-1' : 'w-full'} py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all`}
+              >
+                {nextId ? '다음 질문 →' : '완료하고 돌아가기'}
+              </button>
+            </div>
           </>
         )}
     </div>

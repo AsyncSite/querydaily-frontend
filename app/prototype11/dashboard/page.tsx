@@ -217,14 +217,16 @@ function QuestionCard({ question, index, stackIndex, totalCount, currentIndex, o
   };
 
   const scale = stackIndex === 0 ? 1 : stackIndex === 1 ? 0.95 : 0.9;
-  const yOffset = stackIndex * 10;
+  const yOffset = stackIndex * 12;
+  const rotateOffset = stackIndex === 0 ? 0 : stackIndex === 1 ? -3 : -5;
+  const xOffset = stackIndex === 0 ? 0 : stackIndex === 1 ? -8 : -12;
   const zIndex = 10 - stackIndex;
 
   return (
     <motion.div
       style={{
-        x: stackIndex === 0 ? x : 0,
-        rotate: stackIndex === 0 ? rotate : 0,
+        x: stackIndex === 0 ? x : xOffset,
+        rotate: stackIndex === 0 ? rotate : rotateOffset,
         opacity: stackIndex === 0 ? opacity : 1,
         scale,
         zIndex,

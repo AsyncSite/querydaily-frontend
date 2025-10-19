@@ -7,63 +7,89 @@ import Link from 'next/link';
 export default function QuestionPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [myAnswer, setMyAnswer] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [showMyAnswer, setShowMyAnswer] = useState(false);
   const [shared, setShared] = useState(false);
   const [likedAnswers, setLikedAnswers] = useState<number[]>([]);
   const [bookmarked, setBookmarked] = useState(false);
   const [sortBy, setSortBy] = useState<'popular' | 'recent'>('popular');
 
+  const currentId = parseInt(params.id);
+
   const question = {
     id: params.id,
-    number: 1,
+    number: currentId,
     total: 3,
-    title: 'Spring AOP의 동작 원리를 설명하세요',
-    description: 'Spring AOP가 프록시 패턴을 기반으로 어떻게 동작하는지, 위빙 시점은 언제인지 설명해주세요.',
-    category: 'Spring',
-    difficulty: '중급',
-    hint: '💡 JDK Dynamic Proxy와 CGLIB의 차이를 생각해보세요. 같은 클래스 내부 호출 시 주의점도 있습니다.'
+    title: currentId === 1 ? 'Spring AOP의 동작 원리를 설명하세요'
+           : currentId === 2 ? 'JPA N+1 문제와 해결 방법'
+           : 'HTTP와 HTTPS의 차이',
+    description: currentId === 1 ? 'Spring AOP가 프록시 패턴을 기반으로 어떻게 동작하는지, 위빙 시점은 언제인지 설명해주세요.'
+                 : currentId === 2 ? 'N+1 문제가 발생하는 원인과 해결 방법을 설명해주세요.'
+                 : 'HTTP와 HTTPS의 차이점과 HTTPS가 보안을 제공하는 방식을 설명해주세요.',
+    category: currentId === 1 ? 'Spring' : currentId === 2 ? 'JPA' : 'Network',
+    difficulty: currentId === 3 ? '초급' : '중급',
+    hint: currentId === 1 ? '💡 JDK Dynamic Proxy와 CGLIB의 차이를 생각해보세요.'
+          : currentId === 2 ? '💡 FetchType과 연관관계 로딩 전략을 고려해보세요.'
+          : '💡 SSL/TLS 인증서와 암호화 방식을 생각해보세요.'
   };
 
   const answersData = [
     {
       id: 1,
-      author: {
-        name: '라인 백엔드',
-        badge: '재직',
-        company: 'LINE'
-      },
-      content: 'Spring AOP는 프록시 패턴으로 동작합니다. 인터페이스가 있으면 JDK Dynamic Proxy, 없으면 CGLIB를 사용해요.\n\n런타임에 위빙이 이루어지며, @Aspect로 정의한 Advice가 조인포인트에서 실행됩니다.\n\n주의할 점은 같은 클래스 내부 메서드 호출 시 프록시를 거치지 않아 AOP가 동작하지 않는다는 거예요.',
+      author: { name: '라인 백엔드', badge: '재직', company: 'LINE' },
+      content: currentId === 1
+        ? 'Spring AOP는 프록시 패턴으로 동작합니다. 인터페이스가 있으면 JDK Dynamic Proxy, 없으면 CGLIB를 사용해요.\n\n런타임에 위빙이 이루어지며, @Aspect로 정의한 Advice가 조인포인트에서 실행됩니다.\n\n주의할 점은 같은 클래스 내부 메서드 호출 시 프록시를 거치지 않아 AOP가 동작하지 않는다는 거예요.'
+        : currentId === 2
+        ? 'N+1 문제는 연관관계 조회 시 각 엔티티마다 추가 쿼리가 발생하는 문제입니다.\n\nFetch Join이나 @EntityGraph를 사용하면 한 번의 쿼리로 해결할 수 있어요.\n\nBatch Size 설정도 효과적인 방법 중 하나입니다.'
+        : 'HTTP는 평문 통신이고, HTTPS는 SSL/TLS로 암호화된 통신입니다.\n\nHTTPS는 공개키 암호화 방식으로 데이터를 보호하고, 인증서로 서버의 신원을 보장합니다.\n\n포트도 다릅니다. HTTP는 80, HTTPS는 443을 사용해요.',
       likes: 127,
       timeAgo: '2시간 전',
       timestamp: Date.now() - 2 * 60 * 60 * 1000
     },
     {
       id: 2,
-      author: {
-        name: '네이버 합격',
-        badge: '합격자',
-        company: 'Naver'
-      },
-      content: '면접에서 실제로 "같은 클래스 내부 호출 시 왜 AOP가 안 되는지" 물어봤어요.\n\n프록시를 거치지 않기 때문이라고 답했고, 이 경우 self-injection이나 리팩토링으로 해결할 수 있다고 추가 설명했습니다!',
+      author: { name: '네이버 합격', badge: '합격자', company: 'Naver' },
+      content: currentId === 1
+        ? '면접에서 실제로 "같은 클래스 내부 호출 시 왜 AOP가 안 되는지" 물어봤어요.\n\n프록시를 거치지 않기 때문이라고 답했고, 이 경우 self-injection이나 리팩토링으로 해결할 수 있다고 추가 설명했습니다!'
+        : currentId === 2
+        ? '실무에서 가장 많이 쓰는 건 Fetch Join이에요.\n\n다만 페이징 처리 시 메모리에서 페이징이 되는 문제가 있으니 주의해야 합니다.\n\n이럴 때는 @BatchSize를 사용하는 게 더 나을 수 있어요.'
+        : 'HTTPS는 대칭키와 공개키 암호화를 모두 사용합니다.\n\n핸드셰이크 과정에서 공개키로 대칭키를 교환하고, 실제 데이터는 대칭키로 암호화해요.\n\n이렇게 하면 속도와 보안을 모두 잡을 수 있습니다.',
       likes: 89,
       timeAgo: '1일 전',
       timestamp: Date.now() - 24 * 60 * 60 * 1000
+    },
+    {
+      id: 3,
+      author: { name: '카카오 시니어', badge: '재직', company: 'Kakao' },
+      content: currentId === 1
+        ? '실무 경험상 AOP는 트랜잭션, 로깅, 보안 등에 많이 사용됩니다.\n\n특히 @Transactional도 AOP로 구현되어 있죠.\n\n성능에 미치는 영향은 크지 않지만, 프록시 생성 비용은 고려해야 합니다.'
+        : currentId === 2
+        ? '@BatchSize는 IN 쿼리로 한번에 여러 개를 조회해서 쿼리 수를 줄여줍니다.\n\nFetch Join보다 유연하고, 페이징과도 같이 쓸 수 있어요.'
+        : '중요한 건 HTTPS가 완벽한 보안을 보장하지는 않는다는 점이에요.\n\n중간자 공격을 방지하지만, 서버 자체가 해킹되면 소용없죠.',
+      likes: 64,
+      timeAgo: '3일 전',
+      timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000
+    },
+    {
+      id: 4,
+      author: { name: '토스 개발자', badge: '재직', company: 'Toss' },
+      content: currentId === 1
+        ? 'CGLIB는 클래스 상속 방식이라 final 클래스나 메서드에는 적용할 수 없어요.\n\n이런 제약사항도 면접에서 물어볼 수 있으니 알아두면 좋습니다.'
+        : currentId === 2
+        ? '실무 팁: 지연 로딩을 기본으로 하고, 필요한 경우에만 Fetch Join을 쓰세요.\n\n그리고 항상 쿼리 로그를 확인하는 습관을 들이세요.'
+        : '면접에서 "대칭키와 공개키를 왜 둘 다 쓰는지" 물어보는 경우가 많아요.\n\n공개키는 느리지만 안전하고, 대칭키는 빠르지만 키 교환이 문제라서 둘을 조합하는 거죠.',
+      likes: 52,
+      timeAgo: '5일 전',
+      timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000
     }
   ];
 
-  // 정렬 로직
   const othersAnswers = [...answersData].sort((a, b) => {
     if (sortBy === 'popular') {
-      return b.likes - a.likes; // 좋아요 많은 순
+      return b.likes - a.likes;
     } else {
-      return b.timestamp - a.timestamp; // 최신순
+      return b.timestamp - a.timestamp;
     }
   });
-
-  const handleSubmit = () => {
-    setSubmitted(true);
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  };
 
   const handleShare = () => {
     setShared(true);
@@ -77,7 +103,6 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     );
   };
 
-  const currentId = parseInt(params.id);
   const nextId = currentId < 3 ? currentId + 1 : null;
   const prevId = currentId > 1 ? currentId - 1 : null;
 
@@ -115,10 +140,25 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
+        {/* Free Badge */}
+        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-5 shadow-sm border-2 border-emerald-400">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🎁</span>
+            <div>
+              <div className="font-bold text-gray-900 mb-1">
+                오늘 무료 열람 가능
+              </div>
+              <p className="text-sm text-gray-700">
+                모든 답변을 제한 없이 볼 수 있어요
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Question */}
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex gap-2 mb-4">
-            <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs rounded-full">
+            <span className="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">
               {question.category}
             </span>
             <span className="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded-full">
@@ -133,7 +173,6 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
             {question.description}
           </p>
 
-          {/* Hint */}
           <div className="mt-4 pt-4 border-t border-gray-100">
             <p className="text-sm text-gray-500">
               {question.hint}
@@ -141,182 +180,183 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        {/* My Answer */}
-        {!submitted && (
-          <>
-            <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
-              <label className="block mb-3">
-                <span className="font-semibold text-gray-900">내 답변</span>
-                <span className="text-sm text-gray-400 ml-2">(선택)</span>
-              </label>
-              <textarea
-                value={myAnswer}
-                onChange={(e) => setMyAnswer(e.target.value)}
-                placeholder="자유롭게 작성해보세요. 작성 안 해도 다른 사람 답변은 볼 수 있어요."
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none resize-none"
-                rows={8}
-              />
+        {/* Others' Answers Header */}
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 shadow-sm border border-purple-300">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl">👀</span>
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">
+                다른 개발자들은 어떻게 답했을까요?
+              </h3>
+              <p className="text-sm text-gray-600">
+                {othersAnswers.length}개의 답변을 모두 확인할 수 있어요
+              </p>
             </div>
+          </div>
+        </div>
 
+        {/* Sort Toggle */}
+        <div className="flex items-center justify-between bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+          <span className="text-sm text-gray-600">정렬</span>
+          <div className="flex gap-2">
             <button
-              onClick={handleSubmit}
-              className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+              onClick={() => setSortBy('popular')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                sortBy === 'popular'
+                  ? 'bg-indigo-600 text-white font-medium'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
             >
-              제출하고 다른 사람들 보기 👀
+              인기순
             </button>
-          </>
-        )}
+            <button
+              onClick={() => setSortBy('recent')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                sortBy === 'recent'
+                  ? 'bg-indigo-600 text-white font-medium'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              최신순
+            </button>
+          </div>
+        </div>
 
-        {/* Others' Answers - After Submit */}
-        {submitted && (
-          <>
-            {/* Peek Header */}
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 shadow-sm border border-emerald-300">
-              <div className="flex items-start gap-3">
-                <span className="text-3xl">👀</span>
-                <div>
-                  <h3 className="font-bold text-gray-900 mb-1">
-                    다른 개발자들은 어떻게 답했을까요?
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    현직자와 합격자의 실제 답변입니다
-                  </p>
+        {/* All Answers (Free) */}
+        <div className="space-y-4">
+          {othersAnswers.map((answer) => (
+            <div
+              key={answer.id}
+              className="bg-white rounded-2xl p-6 shadow-md border border-gray-200"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                  {answer.author.name[0]}
                 </div>
-              </div>
-            </div>
-
-            {/* Sort Toggle */}
-            <div className="flex items-center justify-between bg-white rounded-xl p-3 shadow-sm border border-gray-200">
-              <span className="text-sm text-gray-600">정렬</span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setSortBy('popular')}
-                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                    sortBy === 'popular'
-                      ? 'bg-emerald-600 text-white font-medium'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  인기순
-                </button>
-                <button
-                  onClick={() => setSortBy('recent')}
-                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                    sortBy === 'recent'
-                      ? 'bg-emerald-600 text-white font-medium'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  최신순
-                </button>
-              </div>
-            </div>
-
-            {/* Answers */}
-            <div className="space-y-4">
-              {othersAnswers.map((answer) => (
-                <div
-                  key={answer.id}
-                  className="bg-white rounded-2xl p-6 shadow-md border border-gray-200"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
-                      {answer.author.name[0]}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900 text-sm">
-                          {answer.author.name}
-                        </span>
-                        <span className={`px-2 py-0.5 text-xs rounded ${
-                          answer.author.badge === '재직'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-green-100 text-green-700'
-                        }`}>
-                          {answer.author.badge}
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500">{answer.timeAgo}</div>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line mb-4">
-                    {answer.content}
-                  </p>
-
-                  <button
-                    onClick={() => toggleLike(answer.id)}
-                    className={`flex items-center gap-1 text-sm transition-colors ${
-                      likedAnswers.includes(answer.id)
-                        ? 'text-pink-600 font-medium'
-                        : 'text-gray-400 hover:text-pink-600'
-                    }`}
-                  >
-                    <span className="text-lg">
-                      {likedAnswers.includes(answer.id) ? '❤️' : '🤍'}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-900 text-sm">
+                      {answer.author.name}
                     </span>
-                    <span>
-                      {answer.likes + (likedAnswers.includes(answer.id) ? 1 : 0)}
+                    <span className={`px-2 py-0.5 text-xs rounded ${
+                      answer.author.badge === '재직'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-green-100 text-green-700'
+                    }`}>
+                      {answer.author.badge}
                     </span>
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Share My Answer */}
-            {myAnswer.trim() && !shared && (
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 shadow-sm border border-emerald-300">
-                <div className="flex items-start gap-3 mb-3">
-                  <span className="text-2xl">✍️</span>
-                  <div className="flex-1">
-                    <div className="font-semibold text-gray-900 mb-1">
-                      내 답변도 공유하시겠어요?
-                    </div>
-                    <div className="text-sm text-gray-600 mb-3">
-                      공유하면 <strong className="text-emerald-700">+10 인사이트 💎</strong>
-                    </div>
-                    <button
-                      onClick={handleShare}
-                      className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all"
-                    >
-                      공유하기
-                    </button>
                   </div>
+                  <div className="text-xs text-gray-500">{answer.timeAgo}</div>
                 </div>
               </div>
-            )}
 
-            {shared && (
-              <div className="bg-emerald-100 rounded-2xl p-5 shadow-sm border border-emerald-400 text-center">
-                <div className="text-3xl mb-2">✅</div>
-                <div className="font-semibold text-gray-900 mb-1">
-                  공유 완료!
-                </div>
-                <div className="text-sm text-emerald-700">
-                  +10 인사이트를 받았어요 💎
-                </div>
-              </div>
-            )}
+              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line mb-4">
+                {answer.content}
+              </p>
 
-            {/* Navigation Buttons */}
-            <div className="flex gap-3">
-              {prevId && (
-                <button
-                  onClick={handlePrev}
-                  className="flex-1 py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-semibold hover:border-emerald-400 hover:bg-gray-50 transition-all"
-                >
-                  ← 이전 질문
-                </button>
-              )}
               <button
-                onClick={handleNext}
-                className={`${prevId ? 'flex-1' : 'w-full'} py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all`}
+                onClick={() => toggleLike(answer.id)}
+                className={`flex items-center gap-1 text-sm transition-colors ${
+                  likedAnswers.includes(answer.id)
+                    ? 'text-pink-600 font-medium'
+                    : 'text-gray-400 hover:text-pink-600'
+                }`}
               >
-                {nextId ? '다음 질문 →' : '완료하고 돌아가기'}
+                <span className="text-lg">
+                  {likedAnswers.includes(answer.id) ? '❤️' : '🤍'}
+                </span>
+                <span>
+                  {answer.likes + (likedAnswers.includes(answer.id) ? 1 : 0)}
+                </span>
               </button>
             </div>
-          </>
+          ))}
+        </div>
+
+        {/* Encourage Answer Writing (Optional) */}
+        {!showMyAnswer && (
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 shadow-md border-2 border-indigo-300">
+            <div className="flex items-start gap-3 mb-4">
+              <span className="text-3xl">✍️</span>
+              <div className="flex-1">
+                <div className="font-bold text-gray-900 mb-2">
+                  당신의 생각도 공유해주세요
+                </div>
+                <p className="text-sm text-gray-700 mb-3">
+                  답변을 공유하면 <strong className="text-indigo-700">+10 인사이트 💎</strong>를 받고,
+                  다른 사람들에게도 도움을 줄 수 있어요
+                </p>
+                <button
+                  onClick={() => setShowMyAnswer(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all"
+                >
+                  답변 작성하기
+                </button>
+              </div>
+            </div>
+          </div>
         )}
+
+        {/* My Answer Section */}
+        {showMyAnswer && !shared && (
+          <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-indigo-300">
+            <label className="block mb-3">
+              <span className="font-semibold text-gray-900">내 답변</span>
+            </label>
+            <textarea
+              value={myAnswer}
+              onChange={(e) => setMyAnswer(e.target.value)}
+              placeholder="자유롭게 작성해보세요. 완벽할 필요 없어요!"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none resize-none"
+              rows={8}
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => setShowMyAnswer(false)}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleShare}
+                disabled={!myAnswer.trim()}
+                className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                공유하기
+              </button>
+            </div>
+          </div>
+        )}
+
+        {shared && (
+          <div className="bg-emerald-100 rounded-2xl p-5 shadow-sm border border-emerald-400 text-center">
+            <div className="text-3xl mb-2">✅</div>
+            <div className="font-semibold text-gray-900 mb-1">
+              공유 완료!
+            </div>
+            <div className="text-sm text-emerald-700">
+              +10 인사이트를 받았어요 💎
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Buttons */}
+        <div className="flex gap-3">
+          {prevId && (
+            <button
+              onClick={handlePrev}
+              className="flex-1 py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-semibold hover:border-emerald-400 hover:bg-gray-50 transition-all"
+            >
+              ← 이전 질문
+            </button>
+          )}
+          <button
+            onClick={handleNext}
+            className={`${prevId ? 'flex-1' : 'w-full'} py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all`}
+          >
+            {nextId ? '다음 질문 →' : '완료하고 돌아가기'}
+          </button>
+        </div>
     </div>
   );
 }

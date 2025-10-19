@@ -36,6 +36,13 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold mb-3">
               현직자들은 면접에<br/>어떻게 답할까?
             </h1>
+
+            {/* Social Proof Badge - Ultra Minimal */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-emerald-100 text-xs mb-4">
+              <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse"></div>
+              <span>오늘 142명 학습 중</span>
+            </div>
+
             <p className="text-emerald-100 text-sm mb-4">
               라인, 네이버, 카카오 합격자들의 실제 답변
             </p>
@@ -136,6 +143,13 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Mini Stats Footer - Optional */}
+        <div className="flex items-center justify-center gap-3 py-3 text-xs text-gray-500">
+          <span>🔥 첫 방문</span>
+          <span>·</span>
+          <span>💬 답변 35개</span>
         </div>
     </div>
   );

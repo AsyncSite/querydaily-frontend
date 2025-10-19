@@ -34,13 +34,17 @@ export default function OnboardingPage() {
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      router.push('/prototype11/dashboard');
     }
   };
 
   const handleSkip = () => {
-    router.push('/prototype11/dashboard');
+    router.push('/prototype11');
+  };
+
+  const handleKakaoLogin = () => {
+    // 실제로는 카카오 OAuth 호출
+    // 프로토타입에서는 개인화 설정으로 이동
+    router.push('/prototype11/personalization');
   };
 
   const currentStepData = steps[currentStep];
@@ -93,12 +97,24 @@ export default function OnboardingPage() {
           </div>
 
           {/* Action Button */}
-          <button
-            onClick={handleNext}
-            className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-          >
-            {currentStep === steps.length - 1 ? '시작하기' : '다음'}
-          </button>
+          {currentStep === steps.length - 1 ? (
+            <button
+              onClick={handleKakaoLogin}
+              className="w-full py-5 bg-[#FEE500] hover:bg-[#FDD835] text-gray-900 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl"
+            >
+              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.794 1.828 5.25 4.574 6.674-.193.71-.675 2.483-.773 2.87-.117.464.17.458.358.333.155-.103 2.515-1.726 3.608-2.47.74.102 1.5.156 2.28.156 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/>
+              </svg>
+              카카오톡으로 시작하기
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+            >
+              다음
+            </button>
+          )}
         </div>
 
         {/* Step Indicator */}

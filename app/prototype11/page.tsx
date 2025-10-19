@@ -103,6 +103,14 @@ export default function Prototype11Landing() {
           </div>
         </div>
 
+        {/* Wireframe Link */}
+        <Link
+          href="/prototype11/wireframe"
+          className="block w-full py-4 bg-white text-gray-900 rounded-xl font-bold text-base transition-all text-center shadow-lg hover:shadow-xl border-2 border-gray-300 hover:border-emerald-400"
+        >
+          🖼️ 전체 와이어프레임 보기
+        </Link>
+
         {/* Footer */}
         <p className="text-center text-sm text-gray-400 mt-12">
           v11: 초심플 훔쳐보기 루틴

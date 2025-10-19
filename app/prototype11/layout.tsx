@@ -18,12 +18,20 @@ export default function Prototype11Layout({
 }) {
   const pathname = usePathname();
   const isLandingPage = pathname === '/prototype11';
+  const isFullscreenPage = pathname?.startsWith('/prototype11/wireframe') ||
+                          pathname?.startsWith('/prototype11/compare') ||
+                          pathname?.startsWith('/prototype11/onboarding');
   const [showNotifications, setShowNotifications] = useState(false);
 
   // 신규 유저는 알림 없음
   const notifications: { id: number; text: string; time: string; unread: boolean }[] = [];
 
   const unreadCount = notifications.filter(n => n.unread).length;
+
+  // 전체 화면 페이지는 모바일 프레임 없이
+  if (isFullscreenPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">

@@ -217,9 +217,9 @@ function QuestionCard({ question, index, stackIndex, totalCount, currentIndex, o
   };
 
   const scale = stackIndex === 0 ? 1 : stackIndex === 1 ? 0.95 : 0.9;
-  const yOffset = stackIndex * 12;
-  const rotateOffset = stackIndex === 0 ? 0 : stackIndex === 1 ? -3 : -5;
-  const xOffset = stackIndex === 0 ? 0 : stackIndex === 1 ? -8 : -12;
+  const yOffset = stackIndex * 15;
+  const rotateOffset = stackIndex === 0 ? 2 : stackIndex === 1 ? -2 : -4;
+  const xOffset = stackIndex === 0 ? 0 : stackIndex === 1 ? -15 : -25;
   const zIndex = 10 - stackIndex;
 
   return (

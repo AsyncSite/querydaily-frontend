@@ -5329,6 +5329,11 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
+/* 그로스 플랜 (첫 번째 상품)을 넓게 표시 */
+.productCard:first-child {
+    grid-column: span 2;
+}
+
 .productBadge {
     position: absolute;
     top: 10px;

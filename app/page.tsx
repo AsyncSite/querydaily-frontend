@@ -494,15 +494,21 @@ export default function HomePage() {
     setIsSubmitting(true);
 
     try {
+      // 디버깅: 선택된 상품 확인
+      console.log('[DEBUG] selectedPurchaseProduct:', selectedPurchaseProduct);
+
       // ProductCode 매핑
       const productCodeMap: Record<string, ProductCode> = {
         'critical-hit': ProductCode.CRITICAL_HIT,
         'growth-plan': ProductCode.GROWTH_PLAN,
         'real-interview': ProductCode.REAL_INTERVIEW,
-        'resume-analytics': ProductCode.LAST_CHECK
+        'last-check': ProductCode.LAST_CHECK,
+        'resume-fit': ProductCode.RESUME_FIT
       };
 
       const productCode = productCodeMap[selectedPurchaseProduct || ''];
+      console.log('[DEBUG] mapped productCode:', productCode);
+
       if (!productCode) {
         alert('상품을 선택해주세요.');
         return;
@@ -1123,7 +1129,7 @@ export default function HomePage() {
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('resume-analytics')}
+                onClick={() => handleProductSelect('last-check')}
               >
                 지금 시작하기
               </button>
@@ -2305,7 +2311,8 @@ export default function HomePage() {
                     {selectedPurchaseProduct === 'critical-hit' && '맞춤형 핵심 질문 생성을 위해 필요합니다'}
                     {selectedPurchaseProduct === 'growth-plan' && '20일 성장 계획 수립을 위해 필요합니다'}
                     {selectedPurchaseProduct === 'real-interview' && '모의면접 준비를 위해 필요합니다'}
-                    {selectedPurchaseProduct === 'resume-analytics' && '면접 D-1 긴급 대비를 위해 필요합니다'}
+                    {selectedPurchaseProduct === 'last-check' && '면접 D-1 긴급 대비를 위해 필요합니다'}
+                    {selectedPurchaseProduct === 'resume-fit' && '이력서 전문가 분석을 위해 필요합니다'}
                   </p>
 
                   <div className={styles.selectedProductInfo}>
@@ -2313,13 +2320,15 @@ export default function HomePage() {
                       {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
                       {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
                       {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
-                      {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
+                      {selectedPurchaseProduct === 'last-check' && '라스트 체크'}
+                      {selectedPurchaseProduct === 'resume-fit' && '레주메 핏'}
                     </span>
                     <span className={styles.modalProductPrice}>
                       {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
                       {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
                       {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                      {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                      {selectedPurchaseProduct === 'last-check' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                      {selectedPurchaseProduct === 'resume-fit' && formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}
                     </span>
                   </div>
 
@@ -2521,7 +2530,8 @@ export default function HomePage() {
                         {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
                         {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
                         {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
-                        {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
+                        {selectedPurchaseProduct === 'last-check' && '라스트 체크'}
+                        {selectedPurchaseProduct === 'resume-fit' && '레주메 핏'}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem}>
@@ -2530,7 +2540,8 @@ export default function HomePage() {
                         {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
                         {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
                         {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'last-check' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'resume-fit' && formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
@@ -2539,7 +2550,8 @@ export default function HomePage() {
                         {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
                         {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
                         {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'last-check' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'resume-fit' && formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}
                       </span>
                     </div>
                   </div>
@@ -2570,16 +2582,17 @@ export default function HomePage() {
                           // productType 매핑
                           const productTypeMap: Record<string, string> = {
                             'critical-hit': 'CRITICAL_HIT',
-                            'growth-plan': 'SQL_MASTER',
-                            'real-interview': 'SYSTEM_DESIGN',
-                            'resume-analytics': 'DATA_ALGO'
+                            'growth-plan': 'GROWTH_PLAN',
+                            'real-interview': 'REAL_INTERVIEW',
+                            'last-check': 'LAST_CHECK',
+                            'resume-fit': 'RESUME_FIT'
                           };
 
                           // API 호출
                           const response = await submitBetaApplication({
                             email: purchaseEmail,
                             name: purchaseName,
-                            productType: productTypeMap[selectedPurchaseProduct || ''] || 'SQL_MASTER',
+                            productType: productTypeMap[selectedPurchaseProduct || ''] || 'GROWTH_PLAN',
                             resume: purchaseFile
                           });
 

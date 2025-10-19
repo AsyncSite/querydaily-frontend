@@ -108,36 +108,84 @@ export default function DashboardPage() {
         </div>
       ) : (
         /* Completion State */
-        <div className="bg-white rounded-3xl p-12 shadow-2xl text-center mb-8">
-          <div className="text-7xl mb-6">🎉</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            완료!
-          </h2>
-          <p className="text-gray-600 mb-2">
-            오늘 3개 질문을 모두 확인했어요
-          </p>
-          <p className="text-sm text-gray-500">
-            내일 또 만나요
-          </p>
-        </div>
+        <>
+          {/* Completion Card - Compact */}
+          <div className="bg-white rounded-2xl p-6 shadow-lg text-center mb-6">
+            <div className="text-5xl mb-3">🎉</div>
+            <h2 className="text-xl font-bold text-gray-900">
+              오늘 3개 완료!
+            </h2>
+          </div>
+
+          {/* Review Recommendation */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <span>💡</span>
+              <span>복습 추천</span>
+            </h3>
+
+            {/* Random Past Question Card */}
+            <Link
+              href="/prototype11/questions/11"
+              className="block bg-white rounded-2xl p-6 shadow-md border-2 border-purple-200 hover:border-purple-400 hover:shadow-lg transition-all"
+            >
+              <div className="flex gap-2 mb-4">
+                <span className="px-3 py-1 bg-cyan-50 text-cyan-600 text-sm rounded-full font-medium">
+                  React
+                </span>
+                <span className="px-3 py-1 bg-orange-50 text-orange-600 text-sm rounded-full font-medium">
+                  중급
+                </span>
+              </div>
+
+              <h3 className="text-lg font-bold text-gray-900 mb-3">
+                React Hooks의 동작 원리
+              </h3>
+
+              <div className="text-sm text-gray-500 mb-4">
+                💬 15개 답변
+              </div>
+
+              <div className="flex gap-2">
+                <div className="flex-1 py-2 bg-purple-50 text-purple-700 rounded-lg text-sm font-semibold text-center">
+                  다시 보기 →
+                </div>
+                <div className="flex-1 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-semibold text-center">
+                  답변 작성 +10 💎
+                </div>
+              </div>
+            </Link>
+          </div>
+        </>
       )}
 
-      {/* Archive Button */}
-      <Link
-        href="/prototype11/archive"
-        className="block bg-white rounded-2xl p-5 shadow-md border-2 border-gray-200 hover:border-emerald-400 hover:shadow-lg transition-all"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">📚</span>
-            <div>
-              <div className="font-semibold text-gray-900">지난 질문 확인하기</div>
-              <div className="text-sm text-gray-500">복습하고 인사이트 얻기</div>
+      {/* Archive Button - Only show if not completed, or show differently if completed */}
+      {!isCompleted ? (
+        <Link
+          href="/prototype11/archive"
+          className="block bg-white rounded-2xl p-5 shadow-md border-2 border-gray-200 hover:border-emerald-400 hover:shadow-lg transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">📚</span>
+              <div>
+                <div className="font-semibold text-gray-900">지난 질문 확인하기</div>
+                <div className="text-sm text-gray-500">복습하고 인사이트 얻기</div>
+              </div>
             </div>
+            <span className="text-emerald-600">→</span>
           </div>
-          <span className="text-emerald-600">→</span>
-        </div>
-      </Link>
+        </Link>
+      ) : (
+        <Link
+          href="/prototype11/archive"
+          className="block bg-gray-50 rounded-2xl p-4 border-2 border-gray-200 hover:border-gray-300 transition-all text-center"
+        >
+          <div className="text-sm font-semibold text-gray-600">
+            📚 모든 지난 질문 보기 →
+          </div>
+        </Link>
+      )}
 
       {/* Share Modal */}
       {showShareModal && (

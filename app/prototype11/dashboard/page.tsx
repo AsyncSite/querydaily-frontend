@@ -50,24 +50,21 @@ export default function DashboardPage() {
 
           <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="text-2xl">🎁</span>
-              <span className="font-bold text-lg">오늘 무료로 3문제 열람</span>
+              <span className="text-2xl">🎯</span>
+              <span className="font-bold text-lg">오늘의 3문제</span>
             </div>
             <div className="text-center text-emerald-100 text-sm space-y-1">
-              <div>✓ 답변 작성 필요 없음</div>
-              <div>✓ 모든 답변 무제한 열람</div>
+              <div>✓ 지금 바로 확인</div>
+              <div>✓ 모든 답변 열람 가능</div>
               <div>✓ 하루 5분이면 충분</div>
             </div>
           </div>
         </div>
 
-        {/* Today's Free Questions */}
+        {/* Today's Questions */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">오늘의 무료 질문 3개</h2>
-            <div className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
-              무료
-            </div>
+            <h2 className="font-semibold text-gray-900">오늘의 추천 질문</h2>
           </div>
 
           <div className="space-y-3">
@@ -100,13 +97,8 @@ export default function DashboardPage() {
                         {question.difficulty}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-gray-500">
-                        💬 {question.answerCount}개 답변
-                      </span>
-                      <span className="text-emerald-600 font-medium">
-                        · 전체 무료 열람
-                      </span>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span>💬 {question.answerCount}개 답변</span>
                     </div>
                   </div>
                   <div className="text-emerald-600">

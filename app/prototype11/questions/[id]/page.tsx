@@ -37,9 +37,10 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
       id: 1,
       author: {
         nickname: '개발하는 감자',
-        company: 'LINE',
-        position: '백엔드 개발자',
-        verified: true
+        badges: [
+          { type: 'company', label: 'LINE', verified: true, color: 'blue' },
+          { type: 'experience', label: '5년차', color: 'purple' }
+        ]
       },
       content: currentId === 1
         ? 'Spring AOP는 프록시 패턴으로 동작합니다. 인터페이스가 있으면 JDK Dynamic Proxy, 없으면 CGLIB를 사용해요.\n\n런타임에 위빙이 이루어지며, @Aspect로 정의한 Advice가 조인포인트에서 실행됩니다.\n\n주의할 점은 같은 클래스 내부 메서드 호출 시 프록시를 거치지 않아 AOP가 동작하지 않는다는 거예요.'
@@ -53,10 +54,11 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     {
       id: 2,
       author: {
-        nickname: '코딩하는 펭귄',
-        company: 'Naver',
-        position: '25년 합격',
-        verified: false
+        nickname: '코딩하는 호랑이',
+        badges: [
+          { type: 'experience', label: '5년차 백엔드', color: 'purple' },
+          { type: 'activity', label: '베스트 답변 12회', color: 'orange' }
+        ]
       },
       content: currentId === 1
         ? '면접에서 실제로 "같은 클래스 내부 호출 시 왜 AOP가 안 되는지" 물어봤어요.\n\n프록시를 거치지 않기 때문이라고 답했고, 이 경우 self-injection이나 리팩토링으로 해결할 수 있다고 추가 설명했습니다!'
@@ -70,10 +72,11 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     {
       id: 3,
       author: {
-        nickname: 'Java 고인물',
-        company: 'Kakao',
-        position: '시니어 개발자',
-        verified: true
+        nickname: '스프링 마스터',
+        badges: [
+          { type: 'tech', label: 'Spring 전문가', color: 'green' },
+          { type: 'company', label: '우아한형제들', verified: true, color: 'blue' }
+        ]
       },
       content: currentId === 1
         ? '실무 경험상 AOP는 트랜잭션, 로깅, 보안 등에 많이 사용됩니다.\n\n특히 @Transactional도 AOP로 구현되어 있죠.\n\n성능에 미치는 영향은 크지 않지만, 프록시 생성 비용은 고려해야 합니다.'
@@ -87,10 +90,11 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     {
       id: 4,
       author: {
-        nickname: '토스뱅크맨',
-        company: 'Toss',
-        position: '백엔드 개발자',
-        verified: true
+        nickname: '백엔드 지망생',
+        badges: [
+          { type: 'learner', label: '준비 중', color: 'gray' },
+          { type: 'activity', label: '도움돼요 45+', color: 'orange' }
+        ]
       },
       content: currentId === 1
         ? 'CGLIB는 클래스 상속 방식이라 final 클래스나 메서드에는 적용할 수 없어요.\n\n이런 제약사항도 면접에서 물어볼 수 있으니 알아두면 좋습니다.'
@@ -198,24 +202,30 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          {/* Company Badges */}
+          {/* Contributor Badges Preview */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {othersAnswers.map((answer) => (
-              <div
-                key={answer.id}
-                className={`px-2.5 py-1 text-xs font-medium rounded-full ${
-                  answer.author.company === 'LINE'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : answer.author.company === 'Naver'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : answer.author.company === 'Kakao'
-                    ? 'bg-yellow-50 text-yellow-700 border border-yellow-200'
-                    : 'bg-purple-50 text-purple-700 border border-purple-200'
-                }`}
-              >
-                {answer.author.company} {answer.author.position}
-              </div>
-            ))}
+            {othersAnswers.map((answer) => {
+              const primaryBadge = answer.author.badges[0];
+              return (
+                <div
+                  key={answer.id}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-full flex items-center gap-1 ${
+                    primaryBadge.color === 'blue'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : primaryBadge.color === 'purple'
+                      ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                      : primaryBadge.color === 'green'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : primaryBadge.color === 'orange'
+                      ? 'bg-orange-50 text-orange-700 border border-orange-200'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  {primaryBadge.verified && <span className="text-blue-600">✓</span>}
+                  {primaryBadge.label}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -261,24 +271,25 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
                     <span className="font-medium text-gray-900 text-sm">
                       {answer.author.nickname}
                     </span>
-                    {answer.author.verified && (
-                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                        answer.author.company === 'LINE'
-                          ? 'bg-green-100 text-green-700'
-                          : answer.author.company === 'Naver'
-                          ? 'bg-blue-100 text-blue-700'
-                          : answer.author.company === 'Kakao'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-purple-100 text-purple-700'
-                      }`}>
-                        {answer.author.company}
+                    {answer.author.badges.map((badge, idx) => (
+                      <span
+                        key={idx}
+                        className={`px-2 py-0.5 text-xs rounded-full font-medium flex items-center gap-1 ${
+                          badge.color === 'blue'
+                            ? 'bg-blue-100 text-blue-700'
+                            : badge.color === 'purple'
+                            ? 'bg-purple-100 text-purple-700'
+                            : badge.color === 'green'
+                            ? 'bg-green-100 text-green-700'
+                            : badge.color === 'orange'
+                            ? 'bg-orange-100 text-orange-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {badge.verified && <span className="text-blue-600">✓</span>}
+                        {badge.label}
                       </span>
-                    )}
-                    {!answer.author.verified && answer.author.position && (
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
-                        {answer.author.position}
-                      </span>
-                    )}
+                    ))}
                   </div>
                   <div className="text-xs text-gray-500">{answer.timeAgo}</div>
                 </div>

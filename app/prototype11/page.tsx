@@ -93,6 +93,12 @@ export default function Prototype11Landing() {
               >
                 🎉 3가지 옵션 비교 (Day 3)
               </Link>
+              <Link
+                href="/prototype11/onboarding"
+                className="block w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg font-semibold text-sm transition-all text-center shadow-md hover:shadow-lg"
+              >
+                📚 온보딩 체험하기
+              </Link>
             </div>
           </div>
         </div>

@@ -140,21 +140,6 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        {/* Free Badge */}
-        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-5 shadow-sm border-2 border-emerald-400">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">🎁</span>
-            <div>
-              <div className="font-bold text-gray-900 mb-1">
-                오늘 무료 열람 가능
-              </div>
-              <p className="text-sm text-gray-700">
-                모든 답변을 제한 없이 볼 수 있어요
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Question */}
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
           <div className="flex gap-2 mb-4">

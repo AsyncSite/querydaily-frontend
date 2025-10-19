@@ -4,87 +4,25 @@ import Link from 'next/link';
 
 export default function WireframePage() {
   const screens = [
-    {
-      id: 'onboarding-1',
-      title: '온보딩 1/4',
-      description: '매일 딱 3문제',
-      href: '/prototype11/onboarding',
-      emoji: '📝',
-      color: 'from-emerald-400 to-teal-500'
-    },
-    {
-      id: 'onboarding-2',
-      title: '온보딩 2/4',
-      description: '답변 후 훔쳐보기',
-      emoji: '👀',
-      color: 'from-teal-400 to-emerald-500'
-    },
-    {
-      id: 'onboarding-3',
-      title: '온보딩 3/4',
-      description: '인사이트 적립',
-      emoji: '💎',
-      color: 'from-emerald-500 to-teal-600'
-    },
-    {
-      id: 'kakao-login',
-      title: '카카오 로그인',
-      description: '3초 만에 시작',
-      href: '/prototype11',
-      emoji: '💬',
-      color: 'from-yellow-400 to-yellow-500'
-    },
-    {
-      id: 'personalization',
-      title: '개인화 설정',
-      description: '당신만의 질문 추천',
-      href: '/prototype11/personalization',
-      emoji: '🎯',
-      color: 'from-indigo-500 to-purple-600'
-    },
-    {
-      id: 'dashboard',
-      title: '대시보드',
-      description: '개인화된 3문제',
-      href: '/prototype11/dashboard',
-      emoji: '🏠',
-      color: 'from-emerald-500 to-teal-600'
-    },
-    {
-      id: 'question-detail',
-      title: '질문 상세',
-      description: '현직자 답변 보기',
-      href: '/prototype11/questions/1',
-      emoji: '📖',
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      id: 'categories',
-      title: '카테고리',
-      description: '주제별 탐색',
-      href: '/prototype11/categories',
-      emoji: '📂',
-      color: 'from-indigo-500 to-purple-500'
-    },
-    {
-      id: 'mypage',
-      title: '마이페이지',
-      description: '학습 통계',
-      href: '/prototype11/mypage',
-      emoji: '👤',
-      color: 'from-gray-500 to-gray-600'
-    }
+    // Onboarding flow
+    { id: 'onb1', title: '온보딩 1/3', emoji: '📝', href: '/prototype11/onboarding', color: 'from-emerald-400 to-emerald-600', description: '가치 제안', section: 'onboarding' },
+    { id: 'onb2', title: '온보딩 2/3', emoji: '👀', href: '#', color: 'from-teal-400 to-teal-600', description: '기능 소개', section: 'onboarding' },
+    { id: 'onb3', title: '온보딩 3/3', emoji: '💎', href: '#', color: 'from-emerald-400 to-emerald-600', description: '인사이트 안내', section: 'onboarding' },
+    { id: 'kakao', title: '카카오 로그인', emoji: '💬', href: '/prototype11', color: 'from-yellow-400 to-yellow-600', description: '소셜 로그인', section: 'onboarding' },
+    { id: 'perso', title: '개인화 설정', emoji: '🎯', href: '/prototype11/personalization', color: 'from-indigo-400 to-indigo-600', description: '관심 주제 선택', section: 'onboarding' },
+
+    // Main app
+    { id: 'dash', title: '대시보드', emoji: '🏠', href: '/prototype11/dashboard', color: 'from-emerald-400 to-emerald-600', description: '오늘의 카드 스택', section: 'main' },
+    { id: 'quest', title: '질문 상세', emoji: '📖', href: '/prototype11/questions/1', color: 'from-purple-400 to-purple-600', description: '답변 열람', section: 'main' },
+    { id: 'cat', title: '카테고리', emoji: '📂', href: '/prototype11/categories', color: 'from-indigo-400 to-indigo-600', description: '탐색 & 전환', section: 'main' },
+    { id: 'arch', title: '아카이브', emoji: '📚', href: '/prototype11/archive', color: 'from-blue-400 to-blue-600', description: '지난 질문 복습', section: 'main' },
   ];
 
   const flows = [
-    { from: 0, to: 1, label: '다음' },
-    { from: 1, to: 2, label: '다음' },
-    { from: 2, to: 3, label: '시작하기' },
-    { from: 3, to: 4, label: '로그인 완료' },
-    { from: 4, to: 5, label: '설정 완료' },
-    { from: 5, to: 6, label: '질문 클릭' },
-    { from: 5, to: 7, label: '카테고리 탭' },
-    { from: 5, to: 8, label: '프로필 탭' },
+    { label: '시작' },
+    { label: '기능 소개' },
+    { label: '인사이트 소개' },
+    { label: '로그인' },
   ];
 
   return (
@@ -156,24 +94,21 @@ export default function WireframePage() {
           </div>
 
           {/* Main App Flow */}
-          <div>
+          <div className="mb-16">
             <h2 className="text-xl font-bold text-gray-900 mb-6">2. 메인 앱 플로우</h2>
-            <div className="flex items-start gap-8">
-              {/* Dashboard (Central) */}
+            <div className="flex items-start gap-8 justify-center">
+              {/* Dashboard (Central Hub) */}
               <div className="flex flex-col items-center">
-                <Link
-                  href={screens[5].href || '#'}
-                  className="block group"
-                >
-                  <div className="bg-gray-100 rounded-2xl p-6 w-64 h-96 shadow-lg hover:shadow-xl transition-all border-2 border-emerald-400">
-                    <div className={`bg-gradient-to-br ${screens[5].color} rounded-xl p-4 h-48 mb-4 flex flex-col items-center justify-center text-white`}>
-                      <div className="text-5xl mb-3">{screens[5].emoji}</div>
-                      <div className="text-xs font-semibold text-center">
+                <Link href={screens[5].href || '#'} className="block group">
+                  <div className="bg-gray-100 rounded-2xl p-6 w-72 h-[420px] shadow-xl hover:shadow-2xl transition-all border-4 border-emerald-500">
+                    <div className={`bg-gradient-to-br ${screens[5].color} rounded-xl p-4 h-56 mb-4 flex flex-col items-center justify-center text-white`}>
+                      <div className="text-6xl mb-3">{screens[5].emoji}</div>
+                      <div className="text-sm font-bold text-center">
                         {screens[5].title}
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="font-bold text-gray-900 mb-2">
+                      <h3 className="font-bold text-gray-900 mb-2 text-lg">
                         {screens[5].title}
                       </h3>
                       <p className="text-sm text-gray-600">
@@ -182,86 +117,149 @@ export default function WireframePage() {
                     </div>
                   </div>
                 </Link>
-                <div className="mt-4 text-xs text-emerald-700 font-bold">
-                  메인 허브
+                <div className="mt-4 px-4 py-2 bg-emerald-100 text-emerald-800 rounded-full text-sm font-bold">
+                  🎯 메인 허브
                 </div>
               </div>
 
-              {/* Vertical Arrow */}
-              <div className="flex flex-col gap-4 pt-32">
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl text-gray-400">→</div>
-                  <Link
-                    href={screens[6].href || '#'}
-                    className="block group"
-                  >
-                    <div className="bg-gray-100 rounded-2xl p-4 w-48 h-72 shadow-lg hover:shadow-xl transition-all border-2 border-gray-300 hover:border-purple-400">
-                      <div className={`bg-gradient-to-br ${screens[6].color} rounded-xl p-3 h-32 mb-3 flex flex-col items-center justify-center text-white`}>
-                        <div className="text-3xl mb-2">{screens[6].emoji}</div>
-                        <div className="text-xs font-semibold text-center">
-                          {screens[6].title}
+              {/* Side Screens */}
+              <div className="flex flex-col gap-6 pt-20">
+                {[6, 7, 8].map((idx) => (
+                  <div key={idx} className="flex items-center gap-4">
+                    <div className="text-4xl text-gray-400">→</div>
+                    <Link href={screens[idx].href || '#'} className="block group">
+                      <div className="bg-gray-100 rounded-2xl p-5 w-56 h-80 shadow-lg hover:shadow-xl transition-all border-2 border-gray-300 hover:border-indigo-400">
+                        <div className={`bg-gradient-to-br ${screens[idx].color} rounded-xl p-3 h-40 mb-3 flex flex-col items-center justify-center text-white`}>
+                          <div className="text-4xl mb-2">{screens[idx].emoji}</div>
+                          <div className="text-xs font-semibold text-center">
+                            {screens[idx].title}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <h3 className="font-bold text-gray-900 text-base mb-1">
+                            {screens[idx].title}
+                          </h3>
+                          <p className="text-xs text-gray-600">
+                            {screens[idx].description}
+                          </p>
                         </div>
                       </div>
-                      <div className="text-center">
-                        <h3 className="font-bold text-gray-900 text-sm mb-1">
-                          {screens[6].title}
-                        </h3>
-                        <p className="text-xs text-gray-600">
-                          {screens[6].description}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl text-gray-400">→</div>
-                  <Link
-                    href={screens[7].href || '#'}
-                    className="block group"
-                  >
-                    <div className="bg-gray-100 rounded-2xl p-4 w-48 h-72 shadow-lg hover:shadow-xl transition-all border-2 border-gray-300 hover:border-indigo-400">
-                      <div className={`bg-gradient-to-br ${screens[7].color} rounded-xl p-3 h-32 mb-3 flex flex-col items-center justify-center text-white`}>
-                        <div className="text-3xl mb-2">{screens[7].emoji}</div>
-                        <div className="text-xs font-semibold text-center">
-                          {screens[7].title}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <h3 className="font-bold text-gray-900 text-sm mb-1">
-                          {screens[7].title}
-                        </h3>
-                        <p className="text-xs text-gray-600">
-                          {screens[7].description}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
+          {/* Conversion Flows */}
+          <div className="mb-16">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">3. 전환 플로우 (Modals)</h2>
+            <div className="grid grid-cols-3 gap-6">
+              {/* Share Modal */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-300 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-5xl mb-3">🎁</div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">공유 모달</h3>
+                  <p className="text-sm text-gray-600 mb-4">친구 초대 & 바이럴</p>
                 </div>
+                <div className="bg-white rounded-xl p-4 space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span className="text-gray-700">카카오톡 공유</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span className="text-gray-700">링크 복사</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span className="text-gray-700">+5 💎 리워드</span>
+                  </div>
+                </div>
+              </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl text-gray-400">→</div>
-                  <Link
-                    href={screens[8].href || '#'}
-                    className="block group"
-                  >
-                    <div className="bg-gray-100 rounded-2xl p-4 w-48 h-72 shadow-lg hover:shadow-xl transition-all border-2 border-gray-300 hover:border-gray-400">
-                      <div className={`bg-gradient-to-br ${screens[8].color} rounded-xl p-3 h-32 mb-3 flex flex-col items-center justify-center text-white`}>
-                        <div className="text-3xl mb-2">{screens[8].emoji}</div>
-                        <div className="text-xs font-semibold text-center">
-                          {screens[8].title}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <h3 className="font-bold text-gray-900 text-sm mb-1">
-                          {screens[8].title}
-                        </h3>
-                        <p className="text-xs text-gray-600">
-                          {screens[8].description}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
+              {/* Paywall Modal */}
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6 border-2 border-orange-300 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-5xl mb-3">💎</div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">페이월 (인사이트)</h3>
+                  <p className="text-sm text-gray-600 mb-4">Pay-as-you-go</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-orange-600">✓</span>
+                    <span className="text-gray-700">질문당 10 💎</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-orange-600">✓</span>
+                    <span className="text-gray-700">답변 전체 열람</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-orange-600">✓</span>
+                    <span className="text-gray-700">인사이트 구매</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Premium Modal */}
+              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-6 border-2 border-purple-300 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-5xl mb-3">⭐</div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">프리미엄</h3>
+                  <p className="text-sm text-gray-600 mb-4">월 9,900원</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-600">✓</span>
+                    <span className="text-gray-700">질문 검색</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-600">✓</span>
+                    <span className="text-gray-700">회사별 필터</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-600">✓</span>
+                    <span className="text-gray-700">매일 +20 💎</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* States */}
+          <div className="mb-16">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">4. 상태 변화</h2>
+            <div className="grid grid-cols-2 gap-6">
+              {/* Completion State */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-300 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-5xl mb-3">🎉</div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">완료 상태</h3>
+                  <p className="text-sm text-gray-600">오늘 3개 완료!</p>
+                </div>
+                <div className="bg-white rounded-xl p-4">
+                  <p className="text-sm text-gray-700 text-center">
+                    대시보드 → 완료 축하 → 복습 추천 카드
+                  </p>
+                </div>
+              </div>
+
+              {/* Review Recommendation */}
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-300 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-5xl mb-3">💡</div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">복습 추천</h3>
+                  <p className="text-sm text-gray-600">지난 질문 다시보기</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-600">✓</span>
+                    <span className="text-gray-700">랜덤 과거 질문</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-600">✓</span>
+                    <span className="text-gray-700">답변 작성 +10 💎</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -269,25 +267,30 @@ export default function WireframePage() {
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h3 className="font-bold text-gray-900 mb-4">범례</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-emerald-500 rounded"></div>
-              <span className="text-gray-700">온보딩/메인 플로우</span>
+        {/* Key Insights */}
+        <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8 shadow-2xl text-white">
+          <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
+            <span>💡</span>
+            <span>핵심 인사이트</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h4 className="font-bold text-emerald-400 mb-3">사용자 플로우</h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                온보딩 → 대시보드 (카드 스택) → 질문 상세 → 아카이브 복습 사이클
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-purple-500 rounded"></div>
-              <span className="text-gray-700">질문 관련</span>
+            <div>
+              <h4 className="font-bold text-orange-400 mb-3">전환 전략</h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                카테고리 탭에서 트렌딩/검색/회사필터를 통해 페이월/프리미엄 모달로 유도
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-indigo-500 rounded"></div>
-              <span className="text-gray-700">탐색/카테고리</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gray-500 rounded"></div>
-              <span className="text-gray-700">프로필/설정</span>
+            <div>
+              <h4 className="font-bold text-purple-400 mb-3">리텐션 메커니즘</h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                매일 3개 카드 → 완료 시 복습 추천 → 공유 인센티브 (+5 💎)
+              </p>
             </div>
           </div>
         </div>

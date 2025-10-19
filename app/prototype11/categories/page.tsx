@@ -254,7 +254,123 @@ export default function CategoriesPage() {
         </div>
       </section>
 
-      {/* Modals truncated for length - will add separately */}
+      {/* Paywall Modal (💎 Insights) */}
+      {showPaywallModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+          onClick={() => setShowPaywallModal(false)}
+        >
+          <div
+            className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-6">
+              <div className="text-5xl mb-4">💎</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                답변을 보려면
+              </h2>
+              <p className="text-gray-600">
+                인사이트로 잠금 해제하세요
+              </p>
+            </div>
+
+            <div className="bg-emerald-50 rounded-2xl p-4 mb-6 border border-emerald-200">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-gray-700">이 질문 잠금 해제</span>
+                <span className="text-lg font-bold text-emerald-600">10 💎</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                현직자 23개 답변 전체 열람 가능
+              </p>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <button className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold hover:shadow-lg transition-all">
+                10 💎 사용하기
+              </button>
+              <button className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all">
+                인사이트 구매하기 →
+              </button>
+            </div>
+
+            <div className="text-center">
+              <p className="text-xs text-gray-500 mb-2">
+                현재 보유: <strong className="text-emerald-600">35 💎</strong>
+              </p>
+              <button
+                onClick={() => setShowPaywallModal(false)}
+                className="text-sm text-gray-400 hover:text-gray-600"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Premium Modal (⭐ Subscription) */}
+      {showPremiumModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+          onClick={() => setShowPremiumModal(false)}
+        >
+          <div
+            className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-6">
+              <div className="text-5xl mb-4">⭐</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                프리미엄으로 업그레이드
+              </h2>
+              <p className="text-gray-600">
+                모든 기능을 무제한으로
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 mb-6 border-2 border-indigo-200">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-600">✓</span>
+                  <span className="text-sm font-medium text-gray-700">질문 검색 무제한</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-600">✓</span>
+                  <span className="text-sm font-medium text-gray-700">회사별 필터링</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-600">✓</span>
+                  <span className="text-sm font-medium text-gray-700">북마크 무제한</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-600">✓</span>
+                  <span className="text-sm font-medium text-gray-700">AI 답변 요약</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-600">✓</span>
+                  <span className="text-sm font-medium text-gray-700">매일 +20 💎 추가 지급</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <button className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:shadow-lg transition-all">
+                월 9,900원으로 시작하기
+              </button>
+              <p className="text-xs text-center text-gray-500">
+                언제든지 취소 가능 • 7일 무료 체험
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowPremiumModal(false)}
+              className="w-full py-3 text-gray-500 hover:text-gray-700 transition-all"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

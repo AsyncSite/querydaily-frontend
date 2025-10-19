@@ -1,10 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function ShopPage() {
   const [selectedTab, setSelectedTab] = useState<'insights' | 'premium'>('insights');
+  const [balance, setBalance] = useState(35); // 시뮬레이션용 잔액
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Toast auto-hide
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+  const showToastMessage = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
+  const handlePurchaseInsights = (amount: number, bonus: number, price: number) => {
+    const total = amount + bonus;
+    setBalance(balance + total);
+    showToastMessage(`✅ ${total} 💎 구매 완료!\n현재 보유: ${balance + total} 💎`);
+  };
+
+  const handlePremiumSubscribe = () => {
+    showToastMessage('✅ 프리미엄 7일 무료 체험이 시작되었습니다!\n매일 +20 💎를 받으세요');
+  };
 
   const insightPackages = [
     {
@@ -54,7 +80,7 @@ export default function ShopPage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm opacity-90 mb-1">현재 보유</div>
-            <div className="text-4xl font-bold">35 💎</div>
+            <div className="text-4xl font-bold">{balance} 💎</div>
           </div>
           <div className="text-6xl opacity-80">💎</div>
         </div>
@@ -148,7 +174,10 @@ export default function ShopPage() {
                 </div>
               </div>
 
-              <button className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold hover:shadow-lg transition-all">
+              <button
+                onClick={() => handlePurchaseInsights(pkg.amount, pkg.bonus, pkg.price)}
+                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold hover:shadow-lg transition-all"
+              >
                 구매하기
               </button>
             </div>
@@ -289,7 +318,10 @@ export default function ShopPage() {
               </p>
             </div>
 
-            <button className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-lg hover:shadow-xl transition-all mb-3">
+            <button
+              onClick={handlePremiumSubscribe}
+              className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-lg hover:shadow-xl transition-all mb-3"
+            >
               7일 무료로 시작하기
             </button>
 
@@ -345,6 +377,17 @@ export default function ShopPage() {
               <span className="mx-8"></span>
               <span className="text-xs text-indigo-600 font-semibold">프리미엄</span>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+          <div className="bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl max-w-sm">
+            <p className="text-sm font-medium whitespace-pre-line text-center">
+              {toastMessage}
+            </p>
           </div>
         </div>
       )}

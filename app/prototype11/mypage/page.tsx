@@ -1,10 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function MyPage() {
   const [isPremium] = useState(false); // Toggle this to test premium state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Toast auto-hide
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText('POTATO2024');
+      setToastMessage('✅ 초대 코드가 복사되었습니다!');
+      setShowToast(true);
+    } catch (err) {
+      // Fallback for older browsers
+      setToastMessage('❌ 복사 실패. 코드를 수동으로 복사해주세요.');
+      setShowToast(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-6 py-8 pb-24 space-y-6">
@@ -133,7 +155,10 @@ export default function MyPage() {
               <div className="text-2xl font-bold text-purple-600 tracking-wider">
                 POTATO2024
               </div>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all">
+              <button
+                onClick={handleCopyCode}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all"
+              >
                 복사
               </button>
             </div>
@@ -209,6 +234,17 @@ export default function MyPage() {
             로그아웃
           </button>
         </div>
+
+        {/* Toast Notification */}
+        {showToast && (
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+            <div className="bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl">
+              <p className="text-sm font-medium text-center">
+                {toastMessage}
+              </p>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

@@ -1,12 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import Link from 'next/link';
 
 export default function DashboardPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Toast auto-hide
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText('POTATO2024');
+      setToastMessage('✅ 초대 코드가 복사되었습니다!');
+      setShowToast(true);
+    } catch (err) {
+      setToastMessage('❌ 복사 실패. 코드를 수동으로 복사해주세요.');
+      setShowToast(true);
+    }
+  };
 
   const todayQuestions = [
     {
@@ -216,7 +237,10 @@ export default function DashboardPage() {
                 <div className="text-xl font-bold text-purple-600 tracking-wider mb-3">
                   POTATO2024
                 </div>
-                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all">
+                <button
+                  onClick={handleCopyCode}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all"
+                >
                   코드 복사
                 </button>
               </div>
@@ -239,6 +263,17 @@ export default function DashboardPage() {
             >
               닫기
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+          <div className="bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl">
+            <p className="text-sm font-medium text-center">
+              {toastMessage}
+            </p>
           </div>
         </div>
       )}

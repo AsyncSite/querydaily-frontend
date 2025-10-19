@@ -41,7 +41,9 @@ export default function Prototype11Layout({
         {!isLandingPage && (
           <header className="fixed top-0 left-0 right-0 max-w-md mx-auto bg-white border-b border-gray-200 px-6 py-4 z-10">
             <div className="flex items-center justify-between">
-              <LogoDesign2 />
+              <Link href="/prototype11/dashboard">
+                <LogoDesign2 />
+              </Link>
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="relative text-gray-600 hover:text-gray-900 transition-colors"

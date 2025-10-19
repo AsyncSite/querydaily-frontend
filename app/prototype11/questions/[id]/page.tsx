@@ -35,7 +35,12 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
   const answersData = [
     {
       id: 1,
-      author: { name: '라인 백엔드', badge: '재직', company: 'LINE' },
+      author: {
+        nickname: '개발하는 감자',
+        company: 'LINE',
+        position: '백엔드 개발자',
+        verified: true
+      },
       content: currentId === 1
         ? 'Spring AOP는 프록시 패턴으로 동작합니다. 인터페이스가 있으면 JDK Dynamic Proxy, 없으면 CGLIB를 사용해요.\n\n런타임에 위빙이 이루어지며, @Aspect로 정의한 Advice가 조인포인트에서 실행됩니다.\n\n주의할 점은 같은 클래스 내부 메서드 호출 시 프록시를 거치지 않아 AOP가 동작하지 않는다는 거예요.'
         : currentId === 2
@@ -47,7 +52,12 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     },
     {
       id: 2,
-      author: { name: '네이버 합격', badge: '합격자', company: 'Naver' },
+      author: {
+        nickname: '코딩하는 펭귄',
+        company: 'Naver',
+        position: '25년 합격',
+        verified: false
+      },
       content: currentId === 1
         ? '면접에서 실제로 "같은 클래스 내부 호출 시 왜 AOP가 안 되는지" 물어봤어요.\n\n프록시를 거치지 않기 때문이라고 답했고, 이 경우 self-injection이나 리팩토링으로 해결할 수 있다고 추가 설명했습니다!'
         : currentId === 2
@@ -59,7 +69,12 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     },
     {
       id: 3,
-      author: { name: '카카오 시니어', badge: '재직', company: 'Kakao' },
+      author: {
+        nickname: 'Java 고인물',
+        company: 'Kakao',
+        position: '시니어 개발자',
+        verified: true
+      },
       content: currentId === 1
         ? '실무 경험상 AOP는 트랜잭션, 로깅, 보안 등에 많이 사용됩니다.\n\n특히 @Transactional도 AOP로 구현되어 있죠.\n\n성능에 미치는 영향은 크지 않지만, 프록시 생성 비용은 고려해야 합니다.'
         : currentId === 2
@@ -71,7 +86,12 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
     },
     {
       id: 4,
-      author: { name: '토스 개발자', badge: '재직', company: 'Toss' },
+      author: {
+        nickname: '토스뱅크맨',
+        company: 'Toss',
+        position: '백엔드 개발자',
+        verified: true
+      },
       content: currentId === 1
         ? 'CGLIB는 클래스 상속 방식이라 final 클래스나 메서드에는 적용할 수 없어요.\n\n이런 제약사항도 면접에서 물어볼 수 있으니 알아두면 좋습니다.'
         : currentId === 2
@@ -166,17 +186,36 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         </div>
 
         {/* Others' Answers Header */}
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 shadow-sm border border-purple-300">
-          <div className="flex items-start gap-3">
-            <span className="text-3xl">👀</span>
-            <div>
-              <h3 className="font-bold text-gray-900 mb-1">
-                다른 개발자들은 어떻게 답했을까요?
-              </h3>
-              <p className="text-sm text-gray-600">
-                {othersAnswers.length}개의 답변을 모두 확인할 수 있어요
-              </p>
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">👀</span>
+              <span className="font-semibold text-gray-900">현직자 답변</span>
             </div>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span>8명 보는 중</span>
+            </div>
+          </div>
+
+          {/* Company Badges */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {othersAnswers.map((answer) => (
+              <div
+                key={answer.id}
+                className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+                  answer.author.company === 'LINE'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : answer.author.company === 'Naver'
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                    : answer.author.company === 'Kakao'
+                    ? 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+                    : 'bg-purple-50 text-purple-700 border border-purple-200'
+                }`}
+              >
+                {answer.author.company} {answer.author.position}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -215,21 +254,32 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
               className="bg-white rounded-2xl p-6 shadow-md border border-gray-200"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-                  {answer.author.name[0]}
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  {answer.author.nickname[0]}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-gray-900 text-sm">
-                      {answer.author.name}
+                      {answer.author.nickname}
                     </span>
-                    <span className={`px-2 py-0.5 text-xs rounded ${
-                      answer.author.badge === '재직'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-green-100 text-green-700'
-                    }`}>
-                      {answer.author.badge}
-                    </span>
+                    {answer.author.verified && (
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                        answer.author.company === 'LINE'
+                          ? 'bg-green-100 text-green-700'
+                          : answer.author.company === 'Naver'
+                          ? 'bg-blue-100 text-blue-700'
+                          : answer.author.company === 'Kakao'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-purple-100 text-purple-700'
+                      }`}>
+                        {answer.author.company}
+                      </span>
+                    )}
+                    {!answer.author.verified && answer.author.position && (
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                        {answer.author.position}
+                      </span>
+                    )}
                   </div>
                   <div className="text-xs text-gray-500">{answer.timeAgo}</div>
                 </div>

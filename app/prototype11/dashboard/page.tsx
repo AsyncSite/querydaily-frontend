@@ -1,8 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import Link from 'next/link';
 
 export default function DashboardPage() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showShareModal, setShowShareModal] = useState(false);
+
   const todayQuestions = [
     {
       id: 1,
@@ -27,72 +32,261 @@ export default function DashboardPage() {
     }
   ];
 
-  return (
-    <div className="px-6 py-8 space-y-6">
-        {/* Hero Value Proposition */}
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
-          <div className="text-center">
-            <div className="text-5xl mb-3">🎯</div>
-            <h1 className="text-xl font-bold mb-3">
-              현직자 답변으로<br/>면접 준비하기
-            </h1>
+  const isCompleted = currentIndex >= todayQuestions.length;
 
-            {/* Social Proof Badge - Ultra Minimal */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-emerald-100 text-xs">
-              <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse"></div>
-              <span>오늘 142명 학습 중</span>
-            </div>
+  const handleNext = () => {
+    if (currentIndex < todayQuestions.length) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-6 py-8">
+      {/* Hero Value Proposition */}
+      <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg mb-8">
+        <div className="text-center">
+          <div className="text-5xl mb-3">🎯</div>
+          <h1 className="text-xl font-bold mb-3">
+            현직자 답변으로<br/>면접 준비하기
+          </h1>
+
+          {/* Social Proof Badge - Ultra Minimal */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-emerald-100 text-xs">
+            <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse"></div>
+            <span>오늘 142명 학습 중</span>
           </div>
         </div>
+      </div>
 
-        {/* Today's Questions */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">오늘의 추천 질문</h2>
+      {/* Card Stack or Completion State */}
+      {!isCompleted ? (
+        <div className="relative h-[500px] mb-8">
+          {/* Card Stack */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {todayQuestions.map((question, index) => {
+              const isVisible = index >= currentIndex && index < currentIndex + 3;
+              const stackIndex = index - currentIndex;
+
+              return isVisible ? (
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  index={index}
+                  stackIndex={stackIndex}
+                  totalCount={todayQuestions.length}
+                  currentIndex={currentIndex}
+                  onNext={handleNext}
+                  onPrev={handlePrev}
+                  onShare={() => setShowShareModal(true)}
+                />
+              ) : null;
+            })}
           </div>
 
-          <div className="space-y-3">
-            {todayQuestions.map((question, index) => (
-              <Link
-                key={question.id}
-                href={`/prototype11/questions/${question.id}`}
-                className="block bg-white rounded-2xl p-5 shadow-md border-2 border-emerald-200 hover:border-emerald-400 hover:shadow-lg transition-all"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-emerald-100 text-emerald-600">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-medium text-gray-900 flex-1">
-                        {question.title}
-                      </h3>
-                      <span className="text-xl">✓</span>
-                    </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">
-                        {question.category}
-                      </span>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        question.difficulty === '초급'
-                          ? 'bg-green-50 text-green-600'
-                          : 'bg-orange-50 text-orange-600'
-                      }`}>
-                        {question.difficulty}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <span>💬 {question.answerCount}개 답변</span>
-                    </div>
-                  </div>
-                  <div className="text-emerald-600">
-                    →
-                  </div>
-                </div>
-              </Link>
+          {/* Progress Indicator */}
+          <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-2">
+            {todayQuestions.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex
+                    ? 'w-8 bg-emerald-500'
+                    : index < currentIndex
+                    ? 'w-2 bg-emerald-300'
+                    : 'w-2 bg-gray-300'
+                }`}
+              />
             ))}
           </div>
         </div>
+      ) : (
+        /* Completion State */
+        <div className="bg-white rounded-3xl p-12 shadow-2xl text-center mb-8">
+          <div className="text-7xl mb-6">🎉</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            완료!
+          </h2>
+          <p className="text-gray-600 mb-2">
+            오늘 3개 질문을 모두 확인했어요
+          </p>
+          <p className="text-sm text-gray-500">
+            내일 또 만나요
+          </p>
+        </div>
+      )}
+
+      {/* Archive Button */}
+      <Link
+        href="/prototype11/archive"
+        className="block bg-white rounded-2xl p-5 shadow-md border-2 border-gray-200 hover:border-emerald-400 hover:shadow-lg transition-all"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">📚</span>
+            <div>
+              <div className="font-semibold text-gray-900">지난 질문 확인하기</div>
+              <div className="text-sm text-gray-500">복습하고 인사이트 얻기</div>
+            </div>
+          </div>
+          <span className="text-emerald-600">→</span>
+        </div>
+      </Link>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+          onClick={() => setShowShareModal(false)}
+        >
+          <div
+            className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+              질문 공유하기
+            </h2>
+            <p className="text-center text-gray-600 mb-6">
+              친구가 이 질문을 확인하면 <strong className="text-emerald-600">+5 💎</strong>
+            </p>
+
+            <div className="space-y-3 mb-6">
+              <button className="w-full py-4 bg-[#FEE500] text-gray-900 rounded-xl font-semibold hover:bg-[#FDD835] transition-all flex items-center justify-center gap-2">
+                <span className="text-xl">💬</span>
+                카카오톡으로 공유
+              </button>
+              <button className="w-full py-4 bg-gray-100 text-gray-900 rounded-xl font-semibold hover:bg-gray-200 transition-all flex items-center justify-center gap-2">
+                <span className="text-xl">🔗</span>
+                링크 복사
+              </button>
+            </div>
+
+            <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+              <p className="text-sm text-emerald-800 text-center">
+                💡 친구가 가입하면 <strong>+50 💎</strong> 추가!
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowShareModal(false)}
+              className="w-full mt-4 py-3 text-gray-500 hover:text-gray-700 transition-all"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+interface QuestionCardProps {
+  question: {
+    id: number;
+    title: string;
+    category: string;
+    difficulty: string;
+    answerCount: number;
+  };
+  index: number;
+  stackIndex: number;
+  totalCount: number;
+  currentIndex: number;
+  onNext: () => void;
+  onPrev: () => void;
+  onShare: () => void;
+}
+
+function QuestionCard({ question, index, stackIndex, totalCount, currentIndex, onNext, onPrev, onShare }: QuestionCardProps) {
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-200, 200], [-15, 15]);
+  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
+
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (info.offset.x > 100) {
+      onPrev();
+    } else if (info.offset.x < -100) {
+      onNext();
+    }
+  };
+
+  const scale = stackIndex === 0 ? 1 : stackIndex === 1 ? 0.95 : 0.9;
+  const yOffset = stackIndex * 10;
+  const zIndex = 10 - stackIndex;
+
+  return (
+    <motion.div
+      style={{
+        x: stackIndex === 0 ? x : 0,
+        rotate: stackIndex === 0 ? rotate : 0,
+        opacity: stackIndex === 0 ? opacity : 1,
+        scale,
+        zIndex,
+      }}
+      drag={stackIndex === 0 ? 'x' : false}
+      dragConstraints={{ left: 0, right: 0 }}
+      onDragEnd={handleDragEnd}
+      animate={{
+        y: yOffset,
+        transition: { duration: 0.3 }
+      }}
+      className="absolute w-full max-w-sm"
+    >
+      <div className={`bg-white rounded-3xl p-8 shadow-2xl border-2 ${
+        stackIndex === 0 ? 'border-emerald-400' : 'border-gray-200'
+      }`}>
+        {/* Progress */}
+        <div className="text-sm font-semibold text-emerald-600 mb-6 text-center">
+          {index + 1}/{totalCount}
+        </div>
+
+        {/* Category & Difficulty */}
+        <div className="flex gap-2 mb-4 justify-center">
+          <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-sm rounded-full font-medium">
+            {question.category}
+          </span>
+          <span className={`px-3 py-1 text-sm rounded-full font-medium ${
+            question.difficulty === '초급'
+              ? 'bg-green-50 text-green-600'
+              : 'bg-orange-50 text-orange-600'
+          }`}>
+            {question.difficulty}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-xl font-bold text-gray-900 text-center mb-6 leading-relaxed">
+          {question.title}
+        </h3>
+
+        {/* Answer Count */}
+        <div className="text-center text-sm text-gray-500 mb-8">
+          💬 {question.answerCount}개 답변
+        </div>
+
+        {/* View Button */}
+        <Link
+          href={`/prototype11/questions/${question.id}`}
+          className="block w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold text-center hover:shadow-xl transition-all mb-3"
+        >
+          답변 보기 →
+        </Link>
+
+        {/* Share Button */}
+        <button
+          onClick={onShare}
+          className="w-full py-3 bg-emerald-50 text-emerald-700 rounded-xl font-semibold hover:bg-emerald-100 transition-all flex items-center justify-center gap-2"
+        >
+          <span>🎁</span>
+          친구와 공유하고 +5 💎 받기
+        </button>
+      </div>
+    </motion.div>
   );
 }

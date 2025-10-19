@@ -1,8 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useRef } from 'react';
 
 export default function DashboardPage() {
+  const questionsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToQuestions = () => {
+    questionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   const todayQuestions = [
     {
       id: 1,
@@ -31,38 +37,29 @@ export default function DashboardPage() {
     <div className="px-6 py-8 space-y-6">
         {/* Hero Value Proposition */}
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-8 text-white shadow-lg">
-          <div className="text-center mb-6">
+          <div className="text-center">
             <div className="text-6xl mb-4">🎯</div>
             <h1 className="text-2xl font-bold mb-3">
-              현직자들은 면접에<br/>어떻게 답할까?
+              현직자 답변으로<br/>면접 준비하기
             </h1>
 
             {/* Social Proof Badge - Ultra Minimal */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-emerald-100 text-xs mb-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-emerald-100 text-xs mb-6">
               <div className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse"></div>
               <span>오늘 142명 학습 중</span>
             </div>
 
-            <p className="text-emerald-100 text-sm mb-4">
-              라인, 네이버, 카카오 합격자들의 실제 답변
-            </p>
-          </div>
-
-          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="text-2xl">🎯</span>
-              <span className="font-bold text-lg">오늘의 3문제</span>
-            </div>
-            <div className="text-center text-emerald-100 text-sm space-y-1">
-              <div>✓ 지금 바로 확인</div>
-              <div>✓ 모든 답변 열람 가능</div>
-              <div>✓ 하루 5분이면 충분</div>
-            </div>
+            <button
+              onClick={scrollToQuestions}
+              className="w-full py-4 bg-white text-emerald-600 rounded-xl font-bold text-lg hover:shadow-xl transition-all"
+            >
+              오늘의 질문 3개 →
+            </button>
           </div>
         </div>
 
         {/* Today's Questions */}
-        <div>
+        <div ref={questionsRef}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">오늘의 추천 질문</h2>
           </div>

@@ -16,6 +16,8 @@ export default function WireframePage() {
     { id: 'quest', title: '질문 상세', emoji: '📖', href: '/prototype11/questions/1', color: 'from-purple-400 to-purple-600', description: '답변 열람', section: 'main' },
     { id: 'cat', title: '카테고리', emoji: '📂', href: '/prototype11/categories', color: 'from-indigo-400 to-indigo-600', description: '탐색 & 전환', section: 'main' },
     { id: 'arch', title: '아카이브', emoji: '📚', href: '/prototype11/archive', color: 'from-blue-400 to-blue-600', description: '지난 질문 복습', section: 'main' },
+    { id: 'shop', title: '상점', emoji: '💎', href: '/prototype11/shop', color: 'from-orange-400 to-amber-600', description: '인사이트 & 프리미엄', section: 'main' },
+    { id: 'mypage', title: '마이페이지', emoji: '👤', href: '/prototype11/mypage', color: 'from-gray-400 to-gray-600', description: '프로필 & 설정', section: 'main' },
   ];
 
   const flows = [
@@ -122,31 +124,65 @@ export default function WireframePage() {
                 </div>
               </div>
 
-              {/* Side Screens */}
-              <div className="flex flex-col gap-6 pt-20">
-                {[6, 7, 8].map((idx) => (
-                  <div key={idx} className="flex items-center gap-4">
-                    <div className="text-4xl text-gray-400">→</div>
-                    <Link href={screens[idx].href || '#'} className="block group">
-                      <div className="bg-gray-100 rounded-2xl p-5 w-56 h-80 shadow-lg hover:shadow-xl transition-all border-2 border-gray-300 hover:border-indigo-400">
-                        <div className={`bg-gradient-to-br ${screens[idx].color} rounded-xl p-3 h-40 mb-3 flex flex-col items-center justify-center text-white`}>
-                          <div className="text-4xl mb-2">{screens[idx].emoji}</div>
-                          <div className="text-xs font-semibold text-center">
-                            {screens[idx].title}
+              {/* Side Screens - Split into two columns */}
+              <div className="flex gap-8">
+                {/* Left column: Main features */}
+                <div className="flex flex-col gap-6 pt-20">
+                  {[6, 7, 8].map((idx) => (
+                    <div key={idx} className="flex items-center gap-4">
+                      <div className="text-4xl text-gray-400">→</div>
+                      <Link href={screens[idx].href || '#'} className="block group">
+                        <div className="bg-gray-100 rounded-2xl p-5 w-56 h-80 shadow-lg hover:shadow-xl transition-all border-2 border-gray-300 hover:border-indigo-400">
+                          <div className={`bg-gradient-to-br ${screens[idx].color} rounded-xl p-3 h-40 mb-3 flex flex-col items-center justify-center text-white`}>
+                            <div className="text-4xl mb-2">{screens[idx].emoji}</div>
+                            <div className="text-xs font-semibold text-center">
+                              {screens[idx].title}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <h3 className="font-bold text-gray-900 text-base mb-1">
+                              {screens[idx].title}
+                            </h3>
+                            <p className="text-xs text-gray-600">
+                              {screens[idx].description}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-center">
-                          <h3 className="font-bold text-gray-900 text-base mb-1">
-                            {screens[idx].title}
-                          </h3>
-                          <p className="text-xs text-gray-600">
-                            {screens[idx].description}
-                          </p>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Right column: Shop & MyPage */}
+                <div className="flex flex-col gap-6 pt-20">
+                  {[9, 10].map((idx) => (
+                    <div key={idx} className="flex items-center gap-4">
+                      <div className="text-4xl text-gray-400">→</div>
+                      <Link href={screens[idx].href || '#'} className="block group">
+                        <div className={`bg-gray-100 rounded-2xl p-5 w-56 h-80 shadow-lg hover:shadow-xl transition-all border-2 ${
+                          screens[idx].id === 'shop'
+                            ? 'border-orange-400'
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}>
+                          <div className={`bg-gradient-to-br ${screens[idx].color} rounded-xl p-3 h-40 mb-3 flex flex-col items-center justify-center text-white`}>
+                            <div className="text-4xl mb-2">{screens[idx].emoji}</div>
+                            <div className="text-xs font-semibold text-center">
+                              {screens[idx].title}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <h3 className="font-bold text-gray-900 text-base mb-1">
+                              {screens[idx].title}
+                            </h3>
+                            <p className="text-xs text-gray-600">
+                              {screens[idx].description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -281,9 +317,9 @@ export default function WireframePage() {
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-orange-400 mb-3">전환 전략</h4>
+              <h4 className="font-bold text-orange-400 mb-3">수익화 전략</h4>
               <p className="text-sm text-gray-300 leading-relaxed">
-                카테고리 탭에서 트렌딩/검색/회사필터를 통해 페이월/프리미엄 모달로 유도
+                상점 탭 (인사이트 충전 + 프리미엄 구독) + 카테고리 탭 전환 유도
               </p>
             </div>
             <div>

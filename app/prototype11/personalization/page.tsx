@@ -263,15 +263,15 @@ export default function PersonalizationPage() {
                     <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex items-center gap-2">
                         <span className="text-blue-600">✓</span>
-                        <span>"재직자" 배지 획득</span>
+                        <span>회사 배지 획득 (LINE, Kakao 등)</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-blue-600">✓</span>
-                        <span>답변 신뢰도 +20%</span>
+                        <span>답변 작성 시 +15 💎 (일반 +10)</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-blue-600">✓</span>
-                        <span>주간 무료 질문 +3개</span>
+                        <span>프로필에 재직 기간 표시</span>
                       </div>
                     </div>
                   </div>

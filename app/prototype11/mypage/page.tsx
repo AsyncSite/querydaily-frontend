@@ -116,14 +116,56 @@ export default function MyPage() {
           </div>
         </div>
 
+        {/* Referral Section */}
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 shadow-md border-2 border-purple-200">
+          <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            <span>🎁</span>
+            <span>친구 초대</span>
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            친구가 가입하면 나도 친구도 각각 50 💎 받아요!
+          </p>
+
+          {/* Referral Code */}
+          <div className="bg-white rounded-xl p-4 mb-4 border border-purple-200">
+            <div className="text-xs text-gray-600 mb-2">내 초대 코드</div>
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold text-purple-600 tracking-wider">
+                POTATO2024
+              </div>
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all">
+                복사
+              </button>
+            </div>
+          </div>
+
+          {/* Referral Stats */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white/60 rounded-lg p-3 border border-purple-100">
+              <div className="text-xs text-gray-600 mb-1">초대한 친구</div>
+              <div className="text-xl font-bold text-gray-900">0명</div>
+            </div>
+            <div className="bg-white/60 rounded-lg p-3 border border-purple-100">
+              <div className="text-xs text-gray-600 mb-1">받은 인사이트</div>
+              <div className="text-xl font-bold text-emerald-600">0 💎</div>
+            </div>
+          </div>
+
+          {/* Share Button */}
+          <button className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+            <span>💬</span>
+            <span>카카오톡으로 초대하기</span>
+          </button>
+        </div>
+
         {/* My Shared Answers */}
         <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-4">✍️ 공유한 답변</h3>
+          <h3 className="font-semibold text-gray-900 mb-4">✍️ 작성한 답변</h3>
 
           <div className="py-12 text-center">
             <div className="text-5xl mb-3">📝</div>
-            <p className="text-sm text-gray-600 mb-1">아직 공유한 답변이 없습니다</p>
-            <p className="text-xs text-gray-400">답변을 공유하면 인사이트를 받을 수 있어요</p>
+            <p className="text-sm text-gray-600 mb-1">아직 작성한 답변이 없습니다</p>
+            <p className="text-xs text-gray-400">답변을 작성하면 인사이트를 받을 수 있어요</p>
           </div>
         </div>
 

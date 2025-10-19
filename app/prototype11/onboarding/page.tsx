@@ -24,9 +24,9 @@ export default function OnboardingPage() {
     },
     {
       emoji: '💎',
-      title: '답변 공유하면 인사이트 적립',
-      description: '공유할수록 더 많이 볼 수 있어요',
-      detail: '답변 1개당 +10 인사이트',
+      title: '답변 작성하면 인사이트 적립',
+      description: '작성할수록 더 많이 볼 수 있어요',
+      detail: '답변 1개당 +10 💎',
       color: 'from-emerald-500 to-teal-600'
     }
   ];

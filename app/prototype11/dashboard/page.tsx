@@ -197,17 +197,35 @@ export default function DashboardPage() {
             className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-              질문 공유하기
-            </h2>
-            <p className="text-center text-gray-600 mb-6">
-              친구가 이 질문을 확인하면 <strong className="text-emerald-600">+5 💎</strong>
-            </p>
+            <div className="text-center mb-6">
+              <div className="text-5xl mb-4">🎁</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                친구 초대하기
+              </h2>
+              <p className="text-gray-600">
+                친구가 가입하면 나도 친구도 각각
+              </p>
+              <p className="text-2xl font-bold text-emerald-600 mt-2">
+                +50 💎
+              </p>
+            </div>
+
+            <div className="bg-purple-50 rounded-xl p-4 mb-6 border border-purple-200">
+              <div className="text-xs text-gray-600 mb-2 text-center">내 초대 코드</div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-purple-600 tracking-wider mb-3">
+                  POTATO2024
+                </div>
+                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all">
+                  코드 복사
+                </button>
+              </div>
+            </div>
 
             <div className="space-y-3 mb-6">
               <button className="w-full py-4 bg-[#FEE500] text-gray-900 rounded-xl font-semibold hover:bg-[#FDD835] transition-all flex items-center justify-center gap-2">
                 <span className="text-xl">💬</span>
-                카카오톡으로 공유
+                카카오톡으로 초대
               </button>
               <button className="w-full py-4 bg-gray-100 text-gray-900 rounded-xl font-semibold hover:bg-gray-200 transition-all flex items-center justify-center gap-2">
                 <span className="text-xl">🔗</span>
@@ -215,15 +233,9 @@ export default function DashboardPage() {
               </button>
             </div>
 
-            <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-              <p className="text-sm text-emerald-800 text-center">
-                💡 친구가 가입하면 <strong>+50 💎</strong> 추가!
-              </p>
-            </div>
-
             <button
               onClick={() => setShowShareModal(false)}
-              className="w-full mt-4 py-3 text-gray-500 hover:text-gray-700 transition-all"
+              className="w-full py-3 text-gray-500 hover:text-gray-700 transition-all"
             >
               닫기
             </button>
@@ -331,10 +343,10 @@ function QuestionCard({ question, index, stackIndex, totalCount, currentIndex, o
         {/* Share Button */}
         <button
           onClick={onShare}
-          className="w-full py-3 bg-emerald-50 text-emerald-700 rounded-xl font-semibold hover:bg-emerald-100 transition-all flex items-center justify-center gap-2"
+          className="w-full py-3 bg-purple-50 text-purple-700 rounded-xl font-semibold hover:bg-purple-100 transition-all flex items-center justify-center gap-2"
         >
           <span>🎁</span>
-          친구와 공유하고 +5 💎 받기
+          친구 초대하고 +50 💎 받기
         </button>
       </div>
     </motion.div>

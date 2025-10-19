@@ -220,25 +220,24 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
         </div>
 
         {/* Sort Toggle */}
-        <div className="flex items-center justify-between bg-white rounded-xl p-3 shadow-sm border border-gray-200">
-          <span className="text-sm text-gray-600">정렬</span>
-          <div className="flex gap-2">
+        <div className="flex items-center justify-end gap-2 mb-4">
+          <div className="inline-flex bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setSortBy('popular')}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                 sortBy === 'popular'
-                  ? 'bg-indigo-600 text-white font-medium'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               인기순
             </button>
             <button
               onClick={() => setSortBy('recent')}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                 sortBy === 'recent'
-                  ? 'bg-indigo-600 text-white font-medium'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               최신순

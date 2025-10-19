@@ -93,40 +93,6 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
-
-        {/* More Questions */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 shadow-sm border border-indigo-300">
-          <div className="flex items-start gap-3 mb-4">
-            <span className="text-3xl">💡</span>
-            <div className="flex-1">
-              <h3 className="font-bold text-gray-900 mb-2">
-                더 많은 질문을 보고 싶다면?
-              </h3>
-              <p className="text-sm text-gray-700 mb-4">
-                답변을 공유하면 인사이트를 받아요
-              </p>
-              <div className="bg-white/60 rounded-xl p-4 border border-indigo-200">
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="flex items-center justify-between">
-                    <span>답변 1개 공유</span>
-                    <span className="font-bold text-indigo-600">+10 💎</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>5개 답변 = 하루 무제한</span>
-                    <span className="font-bold text-indigo-600">50 💎</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mini Stats Footer - Optional */}
-        <div className="flex items-center justify-center gap-3 py-3 text-xs text-gray-500">
-          <span>🔥 첫 방문</span>
-          <span>·</span>
-          <span>💬 답변 35개</span>
-        </div>
     </div>
   );
 }

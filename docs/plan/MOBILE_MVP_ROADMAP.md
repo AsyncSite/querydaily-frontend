@@ -118,12 +118,32 @@ querydaily-mobile-service/
 | `subscription` | 프리미엄 플랜 관리 | Subscription, SubscriptionPlan |
 | `member` | 사용자 프로필 캐시 (user-service 동기화) | MemberProfile |
 
-### Decision 0.3: User Service 통합 방식 ✅
+### Decision 0.3: AsyncSite 통합 계정 시스템 ✅
+
+**핵심 개념: QueryDaily는 AsyncSite 플랫폼의 한 서비스**
+
+사용자는 **AsyncSite 통합 계정** 하나로 모든 서비스(Study, QueryDaily, 기타)를 이용합니다.
+
+```
+AsyncSite 플랫폼
+├─ user-service (통합 인증 & 계정 관리)
+├─ study-service (스터디 관리)
+├─ querydaily-mobile-service (면접 질문 학습) ← 신규
+└─ 기타 서비스들...
+```
+
+**계정 구조:**
+
+| 계층 | 관리 주체 | 데이터 |
+|------|----------|--------|
+| **통합 계정** | user-service | 이메일, 이름, 프로필 이미지, 카카오 연동 |
+| **서비스 전용 데이터** | 각 서비스 | QueryDaily: 인사이트 잔액, 구독 상태<br>Study: 스터디 참여 내역 |
 
 **user-service가 제공하는 것:**
-- 카카오 OAuth 로그인
-- JWT 토큰 발급
+- 카카오 OAuth 로그인 (AsyncSite 통합 계정)
+- JWT 토큰 발급 (모든 서비스에서 사용 가능)
 - 기본 사용자 정보 (이메일, 이름, 프로필 이미지)
+- SSO (Single Sign-On) - 한 번 로그인하면 모든 서비스 이용 가능
 
 **querydaily-mobile-service가 관리하는 것:**
 - 인사이트 잔액 (💎)
@@ -133,25 +153,80 @@ querydaily-mobile-service/
 
 **통합 패턴:**
 
-1. **인증 플로우:**
+1. **인증 플로우 (API Gateway 필수):**
    ```
-   모바일 앱 → user-service: 카카오 OAuth 로그인
-   user-service → 모바일 앱: JWT 토큰
-   모바일 앱 → querydaily-mobile-service: JWT와 함께 API 호출
-   querydaily-mobile-service: JWT 검증 (공유 secret)
+   로그인 시:
+   모바일 앱 → API Gateway → user-service: 카카오 OAuth 로그인
+   user-service → API Gateway → 모바일 앱: JWT 토큰
+   모바일 앱: JWT를 localStorage에 저장
+
+   일반 API 호출 시:
+   모바일 앱 → API Gateway: JWT 포함
+   API Gateway: JWT 검증 (공통)
+   API Gateway → querydaily-mobile-service: userId 헤더 추가
+   querydaily-mobile-service: userId 신뢰 (재검증 안 함)
    ```
 
-2. **프로필 동기화:**
+2. **API Gateway 라우팅:**
+   ```
+   /api/auth/**        → user-service (JWT 검증 제외)
+   /api/users/**       → user-service (JWT 검증 필요)
+   /api/v1/questions/** → querydaily-mobile-service (JWT 검증 필요)
+   /api/v1/answers/**  → querydaily-mobile-service (JWT 검증 필요)
+   /api/v1/insights/** → querydaily-mobile-service (JWT 검증 필요)
+   기타 모든 /api/v1/** → querydaily-mobile-service
+   ```
+
+3. **프로필 동기화 (Kafka 이벤트):**
    ```
    user-service → Kafka: user.profile.updated 이벤트
    querydaily-mobile-service → Kafka: 이벤트 구독
    querydaily-mobile-service: member 테이블 업데이트 (읽기 전용 캐시)
    ```
 
-3. **데이터 소유권:**
-   - user-service DB: `users` 테이블 (원본)
+4. **데이터 소유권:**
+   - user-service DB: `users` 테이블 (Single Source of Truth)
    - querydaily-mobile-service DB: `members` 테이블 (캐시된 프로필)
    - 동기화 전략: Kafka를 통한 최종 일관성
+
+**사용자 경험:**
+
+1. **신규 사용자:**
+   ```
+   QueryDaily 앱 설치 → 카카오 로그인 → AsyncSite 계정 생성
+   → QueryDaily 온보딩 (초대 코드 입력 가능)
+   → QueryDaily 서비스 이용 시작
+   ```
+
+2. **기존 AsyncSite 사용자 (예: Study 이용 중):**
+   ```
+   QueryDaily 앱 설치 → 기존 JWT 재사용 (재로그인 불필요)
+   → QueryDaily 첫 방문 감지
+   → "AsyncSite 회원이시네요!" 메시지
+   → QueryDaily 온보딩 (초대 코드 입력 가능)
+   → QueryDaily 서비스 이용 시작
+   ```
+
+3. **서비스 간 이동:**
+   ```
+   QueryDaily에서 로그인 → Study로 이동 → 재로그인 불필요 (SSO)
+   Study에서 로그인 → QueryDaily로 이동 → 재로그인 불필요 (SSO)
+   ```
+
+4. **회원 탈퇴:**
+   ```
+   user-service에서 탈퇴
+   → 모든 AsyncSite 서비스 데이터 삭제
+   → QueryDaily, Study 등 모든 서비스 접근 불가
+   ```
+
+**QueryDaily 회원가입 시점:**
+- AsyncSite 계정 생성 시점: user-service 가입 시
+- QueryDaily 회원가입 시점: **QueryDaily 첫 방문 & 온보딩 완료 시**
+  - 초대 코드 입력 가능 (이 시점에만)
+  - member 테이블에 레코드 생성
+  - 초대 코드 자동 생성
+  - 인사이트 초기 잔액 설정 (0 💎 또는 초대 보너스 50 💎)
 
 ### Decision 0.4: 초기 컨텐츠 전략 ✅
 

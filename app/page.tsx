@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile, createOrder, ProductCode, getAllProducts, ProductInfo, ApiResponse, ProductListResponse } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
@@ -85,8 +85,8 @@ export default function HomePage() {
   const [verificationCode, setVerificationCode] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
+  const [purchasePhone, setPurchasePhone] = useState('');
   const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
-  const [purchasePhone, setPurchasePhone] = useState(''); // buyer_tel
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
@@ -94,8 +94,6 @@ export default function HomePage() {
   const [verificationTimer, setVerificationTimer] = useState(0);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [showBusinessInfo, setShowBusinessInfo] = useState(false);
-  const [products, setProducts] = useState<Record<string, ProductInfo>>({});
-  const [productsLoading, setProductsLoading] = useState(true);
 
   // Calculate days remaining until Oct 31
   const calculateDaysRemaining = () => {
@@ -137,35 +135,6 @@ export default function HomePage() {
       return () => clearTimeout(timer);
     }
   }, [notification]);
-
-  // Fetch products on mount
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setProductsLoading(true);
-        const response: ApiResponse<ProductListResponse> = await getAllProducts();
-
-        if (response.success && response.data) {
-          const productMap: Record<string, ProductInfo> = {};
-          response.data.products.forEach(product => {
-            productMap[product.productCode] = product;
-          });
-          setProducts(productMap);
-        }
-      } catch (err) {
-        console.error('Failed to fetch products:', err);
-      } finally {
-        setProductsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Helper function to format price
-  const formatPrice = (price: number): string => {
-    return `₩${price.toLocaleString('ko-KR')}`;
-  };
 
   const testimonials = [
     {
@@ -490,123 +459,67 @@ export default function HomePage() {
     }
   };
 
-  const handleCardPayment = async () => {
-    setIsSubmitting(true);
+  const handleCardPayment = () => {
+    if (!window.IMP) {
+      alert('\uacb0\uc81c \ubaa8\ub4c8\uc774 \ub85c\ub4dc\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.');
+      return;
+    }
 
-    try {
-      // 디버깅: 선택된 상품 확인
-      console.log('[DEBUG] selectedPurchaseProduct:', selectedPurchaseProduct);
+    // Initialize Portone with test MID
+    window.IMP.init('iamport'); // 포트원 공식 테스트용 가맹점 식별코드
 
-      // ProductCode 매핑
-      const productCodeMap: Record<string, ProductCode> = {
-        'critical-hit': ProductCode.CRITICAL_HIT,
-        'growth-plan': ProductCode.GROWTH_PLAN,
-        'real-interview': ProductCode.REAL_INTERVIEW,
-        'last-check': ProductCode.LAST_CHECK,
-        'resume-fit': ProductCode.RESUME_FIT
-      };
+    // \uc0c1\ud488\uba85\uacfc \uac00\uaca9 \ub9e4\ud551
+    const productNames: Record<string, string> = {
+      'critical-hit': '\ud06c\ub9ac\ud2f0\uceec \ud788\ud2b8',
+      'growth-plan': '\uadf8\ub85c\uc2a4 \ud50c\ub79c',
+      'real-interview': '\ub9ac\uc5bc \uc778\ud130\ubdf0',
+      'resume-analytics': '\ub77c\uc2a4\ud2b8 \uccb4\ud06c'
+    };
 
-      const productCode = productCodeMap[selectedPurchaseProduct || ''];
-      console.log('[DEBUG] mapped productCode:', productCode);
+    const productPrices: Record<string, number> = {
+      'critical-hit': 9900,
+      'growth-plan': 49000,
+      'real-interview': 129000,
+      'last-check': 49000,
+      'resume-fit': 59000
+    };
 
-      if (!productCode) {
-        alert('상품을 선택해주세요.');
-        return;
+    const orderData = {
+      pg: 'html5_inicis', // 이니시스 웹표준 결제 (테스트)
+      pay_method: 'card',
+      merchant_uid: `QD${Date.now()}`,
+      name: productNames[selectedPurchaseProduct || ''] || '',
+      amount: productPrices[selectedPurchaseProduct || ''] || 0,
+      buyer_email: purchaseEmail || 'test@example.com',
+      buyer_name: purchaseName || 'Guest',
+      buyer_tel: purchasePhone || '010-0000-0000',
+      custom_data: {
+        product: selectedPurchaseProduct
       }
+    };
 
-      // Query Daily Service를 통한 주문 생성 (Checkout Service 호출)
-      const response = await createOrder({
-        email: purchaseEmail || 'test@example.com',
-        name: purchaseName || 'Guest',
-        phone: purchasePhone,
-        productCode,
-        paymentMethod: 'card', // 카드결제
-        resume: purchaseFile || undefined
-      });
-
-      if (response.success && response.data) {
-        // 주문 정보 저장
+    window.IMP.request_pay(orderData, (response: any) => {
+      if (response.success) {
+        // Store order data
         const orderInfo = {
-          orderId: response.data.orderId,
-          productName: selectedPurchaseProduct,
-          price: response.data.amount,
-          paymentMethod: 'INICIS', // 카드결제
+          orderId: response.merchant_uid,
+          productName: orderData.name,
+          price: orderData.amount,
+          paymentMethod: 'card',
           email: purchaseEmail,
           name: purchaseName,
-          checkoutUrl: response.data.checkoutUrl,
+          phone: purchasePhone || '',
+          paymentId: response.imp_uid,
+          paidAt: new Date().toISOString(),
         };
         localStorage.setItem('orderData', JSON.stringify(orderInfo));
 
-        // SDK 모드인 경우 PortOne V2 SDK 호출
-        if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
-          // PortOne V2 SDK 동적 import
-          const PortOne = await import('@portone/browser-sdk/v2');
-
-          const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
-
-          // 결제 요청 직전 페이로드 로깅 (민감정보 마스킹)
-          const masked = {
-            ...payload,
-            channelKey: payload.channelKey ? `*${payload.channelKey.slice(-6)}` : undefined,
-            storeId: payload.storeId ? `*${payload.storeId.slice(-6)}` : undefined,
-          };
-          console.info('[PortOne SDK] requestPayment payload', masked);
-
-          try {
-            // 백엔드가 보내준 payload 그대로 전달
-            const sdkResponse = await PortOne.requestPayment(payload);
-
-            // 응답 존재 확인
-            if (!sdkResponse) {
-              alert('결제 응답을 받지 못했습니다.');
-              return;
-            }
-
-            // SDK 응답 체크 (문서 기반)
-            if (sdkResponse.code !== undefined) {
-              // 오류 발생 (취소, 실패 등)
-              console.log('[PortOne SDK] Payment cancelled or failed:', {
-                code: sdkResponse.code,
-                message: sdkResponse.message
-              });
-
-              // 사용자 친화적 메시지로 변환
-              let userMessage = '결제를 처리할 수 없습니다.';
-              if (sdkResponse.code === 'USER_CANCEL' || sdkResponse.message?.includes('취소')) {
-                userMessage = '결제가 취소되었습니다.';
-              } else if (sdkResponse.code === 'NETWORK_ERROR') {
-                userMessage = '네트워크 연결을 확인해 주세요.';
-              } else if (sdkResponse.message) {
-                userMessage = sdkResponse.message;
-              }
-
-              alert(userMessage);
-              return;
-            }
-
-            // 성공한 경우
-            console.log('[PortOne SDK] Payment request succeeded, paymentId:', sdkResponse.paymentId);
-            window.location.href = '/order-complete';
-          } catch (error: any) {
-            console.error('[PortOne SDK] Unexpected error:', error);
-            alert(`결제 SDK 오류: ${error.message || '알 수 없는 오류'}`);
-          }
-        } else if (response.data.checkoutUrl) {
-          // URL 모드인 경우 체크아웃 URL로 리다이렉트
-          window.location.href = response.data.checkoutUrl;
-        } else {
-          // URL도 없고 SDK도 아닌 경우
-          window.location.href = '/order-complete';
-        }
+        // Redirect to success page
+        window.location.href = '/order-complete';
       } else {
-        alert(`주문 생성에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+        alert(`\uacb0\uc81c\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4: ${response.error_msg}`);
       }
-    } catch (error: any) {
-      console.error('Payment order error:', error);
-      alert(`주문 처리 중 오류가 발생했습니다: ${error.message}`);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -974,8 +887,8 @@ export default function HomePage() {
                   <span className={styles.priceCurrent}>로딩 중...</span>
                 ) : (
                   <>
-                    <span className={styles.priceOriginal}>{formatPrice(products['GROWTH_PLAN']?.basePrice || 99000)}</span>
-                    <span className={styles.priceCurrent}>{formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}</span>
+                    <span className={styles.priceOriginal}>{formatPrice(products['GROWTH_PLAN']?.basePrice || 106000)}</span>
+                    <span className={styles.priceCurrent}>{formatPrice(products['GROWTH_PLAN']?.currentPrice || 49000)}</span>
                   </>
                 )}
               </div>
@@ -1020,14 +933,8 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                {productsLoading ? (
-                  <span className={styles.priceCurrent}>로딩 중...</span>
-                ) : (
-                  <>
-                    <span className={styles.priceOriginal}>{formatPrice(products['REAL_INTERVIEW']?.basePrice || 39000)}</span>
-                    <span className={styles.priceCurrent}>{formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}</span>
-                  </>
-                )}
+                <span className={styles.priceOriginal}>₩179,000</span>
+                <span className={styles.priceCurrent}>₩129,000</span>
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
@@ -1040,14 +947,14 @@ export default function HomePage() {
             {/* 크리티컬 히트 */}
             <div className={styles.productCard}>
               <div className={styles.productHeader}>
-                <span className={styles.productLabel}>3가지 결정적 질문</span>
+                <span className={styles.productLabel}>단 하나의 결정적 질문</span>
                 <h3 className={styles.productName}>크리티컬 히트</h3>
                 <span className={styles.productEn}>Critical Hit</span>
               </div>
               <div className={styles.productFeatures}>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🎯</span>
-                  <span>이력서 맞춤 핵심 질문 3개</span>
+                  <span>이력서 맞춤 핵심 질문 1개</span>
                 </div>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🔗</span>
@@ -1069,14 +976,8 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                {productsLoading ? (
-                  <span className={styles.priceCurrent}>로딩 중...</span>
-                ) : (
-                  <>
-                    <span className={styles.priceOriginal}>{formatPrice(products['CRITICAL_HIT']?.basePrice || 15900)}</span>
-                    <span className={styles.priceCurrent}>{formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}</span>
-                  </>
-                )}
+                <span className={styles.priceOriginal}>₩4,900</span>
+                <span className={styles.priceCurrent}>₩1,900</span>
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
@@ -1118,67 +1019,12 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                {productsLoading ? (
-                  <span className={styles.priceCurrent}>로딩 중...</span>
-                ) : (
-                  <>
-                    <span className={styles.priceOriginal}>{formatPrice(products['LAST_CHECK']?.basePrice || 49000)}</span>
-                    <span className={styles.priceCurrent}>{formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}</span>
-                  </>
-                )}
+                <span className={styles.priceOriginal}>₩29,900</span>
+                <span className={styles.priceCurrent}>₩19,900</span>
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('last-check')}
-              >
-                지금 시작하기
-              </button>
-            </div>
-
-            {/* 레주메 핏 */}
-            <div className={styles.productCard}>
-              <div className={styles.productHeader}>
-                <span className={styles.productLabel}>이력서 전문가 분석</span>
-                <h3 className={styles.productName}>레주메 핏</h3>
-                <span className={styles.productEn}>Resume Fit</span>
-              </div>
-              <div className={styles.productFeatures}>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>📄</span>
-                  <span>전문가의 이력서 분석</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>✨</span>
-                  <span>맞춤 개선 가이드</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🎯</span>
-                  <span>실전 피드백</span>
-                </div>
-              </div>
-              <div className={styles.productServiceInfo}>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
-                </div>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>환불 규정</span>
-                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
-                </div>
-              </div>
-              <div className={styles.productPrice}>
-                {productsLoading ? (
-                  <span className={styles.priceCurrent}>로딩 중...</span>
-                ) : (
-                  <>
-                    <span className={styles.priceOriginal}>{formatPrice(products['RESUME_FIT']?.basePrice || 59000)}</span>
-                    <span className={styles.priceCurrent}>{formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}</span>
-                  </>
-                )}
-              </div>
-              <button
-                className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('resume-fit')}
+                onClick={() => handleProductSelect('resume-analytics')}
               >
                 지금 시작하기
               </button>
@@ -2254,7 +2100,7 @@ export default function HomePage() {
                           const response = await startFreeTrial(profileData);
                           if (response.success) {
                             setModalOpen(false);
-                            router.push('/success');
+                            router.push(`/trial-started?email=${encodeURIComponent(profileData.email)}`);
                           }
                         } catch (error) {
                           setErrors([error instanceof Error ? error.message : '체험 시작 중 오류가 발생했습니다']);
@@ -2311,8 +2157,7 @@ export default function HomePage() {
                     {selectedPurchaseProduct === 'critical-hit' && '맞춤형 핵심 질문 생성을 위해 필요합니다'}
                     {selectedPurchaseProduct === 'growth-plan' && '20일 성장 계획 수립을 위해 필요합니다'}
                     {selectedPurchaseProduct === 'real-interview' && '모의면접 준비를 위해 필요합니다'}
-                    {selectedPurchaseProduct === 'last-check' && '면접 D-1 긴급 대비를 위해 필요합니다'}
-                    {selectedPurchaseProduct === 'resume-fit' && '이력서 전문가 분석을 위해 필요합니다'}
+                    {selectedPurchaseProduct === 'resume-analytics' && '면접 D-1 긴급 대비를 위해 필요합니다'}
                   </p>
 
                   <div className={styles.selectedProductInfo}>
@@ -2320,15 +2165,14 @@ export default function HomePage() {
                       {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
                       {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
                       {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
-                      {selectedPurchaseProduct === 'last-check' && '라스트 체크'}
-                      {selectedPurchaseProduct === 'resume-fit' && '레주메 핏'}
+                      {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
                     </span>
                     <span className={styles.modalProductPrice}>
-                      {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
-                      {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
-                      {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                      {selectedPurchaseProduct === 'last-check' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
-                      {selectedPurchaseProduct === 'resume-fit' && formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}
+                      {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
+                      {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                      {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                      {selectedPurchaseProduct === 'last-check' && '₩49,000'}
+                      {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                     </span>
                   </div>
 
@@ -2463,9 +2307,9 @@ export default function HomePage() {
                     />
                   </div>
 
-                  {/* 전화번호 입력 */}
+                  {/* 연락처 입력 */}
                   <div className={styles.modalFormGroup}>
-                    <label className={styles.modalLabel}>전화번호 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <label className={styles.modalLabel}>연락처 <span style={{ color: '#ff6b6b' }}>*</span></label>
                     <input
                       type="tel"
                       placeholder="010-1234-5678"
@@ -2490,7 +2334,7 @@ export default function HomePage() {
                         } else if (!purchaseName.trim()) {
                           alert('이름을 입력해주세요');
                         } else if (!purchasePhone.trim()) {
-                          alert('전화번호를 입력해주세요');
+                          alert('연락처를 입력해주세요');
                         } else {
                           // KAKAO/INICIS REVIEW: Handle different payment methods
                           if (paymentMethod === 'card') {
@@ -2537,21 +2381,21 @@ export default function HomePage() {
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
                       <span>
-                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
-                        {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
-                        {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'last-check' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
-                        {selectedPurchaseProduct === 'resume-fit' && formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}
+                        {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
+                        {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                        {selectedPurchaseProduct === 'last-check' && '₩49,000'}
+                        {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
                       <span>결제 금액</span>
                       <span style={{ color: '#c3e88d' }}>
-                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
-                        {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
-                        {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'last-check' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
-                        {selectedPurchaseProduct === 'resume-fit' && formatPrice(products['RESUME_FIT']?.currentPrice || 59000)}
+                        {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
+                        {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                        {selectedPurchaseProduct === 'last-check' && '₩49,000'}
+                        {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                       </span>
                     </div>
                   </div>
@@ -2572,7 +2416,7 @@ export default function HomePage() {
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
                       onClick={async () => {
-                        if (!purchaseFile || !purchaseName || !purchaseEmail) {
+                        if (!purchaseFile || !purchaseName || !purchaseEmail || !purchasePhone) {
                           setErrors(['모든 필수 정보를 입력해주세요.']);
                           return;
                         }
@@ -2582,17 +2426,17 @@ export default function HomePage() {
                           // productType 매핑
                           const productTypeMap: Record<string, string> = {
                             'critical-hit': 'CRITICAL_HIT',
-                            'growth-plan': 'GROWTH_PLAN',
-                            'real-interview': 'REAL_INTERVIEW',
-                            'last-check': 'LAST_CHECK',
-                            'resume-fit': 'RESUME_FIT'
+                            'growth-plan': 'SQL_MASTER',
+                            'real-interview': 'SYSTEM_DESIGN',
+                            'resume-analytics': 'DATA_ALGO'
                           };
 
                           // API 호출
                           const response = await submitBetaApplication({
                             email: purchaseEmail,
                             name: purchaseName,
-                            productType: productTypeMap[selectedPurchaseProduct || ''] || 'GROWTH_PLAN',
+                            phone: purchasePhone,
+                            productType: productTypeMap[selectedPurchaseProduct || ''] || 'SQL_MASTER',
                             resume: purchaseFile
                           });
 
@@ -2600,12 +2444,12 @@ export default function HomePage() {
                             // 주문 정보를 localStorage에 저장
                             const orderData = {
                               memberId: response.data?.memberId,
-                              orderId: response.data?.orderId || `QD${Date.now()}`,
                               name: purchaseName,
                               email: purchaseEmail,
+                              phone: purchasePhone,
                               product: selectedPurchaseProduct || '',
-                              paymentMethod: 'ACCOUNT_TRANSFER', // 계좌이체
-                              orderDate: new Date().toISOString()
+                              orderDate: new Date().toISOString(),
+                              orderId: `QD${Date.now()}`
                             };
 
                             localStorage.setItem('orderData', JSON.stringify(orderData));

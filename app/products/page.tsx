@@ -102,12 +102,15 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.currentPrice}>₩106,000</span>
+                <span className={styles.originalPrice}>₩106,000</span>
+                <span className={styles.arrow}>→</span>
+                <span className={styles.currentPrice}>₩49,000</span>
+                <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 20일간 매일 발송</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('그로스 플랜', '₩106,000')}
+                onClick={() => handlePurchaseClick('그로스 플랜', '₩49,000')}
               >
                 무통장입금으로 결제하기 →
               </button>
@@ -161,12 +164,15 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.currentPrice}>₩39,000</span>
+                <span className={styles.originalPrice}>₩179,000</span>
+                <span className={styles.arrow}>→</span>
+                <span className={styles.currentPrice}>₩129,000</span>
+                <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 90분 모의면접 1회</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('리얼 인터뷰', '₩39,000')}
+                onClick={() => handlePurchaseClick('리얼 인터뷰', '₩129,000')}
               >
                 무통장입금으로 결제하기 →
               </button>

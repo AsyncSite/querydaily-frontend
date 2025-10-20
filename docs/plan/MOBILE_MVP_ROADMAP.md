@@ -38,10 +38,10 @@
 - [ ] 내 답변 작성 → 10 💎 획득
 - [ ] 5 💎 소비해서 과거 질문 보기
 - [ ] 친구 초대 시스템 (+50 💎 양쪽 모두)
+- [ ] 인사이트 충전 (PortOne 결제 연동)
 
 **추가 기능 (Phase 2):**
 - [ ] 프리미엄 구독 (검색, 회사 필터, 북마크)
-- [ ] 결제 연동
 - [ ] 회사 인증
 
 **향후 기능:**
@@ -255,6 +255,136 @@ AsyncSite 플랫폼
 **뱃지 데이터 (초기):**
 - 텍스트 기반 뱃지 (인증 없음)
 - 회사 인증 → Phase 2
+
+### Decision 0.4.5: 결제 통합 (PortOne SDK) ✅
+
+**핵심 결정: 런칭 전 인사이트 충전 기능 포함**
+
+QueryDaily Mobile MVP에 PortOne 결제 시스템을 통합하여 사용자가 인사이트를 충전할 수 있도록 합니다.
+
+**통합 범위:**
+- ✅ **인사이트 충전** (Phase 1 - MVP 포함)
+- ❌ **프리미엄 구독** (Phase 2 - 런칭 후 추가)
+
+**기술적 준비 상태:**
+| 컴포넌트 | 상태 | 비고 |
+|----------|------|------|
+| Payment Core | ✅ 준비 완료 | Transaction 관리, 상태 머신, S2S 검증 |
+| Checkout Service | ✅ 준비 완료 | PaymentIntent 관리, 멱등성 보장 |
+| Payment Gateway | ✅ 준비 완료 | PortOne V2 통합, Mock Server 완비 |
+| PortOne SDK | ✅ 사용 가능 | `@portone/browser-sdk` 패키지 |
+| API Gateway 라우팅 | ⚠️ 설정 필요 | `/api/v1/payments/**` → checkout-service |
+
+**결제 플로우 (PortOne SDK 방식):**
+
+```
+1. 사용자: 인사이트 충전 버튼 클릭 (shop 페이지)
+   ↓
+2. 프론트엔드 → Checkout Service
+   POST /api/v1/checkout/payment-intents
+   {
+     domain: "querydaily-mobile",
+     itemType: "insight-charge",
+     amount: { final: 10000 },
+     customer: { email, name },
+     metadata: { insightAmount: 100 }
+   }
+   ↓
+3. Checkout Service 응답
+   {
+     intentId: "intent_xxx",
+     invocationType: "SDK",
+     portOneSdkPayload: {
+       storeId: "store-xxx",
+       channelKey: "channel-xxx",
+       paymentId: "intent_xxx",
+       orderName: "인사이트 100 💎",
+       totalAmount: 10000,
+       payMethod: "CARD"
+     }
+   }
+   ↓
+4. 프론트엔드: PortOne SDK 호출
+   const portone = PortOne(storeId);
+   await portone.requestPayment(portOneSdkPayload);
+   → 결제창 열림 (시스템 브라우저 또는 인앱 WebView)
+   ↓
+5. 사용자: 결제 승인 (카드/카카오페이/네이버페이)
+   ↓
+6. PG사 → Payment Gateway → Payment Core (S2S Webhook)
+   → Transaction 상태: CONFIRMED
+   → Kafka 이벤트 발행: asyncsite.payment.verified
+   ↓
+7. querydaily-mobile-service: Kafka Listener
+   → 인사이트 충전 (insight 도메인)
+   → InsightTransaction 생성
+   → InsightBalance 업데이트 (+100 💎)
+   ↓
+8. 프론트엔드: 상태 폴링 (Smart Retry)
+   GET /api/v1/checkout/payment-intents/{intentId}/status
+   → status: CONFIRMED 확인
+   → 충전 완료 UI 표시
+```
+
+**PWA 환경에서의 PortOne SDK 동작:**
+- ✅ **시스템 브라우저 방식**: `window.open()` 또는 SDK 자체 팝업
+- ✅ **인앱 WebView**: PWA 설치 후에도 결제창 정상 동작
+- ✅ **콜백 처리**: Webhook 기반 (프론트엔드는 폴링으로 상태 확인)
+- ⚠️ **딥링크 불필요**: Redirect URL이 아닌 SDK 방식이므로 딥링크 설정 불필요
+
+**인사이트 충전 상품:**
+| 상품명 | 인사이트 | 가격 | 보너스 |
+|--------|----------|------|--------|
+| 미니 | 50 💎 | ₩3,000 | - |
+| 베이직 | 100 💎 | ₩5,000 | +10 💎 |
+| 프리미엄 | 300 💎 | ₩13,000 | +50 💎 |
+
+**백엔드 작업 (querydaily-mobile-service):**
+- [ ] payment 도메인 생성:
+  - PaymentEventListener (Kafka)
+  - InsightChargeHandler
+- [ ] insight 도메인에 충전 로직 추가:
+  - ChargeInsightUseCase
+  - InsightTransaction 엔티티
+- [ ] Kafka 설정:
+  - 토픽: `asyncsite.payment.verified`
+  - Consumer Group: `querydaily-mobile-payment-consumer`
+
+**프론트엔드 작업 (querydaily-mobile PWA):**
+- [ ] PortOne SDK 설치:
+  ```bash
+  npm install @portone/browser-sdk
+  ```
+- [ ] 인사이트 충전 페이지 구현:
+  - shop 페이지에 충전 상품 카드
+  - 충전 버튼 → Checkout API 호출
+  - SDK payload 수신 → PortOne SDK 실행
+- [ ] 결제 상태 폴링:
+  - Exponential Backoff (0s → 1s → 2s → 5s)
+  - 최대 30초 폴링
+  - 타임아웃 시 에러 처리
+- [ ] 충전 완료 UI:
+  - Toast 알림
+  - 인사이트 잔액 실시간 업데이트
+
+**API Gateway 라우팅 설정:**
+```yaml
+/api/v1/checkout/payment-intents/** → asyncsite-checkout-service:6081
+/api/v1/checkout/webhooks/** → asyncsite-checkout-service:6081
+```
+
+**추가 개발 기간:**
+- 백엔드: 3일 (payment 도메인 + Kafka listener)
+- 프론트엔드: 4일 (SDK 통합 + 충전 UI)
+- 테스트: 2일 (E2E 결제 플로우)
+- **총 1-1.5주 추가**
+
+**프리미엄 구독 (Phase 2 - 런칭 후 추가):**
+- 월간 구독: ₩9,900/월
+- 기능: 검색, 회사 필터, 북마크, 매일 +20 💎
+- 구현 시점: MVP 런칭 후 2-3주 내
+
+---
 
 ### Decision 0.5: 배포 전략 ✅
 
@@ -572,9 +702,9 @@ CREATE TABLE members (
 
 ---
 
-### 3주차: 수익화 (15-21일차)
+### 3주차: 수익화 및 결제 통합 (15-21일차)
 
-**목표**: 친구 초대 (+50 💎 양쪽) + 프리미엄 구독 + 상점 통합
+**목표**: 친구 초대 (+50 💎 양쪽) + 인사이트 충전 (PortOne) + 상점 통합
 
 **백엔드 작업:**
 - [ ] referral 도메인 생성:
@@ -587,16 +717,16 @@ CREATE TABLE members (
   - [ ] 초대 코드 고유성 검증
   - [ ] ClaimReferralService: 초대자 + 피초대자 +50 💎 (트랜잭션)
   - [ ] 중복 클레임 방지 (사용자당 1회만)
-- [ ] subscription 도메인 생성:
-  - [ ] 도메인 모델: Subscription, SubscriptionPlan
-  - [ ] 유스케이스: SubscribeUseCase, GetMySubscriptionUseCase
-  - [ ] Persistence 어댑터
-  - [ ] Web 어댑터
-- [ ] 구독 로직 구현:
-  - [ ] 구독 생성 (테스트 모드, 결제 없음)
-  - [ ] 프리미엄 상태 확인 (기능 게이팅용)
-  - [ ] end_date 계산 (start_date + 30일)
-- [ ] referral + subscription 통합 테스트 작성
+- [ ] **payment 도메인 생성 (결제 통합)**:
+  - [ ] PaymentEventListener (Kafka)
+  - [ ] InsightChargeHandler
+  - [ ] 토픽: `asyncsite.payment.verified`
+  - [ ] Consumer Group: `querydaily-mobile-payment-consumer`
+- [ ] **insight 도메인 확장 (충전 기능)**:
+  - [ ] ChargeInsightUseCase
+  - [ ] InsightTransaction 엔티티 (payment_intent_id 포함)
+  - [ ] 충전 상품 정의 (50/100/300 💎)
+- [ ] referral + payment 통합 테스트 작성
 
 **프론트엔드 작업:**
 - [ ] dashboard 초대 모달을 GET /api/v1/me/referral/code에 연결
@@ -604,19 +734,38 @@ CREATE TABLE members (
 - [ ] 회원가입 플로우 추가: 초대 코드 입력 → POST /api/v1/referrals/claim
 - [ ] mypage 초대 섹션을 GET /api/v1/me/referrals/stats에 연결
 - [ ] 실제 초대 통계 표시 (초대한 친구, 획득한 인사이트)
-- [ ] shop 페이지를 GET /api/v1/me/subscription에 연결
-- [ ] 프리미엄 구독 버튼 구현 → POST /api/v1/subscriptions
-- [ ] 인사이트 구매 추가 (테스트 모드): POST /api/v1/insights/purchase
-- [ ] 구매 후 shop 페이지에 실제 잔액 표시
-- [ ] mypage에 프리미엄 뱃지 추가
+- [ ] **PortOne SDK 설치 및 설정**:
+  - [ ] `npm install @portone/browser-sdk`
+  - [ ] 환경 변수 추가: `NEXT_PUBLIC_PORTONE_STORE_ID`
+- [ ] **shop 페이지 결제 통합**:
+  - [ ] 충전 상품 카드 (50/100/300 💎)
+  - [ ] 충전 버튼 → POST /api/v1/checkout/payment-intents
+  - [ ] portOneSdkPayload 수신 → PortOne SDK 실행
+  - [ ] 결제창 팝업 처리
+- [ ] **결제 상태 폴링 구현**:
+  - [ ] GET /api/v1/checkout/payment-intents/{intentId}/status
+  - [ ] Exponential Backoff (0s → 1s → 2s → 5s)
+  - [ ] 최대 30초 폴링, 타임아웃 에러 처리
+- [ ] **충전 완료 UI**:
+  - [ ] Toast 알림 ("✅ 100 💎 충전 완료!")
+  - [ ] 인사이트 잔액 실시간 업데이트
+  - [ ] 충전 내역 표시 (InsightTransaction)
+- [ ] mypage에 충전 내역 섹션 추가
+
+**인프라 작업:**
+- [ ] API Gateway 라우팅 추가:
+  - `/api/v1/checkout/payment-intents/**` → checkout-service:6081
+  - `/api/v1/checkout/webhooks/**` → checkout-service:6081
+- [ ] Kafka 토픽 생성: `asyncsite.payment.verified`
+- [ ] PortOne Mock Server 연동 테스트
 
 **완료 기준:**
 - [ ] 사용자가 초대 코드 복사 가능
 - [ ] 친구가 코드로 가입 시 양쪽 +50 💎
 - [ ] 초대 통계에 정확한 카운트 표시
-- [ ] 프리미엄 구독 활성화 가능 (테스트 모드)
-- [ ] 프리미엄 기능 잠금 해제 (검색, 북마크)
-- [ ] 인사이트 구매 동작 (테스트 모드)
+- [ ] **인사이트 충전 가능 (PortOne 결제)**
+- [ ] **결제 완료 후 인사이트 자동 충전 확인**
+- [ ] **충전 내역 조회 가능**
 
 ---
 
@@ -651,6 +800,18 @@ CREATE TABLE members (
   - [ ] 답변 작성 수
   - [ ] 인사이트 거래량
   - [ ] 초대 성공률
+
+**결제 E2E 테스트:**
+- [ ] **PortOne Mock Server 결제 테스트**:
+  - [ ] 인사이트 충전 플로우 (카드 결제)
+  - [ ] 결제 성공 → Kafka 이벤트 → 인사이트 충전 확인
+  - [ ] 결제 실패 시나리오 (카드 거절, 타임아웃)
+  - [ ] 중복 결제 방지 (멱등성 테스트)
+- [ ] **실제 PG 연동 테스트 (프로덕션 준비)**:
+  - [ ] PortOne 실제 채널 키 발급
+  - [ ] 100원 테스트 결제 (실제 카드)
+  - [ ] 환불 테스트
+  - [ ] Webhook 수신 확인
 
 **버그 수정 및 모니터링:**
 - [ ] 로그 수집 설정 (ELK 스택 또는 CloudWatch)

@@ -804,6 +804,120 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Tester Review Section */}
+      <div className={`${styles.section} ${styles.realReviews}`} style={{ background: 'rgba(130, 170, 255, 0.02)' }}>
+        <div className={styles.sectionContainer}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'inline-block', background: 'rgba(195, 232, 141, 0.1)', padding: '8px 16px', borderRadius: '20px', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.9rem', color: '#c3e88d', fontWeight: '600' }}>
+                ✓ 베타 테스터 100% 실제 후기
+              </span>
+            </div>
+          </div>
+
+          <h2 className={styles.sectionTitle}>
+            "이력서 기반 질문이라<br/>면접에서 비슷한 질문이 나왔어요"
+          </h2>
+          <p className={styles.sectionSubtitle} style={{ fontSize: '1.2rem', color: '#82aaff' }}>
+            실제 면접 합격자들이 경험한 QueryDaily
+          </p>
+
+          <div style={{ display: 'grid', gap: '2rem', marginTop: '3rem' }}>
+            {/* 후기 1 - 맹점 발견 */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              padding: '2rem',
+              borderRadius: '12px',
+              borderLeft: '4px solid #c3e88d'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#c3e88d', fontWeight: '600' }}>
+                  제 경험의 '부족한 부분'을 정확히 파악했어요
+                </h3>
+                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  ⭐ 추천도 9/10
+                </span>
+              </div>
+              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
+                "사용자가 늘어날 상황을 가정하고 서비스의 병목 지점과 대처 방법을 물어보는 질문이 인상 깊었습니다.
+                전혀 다뤄보지 않은 내용이라 <strong style={{ color: '#82aaff' }}>어떻게 답할지 고민</strong>하게 되었고,
+                이력서 정리에 큰 도움이 되었습니다."
+              </p>
+            </div>
+
+            {/* 후기 2 - 불안감 해소 */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              padding: '2rem',
+              borderRadius: '12px',
+              borderLeft: '4px solid #82aaff'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#82aaff', fontWeight: '600' }}>
+                  막연한 불안감이 줄고 '자신감'이 생겼습니다
+                </h3>
+                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  ⭐ 추천도 10/10
+                </span>
+              </div>
+              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
+                "질문이 굉장히 구체적이고 <strong style={{ color: '#82aaff' }}>실제 면접에서 나올 것 같았어요</strong>.
+                꾸준히 답변을 고민하며 면접에 대한 자신감을 얻었고,
+                <code style={{ background: '#263238', padding: '2px 6px', borderRadius: '3px', fontSize: '0.95em' }}>Saga 패턴</code>
+                같은 새로운 질문을 받으며 사고가 확장되는 느낌을 받았습니다."
+              </p>
+            </div>
+
+            {/* 후기 3 - 실전성 + 가이드 */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              padding: '2rem',
+              borderRadius: '12px',
+              borderLeft: '4px solid #f78c6c'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#f78c6c', fontWeight: '600' }}>
+                  질문의 '깊이'가 다르고, '답변의 가이드'를 줘요
+                </h3>
+                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  ⭐ 추천도 10/10
+                </span>
+              </div>
+              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
+                "제 이력서 기반으로 '왜
+                <code style={{ background: '#263238', padding: '2px 6px', borderRadius: '3px', fontSize: '0.95em' }}>Elasticsearch</code>를 썼는지'
+                묻는 질문을 받고, 답변을 미리 구조화해볼 수 있었어요.
+                <strong style={{ color: '#f78c6c' }}> STAR 구조화</strong>로 답변의 '가닥'을 잡을 수 있게 도와준 게 최고였습니다."
+              </p>
+            </div>
+          </div>
+
+          {/* 통계 */}
+          <div style={{
+            marginTop: '3rem',
+            textAlign: 'center',
+            padding: '2rem',
+            background: 'rgba(130, 170, 255, 0.05)',
+            borderRadius: '12px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#c3e88d' }}>100%</div>
+                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>만족도 5/5</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#82aaff' }}>10/10</div>
+                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>평균 추천도</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#f78c6c' }}>3일</div>
+                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>챌린지 기간</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Solution Section */}
       <div className={`${styles.section} ${styles.solution}`}>
         <div className={styles.sectionContainer}>

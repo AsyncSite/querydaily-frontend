@@ -997,14 +997,8 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={styles.productPrice}>
-                {productsLoading ? (
-                  <span className={styles.priceCurrent}>로딩 중...</span>
-                ) : (
-                  <>
-                    <span className={styles.priceOriginal}>{formatPrice(products['GROWTH_PLAN']?.basePrice || 106000)}</span>
-                    <span className={styles.priceCurrent}>{formatPrice(products['GROWTH_PLAN']?.currentPrice || 49000)}</span>
-                  </>
-                )}
+                <span className={styles.priceOriginal}>₩106,000</span>
+                <span className={styles.priceCurrent}>₩49,000</span>
               </div>
               <button
                 className={`${styles.btn} ${styles.btnProductCta} ${styles.btnProductCtaPrimary}`}

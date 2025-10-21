@@ -10,6 +10,25 @@ export default function DashboardPage() {
         <div className="text-emerald-50">연속 학습 중! 최고 기록이에요</div>
       </div>
 
+      {/* Insight Points */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-2xl">💎</span>
+          <div>
+            <div className="text-xs text-gray-500">보유 인사이트</div>
+            <div className="text-2xl font-bold text-emerald-600">150</div>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-3 border border-emerald-200">
+          <div className="text-sm font-medium text-gray-900 mb-1">
+            답변 공유로 인사이트 획득
+          </div>
+          <div className="text-xs text-emerald-700">
+            다음 공유 시 +10 💎
+          </div>
+        </div>
+      </div>
+
       {/* Today Progress */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-4">
@@ -129,11 +148,15 @@ export default function DashboardPage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">•</span>
-            <span>복습은 기억을 2배 강화시킵니다</span>
+            <span><strong>답변 후 다른 사람들의 생각을 엿보며</strong> 새로운 관점을 배워보세요</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">•</span>
-            <span>30일 완주 시 전문가 피드백 1회 무료!</span>
+            <span>답변을 공유하면 인사이트를 받을 수 있어요</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-500 mt-0.5">•</span>
+            <span>복습은 기억을 2배 강화시킵니다</span>
           </li>
         </ul>
       </div>

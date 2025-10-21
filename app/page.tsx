@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile, createOrder, ProductCode, getAllProducts, ProductInfo, ApiResponse, ProductListResponse } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
@@ -85,8 +85,8 @@ export default function HomePage() {
   const [verificationCode, setVerificationCode] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
+  const [purchasePhone, setPurchasePhone] = useState('');
   const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
-  const [purchasePhone, setPurchasePhone] = useState(''); // buyer_tel
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
@@ -94,8 +94,6 @@ export default function HomePage() {
   const [verificationTimer, setVerificationTimer] = useState(0);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [showBusinessInfo, setShowBusinessInfo] = useState(false);
-  const [products, setProducts] = useState<Record<string, ProductInfo>>({});
-  const [productsLoading, setProductsLoading] = useState(true);
 
   // Calculate days remaining until Oct 31
   const calculateDaysRemaining = () => {
@@ -137,35 +135,6 @@ export default function HomePage() {
       return () => clearTimeout(timer);
     }
   }, [notification]);
-
-  // Fetch products on mount
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setProductsLoading(true);
-        const response: ApiResponse<ProductListResponse> = await getAllProducts();
-
-        if (response.success && response.data) {
-          const productMap: Record<string, ProductInfo> = {};
-          response.data.products.forEach(product => {
-            productMap[product.productCode] = product;
-          });
-          setProducts(productMap);
-        }
-      } catch (err) {
-        console.error('Failed to fetch products:', err);
-      } finally {
-        setProductsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Helper function to format price
-  const formatPrice = (price: number): string => {
-    return `₩${price.toLocaleString('ko-KR')}`;
-  };
 
   const testimonials = [
     {
@@ -490,117 +459,67 @@ export default function HomePage() {
     }
   };
 
-  const handleCardPayment = async () => {
-    setIsSubmitting(true);
+  const handleCardPayment = () => {
+    if (!window.IMP) {
+      alert('\uacb0\uc81c \ubaa8\ub4c8\uc774 \ub85c\ub4dc\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.');
+      return;
+    }
 
-    try {
-      // ProductCode 매핑
-      const productCodeMap: Record<string, ProductCode> = {
-        'critical-hit': ProductCode.CRITICAL_HIT,
-        'growth-plan': ProductCode.GROWTH_PLAN,
-        'real-interview': ProductCode.REAL_INTERVIEW,
-        'resume-analytics': ProductCode.LAST_CHECK
-      };
+    // Initialize Portone with test MID
+    window.IMP.init('iamport'); // 포트원 공식 테스트용 가맹점 식별코드
 
-      const productCode = productCodeMap[selectedPurchaseProduct || ''];
-      if (!productCode) {
-        alert('상품을 선택해주세요.');
-        return;
+    // \uc0c1\ud488\uba85\uacfc \uac00\uaca9 \ub9e4\ud551
+    const productNames: Record<string, string> = {
+      'critical-hit': '\ud06c\ub9ac\ud2f0\uceec \ud788\ud2b8',
+      'growth-plan': '\uadf8\ub85c\uc2a4 \ud50c\ub79c',
+      'real-interview': '\ub9ac\uc5bc \uc778\ud130\ubdf0',
+      'resume-analytics': '\ub77c\uc2a4\ud2b8 \uccb4\ud06c'
+    };
+
+    const productPrices: Record<string, number> = {
+      'critical-hit': 9900,
+      'growth-plan': 49000,
+      'real-interview': 129000,
+      'last-check': 49000,
+      'resume-fit': 59000
+    };
+
+    const orderData = {
+      pg: 'html5_inicis', // 이니시스 웹표준 결제 (테스트)
+      pay_method: 'card',
+      merchant_uid: `QD${Date.now()}`,
+      name: productNames[selectedPurchaseProduct || ''] || '',
+      amount: productPrices[selectedPurchaseProduct || ''] || 0,
+      buyer_email: purchaseEmail || 'test@example.com',
+      buyer_name: purchaseName || 'Guest',
+      buyer_tel: purchasePhone || '010-0000-0000',
+      custom_data: {
+        product: selectedPurchaseProduct
       }
+    };
 
-      // Query Daily Service를 통한 주문 생성 (Checkout Service 호출)
-      const response = await createOrder({
-        email: purchaseEmail || 'test@example.com',
-        name: purchaseName || 'Guest',
-        phone: purchasePhone,
-        productCode,
-        paymentMethod: 'card', // 카드결제
-        resume: purchaseFile || undefined
-      });
-
-      if (response.success && response.data) {
-        // 주문 정보 저장
+    window.IMP.request_pay(orderData, (response: any) => {
+      if (response.success) {
+        // Store order data
         const orderInfo = {
-          orderId: response.data.orderId,
-          productName: selectedPurchaseProduct,
-          price: response.data.amount,
-          paymentMethod: 'INICIS', // 카드결제
+          orderId: response.merchant_uid,
+          productName: orderData.name,
+          price: orderData.amount,
+          paymentMethod: 'card',
           email: purchaseEmail,
           name: purchaseName,
-          checkoutUrl: response.data.checkoutUrl,
+          phone: purchasePhone || '',
+          paymentId: response.imp_uid,
+          paidAt: new Date().toISOString(),
         };
         localStorage.setItem('orderData', JSON.stringify(orderInfo));
 
-        // SDK 모드인 경우 PortOne V2 SDK 호출
-        if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
-          // PortOne V2 SDK 동적 import
-          const PortOne = await import('@portone/browser-sdk/v2');
-
-          const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
-
-          // 결제 요청 직전 페이로드 로깅 (민감정보 마스킹)
-          const masked = {
-            ...payload,
-            channelKey: payload.channelKey ? `*${payload.channelKey.slice(-6)}` : undefined,
-            storeId: payload.storeId ? `*${payload.storeId.slice(-6)}` : undefined,
-          };
-          console.info('[PortOne SDK] requestPayment payload', masked);
-
-          try {
-            // 백엔드가 보내준 payload 그대로 전달
-            const sdkResponse = await PortOne.requestPayment(payload);
-
-            // 응답 존재 확인
-            if (!sdkResponse) {
-              alert('결제 응답을 받지 못했습니다.');
-              return;
-            }
-
-            // SDK 응답 체크 (문서 기반)
-            if (sdkResponse.code !== undefined) {
-              // 오류 발생 (취소, 실패 등)
-              console.log('[PortOne SDK] Payment cancelled or failed:', {
-                code: sdkResponse.code,
-                message: sdkResponse.message
-              });
-
-              // 사용자 친화적 메시지로 변환
-              let userMessage = '결제를 처리할 수 없습니다.';
-              if (sdkResponse.code === 'USER_CANCEL' || sdkResponse.message?.includes('취소')) {
-                userMessage = '결제가 취소되었습니다.';
-              } else if (sdkResponse.code === 'NETWORK_ERROR') {
-                userMessage = '네트워크 연결을 확인해 주세요.';
-              } else if (sdkResponse.message) {
-                userMessage = sdkResponse.message;
-              }
-
-              alert(userMessage);
-              return;
-            }
-
-            // 성공한 경우
-            console.log('[PortOne SDK] Payment request succeeded, paymentId:', sdkResponse.paymentId);
-            window.location.href = '/order-complete';
-          } catch (error: any) {
-            console.error('[PortOne SDK] Unexpected error:', error);
-            alert(`결제 SDK 오류: ${error.message || '알 수 없는 오류'}`);
-          }
-        } else if (response.data.checkoutUrl) {
-          // URL 모드인 경우 체크아웃 URL로 리다이렉트
-          window.location.href = response.data.checkoutUrl;
-        } else {
-          // URL도 없고 SDK도 아닌 경우
-          window.location.href = '/order-complete';
-        }
+        // Redirect to success page
+        window.location.href = '/order-complete';
       } else {
-        alert(`주문 생성에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+        alert(`\uacb0\uc81c\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4: ${response.error_msg}`);
       }
-    } catch (error: any) {
-      console.error('Payment order error:', error);
-      alert(`주문 처리 중 오류가 발생했습니다: ${error.message}`);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -885,6 +804,120 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Tester Review Section */}
+      <div className={`${styles.section} ${styles.realReviews}`} style={{ background: 'rgba(130, 170, 255, 0.02)' }}>
+        <div className={styles.sectionContainer}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'inline-block', background: 'rgba(195, 232, 141, 0.1)', padding: '8px 16px', borderRadius: '20px', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.9rem', color: '#c3e88d', fontWeight: '600' }}>
+                ✓ 베타 테스터 100% 실제 후기
+              </span>
+            </div>
+          </div>
+
+          <h2 className={styles.sectionTitle}>
+            "이력서 기반 질문이라<br/>면접에서 비슷한 질문이 나왔어요"
+          </h2>
+          <p className={styles.sectionSubtitle} style={{ fontSize: '1.2rem', color: '#82aaff' }}>
+            실제 면접 합격자들이 경험한 QueryDaily
+          </p>
+
+          <div style={{ display: 'grid', gap: '2rem', marginTop: '3rem' }}>
+            {/* 후기 1 - 맹점 발견 */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              padding: '2rem',
+              borderRadius: '12px',
+              borderLeft: '4px solid #c3e88d'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#c3e88d', fontWeight: '600' }}>
+                  제 경험의 '부족한 부분'을 정확히 파악했어요
+                </h3>
+                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  ⭐ 추천도 9/10
+                </span>
+              </div>
+              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
+                "사용자가 늘어날 상황을 가정하고 서비스의 병목 지점과 대처 방법을 물어보는 질문이 인상 깊었습니다.
+                전혀 다뤄보지 않은 내용이라 <strong style={{ color: '#82aaff' }}>어떻게 답할지 고민</strong>하게 되었고,
+                이력서 정리에 큰 도움이 되었습니다."
+              </p>
+            </div>
+
+            {/* 후기 2 - 불안감 해소 */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              padding: '2rem',
+              borderRadius: '12px',
+              borderLeft: '4px solid #82aaff'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#82aaff', fontWeight: '600' }}>
+                  막연한 불안감이 줄고 '자신감'이 생겼습니다
+                </h3>
+                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  ⭐ 추천도 10/10
+                </span>
+              </div>
+              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
+                "질문이 굉장히 구체적이고 <strong style={{ color: '#82aaff' }}>실제 면접에서 나올 것 같았어요</strong>.
+                꾸준히 답변을 고민하며 면접에 대한 자신감을 얻었고,
+                <code style={{ background: '#263238', padding: '2px 6px', borderRadius: '3px', fontSize: '0.95em' }}>Saga 패턴</code>
+                같은 새로운 질문을 받으며 사고가 확장되는 느낌을 받았습니다."
+              </p>
+            </div>
+
+            {/* 후기 3 - 실전성 + 가이드 */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              padding: '2rem',
+              borderRadius: '12px',
+              borderLeft: '4px solid #f78c6c'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.3rem', color: '#f78c6c', fontWeight: '600' }}>
+                  질문의 '깊이'가 다르고, '답변의 가이드'를 줘요
+                </h3>
+                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  ⭐ 추천도 10/10
+                </span>
+              </div>
+              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
+                "제 이력서 기반으로 '왜
+                <code style={{ background: '#263238', padding: '2px 6px', borderRadius: '3px', fontSize: '0.95em' }}>Elasticsearch</code>를 썼는지'
+                묻는 질문을 받고, 답변을 미리 구조화해볼 수 있었어요.
+                <strong style={{ color: '#f78c6c' }}> STAR 구조화</strong>로 답변의 '가닥'을 잡을 수 있게 도와준 게 최고였습니다."
+              </p>
+            </div>
+          </div>
+
+          {/* 통계 */}
+          <div style={{
+            marginTop: '3rem',
+            textAlign: 'center',
+            padding: '2rem',
+            background: 'rgba(130, 170, 255, 0.05)',
+            borderRadius: '12px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#c3e88d' }}>100%</div>
+                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>만족도 5/5</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#82aaff' }}>10/10</div>
+                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>평균 추천도</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#f78c6c' }}>3일</div>
+                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>챌린지 기간</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Solution Section */}
       <div className={`${styles.section} ${styles.solution}`}>
         <div className={styles.sectionContainer}>
@@ -1022,14 +1055,14 @@ export default function HomePage() {
             {/* 크리티컬 히트 */}
             <div className={styles.productCard}>
               <div className={styles.productHeader}>
-                <span className={styles.productLabel}>3가지 결정적 질문</span>
+                <span className={styles.productLabel}>단 하나의 결정적 질문</span>
                 <h3 className={styles.productName}>크리티컬 히트</h3>
                 <span className={styles.productEn}>Critical Hit</span>
               </div>
               <div className={styles.productFeatures}>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🎯</span>
-                  <span>이력서 맞춤 핵심 질문 3개</span>
+                  <span>이력서 맞춤 핵심 질문 1개</span>
                 </div>
                 <div className={styles.productFeature}>
                   <span className={styles.featureIcon}>🔗</span>
@@ -2219,7 +2252,7 @@ export default function HomePage() {
                           const response = await startFreeTrial(profileData);
                           if (response.success) {
                             setModalOpen(false);
-                            router.push('/success');
+                            router.push(`/trial-started?email=${encodeURIComponent(profileData.email)}`);
                           }
                         } catch (error) {
                           setErrors([error instanceof Error ? error.message : '체험 시작 중 오류가 발생했습니다']);
@@ -2287,10 +2320,11 @@ export default function HomePage() {
                       {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
                     </span>
                     <span className={styles.modalProductPrice}>
-                      {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
-                      {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
-                      {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                      {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                      {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
+                      {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                      {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                      {selectedPurchaseProduct === 'last-check' && '₩49,000'}
+                      {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                     </span>
                   </div>
 
@@ -2426,9 +2460,9 @@ export default function HomePage() {
                     />
                   </div>
 
-                  {/* 전화번호 입력 */}
+                  {/* 연락처 입력 */}
                   <div className={styles.modalFormGroup}>
-                    <label className={styles.modalLabel}>전화번호 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <label className={styles.modalLabel}>연락처 <span style={{ color: '#ff6b6b' }}>*</span></label>
                     <input
                       type="tel"
                       placeholder="010-1234-5678"
@@ -2453,7 +2487,7 @@ export default function HomePage() {
                         } else if (!purchaseName.trim()) {
                           alert('이름을 입력해주세요');
                         } else if (!purchasePhone.trim()) {
-                          alert('전화번호를 입력해주세요');
+                          alert('연락처를 입력해주세요');
                         } else {
                           // KAKAO/INICIS REVIEW: Handle different payment methods
                           if (paymentMethod === 'card') {
@@ -2493,25 +2527,28 @@ export default function HomePage() {
                         {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
                         {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
                         {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
-                        {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
+                        {selectedPurchaseProduct === 'last-check' && '라스트 체크'}
+                        {selectedPurchaseProduct === 'resume-fit' && '레주메 핏'}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
                       <span>
-                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
-                        {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
-                        {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
+                        {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                        {selectedPurchaseProduct === 'last-check' && '₩49,000'}
+                        {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
                       <span>결제 금액</span>
                       <span style={{ color: '#c3e88d' }}>
-                        {selectedPurchaseProduct === 'critical-hit' && formatPrice(products['CRITICAL_HIT']?.currentPrice || 9900)}
-                        {selectedPurchaseProduct === 'growth-plan' && formatPrice(products['GROWTH_PLAN']?.currentPrice || 79000)}
-                        {selectedPurchaseProduct === 'real-interview' && formatPrice(products['REAL_INTERVIEW']?.currentPrice || 39000)}
-                        {selectedPurchaseProduct === 'resume-analytics' && formatPrice(products['LAST_CHECK']?.currentPrice || 49000)}
+                        {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
+                        {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
+                        {selectedPurchaseProduct === 'last-check' && '₩49,000'}
+                        {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                       </span>
                     </div>
                   </div>
@@ -2532,7 +2569,7 @@ export default function HomePage() {
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
                       onClick={async () => {
-                        if (!purchaseFile || !purchaseName || !purchaseEmail) {
+                        if (!purchaseFile || !purchaseName || !purchaseEmail || !purchasePhone) {
                           setErrors(['모든 필수 정보를 입력해주세요.']);
                           return;
                         }
@@ -2551,6 +2588,7 @@ export default function HomePage() {
                           const response = await submitBetaApplication({
                             email: purchaseEmail,
                             name: purchaseName,
+                            phone: purchasePhone,
                             productType: productTypeMap[selectedPurchaseProduct || ''] || 'SQL_MASTER',
                             resume: purchaseFile
                           });
@@ -2559,12 +2597,12 @@ export default function HomePage() {
                             // 주문 정보를 localStorage에 저장
                             const orderData = {
                               memberId: response.data?.memberId,
-                              orderId: response.data?.orderId || `QD${Date.now()}`,
                               name: purchaseName,
                               email: purchaseEmail,
+                              phone: purchasePhone,
                               product: selectedPurchaseProduct || '',
-                              paymentMethod: 'ACCOUNT_TRANSFER', // 계좌이체
-                              orderDate: new Date().toISOString()
+                              orderDate: new Date().toISOString(),
+                              orderId: `QD${Date.now()}`
                             };
 
                             localStorage.setItem('orderData', JSON.stringify(orderData));

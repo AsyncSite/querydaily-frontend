@@ -468,6 +468,8 @@ export async function submitBetaApplication(data: {
     productCode = ProductCode.REAL_INTERVIEW;
   } else if (data.productType === 'LAST_CHECK') {
     productCode = ProductCode.LAST_CHECK;
+  } else if (data.productType === 'RESUME_FIT') {
+    productCode = ProductCode.RESUME_FIT;
   }
 
   const request: CreateOrderRequest = {

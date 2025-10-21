@@ -102,15 +102,15 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩99,000</span>
+                <span className={styles.originalPrice}>₩106,000</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩34,900</span>
+                <span className={styles.currentPrice}>₩49,000</span>
                 <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 20일간 매일 발송</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('그로스 플랜', '₩34,900')}
+                onClick={() => handlePurchaseClick('그로스 플랜', '₩49,000')}
               >
                 무통장입금으로 결제하기 →
               </button>
@@ -229,15 +229,15 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩4,900</span>
+                <span className={styles.originalPrice}>₩15,900</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩1,900</span>
+                <span className={styles.currentPrice}>₩9,900</span>
                 <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('크리티컬 히트', '₩1,900')}
+                onClick={() => handlePurchaseClick('크리티컬 히트', '₩9,900')}
               >
                 무통장입금으로 결제하기 →
               </button>
@@ -304,15 +304,65 @@ export default function ProductsPage() {
 
             <div className={styles.priceArea}>
               <div className={styles.priceRow}>
-                <span className={styles.originalPrice}>₩29,900</span>
+                <span className={styles.currentPrice}>₩49,000</span>
+              </div>
+              <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
+              <button
+                className={styles.buyBtn}
+                onClick={() => handlePurchaseClick('라스트 체크', '₩49,000')}
+              >
+                무통장입금으로 결제하기 →
+              </button>
+              <p className={styles.guarantee}>
+                ✅ 콘텐츠 열람 전 100% 환불
+              </p>
+            </div>
+          </div>
+
+          {/* Product 5: 레주메 핏 */}
+          <div className={styles.product}>
+            <div className={styles.productHeader}>
+              <span className={styles.productLabel}>이력서 전문가 분석</span>
+              <h2 className={styles.productName}>레주메 핏</h2>
+              <span className={styles.productEn}>Resume Fit</span>
+            </div>
+
+            <div className={styles.challenge}>
+              <p className={styles.challengeText}>
+                전문가의 눈으로 보는<br/>
+                <span className={styles.emphasis}>당신의 이력서 완벽 분석</span>
+              </p>
+            </div>
+
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>📄</span>
+                <span className={styles.featureName}>전문가의 이력서 분석</span>
+                <span className={styles.featureValue}>맞춤형</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>✨</span>
+                <span className={styles.featureName}>개선 가이드 제공</span>
+                <span className={styles.featureValue}>상세</span>
+              </div>
+              <div className={styles.feature}>
+                <span className={styles.featureIcon}>🎯</span>
+                <span className={styles.featureName}>실전 피드백</span>
+                <span className={styles.featureValue}>즉시</span>
+              </div>
+            </div>
+
+            <div className={styles.priceArea}>
+              <div className={styles.priceRow}>
+                <span className={styles.originalPrice}>₩79,000</span>
                 <span className={styles.arrow}>→</span>
-                <span className={styles.currentPrice}>₩19,900</span>
+                <span className={styles.currentPrice}>₩59,000</span>
                 <span className={styles.discountTag}>베타 테스터 한정 특가</span>
               </div>
               <p className={styles.betaPaymentNotice}>* 구매 즉시 제공</p>
               <button
                 className={styles.buyBtn}
-                onClick={() => handlePurchaseClick('라스트 체크', '₩19,900')}
+                onClick={() => handlePurchaseClick('레주메 핏', '₩59,000')}
               >
                 무통장입금으로 결제하기 →
               </button>

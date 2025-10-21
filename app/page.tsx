@@ -932,7 +932,7 @@ export default function HomePage() {
 
           <div className={styles.productsGrid}>
             {/* 그로스 플랜 */}
-            <div className={styles.productCard}>
+            <div className={`${styles.productCard} ${styles.productCardWide}`}>
               <div className={styles.productBadge}>MOST POPULAR</div>
               <div className={styles.productHeader}>
                 <span className={styles.productLabel}>20일 집중 훈련</span>

@@ -5329,6 +5329,10 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
+.productCardWide {
+    grid-column: span 2;
+}
+
 .productBadge {
     position: absolute;
     top: 10px;

@@ -533,6 +533,308 @@ useEffect(() => {
 }, []);
 ```
 
+### 3.5 서버 성능 추적 (백엔드)
+
+백엔드 API 성능을 추적하여 비즈니스 영향을 실시간으로 측정합니다.
+
+```typescript
+// 서버사이드 성능 모니터링 (Node.js/Express)
+import { Request, Response, NextFunction } from 'express';
+import axios from 'axios';
+
+// GA4 Measurement Protocol을 사용한 서버 성능 추적
+export class ServerPerformanceTracker {
+  private measurementId = process.env.GA_MEASUREMENT_ID;
+  private apiSecret = process.env.GA_API_SECRET;
+  private endpoint = 'https://www.google-analytics.com/mp/collect';
+
+  // Express 미들웨어
+  middleware() {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      const startTime = Date.now();
+      const requestId = this.generateRequestId();
+
+      // 요청 정보 저장
+      const requestInfo = {
+        path: req.path,
+        method: req.method,
+        userAgent: req.headers['user-agent'],
+        ip: req.ip,
+        timestamp: new Date().toISOString()
+      };
+
+      // 응답 완료 시 성능 측정
+      res.on('finish', async () => {
+        const duration = Date.now() - startTime;
+        const statusCode = res.statusCode;
+
+        // 성능 데이터 수집
+        const performanceData = {
+          endpoint: req.path,
+          method: req.method,
+          duration_ms: duration,
+          status_code: statusCode,
+          response_size: res.get('content-length') || 0,
+          memory_usage: process.memoryUsage().heapUsed / 1024 / 1024, // MB
+          cpu_usage: process.cpuUsage().user / 1000, // ms
+        };
+
+        // 비즈니스 영향 계산
+        const businessImpact = this.calculateBusinessImpact(performanceData);
+
+        // GA4로 전송
+        await this.sendToGA4({
+          client_id: this.getClientId(req),
+          events: [{
+            name: 'api_performance',
+            params: {
+              ...performanceData,
+              ...businessImpact,
+              request_id: requestId,
+              environment: process.env.NODE_ENV
+            }
+          }]
+        });
+
+        // 느린 요청 알림 (1초 초과)
+        if (duration > 1000) {
+          await this.sendSlowRequestAlert(performanceData, businessImpact);
+        }
+
+        // 에러 알림 (5xx)
+        if (statusCode >= 500) {
+          await this.sendErrorAlert(performanceData, requestInfo);
+        }
+      });
+
+      next();
+    };
+  }
+
+  // 데이터베이스 쿼리 성능 추적
+  async trackDatabaseQuery(queryName: string, queryFn: () => Promise<any>) {
+    const startTime = Date.now();
+    let error = null;
+    let result;
+
+    try {
+      result = await queryFn();
+    } catch (e) {
+      error = e;
+    }
+
+    const duration = Date.now() - startTime;
+
+    // GA4로 전송
+    await this.sendToGA4({
+      client_id: 'server',
+      events: [{
+        name: 'database_performance',
+        params: {
+          query_name: queryName,
+          duration_ms: duration,
+          success: !error,
+          error_message: error?.message,
+          rows_affected: result?.rowCount || 0,
+          cache_hit: result?.fromCache || false
+        }
+      }]
+    });
+
+    // 느린 쿼리 추적 (500ms 초과)
+    if (duration > 500) {
+      await this.trackSlowQuery(queryName, duration);
+    }
+
+    if (error) throw error;
+    return result;
+  }
+
+  // 비즈니스 영향 계산
+  private calculateBusinessImpact(performanceData: any) {
+    const { endpoint, duration_ms, status_code } = performanceData;
+
+    // 엔드포인트별 가중치 (비즈니스 중요도)
+    const endpointWeights = {
+      '/api/checkout': 10,      // 결제 - 매우 중요
+      '/api/auth': 8,           // 인증 - 중요
+      '/api/search': 6,         // 검색 - 보통
+      '/api/profile': 4,        // 프로필 - 낮음
+      default: 5
+    };
+
+    const weight = endpointWeights[endpoint] || endpointWeights.default;
+
+    // 예상 매출 손실 계산 (원/요청)
+    let revenueLoss = 0;
+    if (status_code >= 500) {
+      revenueLoss = weight * 1000; // 에러 시
+    } else if (duration_ms > 3000) {
+      revenueLoss = weight * 500;  // 매우 느림
+    } else if (duration_ms > 1000) {
+      revenueLoss = weight * 100;  // 느림
+    }
+
+    // 사용자 경험 점수 (0-100)
+    let uxScore = 100;
+    if (duration_ms > 100) uxScore -= Math.min(50, duration_ms / 100);
+    if (status_code >= 400) uxScore -= 30;
+    if (status_code >= 500) uxScore -= 20;
+
+    return {
+      revenue_impact: revenueLoss,
+      ux_score: Math.max(0, uxScore),
+      performance_grade: this.getPerformanceGrade(duration_ms),
+      business_priority: weight
+    };
+  }
+
+  private getPerformanceGrade(duration: number): string {
+    if (duration < 200) return 'excellent';
+    if (duration < 500) return 'good';
+    if (duration < 1000) return 'fair';
+    if (duration < 3000) return 'poor';
+    return 'critical';
+  }
+
+  private async sendToGA4(payload: any) {
+    try {
+      await axios.post(
+        `${this.endpoint}?measurement_id=${this.measurementId}&api_secret=${this.apiSecret}`,
+        payload,
+        { timeout: 1000 } // 비동기, 빠른 타임아웃
+      );
+    } catch (error) {
+      console.error('GA4 전송 실패:', error);
+    }
+  }
+
+  private generateRequestId(): string {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  private getClientId(req: Request): string {
+    // 세션 ID 또는 해시된 IP 사용
+    return req.sessionID || this.hashString(req.ip || 'unknown');
+  }
+
+  private hashString(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36);
+  }
+}
+
+// 사용 예시
+const tracker = new ServerPerformanceTracker();
+
+// Express 앱에 적용
+app.use(tracker.middleware());
+
+// 데이터베이스 쿼리 추적
+const users = await tracker.trackDatabaseQuery('get_active_users', async () => {
+  return await db.query('SELECT * FROM users WHERE active = true');
+});
+```
+
+**주요 기능**:
+- API 엔드포인트별 응답 시간 측정
+- 데이터베이스 쿼리 성능 추적
+- 비즈니스 영향도 자동 계산
+- 실시간 알림 (1초 이상 지연 시)
+- GA4 Measurement Protocol 연동
+
+### 3.6 캐시 성능 모니터링
+
+```typescript
+// Redis 캐시 성능 추적
+export class CachePerformanceTracker {
+  private hitCount = 0;
+  private missCount = 0;
+  private totalLatency = 0;
+  private requestCount = 0;
+
+  async get(key: string): Promise<any> {
+    const startTime = Date.now();
+    const result = await redis.get(key);
+    const duration = Date.now() - startTime;
+
+    this.totalLatency += duration;
+    this.requestCount++;
+
+    if (result) {
+      this.hitCount++;
+      this.trackCacheEvent('cache_hit', key, duration);
+    } else {
+      this.missCount++;
+      this.trackCacheEvent('cache_miss', key, duration);
+    }
+
+    // 주기적으로 집계 데이터 전송 (1분마다)
+    if (this.requestCount % 100 === 0) {
+      this.sendAggregatedMetrics();
+    }
+
+    return result;
+  }
+
+  private trackCacheEvent(eventType: string, key: string, duration: number) {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', eventType, {
+        event_category: 'cache',
+        cache_key: this.sanitizeKey(key),
+        response_time: duration,
+        hit_rate: this.getHitRate()
+      });
+    }
+  }
+
+  private sendAggregatedMetrics() {
+    const metrics = {
+      hit_rate: this.getHitRate(),
+      avg_latency: this.totalLatency / this.requestCount,
+      total_requests: this.requestCount,
+      cache_efficiency: this.calculateEfficiency()
+    };
+
+    // GA4로 전송
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'cache_metrics', {
+        event_category: 'performance',
+        ...metrics
+      });
+    }
+
+    // 캐시 효율이 낮으면 알림
+    if (metrics.hit_rate < 0.7) {
+      console.warn('Low cache hit rate:', metrics);
+      // Slack 알림 등 추가 액션
+    }
+  }
+
+  private getHitRate(): number {
+    const total = this.hitCount + this.missCount;
+    return total > 0 ? this.hitCount / total : 0;
+  }
+
+  private calculateEfficiency(): number {
+    // 캐시 효율성 점수 (0-100)
+    const hitRateScore = this.getHitRate() * 50;
+    const latencyScore = Math.max(0, 50 - (this.totalLatency / this.requestCount) / 10);
+    return Math.round(hitRateScore + latencyScore);
+  }
+
+  private sanitizeKey(key: string): string {
+    // 민감한 정보 제거
+    return key.replace(/user_\d+/, 'user_***').substring(0, 50);
+  }
+}
+```
+
 ---
 
 ## 4. 검증 방법
@@ -729,5 +1031,6 @@ const scrollPercent = (window.scrollY / scrollHeight) * 100;
 
 ---
 
-**문서 버전**: 1.0
-**최종 수정**: 2025-01-XX
+**문서 버전**: 2.0
+**최종 수정**: 2025-01-22
+**주요 업데이트**: 서버 성능 추적 및 캐시 모니터링 섹션 추가

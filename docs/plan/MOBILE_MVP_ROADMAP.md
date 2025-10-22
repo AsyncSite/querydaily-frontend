@@ -111,12 +111,12 @@ querydaily-mobile-service/
 
 | 도메인 | 책임 | 주요 엔티티 |
 |--------|------|-------------|
-| `question` | 질문 관리, 일일 로테이션 | Question, DailyQuestions, QuestionCategory |
-| `answer` | 답변 CRUD, 뱃지 시스템 | Answer, UserAnswer, AnswerBadge |
-| `insight` | 가상 화폐 관리 | InsightBalance, InsightTransaction |
-| `referral` | 친구 초대 시스템 | Referral, InviteCode, ReferralReward |
-| `subscription` | 프리미엄 플랜 관리 | Subscription, SubscriptionPlan |
-| `member` | 사용자 프로필 캐시 (user-service 동기화) | MemberProfile |
+| `question` | 질문 관리, 일일 로테이션, 개인화 선정 (MVP) | Question, DailyQuestions, UnlockedQuestion |
+| `answer` | 답변 CRUD, 좋아요 관리 | Answer, UserAnswer, AnswerLike |
+| `insight` | 가상 화폐 관리, 결제 연동 | Insight, InsightTransaction |
+| `referral` | 친구 초대 시스템 (Growth Hacking) | ReferralCode, Referral |
+| `subscription` | 프리미엄 플랜 관리 (Phase 2) | Subscription, SubscriptionPlan |
+| `member` | 프로필 캐시, 뱃지 관리, 개인화 데이터 | Member |
 
 ---
 
@@ -470,7 +470,6 @@ public interface QuestionService {
 **책임:**
 - 답변 생명주기 관리 (작성, 수정, 삭제)
 - 좋아요 관리
-- 뱃지 정보 포함 (회사, 경력, 기술스택)
 - 답변 정렬 (인기순, 최신순)
 
 **Aggregate Roots:**
@@ -484,16 +483,8 @@ public class Answer {
     private String id;
 
     private String questionId;
-    private String memberId;           // 작성자
+    private String memberId;           // 작성자 (Member Domain에서 뱃지 정보 JOIN)
     private String content;            // Markdown
-
-    // 뱃지 정보
-    private String companyBadge;       // "LINE", "Kakao", "Naver"
-    private String experienceBadge;    // "주니어", "미들", "시니어"
-
-    @ElementCollection
-    @CollectionTable(name = "answer_tech_badges")
-    private List<String> techBadges;   // ["Spring", "JPA"]
 
     private int likeCount;             // 비정규화
     private LocalDateTime createdAt;
@@ -553,7 +544,7 @@ public class AnswerLike {
 
 ```java
 public interface AnswerService {
-    // 답변 목록 조회 (시드 + 사용자 답변)
+    // 답변 목록 조회 (시드 + 사용자 답변, Member JOIN으로 뱃지 포함)
     List<AnswerResponse> getAnswers(String questionId, SortType sortType);
 
     // 답변 작성 (도메인 이벤트 발행 → Insight 획득)
@@ -568,6 +559,19 @@ public interface AnswerService {
     // 좋아요 토글
     LikeResponse toggleLike(String answerId, String userId);
 }
+```
+
+**조회 시 Member JOIN:**
+```sql
+-- 답변 목록 조회 시 뱃지 정보 포함
+SELECT
+    a.id, a.content, a.like_count, a.created_at,
+    m.name, m.profile_image,
+    m.company_badge, m.career_level, m.tech_stack
+FROM answers a
+JOIN members m ON a.member_id = m.id
+WHERE a.question_id = ?
+ORDER BY a.like_count DESC
 ```
 
 **Domain Events:**
@@ -795,6 +799,8 @@ public class ReferralSuccessEvent {
 **책임:**
 - User Service 프로필 캐싱 (읽기 전용)
 - 기술스택, 경력 정보 로컬 관리
+- **뱃지 정보 관리** (회사, 경력, 기술스택)
+- 개인화 추천을 위한 프로필 제공 (MVP)
 - Kafka 이벤트로 프로필 동기화
 
 **Aggregate Root: Member**
@@ -806,19 +812,26 @@ public class Member {
     @Id
     private String id;                 // user-service userId와 동일
 
+    // 기본 프로필 (user-service 동기화)
     private String email;
     private String name;
     private String profileImage;
+
+    // 뱃지 정보 (답변 작성 시 표시)
+    private String companyBadge;       // "LINE", "Kakao", "Naver", null
+    private String careerLevel;        // "junior", "mid", "senior"
 
     @ElementCollection
     @CollectionTable(name = "member_tech_stack")
     private List<String> techStack;    // ["Spring", "JPA", "React"]
 
-    private String careerLevel;        // "junior", "mid", "senior"
-
+    // 개인화 추천용 (MVP)
     @ElementCollection
     @CollectionTable(name = "member_preferred_categories")
     private List<String> preferredCategories;  // ["Backend", "Database"]
+
+    // 회사 인증 (Phase 2)
+    private LocalDateTime badgeVerifiedAt;  // 회사 인증 시점
 
     private LocalDateTime syncedAt;    // 마지막 동기화 시간
 
@@ -832,6 +845,10 @@ public class Member {
         this.name = profile.getName();
         this.profileImage = profile.getProfileImage();
         this.syncedAt = LocalDateTime.now();
+    }
+
+    public boolean hasCompanyBadge() {
+        return companyBadge != null && badgeVerifiedAt != null;
     }
 }
 ```
@@ -848,11 +865,59 @@ public interface MemberService {
 
     // 경력 레벨 업데이트
     void updateCareerLevel(String userId, String careerLevel);
+
+    // 회사 뱃지 업데이트 (회사 인증 후)
+    void updateCompanyBadge(String userId, String companyBadge);
+
+    // 개인화 추천용 프로필 조회 (MVP)
+    PersonalizationProfile getPersonalizationProfile(String userId);
 }
 ```
 
 **Inbound Adapters:**
 - `UserProfileEventListener`: Kafka 리스너 (user.profile.updated)
+
+**개인화 전략 (MVP vs Phase 2):**
+
+**MVP (Member 기반 단순 필터링):**
+```java
+// Question Domain에서 호출
+public class QuestionService {
+    Question selectPersonalizedQuestion(String userId) {
+        Member member = memberService.getProfile(userId);
+
+        // 단순 필터링 (10줄)
+        return questionRepository
+            .findByTechStackAndCareerLevel(
+                member.getTechStack(),
+                member.getCareerLevel()
+            )
+            .random(1);
+    }
+}
+```
+
+**Phase 2 (Personalization Domain 분리):**
+```java
+// 새로운 Personalization Domain
+@Entity UserInteraction {
+    String userId;
+    String questionId;
+    InteractionType type;  // VIEW, ANSWER, LIKE
+}
+
+public class PersonalizationService {
+    Question selectPersonalizedQuestion(String userId) {
+        // ML 모델, 협업 필터링, 이력 분석
+        return mlRecommendationEngine.recommend(userId);
+    }
+}
+```
+
+**트리거 조건 (Phase 2 전환):**
+- ML 모델 도입 필요 OR
+- 추천 로직 복잡도 > 50줄 OR
+- 사용자 이력 분석 필요
 
 ---
 
@@ -861,18 +926,30 @@ public interface MemberService {
 ```mermaid
 graph LR
     Answer[Answer Domain] -->|도메인 이벤트| Insight[Insight Domain]
+    Answer -->|Member JOIN| Member[Member Domain]
     Referral[Referral Domain] -->|도메인 이벤트| Insight
     Question[Question Domain] -->|인사이트 차감| Insight
+    Question -->|개인화 조회| Member
     Insight -->|Feign Client| Checkout[Checkout Service]
-    Member[Member Domain] -->|Kafka| UserService[User Service]
+    Member -->|Kafka| UserService[User Service]
     PaymentCore[Payment Core] -->|Kafka| Insight
 ```
 
 **의존성 규칙:**
 1. **도메인 이벤트 사용**: Answer → Insight, Referral → Insight (느슨한 결합)
 2. **직접 호출**: Question → Insight (spendInsights - 강결합 허용)
-3. **외부 서비스 호출**: Insight → Checkout (Feign Client)
-4. **비동기 연동**: Payment Core → Insight (Kafka)
+3. **조회 의존**: Answer → Member (뱃지 정보 JOIN), Question → Member (개인화 필터링)
+4. **외부 서비스 호출**: Insight → Checkout (Feign Client)
+5. **비동기 연동**: Payment Core → Insight (Kafka), Member → User Service (Kafka)
+
+**주요 설계 결정:**
+
+| 결정 | 이유 |
+|------|------|
+| **뱃지 정보는 Member Domain** | Single Source of Truth, 회사 변경 시 한 곳만 업데이트 |
+| **Answer는 Member JOIN** | 답변 조회 시 뱃지 포함, N+1 쿼리 방지 필요 |
+| **개인화는 MVP에서 Member 기반** | YAGNI 원칙, 단순 필터링으로 충분 (Phase 2에 Personalization Domain 분리) |
+| **Referral Domain 분리** | Growth Hacking 핵심, 독립적 생명주기, 향후 확장성 |
 
 ---
 

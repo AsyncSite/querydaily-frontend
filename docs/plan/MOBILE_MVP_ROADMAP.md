@@ -53,7 +53,7 @@
 
 ## 2. 핵심 결정 사항
 
-### Decision 0.1: 레포지토리 구조 ✅
+### Decision 2.1: 레포지토리 구조 ✅
 
 **프론트엔드:**
 - **새 레포**: `asyncsite/querydaily-mobile`
@@ -74,7 +74,7 @@
 - 독립적인 배포 및 확장
 - Prototype11이 검증된 UI/UX 기반 제공
 
-### Decision 0.2: 백엔드 도메인 설계 ✅
+### Decision 2.2: 백엔드 도메인 설계 ✅
 
 **핵심 도메인:**
 
@@ -473,7 +473,7 @@ public interface QuestionService {
 
 ---
 
-### 3.3 Answer Domain (답변)
+### 4.2 Answer Domain (답변)
 
 **책임:**
 - 답변 생명주기 관리 (작성, 수정, 삭제)
@@ -599,7 +599,7 @@ public class AnswerCreatedEvent {
 
 ---
 
-### 3.4 Insight Domain (인사이트 💎)
+### 4.3 Insight Domain (인사이트 💎)
 
 **책임:**
 - 인사이트 잔액 관리
@@ -722,7 +722,7 @@ public interface InsightService {
 
 ---
 
-### 3.5 Referral Domain (친구 초대)
+### 4.4 Referral Domain (친구 초대)
 
 **책임:**
 - 초대 코드 생성/관리
@@ -802,7 +802,7 @@ public class ReferralSuccessEvent {
 
 ---
 
-### 3.6 Member Domain (회원 프로필)
+### 4.5 Member Domain (회원 프로필)
 
 **책임:**
 - User Service 프로필 캐싱 (읽기 전용)
@@ -883,7 +883,7 @@ public interface MemberService {
 
 ---
 
-### 3.7 Personalization Domain (개인화 추천)
+### 4.6 Personalization Domain (개인화 추천)
 
 **책임:**
 - 사용자별 개인화 질문 선정
@@ -1025,7 +1025,7 @@ public class MlPersonalizationStrategy implements PersonalizationStrategy {
 
 ---
 
-### 3.8 도메인 간 의존성
+### 4.7 도메인 간 의존성
 
 ```mermaid
 graph LR
@@ -1061,7 +1061,7 @@ graph LR
 
 ---
 
-### Decision 0.3: AsyncSite 통합 계정 시스템 ✅
+### Decision 2.3: AsyncSite 통합 계정 시스템 ✅
 
 **핵심 개념: QueryDaily는 AsyncSite 플랫폼의 한 서비스**
 
@@ -1171,7 +1171,7 @@ AsyncSite 플랫폼
   - 초대 코드 자동 생성
   - 인사이트 초기 잔액 설정 (0 💎 또는 초대 보너스 50 💎)
 
-### Decision 0.4: 초기 컨텐츠 전략 ✅
+### Decision 2.4: 초기 컨텐츠 전략 ✅
 
 **100개 질문 시드 데이터:**
 
@@ -1199,7 +1199,7 @@ AsyncSite 플랫폼
 - 텍스트 기반 뱃지 (인증 없음)
 - 회사 인증 → Phase 2
 
-### Decision 0.4.5: 결제 통합 (PortOne SDK) ✅
+### Decision 2.5: 결제 통합 (PortOne SDK) ✅
 
 **핵심 결정: 런칭 전 인사이트 충전 기능 포함**
 
@@ -1329,7 +1329,7 @@ QueryDaily Mobile MVP에 PortOne 결제 시스템을 통합하여 사용자가 �
 
 ---
 
-### Decision 0.4.6: 실시간 채용공고 알림 시스템 (보류 🔄)
+### Decision 2.6: 실시간 채용공고 알림 시스템 (보류 🔄)
 
 **핵심 결정: MVP에서 제외, 향후 재고려**
 
@@ -1447,7 +1447,7 @@ noti-service 푸시 알림 (FCM/APNs)
 
 ---
 
-### Decision 0.5: 배포 전략 ✅
+### Decision 2.7: 배포 전략 ✅
 
 **프론트엔드 (PWA):**
 - **플랫폼**: Vercel
@@ -1471,208 +1471,7 @@ noti-service 푸시 알림 (FCM/APNs)
 
 ---
 
-## 3. 기술 아키텍처
-
-### 3.1 시스템 개요
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  클라이언트 계층 (PWA)                        │
-│               querydaily-mobile (Vercel)                     │
-└───────────────────────────┬─────────────────────────────────┘
-                            │ HTTPS
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│              API Gateway :8080 (필수 진입점)                 │
-└──────────┬──────────────────────────────────┬───────────────┘
-           │                                  │
-           ▼                                  ▼
-┌──────────────────────┐          ┌──────────────────────┐
-│   user-service       │          │ querydaily-mobile-   │
-│   (기존)             │◄────────►│    service (신규)    │
-│ - 카카오 OAuth       │  Kafka   │ - 질문               │
-│ - JWT 토큰           │  이벤트  │ - 답변               │
-│ - 사용자 프로필      │          │ - 인사이트 (💎)      │
-└──────────┬───────────┘          │ - 초대               │
-           │                      │ - 구독               │
-           │                      └──────────┬───────────┘
-           │                                 │
-           ▼                                 ▼
-┌─────────────────────────────────────────────────────────────┐
-│                        데이터 계층                            │
-│  MySQL (users, members) | Redis (캐시) | Kafka (이벤트)     │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 3.2 API 설계
-
-**기본 URL:**
-- user-service: `http://localhost:8081` (기존)
-- querydaily-mobile-service: `http://localhost:8388` (신규)
-
-**핵심 엔드포인트:**
-
-```
-인증 (user-service)
-├─ POST   /api/auth/oauth/kakao       # 카카오 로그인
-├─ POST   /api/auth/refresh           # 토큰 갱신
-└─ GET    /api/users/me               # 현재 사용자 정보
-
-질문 (querydaily-mobile-service)
-├─ GET    /api/v1/questions/daily     # 오늘의 3문제
-├─ GET    /api/v1/questions/{id}      # 질문 상세
-├─ GET    /api/v1/questions/archive   # 과거 질문 (5 💎 소비)
-└─ GET    /api/v1/categories          # 질문 카테고리
-
-답변 (querydaily-mobile-service)
-├─ GET    /api/v1/questions/{id}/answers   # 답변 목록 (뱃지 포함)
-├─ POST   /api/v1/answers                  # 답변 작성 (+10 💎)
-├─ GET    /api/v1/me/answers               # 내 답변
-└─ DELETE /api/v1/answers/{id}             # 내 답변 삭제
-
-인사이트 (querydaily-mobile-service)
-├─ GET    /api/v1/me/insights              # 내 잔액
-├─ GET    /api/v1/me/insights/transactions # 거래 내역
-└─ POST   /api/v1/insights/purchase        # 인사이트 구매 (테스트 모드)
-
-초대 (querydaily-mobile-service)
-├─ GET    /api/v1/me/referral/code         # 내 초대 코드
-├─ POST   /api/v1/referrals/claim          # 초대 코드 입력 (+50 💎 양쪽)
-└─ GET    /api/v1/me/referrals/stats       # 초대 통계
-
-구독 (querydaily-mobile-service)
-├─ GET    /api/v1/me/subscription          # 내 구독 상태
-└─ POST   /api/v1/subscriptions            # 프리미엄 구독
-```
-
-### 3.3 데이터베이스 스키마 (주요 테이블)
-
-```sql
--- 질문
-CREATE TABLE questions (
-    id VARCHAR(36) PRIMARY KEY,
-    title VARCHAR(500) NOT NULL,
-    content TEXT NOT NULL,
-    category VARCHAR(50) NOT NULL,
-    difficulty VARCHAR(20) NOT NULL,
-    answer_count INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_category (category),
-    INDEX idx_difficulty (difficulty)
-);
-
--- 일일 질문 로테이션
-CREATE TABLE daily_questions (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    date DATE NOT NULL UNIQUE,
-    question_1_id VARCHAR(36) NOT NULL,
-    question_2_id VARCHAR(36) NOT NULL,
-    question_3_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (question_1_id) REFERENCES questions(id),
-    FOREIGN KEY (question_2_id) REFERENCES questions(id),
-    FOREIGN KEY (question_3_id) REFERENCES questions(id)
-);
-
--- 답변 (경력자 답변)
-CREATE TABLE answers (
-    id VARCHAR(36) PRIMARY KEY,
-    question_id VARCHAR(36) NOT NULL,
-    member_id VARCHAR(36) NOT NULL,
-    content TEXT NOT NULL,
-    company_badge VARCHAR(100),      -- LINE, Kakao, Naver 등
-    experience_badge VARCHAR(50),    -- 주니어, 미들, 시니어
-    tech_badges JSON,                -- ["Spring", "JPA", "AWS"]
-    view_count INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (question_id) REFERENCES questions(id),
-    INDEX idx_question (question_id),
-    INDEX idx_member (member_id)
-);
-
--- 사용자 답변
-CREATE TABLE user_answers (
-    id VARCHAR(36) PRIMARY KEY,
-    question_id VARCHAR(36) NOT NULL,
-    member_id VARCHAR(36) NOT NULL,
-    content TEXT NOT NULL,
-    is_public BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (question_id) REFERENCES questions(id),
-    INDEX idx_member_question (member_id, question_id)
-);
-
--- 인사이트 잔액
-CREATE TABLE insight_balances (
-    member_id VARCHAR(36) PRIMARY KEY,
-    balance INT DEFAULT 0,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- 인사이트 거래
-CREATE TABLE insight_transactions (
-    id VARCHAR(36) PRIMARY KEY,
-    member_id VARCHAR(36) NOT NULL,
-    amount INT NOT NULL,              -- 획득은 양수, 소비는 음수
-    type VARCHAR(20) NOT NULL,        -- EARN, SPEND
-    reason VARCHAR(100) NOT NULL,     -- ANSWER_WRITE, VIEW_ARCHIVE, REFERRAL, PURCHASE
-    reference_id VARCHAR(36),         -- 관련 엔티티 ID (answer_id, question_id 등)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id),
-    INDEX idx_member_created (member_id, created_at DESC)
-);
-
--- 초대
-CREATE TABLE referrals (
-    id VARCHAR(36) PRIMARY KEY,
-    referrer_id VARCHAR(36) NOT NULL,
-    referred_id VARCHAR(36) NOT NULL,
-    code VARCHAR(20) NOT NULL,
-    status VARCHAR(20) DEFAULT 'COMPLETED',
-    claimed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (referrer_id) REFERENCES members(id),
-    FOREIGN KEY (referred_id) REFERENCES members(id),
-    UNIQUE KEY uk_referred (referred_id),
-    INDEX idx_referrer (referrer_id)
-);
-
--- 초대 코드
-CREATE TABLE invite_codes (
-    member_id VARCHAR(36) PRIMARY KEY,
-    code VARCHAR(20) UNIQUE NOT NULL,
-    referral_count INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id)
-);
-
--- 구독
-CREATE TABLE subscriptions (
-    id VARCHAR(36) PRIMARY KEY,
-    member_id VARCHAR(36) NOT NULL,
-    plan VARCHAR(20) NOT NULL,         -- PREMIUM
-    status VARCHAR(20) NOT NULL,       -- ACTIVE, EXPIRED, CANCELLED
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id),
-    INDEX idx_member_status (member_id, status)
-);
-
--- 회원 (user-service에서 캐시)
-CREATE TABLE members (
-    id VARCHAR(36) PRIMARY KEY,        -- user-service의 user ID와 동일
-    email VARCHAR(255) NOT NULL,
-    name VARCHAR(100),
-    profile_image VARCHAR(500),
-    company VARCHAR(100),
-    role VARCHAR(100),
-    synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_email (email)
-);
-```
-
----
-
-## 4. 주차별 구현 계획
+## 5. 주차별 구현 계획
 
 ### 1주차: 기반 구축 (1-7일차)
 
@@ -1906,7 +1705,7 @@ CREATE TABLE members (
 
 ---
 
-## 5. 타임라인 요약
+## 6. 타임라인 요약
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -1939,7 +1738,7 @@ CREATE TABLE members (
 
 ---
 
-## 6. 런칭 후 로드맵 (Phase 2)
+## 7. 런칭 후 로드맵 (Phase 2)
 
 **런칭 후 1개월:**
 - [ ] 결제 연동 (Toss Payments 또는 PortOne)
@@ -1963,7 +1762,7 @@ CREATE TABLE members (
 
 ---
 
-## 7. 성공 지표
+## 8. 성공 지표
 
 ### 제품 지표 (핵심 지표)
 
@@ -1986,7 +1785,7 @@ CREATE TABLE members (
 
 ---
 
-## 8. 다음 단계 (즉시 실행)
+## 9. 다음 단계 (즉시 실행)
 
 ### 1일차 작업:
 
@@ -2019,7 +1818,7 @@ CREATE TABLE members (
 
 ---
 
-## 9. 부록
+## 10. 부록
 
 ### A. 기술 스택 요약
 

@@ -111,12 +111,13 @@ querydaily-mobile-service/
 
 | 도메인 | 책임 | 주요 엔티티 |
 |--------|------|-------------|
-| `question` | 질문 관리, 일일 로테이션, 개인화 선정 (MVP) | Question, DailyQuestions, UnlockedQuestion |
+| `question` | 질문 관리, 일일 로테이션 | Question, DailyQuestions, UnlockedQuestion |
 | `answer` | 답변 CRUD, 좋아요 관리 | Answer, UserAnswer, AnswerLike |
 | `insight` | 가상 화폐 관리, 결제 연동 | Insight, InsightTransaction |
 | `referral` | 친구 초대 시스템 (Growth Hacking) | ReferralCode, Referral |
+| `personalization` | 개인화 추천 (MVP: 필터링, Phase 2: ML) | UserPreference, UserInteraction |
 | `subscription` | 프리미엄 플랜 관리 (Phase 2) | Subscription, SubscriptionPlan |
-| `member` | 프로필 캐시, 뱃지 관리, 개인화 데이터 | Member |
+| `member` | 프로필 캐시, 뱃지 관리 | Member |
 
 ---
 
@@ -143,6 +144,7 @@ graph TB
             Answer[Answer Domain]
             Insight[Insight Domain]
             Referral[Referral Domain]
+            Personalization[Personalization Domain]
             Member[Member Domain]
         end
     end
@@ -156,8 +158,7 @@ graph TB
     subgraph "Payment Context (AsyncSite 공통)"
         direction TB
         Checkout[Checkout Service<br/>결제 오케스트레이션<br/>:6081]
-        PaymentCore[Payment Core<br/>트랜잭션 관리<br/>:6082]
-        PaymentGateway[Payment Gateway<br/>PortOne 연동<br/>내장]
+        PaymentCore[Payment Core<br/>트랜잭션 관리<br/>PortOne Adapter 내장<br/>:6082]
     end
 
     subgraph "인프라"
@@ -178,20 +179,21 @@ graph TB
     QDService --> Answer
     QDService --> Insight
     QDService --> Referral
+    QDService --> Personalization
     QDService --> Member
 
+    Question -->|개인화 요청| Personalization
     Question -.도메인 이벤트.-> Insight
-    Question -->|개인화 조회| Member
     Answer -.도메인 이벤트.-> Insight
     Answer -->|뱃지 JOIN| Member
     Referral -.도메인 이벤트.-> Insight
+    Personalization -->|프로필 조회| Member
 
     Insight -->|Feign| Checkout
     Member -->|Kafka| UserService
 
     Checkout -->|내부 호출| PaymentCore
-    PaymentCore -->|내장| PaymentGateway
-    PaymentGateway -->|HTTP| PortOne
+    PaymentCore -->|PortOne Adapter| PortOne
     PaymentCore -.Kafka 이벤트.-> Insight
 
     QDService --> MySQL
@@ -219,7 +221,8 @@ graph TB
 2. **Checkout Service가 결제의 단일 진입점** (도메인 서비스는 Checkout만 호출)
 3. **Payment Core는 외부와 직접 통신 안 함** (Checkout만 호출 가능)
 4. **도메인 간 통신은 Domain Event 또는 Kafka 사용**
-5. **Member Domain은 조회 전용** (Question의 개인화, Answer의 뱃지 JOIN)
+5. **Member Domain은 조회 전용** (Personalization의 프로필, Answer의 뱃지 JOIN)
+6. **Personalization Domain은 모놀리식 내 별도 도메인** (향후 확장 대비, 비용 거의 없음)
 
 ---
 
@@ -231,8 +234,7 @@ sequenceDiagram
     participant Gateway as API Gateway
     participant QD as QueryDaily Service<br/>(Insight Domain)
     participant Checkout as Checkout Service<br/>(결제 오케스트레이터)
-    participant Core as Payment Core<br/>(트랜잭션 엔진)
-    participant PG as Payment Gateway<br/>(PortOne 연동)
+    participant Core as Payment Core<br/>(트랜잭션 엔진<br/>PortOne Adapter 내장)
     participant PortOne as PortOne<br/>(PG 제공자)
     participant Kafka as Kafka
 
@@ -256,11 +258,11 @@ sequenceDiagram
     PortOne-->>Mobile: 결제창 표시
     Note over Mobile,PortOne: 사용자 결제 진행
 
-    PortOne->>PG: Webhook (결제 완료)
-    Note over PG: Payment Gateway<br/>(Core 내장)
-    PG->>PortOne: S2S 검증 요청
-    PortOne-->>PG: 검증 성공
-    PG->>Core: 상태 업데이트<br/>(10→30→40→50)
+    PortOne->>Core: Webhook (결제 완료)
+    Note over Core: PortOne Adapter가<br/>Webhook 수신
+    Core->>PortOne: S2S 검증 요청
+    PortOne-->>Core: 검증 성공
+    Note over Core: 상태 업데이트<br/>(10→30→40→50)
 
     Core->>Kafka: asyncsite.payment.verified<br/>{domain: "querydaily-mobile", ...}
 
@@ -287,10 +289,10 @@ sequenceDiagram
    - ❌ 외부 서비스가 Core 직접 호출 금지
    - ❌ Core가 도메인 서비스 호출 금지
 
-3. **Payment Gateway는 Payment Core 내장**
-   - Gateway는 별도 서비스가 아닌 Core의 Adapter
-   - PortOne과의 HTTP 통신 담당
-   - Webhook 수신 및 S2S 검증
+3. **PortOne Adapter는 Payment Core 내장**
+   - 별도 서비스가 아닌 Core의 Adapter (헥사고날 아키텍처)
+   - PortOne과의 HTTP 통신 담당 (Webhook 수신, S2S 검증)
+   - Core 내부에서만 사용 (외부 노출 안 함)
 
 4. **비동기 이벤트로 결과 전파**
    - Core → Kafka → 도메인 서비스
@@ -354,7 +356,7 @@ graph TB
 
 **책임:**
 - 질문 생명주기 관리 (생성, 조회, 수정, 삭제)
-- 오늘의 3문제 선정 (공통 2문제 + 개인화 1문제)
+- 오늘의 3문제 선정 (공통 2문제 + Personalization Domain에 개인화 1문제 요청)
 - 질문 잠금/해제 상태 관리
 - 카테고리별 질문 필터링
 
@@ -464,7 +466,7 @@ public interface QuestionService {
 **Outbound Ports:**
 - `QuestionRepository`: 질문 조회/저장
 - `InsightService`: 잠금 해제 시 인사이트 차감
-- `MemberService`: 사용자 프로필 조회 (개인화용)
+- `PersonalizationService`: 개인화 질문 선정 요청
 
 ---
 
@@ -803,7 +805,6 @@ public class ReferralSuccessEvent {
 - User Service 프로필 캐싱 (읽기 전용)
 - 기술스택, 경력 정보 로컬 관리
 - **뱃지 정보 관리** (회사, 경력, 기술스택)
-- 개인화 추천을 위한 프로필 제공 (MVP)
 - Kafka 이벤트로 프로필 동기화
 
 **Aggregate Root: Member**
@@ -871,60 +872,157 @@ public interface MemberService {
 
     // 회사 뱃지 업데이트 (회사 인증 후)
     void updateCompanyBadge(String userId, String companyBadge);
-
-    // 개인화 추천용 프로필 조회 (MVP)
-    PersonalizationProfile getPersonalizationProfile(String userId);
 }
 ```
 
 **Inbound Adapters:**
 - `UserProfileEventListener`: Kafka 리스너 (user.profile.updated)
 
-**개인화 전략 (MVP vs Phase 2):**
+---
 
-**MVP (Member 기반 단순 필터링):**
+### 3.7 Personalization Domain (개인화 추천)
+
+**책임:**
+- 사용자별 개인화 질문 선정
+- 사용자 선호도 관리 (기술스택, 경력, 카테고리)
+- MVP: 단순 필터링, Phase 2: ML 모델 기반 추천
+
+**Aggregate Roots:**
+
 ```java
-// Question Domain에서 호출
-public class QuestionService {
-    Question selectPersonalizedQuestion(String userId) {
-        Member member = memberService.getProfile(userId);
+// 사용자 선호도 (MVP)
+@Entity
+@Table(name = "user_preferences")
+public class UserPreference {
+    @Id
+    private String userId;
 
-        // 단순 필터링 (10줄)
+    @ElementCollection
+    @CollectionTable(name = "user_tech_stack_preferences")
+    private List<String> techStack;    // ["Spring", "JPA", "React"]
+
+    private String careerLevel;        // "junior", "mid", "senior"
+
+    @ElementCollection
+    @CollectionTable(name = "user_category_preferences")
+    private List<String> preferredCategories;  // ["Backend", "Database"]
+
+    private LocalDateTime updatedAt;
+
+    // 도메인 로직
+    public void updateTechStack(List<String> newTechStack) {
+        this.techStack = newTechStack;
+        this.updatedAt = LocalDateTime.now();
+    }
+}
+
+// 사용자 인터랙션 (Phase 2 대비)
+@Entity
+@Table(name = "user_interactions")
+public class UserInteraction {
+    @Id
+    private String id;
+
+    private String userId;
+    private String questionId;
+
+    @Enumerated(EnumType.STRING)
+    private InteractionType type;      // VIEW, ANSWER, LIKE, UNLOCK
+
+    private LocalDateTime createdAt;
+}
+
+public enum InteractionType {
+    VIEW,      // 질문 조회
+    ANSWER,    // 답변 작성
+    LIKE,      // 답변 좋아요
+    UNLOCK     // 과거 질문 잠금 해제
+}
+```
+
+**Use Cases:**
+
+```java
+public interface PersonalizationService {
+    // MVP: 단순 필터링 기반 개인화
+    Question selectPersonalizedQuestion(String userId);
+
+    // 사용자 선호도 조회
+    UserPreference getUserPreference(String userId);
+
+    // 사용자 선호도 업데이트
+    void updateUserPreference(String userId, UserPreferenceCommand command);
+
+    // Phase 2: 인터랙션 기록 (추천 모델 학습용)
+    void recordInteraction(String userId, String questionId, InteractionType type);
+}
+```
+
+**개인화 알고리즘 (점진적 확장):**
+
+**MVP (단순 필터링):**
+```java
+public class SimplePersonalizationStrategy implements PersonalizationStrategy {
+    @Override
+    public Question selectQuestion(String userId) {
+        UserPreference pref = preferenceRepository.findByUserId(userId);
+
+        // 기술스택 + 경력 레벨로 필터링
         return questionRepository
             .findByTechStackAndCareerLevel(
-                member.getTechStack(),
-                member.getCareerLevel()
+                pref.getTechStack(),
+                pref.getCareerLevel()
             )
-            .random(1);
+            .stream()
+            .findAny()  // 랜덤 선택
+            .orElse(questionRepository.findRandomQuestion());
     }
 }
 ```
 
-**Phase 2 (Personalization Domain 분리):**
+**Phase 2 (ML 기반 추천):**
 ```java
-// 새로운 Personalization Domain
-@Entity UserInteraction {
-    String userId;
-    String questionId;
-    InteractionType type;  // VIEW, ANSWER, LIKE
-}
+public class MlPersonalizationStrategy implements PersonalizationStrategy {
+    @Override
+    public Question selectQuestion(String userId) {
+        UserPreference pref = preferenceRepository.findByUserId(userId);
+        List<UserInteraction> history = interactionRepository.findByUserId(userId);
 
-public class PersonalizationService {
-    Question selectPersonalizedQuestion(String userId) {
-        // ML 모델, 협업 필터링, 이력 분석
-        return mlRecommendationEngine.recommend(userId);
+        // ML 모델로 점수 계산
+        List<QuestionScore> scores = mlRecommendationEngine.score(
+            userId,
+            pref,
+            history
+        );
+
+        // 가장 높은 점수의 질문 선택
+        return scores.get(0).getQuestion();
     }
 }
 ```
 
-**트리거 조건 (Phase 2 전환):**
-- ML 모델 도입 필요 OR
-- 추천 로직 복잡도 > 50줄 OR
-- 사용자 이력 분석 필요
+**Outbound Ports:**
+- `UserPreferenceRepository`: 사용자 선호도 조회/저장
+- `UserInteractionRepository`: 인터랙션 기록 조회/저장
+- `MemberService`: Member 프로필 조회 (techStack, careerLevel 동기화)
+- `QuestionRepository`: 질문 풀 조회 (필터링용)
+
+**Inbound Adapters:**
+- `PersonalizationRestController`: REST API (선호도 업데이트)
+- `MemberSyncEventListener`: Member 프로필 변경 시 UserPreference 동기화
+
+**설계 원칙:**
+
+| 원칙 | 설명 |
+|------|------|
+| **Strategy Pattern** | PersonalizationStrategy 인터페이스로 알고리즘 교체 가능 |
+| **점진적 확장** | MVP는 Simple, Phase 2는 ML로 전환 (인터페이스 동일) |
+| **모놀리식 내 분리** | 별도 도메인이지만 같은 서비스 (네트워크 호출 없음) |
+| **Member와 분리** | Member = 신분, Personalization = 추천 (책임 명확) |
 
 ---
 
-### 3.7 도메인 간 의존성
+### 3.8 도메인 간 의존성
 
 ```mermaid
 graph LR
@@ -932,7 +1030,9 @@ graph LR
     Answer -->|Member JOIN| Member[Member Domain]
     Referral[Referral Domain] -->|도메인 이벤트| Insight
     Question[Question Domain] -->|인사이트 차감| Insight
-    Question -->|개인화 조회| Member
+    Question -->|개인화 요청| Personalization[Personalization Domain]
+    Personalization -->|프로필 조회| Member
+    Personalization -->|Question 조회| Question
     Insight -->|Feign Client| Checkout[Checkout Service]
     Member -->|Kafka| UserService[User Service]
     PaymentCore[Payment Core] -->|Kafka| Insight
@@ -941,9 +1041,10 @@ graph LR
 **의존성 규칙:**
 1. **도메인 이벤트 사용**: Answer → Insight, Referral → Insight (느슨한 결합)
 2. **직접 호출**: Question → Insight (spendInsights - 강결합 허용)
-3. **조회 의존**: Answer → Member (뱃지 정보 JOIN), Question → Member (개인화 필터링)
+3. **조회 의존**: Answer → Member (뱃지 정보 JOIN), Personalization → Member (프로필 조회)
 4. **외부 서비스 호출**: Insight → Checkout (Feign Client)
 5. **비동기 연동**: Payment Core → Insight (Kafka), Member → User Service (Kafka)
+6. **개인화 분리**: Question → Personalization (추천 요청), Personalization → Question (질문 풀 조회)
 
 **주요 설계 결정:**
 
@@ -951,8 +1052,9 @@ graph LR
 |------|------|
 | **뱃지 정보는 Member Domain** | Single Source of Truth, 회사 변경 시 한 곳만 업데이트 |
 | **Answer는 Member JOIN** | 답변 조회 시 뱃지 포함, N+1 쿼리 방지 필요 |
-| **개인화는 MVP에서 Member 기반** | YAGNI 원칙, 단순 필터링으로 충분 (Phase 2에 Personalization Domain 분리) |
+| **Personalization Domain 분리** | 모놀리식이라 비용 없음, 책임 분리 명확, 향후 확장 용이 |
 | **Referral Domain 분리** | Growth Hacking 핵심, 독립적 생명주기, 향후 확장성 |
+| **Member와 Personalization 분리** | Member = 신분, Personalization = 추천 (책임 명확) |
 
 ---
 

@@ -2195,37 +2195,45 @@ sequenceDiagram
     actor User
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
-    participant QDService as QueryDaily Service
-    participant AnswerDomain as Answer Domain
-    participant InsightDomain as Insight Domain
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as SubmitAnswerOrchestrator
+    participant AnswerSvc as Answer Service
     participant DB as MySQL
-    participant Kafka as Kafka
+    participant EventBus as Spring Event Bus
+    participant InsightListener as Insight Event Listener
+    participant InsightSvc as Insight Service
 
     User->>Mobile: 답변 작성 후 "제출" 클릭
     Mobile->>Gateway: POST /api/v1/answers<br/>{questionId, content}<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
-    Gateway->>QDService: POST /api/v1/answers<br/>(X-User-Id: userId)
+    Gateway->>Controller: POST /api/v1/answers<br/>(X-User-Id: userId)
 
-    QDService->>AnswerDomain: createAnswer(userId, questionId, content)
-    AnswerDomain->>DB: INSERT INTO user_answers<br/>(id, question_id, member_id, content)
-    DB-->>AnswerDomain: Success
-    AnswerDomain->>AnswerDomain: 도메인 이벤트 발행
-    AnswerDomain->>InsightDomain: AnswerCreatedEvent(userId)
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: execute(userId, questionId, content)
 
-    InsightDomain->>InsightDomain: earnInsights(userId, 10, ANSWER)
-    InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 10<br/>WHERE user_id = userId
-    InsightDomain->>DB: INSERT INTO insight_transactions<br/>(type=EARN, source=ANSWER, amount=10)
-    DB-->>InsightDomain: Success
+    Note over Orchestrator: orchestration/application/command<br/>답변 작성 (Insight는 이벤트로)
 
-    opt 이벤트 발행 (선택)
-        InsightDomain->>Kafka: InsightEarnedEvent<br/>{userId, amount=10, source=ANSWER}
-    end
+    Orchestrator->>AnswerSvc: submitAnswer(userId, questionId, content)
+    Note over AnswerSvc: answer/application
+    AnswerSvc->>DB: INSERT INTO user_answers<br/>(id, question_id, member_id, content)
+    DB-->>AnswerSvc: Success
 
-    InsightDomain-->>AnswerDomain: Success
-    AnswerDomain-->>QDService: AnswerResponse
-    QDService-->>Gateway: AnswerResponse + newBalance
-    Gateway-->>Mobile: AnswerResponse + newBalance
-    Mobile->>Mobile: "+10 💎" 토스트 표시
+    Note over AnswerSvc: 도메인 이벤트 발행
+    AnswerSvc->>EventBus: publish(AnswerCreatedEvent(userId, 10))
+
+    EventBus-->>InsightListener: AnswerCreatedEvent
+    Note over InsightListener: insight/adapter/in/event
+    InsightListener->>InsightSvc: earnInsights(userId, 10, "ANSWER")
+    Note over InsightSvc: insight/application
+    InsightSvc->>DB: UPDATE insights<br/>SET balance = balance + 10<br/>WHERE user_id = userId
+    InsightSvc->>DB: INSERT INTO insight_transactions<br/>(type=EARN, source=ANSWER, amount=10)
+    DB-->>InsightSvc: Success
+
+    AnswerSvc-->>Orchestrator: AnswerResponse
+    Orchestrator-->>Controller: AnswerResponse
+    Controller-->>Gateway: AnswerResponse
+    Gateway-->>Mobile: AnswerResponse
+    Mobile->>Mobile: "+10 💎" 토스트 표시 (비동기)
     Mobile-->>User: "답변이 등록되었습니다!"
 ```
 
@@ -2238,40 +2246,52 @@ sequenceDiagram
     actor User
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
-    participant QDService as QueryDaily Service
-    participant InsightDomain as Insight Domain
-    participant QuestionDomain as Question Domain
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as UnlockQuestionOrchestrator
+    participant InsightSvc as Insight Service
+    participant QuestionSvc as Question Service
     participant DB as MySQL
 
     User->>Mobile: 잠긴 질문 "5 💎로 열기" 클릭
     Mobile->>Gateway: POST /api/v1/questions/{questionId}/unlock<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
-    Gateway->>QDService: POST /api/v1/questions/{questionId}/unlock<br/>(X-User-Id: userId)
+    Gateway->>Controller: POST /api/v1/questions/{questionId}/unlock<br/>(X-User-Id: userId)
 
-    QDService->>InsightDomain: spendInsights(userId, 5, questionId)
-    InsightDomain->>DB: SELECT balance FROM insights<br/>WHERE user_id = userId<br/>FOR UPDATE
-    DB-->>InsightDomain: balance = 35
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: execute(userId, questionId)
+
+    Note over Orchestrator: orchestration/application/command<br/>Insight + Question 조합 (트랜잭션)
+
+    Orchestrator->>InsightSvc: spendInsights(userId, 5, questionId)
+    Note over InsightSvc: insight/application
+    InsightSvc->>DB: SELECT balance FROM insights<br/>WHERE user_id = userId<br/>FOR UPDATE
+    DB-->>InsightSvc: balance = 35
 
     alt 잔액 충분
-        InsightDomain->>InsightDomain: 35 >= 5 ✅
-        InsightDomain->>DB: UPDATE insights<br/>SET balance = 30<br/>WHERE user_id = userId
-        InsightDomain->>DB: INSERT INTO insight_transactions<br/>(type=SPEND, amount=5)
-        DB-->>InsightDomain: Success
+        InsightSvc->>InsightSvc: 35 >= 5 ✅
+        InsightSvc->>DB: UPDATE insights<br/>SET balance = 30<br/>WHERE user_id = userId
+        InsightSvc->>DB: INSERT INTO insight_transactions<br/>(type=SPEND, amount=5, metadata=questionId)
+        DB-->>InsightSvc: Success
+        InsightSvc-->>Orchestrator: Success
 
-        InsightDomain-->>QuestionDomain: Success
-        QuestionDomain->>DB: INSERT INTO unlocked_questions<br/>(user_id, question_id)
-        DB-->>QuestionDomain: Success
+        Orchestrator->>QuestionSvc: unlockQuestion(userId, questionId)
+        Note over QuestionSvc: question/application
+        QuestionSvc->>DB: INSERT INTO unlocked_questions<br/>(user_id, question_id, unlocked_at)
+        DB-->>QuestionSvc: Success
+        QuestionSvc-->>Orchestrator: Success
 
-        QuestionDomain-->>QDService: UnlockResponse{success=true}
-        QDService-->>Gateway: UnlockResponse
+        Orchestrator->>Orchestrator: Assemble UnlockResponse
+        Orchestrator-->>Controller: UnlockResponse{success=true, newBalance=30}
+        Controller-->>Gateway: UnlockResponse
         Gateway-->>Mobile: UnlockResponse
         Mobile->>Mobile: 질문 내용 표시
         Mobile-->>User: 질문 내용 보여짐
 
     else 잔액 부족
-        InsightDomain->>InsightDomain: 35 < 5 ❌
-        InsightDomain-->>QDService: InsufficientInsightException
-        QDService-->>Gateway: 400 Bad Request
+        InsightSvc->>InsightSvc: 35 < 5 ❌
+        InsightSvc-->>Orchestrator: InsufficientInsightException
+        Orchestrator-->>Controller: InsufficientInsightException
+        Controller-->>Gateway: 400 Bad Request
         Gateway-->>Mobile: Error Response
         Mobile-->>User: "인사이트가 부족합니다"<br/>"충전하기" 버튼 표시
     end
@@ -2286,30 +2306,38 @@ sequenceDiagram
     actor User
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
-    participant QDService as QueryDaily Service
-    participant ReferralDomain as Referral Domain
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as GetReferralCodeOrchestrator
+    participant ReferralSvc as Referral Service
     participant DB as MySQL
 
     User->>Mobile: 마이페이지 접속
     Mobile->>Gateway: GET /api/v1/referrals/my-code<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
-    Gateway->>QDService: GET /api/v1/referrals/my-code<br/>(X-User-Id: userId)
+    Gateway->>Controller: GET /api/v1/referrals/my-code<br/>(X-User-Id: userId)
 
-    QDService->>ReferralDomain: getOrCreateReferralCode(userId)
-    ReferralDomain->>DB: SELECT code FROM referral_codes<br/>WHERE user_id = userId
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: execute(userId)
+
+    Note over Orchestrator: orchestration/application/query<br/>단일 도메인 (일관성 위해 orchestration 사용)
+
+    Orchestrator->>ReferralSvc: getOrCreateReferralCode(userId)
+    Note over ReferralSvc: referral/application
+    ReferralSvc->>DB: SELECT code FROM referral_codes<br/>WHERE user_id = userId
 
     alt 코드 존재
-        DB-->>ReferralDomain: code = "POTATO2024"
-        ReferralDomain-->>QDService: "POTATO2024"
+        DB-->>ReferralSvc: code = "POTATO2024"
+        ReferralSvc-->>Orchestrator: "POTATO2024"
     else 코드 없음
-        DB-->>ReferralDomain: null
-        ReferralDomain->>ReferralDomain: generateUniqueCode()
-        ReferralDomain->>DB: INSERT INTO referral_codes<br/>(user_id, code)
-        DB-->>ReferralDomain: Success
-        ReferralDomain-->>QDService: "NEWCODE123"
+        DB-->>ReferralSvc: null
+        ReferralSvc->>ReferralSvc: generateUniqueCode()
+        ReferralSvc->>DB: INSERT INTO referral_codes<br/>(user_id, code)
+        DB-->>ReferralSvc: Success
+        ReferralSvc-->>Orchestrator: "NEWCODE123"
     end
 
-    QDService-->>Gateway: ReferralCodeResponse
+    Orchestrator-->>Controller: ReferralCodeResponse
+    Controller-->>Gateway: ReferralCodeResponse
     Gateway-->>Mobile: ReferralCodeResponse
     Mobile->>Mobile: 초대 코드 표시
     Mobile-->>User: "내 초대 코드: POTATO2024"
@@ -2329,10 +2357,13 @@ sequenceDiagram
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
     participant UserService as User Service
-    participant QDService as QueryDaily Service
-    participant ReferralDomain as Referral Domain
-    participant InsightDomain as Insight Domain
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as ApplyReferralCodeOrchestrator
+    participant ReferralSvc as Referral Service
     participant DB as MySQL
+    participant EventBus as Spring Event Bus
+    participant InsightListener as Insight Event Listener
+    participant InsightSvc as Insight Service
 
     NewUser->>Mobile: 온보딩 "초대 코드 입력"
     Mobile->>Mobile: 코드 입력: "POTATO2024"
@@ -2345,32 +2376,45 @@ sequenceDiagram
     Gateway-->>Mobile: JWT 토큰
 
     Mobile->>Gateway: POST /api/v1/referrals/apply<br/>{code: "POTATO2024"}<br/>(Authorization: Bearer JWT)
-    Gateway->>QDService: POST /api/v1/referrals/apply<br/>(X-User-Id: newUserId)
+    Gateway->>Controller: POST /api/v1/referrals/apply<br/>(X-User-Id: newUserId)
 
-    QDService->>ReferralDomain: applyReferralCode(newUserId, "POTATO2024")
-    ReferralDomain->>DB: SELECT user_id FROM referral_codes<br/>WHERE code = "POTATO2024"
-    DB-->>ReferralDomain: referrerId = "user_123"
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: execute(newUserId, "POTATO2024")
+
+    Note over Orchestrator: orchestration/application/command<br/>Referral (Insight는 이벤트로)
+
+    Orchestrator->>ReferralSvc: applyReferralCode(newUserId, "POTATO2024")
+    Note over ReferralSvc: referral/application
+    ReferralSvc->>DB: SELECT user_id FROM referral_codes<br/>WHERE code = "POTATO2024"
+    DB-->>ReferralSvc: referrerId = "user_123"
 
     alt 유효한 코드
-        ReferralDomain->>DB: INSERT INTO referrals<br/>(referrer_id, referee_id, code)
-        DB-->>ReferralDomain: Success
+        ReferralSvc->>DB: INSERT INTO referrals<br/>(referrer_id, referee_id, code)
+        DB-->>ReferralSvc: Success
 
-        par 초대자에게 리워드
-            ReferralDomain->>InsightDomain: earnInsights(referrerId, 50, REFERRAL)
-            InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 50
-        and 피초대자에게 리워드
-            ReferralDomain->>InsightDomain: earnInsights(newUserId, 50, REFERRAL)
-            InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 50
-        end
+        Note over ReferralSvc: 도메인 이벤트 발행 (2건)
+        ReferralSvc->>EventBus: publish(ReferralAppliedEvent(referrerId, 50))
+        ReferralSvc->>EventBus: publish(ReferralAppliedEvent(newUserId, 50))
 
-        ReferralDomain-->>QDService: Success
-        QDService-->>Gateway: ReferralResponse{success=true}
+        EventBus-->>InsightListener: ReferralAppliedEvent (referrerId)
+        Note over InsightListener: insight/adapter/in/event
+        InsightListener->>InsightSvc: earnInsights(referrerId, 50, "REFERRAL")
+        InsightSvc->>DB: UPDATE insights SET balance = balance + 50
+
+        EventBus-->>InsightListener: ReferralAppliedEvent (newUserId)
+        InsightListener->>InsightSvc: earnInsights(newUserId, 50, "REFERRAL")
+        InsightSvc->>DB: UPDATE insights SET balance = balance + 50
+
+        ReferralSvc-->>Orchestrator: Success
+        Orchestrator-->>Controller: ReferralResponse{success=true}
+        Controller-->>Gateway: ReferralResponse
         Gateway-->>Mobile: ReferralResponse
         Mobile-->>NewUser: "🎉 초대 코드 적용!<br/>나와 친구 모두 +50 💎"
 
     else 잘못된 코드
-        ReferralDomain-->>QDService: InvalidReferralCodeException
-        QDService-->>Gateway: 400 Bad Request
+        ReferralSvc-->>Orchestrator: InvalidReferralCodeException
+        Orchestrator-->>Controller: InvalidReferralCodeException
+        Controller-->>Gateway: 400 Bad Request
         Gateway-->>Mobile: Error Response
         Mobile-->>NewUser: "유효하지 않은 초대 코드입니다"
     end
@@ -2385,53 +2429,69 @@ sequenceDiagram
     actor User
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
-    participant QDService as QueryDaily Service
-    participant InsightDomain as Insight Domain
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as ChargeInsightOrchestrator
+    participant InsightSvc as Insight Service
     participant CheckoutClient as Checkout Client
     participant CheckoutService as Checkout Service
-    participant PortOne as PortOne
-    participant PaymentGateway as Payment Gateway
     participant PaymentCore as Payment Core
+    participant PortOne as PortOne
     participant Kafka as Kafka
+    participant PaymentListener as Payment Event Listener
+    participant DB as MySQL
 
     User->>Mobile: Shop 페이지 "100 💎 충전" 클릭
     Mobile->>Gateway: POST /api/v1/insights/payment-intents<br/>{insightAmount: 100, price: 5000}<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
-    Gateway->>QDService: POST /api/v1/insights/payment-intents<br/>(X-User-Id: userId)
+    Gateway->>Controller: POST /api/v1/insights/payment-intents<br/>(X-User-Id: userId)
 
-    QDService->>InsightDomain: createPaymentIntent(userId, 100, 5000)
-    InsightDomain->>CheckoutClient: createPaymentIntent({<br/>  domain: "querydaily-mobile",<br/>  itemType: "insight-charge",<br/>  amount: 5000,<br/>  metadata: {userId, insightAmount: 100}<br/>})
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: execute(userId, 100, 5000)
+
+    Note over Orchestrator: orchestration/application/command<br/>Insight + Checkout 조합
+
+    Orchestrator->>InsightSvc: createPaymentIntent(userId, 100, 5000)
+    Note over InsightSvc: insight/application
+    InsightSvc->>CheckoutClient: createPaymentIntent({<br/>  domain: "querydaily-mobile",<br/>  itemType: "insight-charge",<br/>  amount: 5000,<br/>  metadata: {userId, insightAmount: 100}<br/>})
+    Note over CheckoutClient: insight/adapter/out/client
     CheckoutClient->>CheckoutService: POST /api/v1/checkout/payment-intents
     CheckoutService->>CheckoutService: PaymentIntent 생성<br/>PortOne SDK 정보 준비
-    CheckoutService-->>CheckoutClient: PaymentIntentResponse{<br/>  intentId,<br/>  portOneSdkPayload<br/>}
-    CheckoutClient-->>InsightDomain: PaymentIntentResponse
-    InsightDomain-->>QDService: PaymentIntentResponse
-    QDService-->>Gateway: PaymentIntentResponse
+    CheckoutService-->>CheckoutClient: PaymentIntentResponse{intentId, portOneSdkPayload}
+    CheckoutClient-->>InsightSvc: PaymentIntentResponse
+    InsightSvc-->>Orchestrator: PaymentIntentResponse
+    Orchestrator-->>Controller: PaymentIntentResponse
+    Controller-->>Gateway: PaymentIntentResponse
     Gateway-->>Mobile: PaymentIntentResponse
 
     Mobile->>Mobile: PortOne SDK 초기화
     Mobile->>PortOne: portone.requestPayment(sdkPayload)
     PortOne-->>User: 결제창 표시
     User->>PortOne: 카드 정보 입력, 결제 완료
-    PortOne->>PaymentGateway: Webhook (결제 완료)
-    PaymentGateway->>PortOne: S2S 검증
-    PortOne-->>PaymentGateway: 검증 성공
-    PaymentGateway->>PaymentCore: 트랜잭션 상태 업데이트
-    PaymentCore->>PaymentCore: Status: 10→30→40→50
-    PaymentCore->>Kafka: Publish Event<br/>Topic: asyncsite.payment.verified<br/>{<br/>  paymentId,<br/>  domain: "querydaily-mobile",<br/>  itemType: "insight-charge",<br/>  amount: 5000,<br/>  metadata: {userId, insightAmount: 100}<br/>}
 
-    Kafka->>QDService: Event Consumed
-    QDService->>InsightDomain: handlePaymentVerified(event)
-    InsightDomain->>InsightDomain: chargeInsights(userId, 100, paymentId)
-    InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 100
-    InsightDomain->>DB: INSERT INTO insight_transactions<br/>(type=CHARGE, source=PAYMENT, amount=100)
+    Note over PortOne,PaymentCore: PortOne Adapter는 Payment Core 내장
+    PortOne->>CheckoutService: Webhook (결제 완료)
+    CheckoutService->>PaymentCore: verifyAndConfirm(paymentId)
+    PaymentCore->>PortOne: S2S 검증 (Adapter 통해)
+    PortOne-->>PaymentCore: 검증 성공
+    PaymentCore->>PaymentCore: Status: 10→30→40→50
+    PaymentCore->>Kafka: Publish Event<br/>Topic: asyncsite.payment.verified<br/>{paymentId, domain, itemType, metadata}
+
+    Kafka-->>PaymentListener: PaymentVerifiedEvent
+    Note over PaymentListener: insight/adapter/in/kafka
+    PaymentListener->>InsightSvc: chargeInsights(userId, 100, paymentId)
+    InsightSvc->>DB: UPDATE insights SET balance = balance + 100
+    InsightSvc->>DB: INSERT INTO insight_transactions<br/>(type=CHARGE, source=PAYMENT, amount=100)
 
     PortOne-->>Mobile: 결제 완료 콜백
     Mobile->>Gateway: GET /api/v1/me/insights<br/>(Authorization: Bearer JWT)
-    Gateway->>QDService: GET /api/v1/me/insights
-    QDService->>DB: SELECT balance FROM insights
-    DB-->>QDService: balance = 135
-    QDService-->>Gateway: InsightResponse{balance=135}
+    Gateway->>Controller: GET /api/v1/me/insights<br/>(X-User-Id: userId)
+    Controller->>Orchestrator: getMyInsights(userId)
+    Orchestrator->>InsightSvc: getBalance(userId)
+    InsightSvc->>DB: SELECT balance FROM insights WHERE user_id = ?
+    DB-->>InsightSvc: balance = 135
+    InsightSvc-->>Orchestrator: 135
+    Orchestrator-->>Controller: InsightResponse{balance=135}
+    Controller-->>Gateway: InsightResponse
     Gateway-->>Mobile: InsightResponse
     Mobile-->>User: "✅ 100 💎 충전 완료!<br/>현재 잔액: 135 💎"
 ```

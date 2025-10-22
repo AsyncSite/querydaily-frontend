@@ -95,13 +95,17 @@ querydaily-mobile-service/
     │   │   └── service/
     │   │       └── QuestionDomainService.java
     │   ├── application/
-    │   │   └── QuestionService.java            # 단일 도메인 Use Case
+    │   │   ├── QuestionQueryService.java       # Use Case (Read)
+    │   │   └── QuestionCommandService.java     # Use Case (Write)
     │   └── adapter/
-    │       ├── in/web/
-    │       │   └── QuestionController.java     # 단일 도메인 API
-    │       └── out/persistence/
-    │           ├── QuestionJpaRepository.java
-    │           └── QuestionRepositoryAdapter.java
+    │       └── out/                            # ✅ Outbound만
+    │           ├── persistence/
+    │           │   ├── QuestionEntity.java
+    │           │   ├── QuestionJpaRepository.java
+    │           │   ├── QuestionMapper.java
+    │           │   └── QuestionRepositoryAdapter.java
+    │           └── scheduler/                  # 필요시: Scheduled Job
+    │               └── DailyRotationScheduler.java
     │
     ├── 📦 answer/                      # Answer Bounded Context
     │   ├── domain/
@@ -116,10 +120,11 @@ querydaily-mobile-service/
     │   │   ├── AnswerQueryService.java
     │   │   └── SubmitAnswerService.java
     │   └── adapter/
-    │       ├── in/web/
-    │       │   └── AnswerController.java
-    │       └── out/persistence/
-    │           └── AnswerRepositoryAdapter.java
+    │       └── out/
+    │           ├── persistence/
+    │           │   └── AnswerRepositoryAdapter.java
+    │           └── event/
+    │               └── AnswerEventPublisher.java
     │
     ├── 📦 member/                      # Member Bounded Context
     │   ├── domain/
@@ -131,10 +136,12 @@ querydaily-mobile-service/
     │   ├── application/
     │   │   └── MemberQueryService.java
     │   └── adapter/
-    │       ├── in/kafka/
-    │       │   └── ProfileSyncEventListener.java
-    │       └── out/persistence/
-    │           └── MemberRepositoryAdapter.java
+    │       ├── in/                             # ✅ Kafka Consumer (필요)
+    │       │   └── kafka/
+    │       │       └── ProfileSyncEventListener.java
+    │       └── out/
+    │           └── persistence/
+    │               └── MemberRepositoryAdapter.java
     │
     ├── 📦 insight/                     # Insight Bounded Context
     │   ├── domain/
@@ -147,12 +154,16 @@ querydaily-mobile-service/
     │   │   ├── InsightChargeService.java
     │   │   └── InsightSpendService.java
     │   └── adapter/
-    │       ├── in/web/
-    │       │   └── InsightController.java
-    │       ├── in/kafka/
-    │       │   └── PaymentVerifiedEventListener.java
-    │       └── out/client/
-    │           └── CheckoutServiceClient.java
+    │       ├── in/                             # ✅ Kafka Consumer (필요)
+    │       │   └── kafka/
+    │       │       └── PaymentVerifiedEventListener.java
+    │       └── out/
+    │           ├── persistence/
+    │           │   └── InsightRepositoryAdapter.java
+    │           ├── client/                     # HTTP Client
+    │           │   └── CheckoutServiceClient.java
+    │           └── event/
+    │               └── InsightEventPublisher.java
     │
     ├── 📦 personalization/             # Personalization Bounded Context
     │   ├── domain/
@@ -164,8 +175,9 @@ querydaily-mobile-service/
     │   ├── application/
     │   │   └── PersonalizationService.java
     │   └── adapter/
-    │       └── out/persistence/
-    │           └── PreferenceRepositoryAdapter.java
+    │       └── out/
+    │           └── persistence/
+    │               └── PreferenceRepositoryAdapter.java
     │
     ├── 📦 referral/                    # Referral Bounded Context
     │   ├── domain/
@@ -178,20 +190,32 @@ querydaily-mobile-service/
     │   │   ├── CreateReferralCodeService.java
     │   │   └── ApplyReferralCodeService.java
     │   └── adapter/
-    │       └── in/web/
-    │           └── ReferralController.java
+    │       └── out/
+    │           ├── persistence/
+    │           │   └── ReferralRepositoryAdapter.java
+    │           └── event/
+    │               └── ReferralEventPublisher.java
     │
-    ├── 📦 orchestration/               ⭐ 도메인 간 조합 레이어
+    ├── 📦 orchestration/               ⭐ 도메인 간 조합 레이어 (유일한 Public API)
     │   ├── application/
     │   │   ├── query/
-    │   │   │   ├── QuestionDetailOrchestrator.java      # Question + Answer + Member 조합
-    │   │   │   ├── DailyQuestionsOrchestrator.java      # Question + Personalization 조합
-    │   │   │   └── MyPageOrchestrator.java              # Member + Insight + Referral 조합
+    │   │   │   ├── DailyQuestionsOrchestrator.java      # Question + Personalization
+    │   │   │   ├── QuestionDetailOrchestrator.java      # Question + Answer + Member
+    │   │   │   ├── GetReferralCodeOrchestrator.java     # Referral (단일이지만 일관성)
+    │   │   │   └── MyPageOrchestrator.java              # Member + Insight + Referral
     │   │   └── command/
-    │   │       └── SubmitAnswerOrchestrator.java        # Answer + Insight 조합
+    │   │       ├── SubmitAnswerOrchestrator.java        # Answer (이벤트로 Insight 연동)
+    │   │       ├── UnlockQuestionOrchestrator.java      # Insight + Question
+    │   │       ├── ApplyReferralCodeOrchestrator.java   # Referral (이벤트로 Insight 연동)
+    │   │       └── ChargeInsightOrchestrator.java       # Insight + Checkout
     │   └── adapter/
-    │       └── in/web/
-    │           └── QueryDailyController.java            # 조합 API 엔드포인트
+    │       └── in/                             # ✅ 유일한 Public REST API
+    │           └── web/
+    │               ├── QueryDailyController.java
+    │               └── dto/
+    │                   ├── QuestionDetailResponse.java
+    │                   ├── DailyQuestionsResponse.java
+    │                   └── AnswerResponse.java
     │
     ├── 📦 common/                      # 공통 유틸리티 & 설정
     │   ├── exception/
@@ -235,9 +259,17 @@ querydaily-mobile-service/
 
 **핵심 원칙:**
 1. 각 도메인은 **다른 도메인에 대해 모름** (독립적)
-2. 도메인 간 조합이 필요한 API는 **orchestration 레이어**가 담당
-3. orchestration은 각 도메인의 **Application Service를 호출**하여 조합
-4. 의존성 방향: `orchestration → domain` (단방향)
+2. **모든 Public REST API는 orchestration 레이어가 담당** (일관성)
+3. 각 도메인의 `adapter/in/web`은 **존재하지 않음** (orchestration이 유일한 진입점)
+4. `adapter/in`은 **필요한 경우만** (Kafka Consumer, Scheduler 등)
+5. orchestration은 각 도메인의 **Application Service를 호출**하여 조합
+6. 의존성 방향: `orchestration → domain` (단방향)
+
+**Inbound Adapter 규칙:**
+- ✅ `orchestration/adapter/in/web` - 모든 Public REST API
+- ✅ `*/adapter/in/kafka` - 외부 이벤트 수신이 필요한 도메인만
+- ✅ `*/adapter/in/scheduler` - 스케줄링이 필요한 도메인만
+- ❌ `*/adapter/in/web` - 각 도메인에는 불필요 (orchestration이 담당)
 
 ---
 

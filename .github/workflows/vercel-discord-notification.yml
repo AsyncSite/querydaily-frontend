@@ -39,7 +39,7 @@ jobs:
                    {\"name\": \"커밋\", \"value\": \"\`$COMMIT_SHORT\`\", \"inline\": true},
                    {\"name\": \"브랜치\", \"value\": \"${{ github.event.deployment.ref }}\", \"inline\": true},
                    {\"name\": \"시간\", \"value\": \"$(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M:%S KST')\", \"inline\": true},
-                   {\"name\": \"배포 URL\", \"value\": \"[https://querydaily-frontend.vercel.app](https://querydaily-frontend.vercel.app)\", \"inline\": false}
+                   {\"name\": \"배포 URL\", \"value\": \"$DEPLOYMENT_URL\", \"inline\": false}
                  ],
                  \"footer\": {
                    \"text\": \"Vercel × GitHub Actions\"

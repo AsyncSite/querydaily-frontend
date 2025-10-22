@@ -181,7 +181,9 @@ graph TB
     QDService --> Member
 
     Question -.도메인 이벤트.-> Insight
+    Question -->|개인화 조회| Member
     Answer -.도메인 이벤트.-> Insight
+    Answer -->|뱃지 JOIN| Member
     Referral -.도메인 이벤트.-> Insight
 
     Insight -->|Feign| Checkout
@@ -217,6 +219,7 @@ graph TB
 2. **Checkout Service가 결제의 단일 진입점** (도메인 서비스는 Checkout만 호출)
 3. **Payment Core는 외부와 직접 통신 안 함** (Checkout만 호출 가능)
 4. **도메인 간 통신은 Domain Event 또는 Kafka 사용**
+5. **Member Domain은 조회 전용** (Question의 개인화, Answer의 뱃지 JOIN)
 
 ---
 

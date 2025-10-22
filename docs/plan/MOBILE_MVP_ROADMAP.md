@@ -76,48 +76,168 @@
 
 ### Decision 2.2: 백엔드 도메인 설계 ✅
 
-**핵심 도메인:**
+**아키텍처 스타일**: 헥사고날 아키텍처 + 도메인 우선 구조 (Vertical Slice)
+
+**패키지 구조:**
 
 ```
 querydaily-mobile-service/
 └── src/main/java/com/asyncsite/querydailymobile/
-    ├── question/          # 질문 도메인
+    │
+    ├── 📦 question/                    # Question Bounded Context
     │   ├── domain/
+    │   │   ├── model/
+    │   │   │   ├── Question.java
+    │   │   │   ├── DailyQuestion.java
+    │   │   │   └── UnlockedQuestion.java
+    │   │   ├── repository/
+    │   │   │   └── QuestionRepository.java     # Port (Interface)
+    │   │   └── service/
+    │   │       └── QuestionDomainService.java
     │   ├── application/
+    │   │   └── QuestionService.java            # 단일 도메인 Use Case
     │   └── adapter/
-    ├── answer/            # 답변 도메인
+    │       ├── in/web/
+    │       │   └── QuestionController.java     # 단일 도메인 API
+    │       └── out/persistence/
+    │           ├── QuestionJpaRepository.java
+    │           └── QuestionRepositoryAdapter.java
+    │
+    ├── 📦 answer/                      # Answer Bounded Context
     │   ├── domain/
+    │   │   ├── model/
+    │   │   │   ├── Answer.java
+    │   │   │   └── UserAnswer.java
+    │   │   ├── repository/
+    │   │   │   └── AnswerRepository.java
+    │   │   └── service/
+    │   │       └── AnswerDomainService.java
     │   ├── application/
+    │   │   ├── AnswerQueryService.java
+    │   │   └── SubmitAnswerService.java
     │   └── adapter/
-    ├── insight/           # 인사이트 (💎) 도메인
+    │       ├── in/web/
+    │       │   └── AnswerController.java
+    │       └── out/persistence/
+    │           └── AnswerRepositoryAdapter.java
+    │
+    ├── 📦 member/                      # Member Bounded Context
     │   ├── domain/
+    │   │   ├── model/
+    │   │   │   ├── Member.java
+    │   │   │   └── MemberBadge.java
+    │   │   └── service/
+    │   │       └── MemberDomainService.java
     │   ├── application/
+    │   │   └── MemberQueryService.java
     │   └── adapter/
-    ├── referral/          # 친구 초대 도메인
+    │       ├── in/kafka/
+    │       │   └── ProfileSyncEventListener.java
+    │       └── out/persistence/
+    │           └── MemberRepositoryAdapter.java
+    │
+    ├── 📦 insight/                     # Insight Bounded Context
     │   ├── domain/
+    │   │   ├── model/
+    │   │   │   ├── Insight.java
+    │   │   │   └── InsightTransaction.java
+    │   │   └── service/
+    │   │       └── InsightDomainService.java
     │   ├── application/
+    │   │   ├── InsightChargeService.java
+    │   │   └── InsightSpendService.java
     │   └── adapter/
-    ├── subscription/      # 프리미엄 구독 도메인
+    │       ├── in/web/
+    │       │   └── InsightController.java
+    │       ├── in/kafka/
+    │       │   └── PaymentVerifiedEventListener.java
+    │       └── out/client/
+    │           └── CheckoutServiceClient.java
+    │
+    ├── 📦 personalization/             # Personalization Bounded Context
     │   ├── domain/
+    │   │   ├── model/
+    │   │   │   ├── UserPreference.java
+    │   │   │   └── UserInteraction.java
+    │   │   └── service/
+    │   │       └── PersonalizationStrategy.java
     │   ├── application/
+    │   │   └── PersonalizationService.java
     │   └── adapter/
-    └── member/            # 회원 프로필 (읽기 전용 캐시)
-        ├── domain/
-        ├── application/
-        └── adapter/
+    │       └── out/persistence/
+    │           └── PreferenceRepositoryAdapter.java
+    │
+    ├── 📦 referral/                    # Referral Bounded Context
+    │   ├── domain/
+    │   │   ├── model/
+    │   │   │   ├── ReferralCode.java
+    │   │   │   └── Referral.java
+    │   │   └── service/
+    │   │       └── ReferralDomainService.java
+    │   ├── application/
+    │   │   ├── CreateReferralCodeService.java
+    │   │   └── ApplyReferralCodeService.java
+    │   └── adapter/
+    │       └── in/web/
+    │           └── ReferralController.java
+    │
+    ├── 📦 orchestration/               ⭐ 도메인 간 조합 레이어
+    │   ├── application/
+    │   │   ├── query/
+    │   │   │   ├── QuestionDetailOrchestrator.java      # Question + Answer + Member 조합
+    │   │   │   ├── DailyQuestionsOrchestrator.java      # Question + Personalization 조합
+    │   │   │   └── MyPageOrchestrator.java              # Member + Insight + Referral 조합
+    │   │   └── command/
+    │   │       └── SubmitAnswerOrchestrator.java        # Answer + Insight 조합
+    │   └── adapter/
+    │       └── in/web/
+    │           └── QueryDailyController.java            # 조합 API 엔드포인트
+    │
+    ├── 📦 common/                      # 공통 유틸리티 & 설정
+    │   ├── exception/
+    │   │   ├── BusinessException.java
+    │   │   └── GlobalExceptionHandler.java
+    │   ├── config/
+    │   │   ├── SecurityConfig.java
+    │   │   ├── JpaConfig.java
+    │   │   └── KafkaConfig.java
+    │   └── util/
+    │       └── DateUtils.java
+    │
+    └── QueryDailyMobileApplication.java
 ```
 
 **도메인 책임:**
 
-| 도메인 | 책임 | 주요 엔티티 |
-|--------|------|-------------|
-| `question` | 질문 관리, 일일 로테이션 | Question, DailyQuestions, UnlockedQuestion |
-| `answer` | 답변 CRUD, 좋아요 관리 | Answer, UserAnswer, AnswerLike |
-| `insight` | 가상 화폐 관리, 결제 연동 | Insight, InsightTransaction |
-| `referral` | 친구 초대 시스템 (Growth Hacking) | ReferralCode, Referral |
-| `personalization` | 개인화 추천 (MVP: 필터링, Phase 2: ML) | UserPreference, UserInteraction |
-| `subscription` | 프리미엄 플랜 관리 (Phase 2) | Subscription, SubscriptionPlan |
-| `member` | 프로필 캐시, 뱃지 관리 | Member |
+| 도메인 | 책임 | 주요 엔티티 | 독립성 |
+|--------|------|-------------|--------|
+| `question` | 질문 관리, 일일 로테이션 | Question, DailyQuestions, UnlockedQuestion | 독립 도메인 |
+| `answer` | 답변 CRUD, 좋아요 관리 | Answer, UserAnswer, AnswerLike | 독립 도메인 |
+| `member` | 프로필 캐시, 뱃지 관리 | Member, MemberBadge | 독립 도메인 |
+| `insight` | 가상 화폐 관리, 결제 연동 | Insight, InsightTransaction | 독립 도메인 |
+| `personalization` | 개인화 추천 (MVP: 필터링, Phase 2: ML) | UserPreference, UserInteraction | 독립 도메인 |
+| `referral` | 친구 초대 시스템 (Growth Hacking) | ReferralCode, Referral | 독립 도메인 |
+| **`orchestration`** | **여러 도메인 조합 (BFF 역할)** | N/A (조율만 수행) | **조합 레이어** |
+
+**의존성 규칙:**
+
+```
+┌──────────────────────────────────────────────┐
+│          orchestration (조합)                 │  ← 여러 도메인을 알고 조율
+│  QuestionDetailOrchestrator                  │
+└──────────────┬───────────────┬───────────────┘
+               ↓               ↓               ↓
+┌──────────────┐ ┌─────────────┐ ┌────────────┐
+│   question   │ │   answer    │ │   member   │  ← 서로를 모름 (독립)
+│  (독립)      │ │  (독립)     │ │  (독립)    │
+└──────────────┘ └─────────────┘ └────────────┘
+```
+
+**핵심 원칙:**
+1. 각 도메인은 **다른 도메인에 대해 모름** (독립적)
+2. 도메인 간 조합이 필요한 API는 **orchestration 레이어**가 담당
+3. orchestration은 각 도메인의 **Application Service를 호출**하여 조합
+4. 의존성 방향: `orchestration → domain` (단방향)
 
 ---
 
@@ -1898,20 +2018,43 @@ sequenceDiagram
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
     participant QDService as QueryDaily Service
+    participant QuestionDomain as Question Domain
+    participant PersonalizationDomain as Personalization Domain
+    participant MemberDomain as Member Domain
     participant DB as MySQL
 
     User->>Mobile: 대시보드 접속
     Mobile->>Gateway: GET /api/v1/questions/daily<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
     Gateway->>QDService: GET /api/v1/questions/daily<br/>(X-User-Id: userId)
-    QDService->>DB: SELECT * FROM daily_questions<br/>WHERE date = TODAY
-    DB-->>QDService: DailyQuestion(q1, q2, q3)
-    QDService->>DB: SELECT * FROM questions<br/>WHERE id IN (q1, q2, q3)
-    DB-->>QDService: List<Question>
+
+    QDService->>QuestionDomain: getDailyQuestions(userId)
+
+    Note over QuestionDomain: 공통 2문제 조회
+    QuestionDomain->>DB: SELECT * FROM daily_common_questions<br/>WHERE date = TODAY
+    DB-->>QuestionDomain: CommonQuestions(q1_id, q2_id)
+
+    Note over QuestionDomain: 개인화 1문제 요청
+    QuestionDomain->>PersonalizationDomain: selectPersonalizedQuestion(userId)
+    PersonalizationDomain->>MemberDomain: getProfile(userId)
+    MemberDomain->>DB: SELECT tech_stack, career_level<br/>FROM members WHERE id = userId
+    DB-->>MemberDomain: Member(techStack, careerLevel)
+    MemberDomain-->>PersonalizationDomain: MemberProfile
+
+    Note over PersonalizationDomain: MVP: 단순 필터링
+    PersonalizationDomain->>DB: SELECT * FROM questions<br/>WHERE tech_stack IN (user.techStack)<br/>AND career_level = user.careerLevel<br/>ORDER BY RAND() LIMIT 1
+    DB-->>PersonalizationDomain: Question(q3_id)
+    PersonalizationDomain-->>QuestionDomain: Question(q3_id)
+
+    Note over QuestionDomain: 3문제 상세 조회
+    QuestionDomain->>DB: SELECT * FROM questions<br/>WHERE id IN (q1_id, q2_id, q3_id)
+    DB-->>QuestionDomain: List<Question>
+
+    QuestionDomain-->>QDService: DailyQuestionsResponse(q1, q2, q3)
     QDService-->>Gateway: QuestionResponse[]
     Gateway-->>Mobile: QuestionResponse[]
     Mobile->>Mobile: 카드 스택 UI 렌더링
-    Mobile-->>User: 3개 질문 표시
+    Mobile-->>User: 3개 질문 표시<br/>(공통 2 + 개인화 1)
 ```
 
 ---
@@ -1923,29 +2066,53 @@ sequenceDiagram
     actor User
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
-    participant QDService as QueryDaily Service
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as QuestionDetailOrchestrator
+    participant QuestionSvc as Question Service
+    participant AnswerSvc as Answer Service
+    participant MemberSvc as Member Service
     participant DB as MySQL
 
     User->>Mobile: 질문 카드 "답변 보기" 클릭
     Mobile->>Gateway: GET /api/v1/questions/{questionId}<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
-    Gateway->>QDService: GET /api/v1/questions/{questionId}<br/>(X-User-Id: userId)
+    Gateway->>Controller: GET /api/v1/questions/{questionId}<br/>(X-User-Id: userId)
 
-    par 질문 정보 조회
-        QDService->>DB: SELECT * FROM questions<br/>WHERE id = questionId
-        DB-->>QDService: Question
-    and 답변 목록 조회
-        QDService->>DB: SELECT * FROM answers<br/>WHERE question_id = questionId<br/>ORDER BY like_count DESC
-        DB-->>QDService: List<Answer>
-    and 내 답변 확인
-        QDService->>DB: SELECT * FROM user_answers<br/>WHERE question_id = questionId<br/>AND member_id = userId
-        DB-->>QDService: UserAnswer (or null)
-    end
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: orchestrate(questionId, userId)
 
-    QDService->>QDService: 응답 조립<br/>(Question + Answers + MyAnswer)
-    QDService-->>Gateway: QuestionDetailResponse
+    Note over Orchestrator: orchestration/application/query<br/>여러 도메인을 조합
+
+    Orchestrator->>QuestionSvc: findById(questionId)
+    Note over QuestionSvc: question/application
+    QuestionSvc->>DB: SELECT * FROM questions WHERE id = ?
+    DB-->>QuestionSvc: Question
+    QuestionSvc-->>Orchestrator: Question
+
+    Orchestrator->>AnswerSvc: findByQuestionId(questionId)
+    Note over AnswerSvc: answer/application
+    AnswerSvc->>DB: SELECT * FROM answers<br/>WHERE question_id = ?<br/>ORDER BY like_count DESC
+    DB-->>AnswerSvc: List<Answer>
+    AnswerSvc-->>Orchestrator: List<Answer>
+
+    Orchestrator->>AnswerSvc: findMyAnswer(userId, questionId)
+    AnswerSvc->>DB: SELECT * FROM user_answers<br/>WHERE member_id = ? AND question_id = ?
+    DB-->>AnswerSvc: Optional<UserAnswer>
+    AnswerSvc-->>Orchestrator: Optional<UserAnswer>
+
+    Note over Orchestrator: 답변 작성자 뱃지 정보 필요
+    Orchestrator->>Orchestrator: Extract memberIds from answers
+    Orchestrator->>MemberSvc: getBadges(memberIds)
+    Note over MemberSvc: member/application
+    MemberSvc->>DB: SELECT company_badge, career_level, tech_stack<br/>FROM members WHERE id IN (...)
+    DB-->>MemberSvc: Map<memberId, MemberBadge>
+    MemberSvc-->>Orchestrator: Map<memberId, MemberBadge>
+
+    Orchestrator->>Orchestrator: Assemble QuestionDetailResponse<br/>(Question + Answers + Badges + MyAnswer)
+    Orchestrator-->>Controller: QuestionDetailResponse
+    Controller-->>Gateway: QuestionDetailResponse
     Gateway-->>Mobile: QuestionDetailResponse
-    Mobile->>Mobile: 답변 리스트 렌더링<br/>(뱃지 포함)
+    Mobile->>Mobile: 답변 리스트 렌더링 (뱃지 포함)
     Mobile-->>User: 질문 + 답변들 표시
 ```
 

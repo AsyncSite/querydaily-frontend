@@ -120,9 +120,183 @@ querydaily-mobile-service/
 
 ---
 
-## 3. Bounded Context & 도메인 모델
+## 3. 시스템 아키텍처
 
-### 3.1 Bounded Context 개요
+### 3.1 전체 시스템 아키텍처
+
+```mermaid
+graph TB
+    subgraph "클라이언트 레이어"
+        Mobile[QueryDaily Mobile PWA<br/>Next.js + PortOne SDK]
+    end
+
+    subgraph "AsyncSite 플랫폼"
+        Gateway[API Gateway<br/>Spring Cloud Gateway<br/>:8080]
+        Eureka[Eureka Server<br/>Service Discovery]
+    end
+
+    subgraph "QueryDaily Mobile Context"
+        QDService[QueryDaily Mobile Service<br/>:8388]
+
+        subgraph "도메인"
+            Question[Question Domain]
+            Answer[Answer Domain]
+            Insight[Insight Domain]
+            Referral[Referral Domain]
+            Member[Member Domain]
+        end
+    end
+
+    subgraph "AsyncSite 공통 서비스"
+        UserService[User Service<br/>인증 & 계정<br/>:8081]
+        AssetService[Asset Service<br/>파일 관리<br/>:8082]
+        NotiService[Noti Service<br/>알림<br/>:8086]
+    end
+
+    subgraph "Payment Context (AsyncSite 공통)"
+        direction TB
+        Checkout[Checkout Service<br/>결제 오케스트레이션<br/>:6081]
+        PaymentCore[Payment Core<br/>트랜잭션 관리<br/>:6082]
+        PaymentGateway[Payment Gateway<br/>PortOne 연동<br/>내장]
+    end
+
+    subgraph "인프라"
+        MySQL[(MySQL)]
+        Redis[(Redis)]
+        Kafka[Kafka<br/>Event Bus]
+        PortOne[PortOne<br/>PG 제공자]
+    end
+
+    Mobile --> Gateway
+    Gateway --> QDService
+    Gateway --> UserService
+    Gateway --> AssetService
+    Gateway --> NotiService
+    Gateway --> Checkout
+
+    QDService --> Question
+    QDService --> Answer
+    QDService --> Insight
+    QDService --> Referral
+    QDService --> Member
+
+    Question -.도메인 이벤트.-> Insight
+    Answer -.도메인 이벤트.-> Insight
+    Referral -.도메인 이벤트.-> Insight
+
+    Insight -->|Feign| Checkout
+    Member -->|Kafka| UserService
+
+    Checkout -->|내부 호출| PaymentCore
+    PaymentCore -->|내장| PaymentGateway
+    PaymentGateway -->|HTTP| PortOne
+    PaymentCore -.Kafka 이벤트.-> Insight
+
+    QDService --> MySQL
+    QDService --> Redis
+    UserService --> MySQL
+    AssetService --> MySQL
+    NotiService --> MySQL
+    Checkout --> MySQL
+    PaymentCore --> MySQL
+
+    QDService --> Kafka
+    UserService --> Kafka
+    NotiService --> Kafka
+    PaymentCore --> Kafka
+
+    QDService -.서비스 등록.-> Eureka
+    UserService -.서비스 등록.-> Eureka
+    AssetService -.서비스 등록.-> Eureka
+    NotiService -.서비스 등록.-> Eureka
+    Checkout -.서비스 등록.-> Eureka
+```
+
+**핵심 원칙:**
+1. **모든 외부 요청은 API Gateway를 통해서만 진입**
+2. **Checkout Service가 결제의 단일 진입점** (도메인 서비스는 Checkout만 호출)
+3. **Payment Core는 외부와 직접 통신 안 함** (Checkout만 호출 가능)
+4. **도메인 간 통신은 Domain Event 또는 Kafka 사용**
+
+---
+
+### 3.2 결제 아키텍처 (Payment Context)
+
+```mermaid
+sequenceDiagram
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QD as QueryDaily Service<br/>(Insight Domain)
+    participant Checkout as Checkout Service<br/>(결제 오케스트레이터)
+    participant Core as Payment Core<br/>(트랜잭션 엔진)
+    participant PG as Payment Gateway<br/>(PortOne 연동)
+    participant PortOne as PortOne<br/>(PG 제공자)
+    participant Kafka as Kafka
+
+    Note over Mobile,PortOne: ⚠️ 핵심 규칙: Payment Core는 외부와 직접 통신 안 함!
+
+    Mobile->>Gateway: POST /api/v1/insights/payment-intents
+    Gateway->>QD: POST /api/v1/insights/payment-intents<br/>(X-User-Id: userId)
+
+    Note over QD: Insight Domain
+    QD->>Checkout: POST /api/v1/checkout/payment-intents<br/>(Feign Client)
+
+    Note over Checkout: 결제 준비 조정
+    Checkout->>Core: 내부 호출: createTransaction()
+    Core-->>Checkout: transactionId + PortOne SDK 정보
+    Checkout-->>QD: PaymentIntentResponse
+    QD-->>Gateway: PaymentIntentResponse
+    Gateway-->>Mobile: PaymentIntentResponse
+
+    Mobile->>Mobile: PortOne SDK 초기화
+    Mobile->>PortOne: portone.requestPayment()
+    PortOne-->>Mobile: 결제창 표시
+    Note over Mobile,PortOne: 사용자 결제 진행
+
+    PortOne->>PG: Webhook (결제 완료)
+    Note over PG: Payment Gateway<br/>(Core 내장)
+    PG->>PortOne: S2S 검증 요청
+    PortOne-->>PG: 검증 성공
+    PG->>Core: 상태 업데이트<br/>(10→30→40→50)
+
+    Core->>Kafka: asyncsite.payment.verified<br/>{domain: "querydaily-mobile", ...}
+
+    Kafka->>QD: Kafka Consumer
+    Note over QD: Insight Domain<br/>PaymentEventListener
+    QD->>QD: chargeInsights(userId, 100)
+
+    Mobile->>Gateway: GET /api/v1/me/insights
+    Gateway->>QD: GET /api/v1/me/insights
+    QD-->>Gateway: balance: 135
+    Gateway-->>Mobile: "✅ 100 💎 충전 완료!"
+```
+
+**Payment Context 설계 원칙:**
+
+1. **Checkout Service는 결제의 단일 진입점**
+   - 모든 도메인 서비스(QueryDaily, Study, Documento)는 **Checkout만 호출**
+   - Checkout이 Payment Core 호출을 조정
+   - ❌ 도메인 서비스 → Payment Core 직접 호출 금지
+
+2. **Payment Core는 외부와 통신 안 함**
+   - ✅ Checkout Service만 Core 호출 가능
+   - ✅ Core는 Kafka 이벤트 발행 (내부 통신)
+   - ❌ 외부 서비스가 Core 직접 호출 금지
+   - ❌ Core가 도메인 서비스 호출 금지
+
+3. **Payment Gateway는 Payment Core 내장**
+   - Gateway는 별도 서비스가 아닌 Core의 Adapter
+   - PortOne과의 HTTP 통신 담당
+   - Webhook 수신 및 S2S 검증
+
+4. **비동기 이벤트로 결과 전파**
+   - Core → Kafka → 도메인 서비스
+   - Topic: `asyncsite.payment.verified`
+   - 도메인 서비스는 Kafka Consumer로 수신
+
+---
+
+### 3.3 Bounded Context 상세
 
 ```mermaid
 graph TB
@@ -139,29 +313,41 @@ graph TB
     end
 
     subgraph "Payment Context (AsyncSite 공통)"
-        Checkout[Checkout Service<br/>결제 의도]
-        PaymentCore[Payment Core<br/>트랜잭션]
-        PaymentGateway[Payment Gateway<br/>검증]
+        direction TB
+        Checkout[Checkout Service<br/>결제 오케스트레이터]
+        PaymentCore[Payment Core<br/>트랜잭션 엔진]
+        Note1[⚠️ Core는 외부 직접 통신 안 함]
     end
 
     Question --> Answer
-    Answer --> Insight
-    Referral --> Insight
-    Insight --> Checkout
-    Member --> UserService
+    Answer -.도메인 이벤트.-> Insight
+    Referral -.도메인 이벤트.-> Insight
 
+    Insight -->|Feign Client| Checkout
+    Checkout -->|내부 호출| PaymentCore
+
+    Member -->|Kafka| UserService
     PaymentCore -.Kafka.-> Insight
 ```
 
-**Context 간 통신:**
-- **Synchronous (Feign)**: Insight → Checkout (결제 의도 생성)
-- **Asynchronous (Kafka)**: Payment Core → Insight (결제 완료 이벤트)
-- **Synchronous (Feign)**: Member → User Service (프로필 동기화)
-- **Domain Event**: Answer → Insight (답변 작성 시 인사이트 획득)
+**Context 간 통신 규칙:**
+
+| 통신 방식 | 사용 케이스 | 예시 |
+|-----------|-------------|------|
+| **Synchronous (Feign)** | 즉시 응답 필요 | Insight → Checkout (PaymentIntent 생성) |
+| **Asynchronous (Kafka)** | 최종 일관성 | Payment Core → Insight (결제 완료) |
+| **Domain Event** | 같은 컨텍스트 내 도메인 간 | Answer → Insight (답변 작성 시 +10 💎) |
+| **내부 호출** | 같은 Context 내 | Checkout → Payment Core |
+
+**중요:**
+- Payment Context는 **폐쇄적** (Checkout만 외부 통신)
+- QueryDaily Mobile Context는 **개방적** (필요한 외부 서비스 호출 가능)
 
 ---
 
-### 3.2 Question Domain (질문)
+## 4. 도메인 모델 상세
+
+### 4.1 Question Domain (질문)
 
 **책임:**
 - 질문 생명주기 관리 (생성, 조회, 수정, 삭제)

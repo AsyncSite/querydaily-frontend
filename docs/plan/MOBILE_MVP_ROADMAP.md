@@ -1117,6 +1117,348 @@ CREATE TABLE members (
 
 ---
 
+## 11. 시퀀스 다이어그램
+
+### 11.1 로그인 (카카오 OAuth)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant UserService as User Service
+    participant Kakao as Kakao OAuth
+
+    User->>Mobile: 카카오 로그인 버튼 클릭
+    Mobile->>Gateway: GET /api/auth/oauth/kakao/login
+    Gateway->>UserService: GET /api/auth/oauth/kakao/login
+    UserService->>Kakao: OAuth 인증 요청
+    Kakao-->>User: 카카오 로그인 페이지
+    User->>Kakao: 이메일/비밀번호 입력
+    Kakao->>UserService: Authorization Code
+    UserService->>Kakao: Access Token 요청
+    Kakao-->>UserService: Access Token + 사용자 정보
+    UserService->>UserService: 회원 정보 생성/업데이트
+    UserService->>UserService: JWT 토큰 생성
+    UserService-->>Gateway: JWT 토큰
+    Gateway-->>Mobile: JWT 토큰
+    Mobile->>Mobile: 토큰 저장 (localStorage)
+    Mobile-->>User: 대시보드로 이동
+```
+
+---
+
+### 11.2 오늘의 3문제 조회
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QDService as QueryDaily Service
+    participant DB as MySQL
+
+    User->>Mobile: 대시보드 접속
+    Mobile->>Gateway: GET /api/v1/questions/daily<br/>(Authorization: Bearer JWT)
+    Gateway->>Gateway: JWT 검증
+    Gateway->>QDService: GET /api/v1/questions/daily<br/>(X-User-Id: userId)
+    QDService->>DB: SELECT * FROM daily_questions<br/>WHERE date = TODAY
+    DB-->>QDService: DailyQuestion(q1, q2, q3)
+    QDService->>DB: SELECT * FROM questions<br/>WHERE id IN (q1, q2, q3)
+    DB-->>QDService: List<Question>
+    QDService-->>Gateway: QuestionResponse[]
+    Gateway-->>Mobile: QuestionResponse[]
+    Mobile->>Mobile: 카드 스택 UI 렌더링
+    Mobile-->>User: 3개 질문 표시
+```
+
+---
+
+### 11.3 질문 상세 조회 + 답변 목록
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QDService as QueryDaily Service
+    participant DB as MySQL
+
+    User->>Mobile: 질문 카드 "답변 보기" 클릭
+    Mobile->>Gateway: GET /api/v1/questions/{questionId}<br/>(Authorization: Bearer JWT)
+    Gateway->>Gateway: JWT 검증
+    Gateway->>QDService: GET /api/v1/questions/{questionId}<br/>(X-User-Id: userId)
+
+    par 질문 정보 조회
+        QDService->>DB: SELECT * FROM questions<br/>WHERE id = questionId
+        DB-->>QDService: Question
+    and 답변 목록 조회
+        QDService->>DB: SELECT * FROM answers<br/>WHERE question_id = questionId<br/>ORDER BY like_count DESC
+        DB-->>QDService: List<Answer>
+    and 내 답변 확인
+        QDService->>DB: SELECT * FROM user_answers<br/>WHERE question_id = questionId<br/>AND member_id = userId
+        DB-->>QDService: UserAnswer (or null)
+    end
+
+    QDService->>QDService: 응답 조립<br/>(Question + Answers + MyAnswer)
+    QDService-->>Gateway: QuestionDetailResponse
+    Gateway-->>Mobile: QuestionDetailResponse
+    Mobile->>Mobile: 답변 리스트 렌더링<br/>(뱃지 포함)
+    Mobile-->>User: 질문 + 답변들 표시
+```
+
+---
+
+### 11.4 답변 작성 + 인사이트 획득
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QDService as QueryDaily Service
+    participant AnswerDomain as Answer Domain
+    participant InsightDomain as Insight Domain
+    participant DB as MySQL
+    participant Kafka as Kafka
+
+    User->>Mobile: 답변 작성 후 "제출" 클릭
+    Mobile->>Gateway: POST /api/v1/answers<br/>{questionId, content}<br/>(Authorization: Bearer JWT)
+    Gateway->>Gateway: JWT 검증
+    Gateway->>QDService: POST /api/v1/answers<br/>(X-User-Id: userId)
+
+    QDService->>AnswerDomain: createAnswer(userId, questionId, content)
+    AnswerDomain->>DB: INSERT INTO user_answers<br/>(id, question_id, member_id, content)
+    DB-->>AnswerDomain: Success
+    AnswerDomain->>AnswerDomain: 도메인 이벤트 발행
+    AnswerDomain->>InsightDomain: AnswerCreatedEvent(userId)
+
+    InsightDomain->>InsightDomain: earnInsights(userId, 10, ANSWER)
+    InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 10<br/>WHERE user_id = userId
+    InsightDomain->>DB: INSERT INTO insight_transactions<br/>(type=EARN, source=ANSWER, amount=10)
+    DB-->>InsightDomain: Success
+
+    opt 이벤트 발행 (선택)
+        InsightDomain->>Kafka: InsightEarnedEvent<br/>{userId, amount=10, source=ANSWER}
+    end
+
+    InsightDomain-->>AnswerDomain: Success
+    AnswerDomain-->>QDService: AnswerResponse
+    QDService-->>Gateway: AnswerResponse + newBalance
+    Gateway-->>Mobile: AnswerResponse + newBalance
+    Mobile->>Mobile: "+10 💎" 토스트 표시
+    Mobile-->>User: "답변이 등록되었습니다!"
+```
+
+---
+
+### 11.5 인사이트로 과거 질문 잠금 해제
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QDService as QueryDaily Service
+    participant InsightDomain as Insight Domain
+    participant QuestionDomain as Question Domain
+    participant DB as MySQL
+
+    User->>Mobile: 잠긴 질문 "5 💎로 열기" 클릭
+    Mobile->>Gateway: POST /api/v1/questions/{questionId}/unlock<br/>(Authorization: Bearer JWT)
+    Gateway->>Gateway: JWT 검증
+    Gateway->>QDService: POST /api/v1/questions/{questionId}/unlock<br/>(X-User-Id: userId)
+
+    QDService->>InsightDomain: spendInsights(userId, 5, questionId)
+    InsightDomain->>DB: SELECT balance FROM insights<br/>WHERE user_id = userId<br/>FOR UPDATE
+    DB-->>InsightDomain: balance = 35
+
+    alt 잔액 충분
+        InsightDomain->>InsightDomain: 35 >= 5 ✅
+        InsightDomain->>DB: UPDATE insights<br/>SET balance = 30<br/>WHERE user_id = userId
+        InsightDomain->>DB: INSERT INTO insight_transactions<br/>(type=SPEND, amount=5)
+        DB-->>InsightDomain: Success
+
+        InsightDomain-->>QuestionDomain: Success
+        QuestionDomain->>DB: INSERT INTO unlocked_questions<br/>(user_id, question_id)
+        DB-->>QuestionDomain: Success
+
+        QuestionDomain-->>QDService: UnlockResponse{success=true}
+        QDService-->>Gateway: UnlockResponse
+        Gateway-->>Mobile: UnlockResponse
+        Mobile->>Mobile: 질문 내용 표시
+        Mobile-->>User: 질문 내용 보여짐
+
+    else 잔액 부족
+        InsightDomain->>InsightDomain: 35 < 5 ❌
+        InsightDomain-->>QDService: InsufficientInsightException
+        QDService-->>Gateway: 400 Bad Request
+        Gateway-->>Mobile: Error Response
+        Mobile-->>User: "인사이트가 부족합니다"<br/>"충전하기" 버튼 표시
+    end
+```
+
+---
+
+### 11.6 친구 초대 (초대 코드 생성)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QDService as QueryDaily Service
+    participant ReferralDomain as Referral Domain
+    participant DB as MySQL
+
+    User->>Mobile: 마이페이지 접속
+    Mobile->>Gateway: GET /api/v1/referrals/my-code<br/>(Authorization: Bearer JWT)
+    Gateway->>Gateway: JWT 검증
+    Gateway->>QDService: GET /api/v1/referrals/my-code<br/>(X-User-Id: userId)
+
+    QDService->>ReferralDomain: getOrCreateReferralCode(userId)
+    ReferralDomain->>DB: SELECT code FROM referral_codes<br/>WHERE user_id = userId
+
+    alt 코드 존재
+        DB-->>ReferralDomain: code = "POTATO2024"
+        ReferralDomain-->>QDService: "POTATO2024"
+    else 코드 없음
+        DB-->>ReferralDomain: null
+        ReferralDomain->>ReferralDomain: generateUniqueCode()
+        ReferralDomain->>DB: INSERT INTO referral_codes<br/>(user_id, code)
+        DB-->>ReferralDomain: Success
+        ReferralDomain-->>QDService: "NEWCODE123"
+    end
+
+    QDService-->>Gateway: ReferralCodeResponse
+    Gateway-->>Mobile: ReferralCodeResponse
+    Mobile->>Mobile: 초대 코드 표시
+    Mobile-->>User: "내 초대 코드: POTATO2024"
+
+    User->>Mobile: "복사" 버튼 클릭
+    Mobile->>Mobile: navigator.clipboard.writeText()
+    Mobile-->>User: "✅ 초대 코드가 복사되었습니다!"
+```
+
+---
+
+### 11.7 친구 초대 (신규 가입 시 코드 입력)
+
+```mermaid
+sequenceDiagram
+    actor NewUser as 신규 사용자
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant UserService as User Service
+    participant QDService as QueryDaily Service
+    participant ReferralDomain as Referral Domain
+    participant InsightDomain as Insight Domain
+    participant DB as MySQL
+
+    NewUser->>Mobile: 온보딩 "초대 코드 입력"
+    Mobile->>Mobile: 코드 입력: "POTATO2024"
+    NewUser->>Mobile: "가입 완료" 클릭
+
+    Mobile->>Gateway: POST /api/auth/signup<br/>{email, name, referralCode}
+    Gateway->>UserService: POST /api/auth/signup
+    UserService->>UserService: 회원 생성
+    UserService-->>Gateway: userId (new)
+    Gateway-->>Mobile: JWT 토큰
+
+    Mobile->>Gateway: POST /api/v1/referrals/apply<br/>{code: "POTATO2024"}<br/>(Authorization: Bearer JWT)
+    Gateway->>QDService: POST /api/v1/referrals/apply<br/>(X-User-Id: newUserId)
+
+    QDService->>ReferralDomain: applyReferralCode(newUserId, "POTATO2024")
+    ReferralDomain->>DB: SELECT user_id FROM referral_codes<br/>WHERE code = "POTATO2024"
+    DB-->>ReferralDomain: referrerId = "user_123"
+
+    alt 유효한 코드
+        ReferralDomain->>DB: INSERT INTO referrals<br/>(referrer_id, referee_id, code)
+        DB-->>ReferralDomain: Success
+
+        par 초대자에게 리워드
+            ReferralDomain->>InsightDomain: earnInsights(referrerId, 50, REFERRAL)
+            InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 50
+        and 피초대자에게 리워드
+            ReferralDomain->>InsightDomain: earnInsights(newUserId, 50, REFERRAL)
+            InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 50
+        end
+
+        ReferralDomain-->>QDService: Success
+        QDService-->>Gateway: ReferralResponse{success=true}
+        Gateway-->>Mobile: ReferralResponse
+        Mobile-->>NewUser: "🎉 초대 코드 적용!<br/>나와 친구 모두 +50 💎"
+
+    else 잘못된 코드
+        ReferralDomain-->>QDService: InvalidReferralCodeException
+        QDService-->>Gateway: 400 Bad Request
+        Gateway-->>Mobile: Error Response
+        Mobile-->>NewUser: "유효하지 않은 초대 코드입니다"
+    end
+```
+
+---
+
+### 11.8 인사이트 충전 (결제 연동)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Mobile as QueryDaily Mobile
+    participant Gateway as API Gateway
+    participant QDService as QueryDaily Service
+    participant InsightDomain as Insight Domain
+    participant CheckoutClient as Checkout Client
+    participant CheckoutService as Checkout Service
+    participant PortOne as PortOne
+    participant PaymentGateway as Payment Gateway
+    participant PaymentCore as Payment Core
+    participant Kafka as Kafka
+
+    User->>Mobile: Shop 페이지 "100 💎 충전" 클릭
+    Mobile->>Gateway: POST /api/v1/insights/payment-intents<br/>{insightAmount: 100, price: 5000}<br/>(Authorization: Bearer JWT)
+    Gateway->>Gateway: JWT 검증
+    Gateway->>QDService: POST /api/v1/insights/payment-intents<br/>(X-User-Id: userId)
+
+    QDService->>InsightDomain: createPaymentIntent(userId, 100, 5000)
+    InsightDomain->>CheckoutClient: createPaymentIntent({<br/>  domain: "querydaily-mobile",<br/>  itemType: "insight-charge",<br/>  amount: 5000,<br/>  metadata: {userId, insightAmount: 100}<br/>})
+    CheckoutClient->>CheckoutService: POST /api/v1/checkout/payment-intents
+    CheckoutService->>CheckoutService: PaymentIntent 생성<br/>PortOne SDK 정보 준비
+    CheckoutService-->>CheckoutClient: PaymentIntentResponse{<br/>  intentId,<br/>  portOneSdkPayload<br/>}
+    CheckoutClient-->>InsightDomain: PaymentIntentResponse
+    InsightDomain-->>QDService: PaymentIntentResponse
+    QDService-->>Gateway: PaymentIntentResponse
+    Gateway-->>Mobile: PaymentIntentResponse
+
+    Mobile->>Mobile: PortOne SDK 초기화
+    Mobile->>PortOne: portone.requestPayment(sdkPayload)
+    PortOne-->>User: 결제창 표시
+    User->>PortOne: 카드 정보 입력, 결제 완료
+    PortOne->>PaymentGateway: Webhook (결제 완료)
+    PaymentGateway->>PortOne: S2S 검증
+    PortOne-->>PaymentGateway: 검증 성공
+    PaymentGateway->>PaymentCore: 트랜잭션 상태 업데이트
+    PaymentCore->>PaymentCore: Status: 10→30→40→50
+    PaymentCore->>Kafka: Publish Event<br/>Topic: asyncsite.payment.verified<br/>{<br/>  paymentId,<br/>  domain: "querydaily-mobile",<br/>  itemType: "insight-charge",<br/>  amount: 5000,<br/>  metadata: {userId, insightAmount: 100}<br/>}
+
+    Kafka->>QDService: Event Consumed
+    QDService->>InsightDomain: handlePaymentVerified(event)
+    InsightDomain->>InsightDomain: chargeInsights(userId, 100, paymentId)
+    InsightDomain->>DB: UPDATE insights<br/>SET balance = balance + 100
+    InsightDomain->>DB: INSERT INTO insight_transactions<br/>(type=CHARGE, source=PAYMENT, amount=100)
+
+    PortOne-->>Mobile: 결제 완료 콜백
+    Mobile->>Gateway: GET /api/v1/me/insights<br/>(Authorization: Bearer JWT)
+    Gateway->>QDService: GET /api/v1/me/insights
+    QDService->>DB: SELECT balance FROM insights
+    DB-->>QDService: balance = 135
+    QDService-->>Gateway: InsightResponse{balance=135}
+    Gateway-->>Mobile: InsightResponse
+    Mobile-->>User: "✅ 100 💎 충전 완료!<br/>현재 잔액: 135 💎"
+```
+
+---
+
 **문서 소유자**: 제품팀
 **검토 주기**: 구현 중 매주
 **상태**: ✅ 구현 승인됨

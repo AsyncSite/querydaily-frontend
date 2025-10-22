@@ -1,0 +1,32 @@
+
+> querydaily-frontend@1.0.0 dev
+> next dev -p 4500
+
+  ▲ Next.js 14.2.32
+  - Local:        http://localhost:4500
+  - Environments: .env.development
+
+ ✓ Starting...
+ ✓ Ready in 1274ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.6s (507 modules)
+ GET / 200 in 2840ms
+ ✓ Compiled in 149ms (254 modules)
+ ✓ Compiled /_not-found in 153ms (478 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 248ms
+ ✓ Compiled in 465ms (489 modules)
+ ✓ Compiled in 410ms (489 modules)
+ ✓ Compiled in 452ms (489 modules)
+ ✓ Compiled in 397ms (489 modules)
+ ✓ Compiled in 445ms (489 modules)
+ ✓ Compiled in 379ms (489 modules)
+ ✓ Compiled in 358ms (489 modules)
+ ✓ Compiled /_not-found in 332ms (478 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 457ms
+ ✓ Compiled /order-complete in 430ms (484 modules)
+ GET /order-complete 200 in 559ms
+ ✓ Compiled /_not-found in 113ms (487 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 189ms
+ GET / 200 in 87ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 36ms
+ ✓ Compiled in 459ms (498 modules)

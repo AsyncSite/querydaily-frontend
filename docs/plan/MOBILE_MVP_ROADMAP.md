@@ -118,6 +118,578 @@ querydaily-mobile-service/
 | `subscription` | 프리미엄 플랜 관리 | Subscription, SubscriptionPlan |
 | `member` | 사용자 프로필 캐시 (user-service 동기화) | MemberProfile |
 
+---
+
+## 3. Bounded Context & 도메인 모델
+
+### 3.1 Bounded Context 개요
+
+```mermaid
+graph TB
+    subgraph "QueryDaily Mobile Context"
+        Question[Question Domain<br/>질문 관리]
+        Answer[Answer Domain<br/>답변 관리]
+        Insight[Insight Domain<br/>인사이트 관리]
+        Referral[Referral Domain<br/>친구 초대]
+        Member[Member Domain<br/>회원 프로필 캐시]
+    end
+
+    subgraph "User Context (AsyncSite 공통)"
+        UserService[User Service<br/>인증 & 계정]
+    end
+
+    subgraph "Payment Context (AsyncSite 공통)"
+        Checkout[Checkout Service<br/>결제 의도]
+        PaymentCore[Payment Core<br/>트랜잭션]
+        PaymentGateway[Payment Gateway<br/>검증]
+    end
+
+    Question --> Answer
+    Answer --> Insight
+    Referral --> Insight
+    Insight --> Checkout
+    Member --> UserService
+
+    PaymentCore -.Kafka.-> Insight
+```
+
+**Context 간 통신:**
+- **Synchronous (Feign)**: Insight → Checkout (결제 의도 생성)
+- **Asynchronous (Kafka)**: Payment Core → Insight (결제 완료 이벤트)
+- **Synchronous (Feign)**: Member → User Service (프로필 동기화)
+- **Domain Event**: Answer → Insight (답변 작성 시 인사이트 획득)
+
+---
+
+### 3.2 Question Domain (질문)
+
+**책임:**
+- 질문 생명주기 관리 (생성, 조회, 수정, 삭제)
+- 오늘의 3문제 선정 (공통 2문제 + 개인화 1문제)
+- 질문 잠금/해제 상태 관리
+- 카테고리별 질문 필터링
+
+**Aggregate Root: Question**
+
+```java
+@Entity
+@Table(name = "questions")
+public class Question {
+    @Id
+    private String id;  // UUID
+
+    private String title;          // "Spring AOP의 동작 원리를 설명하세요"
+    private String content;        // 상세 설명 (Markdown)
+    private String category;       // "Spring", "JPA", "React"
+    private String difficulty;     // "junior", "mid", "senior"
+
+    @Column(name = "answer_count")
+    private int answerCount;       // 답변 개수 (비정규화)
+
+    @ElementCollection
+    @CollectionTable(name = "question_tags")
+    private List<String> tags;     // ["AOP", "Proxy", "Spring"]
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    // 도메인 로직
+    public boolean isLockedFor(String userId, List<String> unlockedQuestionIds) {
+        // 오늘 문제가 아니면서 unlock하지 않았으면 잠금
+        return !isToday() && !unlockedQuestionIds.contains(this.id);
+    }
+
+    public void incrementAnswerCount() {
+        this.answerCount++;
+    }
+}
+```
+
+**Entities:**
+
+```java
+// 공통 2문제 (모든 사용자 동일)
+@Entity
+@Table(name = "daily_common_questions")
+public class DailyCommonQuestions {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDate date;            // 2025-01-20
+    private String question1Id;        // 공통 문제 1
+    private String question2Id;        // 공통 문제 2
+
+    @Column(unique = true)
+    private LocalDate uniqueDate;      // Unique constraint
+}
+
+// 사용자별 오늘의 3문제 기록
+@Entity
+@Table(name = "user_daily_questions")
+public class UserDailyQuestions {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String userId;
+    private LocalDate date;
+    private String question1Id;        // 공통 1
+    private String question2Id;        // 공통 2
+    private String question3Id;        // 개인화
+
+    private LocalDateTime createdAt;
+}
+
+// 사용자가 잠금 해제한 과거 질문
+@Entity
+@Table(name = "unlocked_questions")
+public class UnlockedQuestion {
+    @Id
+    private String id;
+
+    private String userId;
+    private String questionId;
+    private LocalDateTime unlockedAt;
+}
+```
+
+**Use Cases (Application Layer):**
+
+```java
+public interface QuestionService {
+    // 오늘의 3문제 조회 (공통 2 + 개인화 1)
+    List<QuestionResponse> getDailyQuestions(String userId);
+
+    // 질문 상세 조회
+    QuestionDetailResponse getQuestionDetail(String questionId, String userId);
+
+    // 과거 질문 잠금 해제 (5 💎 소비)
+    UnlockResponse unlockQuestion(String questionId, String userId);
+
+    // 카테고리별 질문 목록
+    List<QuestionResponse> getQuestionsByCategory(String category, Pageable pageable);
+}
+```
+
+**Outbound Ports:**
+- `QuestionRepository`: 질문 조회/저장
+- `InsightService`: 잠금 해제 시 인사이트 차감
+- `MemberService`: 사용자 프로필 조회 (개인화용)
+
+---
+
+### 3.3 Answer Domain (답변)
+
+**책임:**
+- 답변 생명주기 관리 (작성, 수정, 삭제)
+- 좋아요 관리
+- 뱃지 정보 포함 (회사, 경력, 기술스택)
+- 답변 정렬 (인기순, 최신순)
+
+**Aggregate Roots:**
+
+```java
+// 시드 답변 (미리 작성된 모범 답변)
+@Entity
+@Table(name = "answers")
+public class Answer {
+    @Id
+    private String id;
+
+    private String questionId;
+    private String memberId;           // 작성자
+    private String content;            // Markdown
+
+    // 뱃지 정보
+    private String companyBadge;       // "LINE", "Kakao", "Naver"
+    private String experienceBadge;    // "주니어", "미들", "시니어"
+
+    @ElementCollection
+    @CollectionTable(name = "answer_tech_badges")
+    private List<String> techBadges;   // ["Spring", "JPA"]
+
+    private int likeCount;             // 비정규화
+    private LocalDateTime createdAt;
+
+    // 도메인 로직
+    public void like() {
+        this.likeCount++;
+    }
+
+    public void unlike() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
+    }
+}
+
+// 사용자 작성 답변
+@Entity
+@Table(name = "user_answers")
+public class UserAnswer {
+    @Id
+    private String id;
+
+    private String questionId;
+    private String memberId;
+    private String content;
+
+    private int likeCount;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    // 도메인 로직
+    public boolean isOwner(String userId) {
+        return this.memberId.equals(userId);
+    }
+
+    public void update(String newContent) {
+        this.content = newContent;
+        this.updatedAt = LocalDateTime.now();
+    }
+}
+
+// 좋아요
+@Entity
+@Table(name = "answer_likes")
+public class AnswerLike {
+    @Id
+    private String id;
+
+    private String answerId;           // Answer or UserAnswer
+    private String memberId;
+    private LocalDateTime createdAt;
+}
+```
+
+**Use Cases:**
+
+```java
+public interface AnswerService {
+    // 답변 목록 조회 (시드 + 사용자 답변)
+    List<AnswerResponse> getAnswers(String questionId, SortType sortType);
+
+    // 답변 작성 (도메인 이벤트 발행 → Insight 획득)
+    AnswerResponse createAnswer(CreateAnswerCommand command);
+
+    // 답변 수정
+    AnswerResponse updateAnswer(String answerId, String userId, String content);
+
+    // 답변 삭제
+    void deleteAnswer(String answerId, String userId);
+
+    // 좋아요 토글
+    LikeResponse toggleLike(String answerId, String userId);
+}
+```
+
+**Domain Events:**
+
+```java
+@Value
+public class AnswerCreatedEvent {
+    String userId;
+    String questionId;
+    String answerId;
+    LocalDateTime createdAt;
+}
+```
+
+**Event Handlers:**
+- `InsightEventHandler`: 답변 작성 시 +10 💎 지급
+
+---
+
+### 3.4 Insight Domain (인사이트 💎)
+
+**책임:**
+- 인사이트 잔액 관리
+- 인사이트 획득 (답변 작성, 친구 초대, 출석)
+- 인사이트 소비 (과거 질문 잠금 해제)
+- 인사이트 충전 (결제 연동)
+
+**Aggregate Root: Insight**
+
+```java
+@Entity
+@Table(name = "insights")
+public class Insight {
+    @Id
+    private String userId;
+
+    private int balance;               // 현재 잔액
+    private LocalDateTime updatedAt;
+
+    // 도메인 로직
+    public void earn(int amount) {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be positive");
+        }
+        this.balance += amount;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public boolean canSpend(int amount) {
+        return this.balance >= amount;
+    }
+
+    public void spend(int amount) {
+        if (!canSpend(amount)) {
+            throw new InsufficientInsightException(
+                "Required: " + amount + ", Available: " + this.balance
+            );
+        }
+        this.balance -= amount;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void charge(int amount) {
+        earn(amount);  // 충전도 획득의 일종
+    }
+}
+```
+
+**Entities:**
+
+```java
+// 거래 내역
+@Entity
+@Table(name = "insight_transactions")
+public class InsightTransaction {
+    @Id
+    private String id;
+
+    private String userId;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;      // EARN, SPEND, CHARGE
+
+    @Enumerated(EnumType.STRING)
+    private TransactionSource source;  // ANSWER, REFERRAL, PAYMENT, UNLOCK
+
+    private int amount;
+    private String referenceId;        // answerId, referralId, paymentId, questionId
+    private LocalDateTime createdAt;
+}
+
+public enum TransactionType {
+    EARN,    // 획득
+    SPEND,   // 소비
+    CHARGE   // 충전
+}
+
+public enum TransactionSource {
+    ANSWER,     // 답변 작성
+    REFERRAL,   // 친구 초대
+    PAYMENT,    // 결제
+    UNLOCK,     // 질문 잠금 해제
+    STREAK      // 출석 보너스 (Phase 2)
+}
+```
+
+**Use Cases:**
+
+```java
+public interface InsightService {
+    // 잔액 조회
+    InsightBalanceResponse getBalance(String userId);
+
+    // 인사이트 획득 (내부 호출)
+    void earnInsights(EarnInsightCommand command);
+
+    // 인사이트 소비 (내부 호출)
+    void spendInsights(SpendInsightCommand command);
+
+    // 결제 의도 생성 (프론트에서 호출)
+    PaymentIntentResponse createPaymentIntent(CreatePaymentIntentCommand command);
+
+    // 결제 완료 처리 (Kafka 이벤트)
+    void handlePaymentVerified(PaymentVerifiedEvent event);
+
+    // 거래 내역 조회
+    List<InsightTransactionResponse> getTransactions(String userId, Pageable pageable);
+}
+```
+
+**Outbound Ports:**
+- `InsightRepository`: 잔액 조회/업데이트
+- `InsightTransactionRepository`: 거래 내역 저장
+- `CheckoutClient`: Checkout Service 호출 (결제 의도 생성)
+- `InsightEventPublisher`: 도메인 이벤트 발행
+
+**Inbound Adapters:**
+- `InsightRestController`: REST API
+- `PaymentEventListener`: Kafka 리스너 (payment.verified)
+
+---
+
+### 3.5 Referral Domain (친구 초대)
+
+**책임:**
+- 초대 코드 생성/관리
+- 초대 관계 추적
+- 초대 성공 시 리워드 지급 (Insight Domain 연동)
+
+**Aggregate Root: Referral**
+
+```java
+@Entity
+@Table(name = "referral_codes")
+public class ReferralCode {
+    @Id
+    private String userId;
+
+    @Column(unique = true)
+    private String code;               // "POTATO2024"
+
+    private int referralCount;         // 초대 성공 횟수
+    private LocalDateTime createdAt;
+
+    // 도메인 로직
+    public static String generateCode(String userId) {
+        // 사용자 이름 일부 + 랜덤 숫자
+        return "USER" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    public void incrementReferralCount() {
+        this.referralCount++;
+    }
+}
+
+@Entity
+@Table(name = "referrals")
+public class Referral {
+    @Id
+    private String id;
+
+    private String referrerId;         // 초대한 사람
+    private String refereeId;          // 초대받은 사람
+    private String code;               // 사용된 코드
+
+    private boolean rewardClaimed;     // 리워드 지급 완료 여부
+    private LocalDateTime createdAt;
+}
+```
+
+**Use Cases:**
+
+```java
+public interface ReferralService {
+    // 내 초대 코드 조회 (없으면 생성)
+    ReferralCodeResponse getOrCreateMyCode(String userId);
+
+    // 초대 코드 적용 (신규 가입 시)
+    ReferralResponse applyReferralCode(String userId, String code);
+
+    // 초대 통계 조회
+    ReferralStatsResponse getMyStats(String userId);
+}
+```
+
+**Domain Events:**
+
+```java
+@Value
+public class ReferralSuccessEvent {
+    String referrerId;
+    String refereeId;
+    String code;
+    LocalDateTime createdAt;
+}
+```
+
+**Event Handlers:**
+- `ReferralRewardHandler`: 초대 성공 시 양쪽 모두 +50 💎
+
+---
+
+### 3.6 Member Domain (회원 프로필)
+
+**책임:**
+- User Service 프로필 캐싱 (읽기 전용)
+- 기술스택, 경력 정보 로컬 관리
+- Kafka 이벤트로 프로필 동기화
+
+**Aggregate Root: Member**
+
+```java
+@Entity
+@Table(name = "members")
+public class Member {
+    @Id
+    private String id;                 // user-service userId와 동일
+
+    private String email;
+    private String name;
+    private String profileImage;
+
+    @ElementCollection
+    @CollectionTable(name = "member_tech_stack")
+    private List<String> techStack;    // ["Spring", "JPA", "React"]
+
+    private String careerLevel;        // "junior", "mid", "senior"
+
+    @ElementCollection
+    @CollectionTable(name = "member_preferred_categories")
+    private List<String> preferredCategories;  // ["Backend", "Database"]
+
+    private LocalDateTime syncedAt;    // 마지막 동기화 시간
+
+    // 도메인 로직
+    public boolean needsSync() {
+        return syncedAt.isBefore(LocalDateTime.now().minusHours(1));
+    }
+
+    public void updateFromUserService(UserProfile profile) {
+        this.email = profile.getEmail();
+        this.name = profile.getName();
+        this.profileImage = profile.getProfileImage();
+        this.syncedAt = LocalDateTime.now();
+    }
+}
+```
+
+**Use Cases:**
+
+```java
+public interface MemberService {
+    // 프로필 조회 (캐시 우선)
+    MemberProfile getProfile(String userId);
+
+    // 기술스택 업데이트
+    void updateTechStack(String userId, List<String> techStack);
+
+    // 경력 레벨 업데이트
+    void updateCareerLevel(String userId, String careerLevel);
+}
+```
+
+**Inbound Adapters:**
+- `UserProfileEventListener`: Kafka 리스너 (user.profile.updated)
+
+---
+
+### 3.7 도메인 간 의존성
+
+```mermaid
+graph LR
+    Answer[Answer Domain] -->|도메인 이벤트| Insight[Insight Domain]
+    Referral[Referral Domain] -->|도메인 이벤트| Insight
+    Question[Question Domain] -->|인사이트 차감| Insight
+    Insight -->|Feign Client| Checkout[Checkout Service]
+    Member[Member Domain] -->|Kafka| UserService[User Service]
+    PaymentCore[Payment Core] -->|Kafka| Insight
+```
+
+**의존성 규칙:**
+1. **도메인 이벤트 사용**: Answer → Insight, Referral → Insight (느슨한 결합)
+2. **직접 호출**: Question → Insight (spendInsights - 강결합 허용)
+3. **외부 서비스 호출**: Insight → Checkout (Feign Client)
+4. **비동기 연동**: Payment Core → Insight (Kafka)
+
+---
+
 ### Decision 0.3: AsyncSite 통합 계정 시스템 ✅
 
 **핵심 개념: QueryDaily는 AsyncSite 플랫폼의 한 서비스**

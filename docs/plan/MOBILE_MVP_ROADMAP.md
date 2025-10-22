@@ -258,10 +258,13 @@ sequenceDiagram
     PortOne-->>Mobile: 결제창 표시
     Note over Mobile,PortOne: 사용자 결제 진행
 
-    PortOne->>Core: Webhook (결제 완료)
-    Note over Core: PortOne Adapter가<br/>Webhook 수신
+    PortOne->>Checkout: Webhook (결제 완료)
+    Note over Checkout: Webhook 수신
+    Checkout->>Core: verifyAndConfirm()
+    Note over Core: PortOne Adapter로<br/>S2S 검증 요청
     Core->>PortOne: S2S 검증 요청
     PortOne-->>Core: 검증 성공
+    Core-->>Checkout: 검증 완료
     Note over Core: 상태 업데이트<br/>(10→30→40→50)
 
     Core->>Kafka: asyncsite.payment.verified<br/>{domain: "querydaily-mobile", ...}

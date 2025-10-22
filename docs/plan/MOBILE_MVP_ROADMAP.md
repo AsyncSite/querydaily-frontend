@@ -511,9 +511,11 @@ graph TB
 
 **책임:**
 - 질문 생명주기 관리 (생성, 조회, 수정, 삭제)
-- 오늘의 3문제 선정 (공통 2문제 + Personalization Domain에 개인화 1문제 요청)
+- 질문 상세 정보 제공 (Orchestration 레이어에서 조회 시)
 - 질문 잠금/해제 상태 관리
 - 카테고리별 질문 필터링
+
+**Note:** 오늘의 3문제 선정은 **Personalization Domain**이 담당 (사용자별 개인화 3문제)
 
 **Aggregate Root: Question**
 
@@ -554,39 +556,6 @@ public class Question {
 **Entities:**
 
 ```java
-// 공통 2문제 (모든 사용자 동일)
-@Entity
-@Table(name = "daily_common_questions")
-public class DailyCommonQuestions {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private LocalDate date;            // 2025-01-20
-    private String question1Id;        // 공통 문제 1
-    private String question2Id;        // 공통 문제 2
-
-    @Column(unique = true)
-    private LocalDate uniqueDate;      // Unique constraint
-}
-
-// 사용자별 오늘의 3문제 기록
-@Entity
-@Table(name = "user_daily_questions")
-public class UserDailyQuestions {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String userId;
-    private LocalDate date;
-    private String question1Id;        // 공통 1
-    private String question2Id;        // 공통 2
-    private String question3Id;        // 개인화
-
-    private LocalDateTime createdAt;
-}
-
 // 사용자가 잠금 해제한 과거 질문
 @Entity
 @Table(name = "unlocked_questions")
@@ -603,25 +572,35 @@ public class UnlockedQuestion {
 **Use Cases (Application Layer):**
 
 ```java
-public interface QuestionService {
-    // 오늘의 3문제 조회 (공통 2 + 개인화 1)
-    List<QuestionResponse> getDailyQuestions(String userId);
+public interface QuestionQueryService {
+    // ID로 질문 조회
+    Question findById(String questionId);
+
+    // 여러 질문 조회
+    List<Question> findByIds(List<String> questionIds);
 
     // 질문 상세 조회
     QuestionDetailResponse getQuestionDetail(String questionId, String userId);
 
-    // 과거 질문 잠금 해제 (5 💎 소비)
-    UnlockResponse unlockQuestion(String questionId, String userId);
-
     // 카테고리별 질문 목록
     List<QuestionResponse> getQuestionsByCategory(String category, Pageable pageable);
+}
+
+public interface QuestionCommandService {
+    // 질문 생성 (Admin)
+    Question create(CreateQuestionRequest request);
+
+    // 질문 수정 (Admin)
+    Question update(String questionId, UpdateQuestionRequest request);
 }
 ```
 
 **Outbound Ports:**
 - `QuestionRepository`: 질문 조회/저장
-- `InsightService`: 잠금 해제 시 인사이트 차감
-- `PersonalizationService`: 개인화 질문 선정 요청
+
+**Note:**
+- 오늘의 3문제 선정은 **Personalization Domain**이 담당
+- 질문 잠금 해제는 **Orchestration Layer**에서 Insight + Question 조합으로 처리
 
 ---
 
@@ -1045,6 +1024,34 @@ public interface MemberService {
 **Aggregate Roots:**
 
 ```java
+// 사용자별 오늘의 3문제 (캐싱)
+@Entity
+@Table(name = "daily_personalized_questions")
+public class DailyPersonalizedQuestions {
+    @Id
+    private String id;
+
+    private String userId;
+    private LocalDate date;              // 2025-01-20
+    private String question1Id;
+    private String question2Id;
+    private String question3Id;
+
+    private LocalDateTime generatedAt;
+
+    @Column(name = "unique_user_date", unique = true)
+    private String uniqueUserDate;       // userId + date (Unique constraint)
+
+    // 도메인 로직
+    public boolean isToday() {
+        return this.date.equals(LocalDate.now());
+    }
+
+    public List<String> getQuestionIds() {
+        return List.of(question1Id, question2Id, question3Id);
+    }
+}
+
 // 사용자 선호도 (MVP)
 @Entity
 @Table(name = "user_preferences")
@@ -1099,8 +1106,11 @@ public enum InteractionType {
 
 ```java
 public interface PersonalizationService {
-    // MVP: 단순 필터링 기반 개인화
-    Question selectPersonalizedQuestion(String userId);
+    // 오늘의 3문제 조회 (캐시 또는 새로 생성)
+    DailyPersonalizedQuestions getDailyQuestions(String userId, LocalDate date);
+
+    // MVP: 단순 필터링 기반 개인화 3문제 선택
+    List<String> selectDailyQuestions(String userId, MemberProfile profile);
 
     // 사용자 선호도 조회
     UserPreference getUserPreference(String userId);
@@ -1115,56 +1125,68 @@ public interface PersonalizationService {
 
 **개인화 알고리즘 (점진적 확장):**
 
-**MVP (단순 필터링):**
+**MVP (단순 필터링 - 3문제):**
 ```java
 public class SimplePersonalizationStrategy implements PersonalizationStrategy {
     @Override
-    public Question selectQuestion(String userId) {
-        UserPreference pref = preferenceRepository.findByUserId(userId);
-
+    public List<String> selectDailyQuestions(String userId, MemberProfile profile) {
         // 기술스택 + 경력 레벨로 필터링
-        return questionRepository
-            .findByTechStackAndCareerLevel(
-                pref.getTechStack(),
-                pref.getCareerLevel()
-            )
-            .stream()
-            .findAny()  // 랜덤 선택
-            .orElse(questionRepository.findRandomQuestion());
+        // 이미 답변한 질문 제외
+        List<Question> candidates = questionRepository.findAll().stream()
+            .filter(q -> q.getTechStack().stream()
+                .anyMatch(tech -> profile.getTechStack().contains(tech)))
+            .filter(q -> q.getCareerLevel().equals(profile.getCareerLevel()))
+            .filter(q -> !hasAnswered(userId, q.getId()))
+            .collect(toList());
+
+        // 랜덤으로 3개 선택
+        Collections.shuffle(candidates);
+        return candidates.stream()
+            .limit(3)
+            .map(Question::getId)
+            .collect(toList());
+    }
+
+    private boolean hasAnswered(String userId, String questionId) {
+        return answerRepository.existsByMemberIdAndQuestionId(userId, questionId);
     }
 }
 ```
 
-**Phase 2 (ML 기반 추천):**
+**Phase 2 (ML 기반 추천 - 3문제):**
 ```java
 public class MlPersonalizationStrategy implements PersonalizationStrategy {
     @Override
-    public Question selectQuestion(String userId) {
-        UserPreference pref = preferenceRepository.findByUserId(userId);
+    public List<String> selectDailyQuestions(String userId, MemberProfile profile) {
         List<UserInteraction> history = interactionRepository.findByUserId(userId);
 
-        // ML 모델로 점수 계산
-        List<QuestionScore> scores = mlRecommendationEngine.score(
+        // ML 모델로 모든 질문에 대해 점수 계산
+        List<QuestionScore> scores = mlRecommendationEngine.scoreAll(
             userId,
-            pref,
+            profile,
             history
         );
 
-        // 가장 높은 점수의 질문 선택
-        return scores.get(0).getQuestion();
+        // 상위 3개 질문 선택
+        return scores.stream()
+            .limit(3)
+            .map(QuestionScore::getQuestionId)
+            .collect(toList());
     }
 }
 ```
 
 **Outbound Ports:**
+- `DailyPersonalizedQuestionsRepository`: 오늘의 3문제 캐시 조회/저장
 - `UserPreferenceRepository`: 사용자 선호도 조회/저장
 - `UserInteractionRepository`: 인터랙션 기록 조회/저장
-- `MemberService`: Member 프로필 조회 (techStack, careerLevel 동기화)
 - `QuestionRepository`: 질문 풀 조회 (필터링용)
+- `AnswerRepository`: 답변 여부 확인 (이미 답한 질문 제외)
 
-**Inbound Adapters:**
-- `PersonalizationRestController`: REST API (선호도 업데이트)
-- `MemberSyncEventListener`: Member 프로필 변경 시 UserPreference 동기화
+**Note:**
+- 오늘의 3문제는 `daily_personalized_questions` 테이블에 캐싱됨
+- 같은 날 여러 번 조회해도 동일한 3문제 반환 (일관성)
+- 자정 배치로 미리 생성 가능 (성능 최적화)
 
 **설계 원칙:**
 
@@ -2049,44 +2071,60 @@ sequenceDiagram
     actor User
     participant Mobile as QueryDaily Mobile
     participant Gateway as API Gateway
-    participant QDService as QueryDaily Service
-    participant QuestionDomain as Question Domain
-    participant PersonalizationDomain as Personalization Domain
-    participant MemberDomain as Member Domain
+    participant Controller as QueryDaily Controller
+    participant Orchestrator as DailyQuestionsOrchestrator
+    participant PersonalizationSvc as Personalization Service
+    participant QuestionSvc as Question Service
+    participant MemberSvc as Member Service
     participant DB as MySQL
 
     User->>Mobile: 대시보드 접속
     Mobile->>Gateway: GET /api/v1/questions/daily<br/>(Authorization: Bearer JWT)
     Gateway->>Gateway: JWT 검증
-    Gateway->>QDService: GET /api/v1/questions/daily<br/>(X-User-Id: userId)
+    Gateway->>Controller: GET /api/v1/questions/daily<br/>(X-User-Id: userId)
 
-    QDService->>QuestionDomain: getDailyQuestions(userId)
+    Note over Controller: orchestration/adapter/in/web
+    Controller->>Orchestrator: execute(userId)
 
-    Note over QuestionDomain: 공통 2문제 조회
-    QuestionDomain->>DB: SELECT * FROM daily_common_questions<br/>WHERE date = TODAY
-    DB-->>QuestionDomain: CommonQuestions(q1_id, q2_id)
+    Note over Orchestrator: orchestration/application/query<br/>개인화 3문제 생성 또는 조회
 
-    Note over QuestionDomain: 개인화 1문제 요청
-    QuestionDomain->>PersonalizationDomain: selectPersonalizedQuestion(userId)
-    PersonalizationDomain->>MemberDomain: getProfile(userId)
-    MemberDomain->>DB: SELECT tech_stack, career_level<br/>FROM members WHERE id = userId
-    DB-->>MemberDomain: Member(techStack, careerLevel)
-    MemberDomain-->>PersonalizationDomain: MemberProfile
+    Orchestrator->>DB: SELECT * FROM daily_personalized_questions<br/>WHERE user_id = ? AND date = TODAY
 
-    Note over PersonalizationDomain: MVP: 단순 필터링
-    PersonalizationDomain->>DB: SELECT * FROM questions<br/>WHERE tech_stack IN (user.techStack)<br/>AND career_level = user.careerLevel<br/>ORDER BY RAND() LIMIT 1
-    DB-->>PersonalizationDomain: Question(q3_id)
-    PersonalizationDomain-->>QuestionDomain: Question(q3_id)
+    alt 오늘의 문제가 이미 생성됨
+        DB-->>Orchestrator: DailyQuestions(q1_id, q2_id, q3_id)
+        Note over Orchestrator: 이미 생성된 문제 사용 (일관성)
+    else 오늘의 문제가 아직 없음
+        DB-->>Orchestrator: null
 
-    Note over QuestionDomain: 3문제 상세 조회
-    QuestionDomain->>DB: SELECT * FROM questions<br/>WHERE id IN (q1_id, q2_id, q3_id)
-    DB-->>QuestionDomain: List<Question>
+        Note over Orchestrator: 사용자 프로필 기반 개인화 3문제 선택
+        Orchestrator->>MemberSvc: getProfile(userId)
+        Note over MemberSvc: member/application
+        MemberSvc->>DB: SELECT tech_stack, career_level, preferred_categories<br/>FROM members WHERE id = ?
+        DB-->>MemberSvc: Member(techStack, careerLevel)
+        MemberSvc-->>Orchestrator: MemberProfile
 
-    QuestionDomain-->>QDService: DailyQuestionsResponse(q1, q2, q3)
-    QDService-->>Gateway: QuestionResponse[]
-    Gateway-->>Mobile: QuestionResponse[]
+        Orchestrator->>PersonalizationSvc: selectDailyQuestions(userId, profile)
+        Note over PersonalizationSvc: personalization/application<br/>MVP: 단순 필터링
+        PersonalizationSvc->>DB: SELECT * FROM questions<br/>WHERE tech_stack IN (user.techStack)<br/>AND career_level = user.careerLevel<br/>AND id NOT IN (SELECT question_id FROM user_answers WHERE member_id = ?)<br/>ORDER BY RAND() LIMIT 3
+        DB-->>PersonalizationSvc: List<Question>(3개)
+        PersonalizationSvc-->>Orchestrator: List<questionId>(q1, q2, q3)
+
+        Note over Orchestrator: 오늘의 문제 저장 (캐싱)
+        Orchestrator->>DB: INSERT INTO daily_personalized_questions<br/>(user_id, date, question1_id, question2_id, question3_id)
+    end
+
+    Orchestrator->>QuestionSvc: findByIds([q1_id, q2_id, q3_id])
+    Note over QuestionSvc: question/application
+    QuestionSvc->>DB: SELECT * FROM questions<br/>WHERE id IN (?, ?, ?)
+    DB-->>QuestionSvc: List<Question>(3개 상세)
+    QuestionSvc-->>Orchestrator: List<Question>
+
+    Orchestrator->>Orchestrator: Assemble DailyQuestionsResponse
+    Orchestrator-->>Controller: DailyQuestionsResponse(3개)
+    Controller-->>Gateway: DailyQuestionsResponse
+    Gateway-->>Mobile: DailyQuestionsResponse
     Mobile->>Mobile: 카드 스택 UI 렌더링
-    Mobile-->>User: 3개 질문 표시<br/>(공통 2 + 개인화 1)
+    Mobile-->>User: 개인화된 3개 질문 표시
 ```
 
 ---

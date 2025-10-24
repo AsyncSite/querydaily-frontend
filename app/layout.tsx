@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import GADebugPanel from '@/lib/analytics/debug-panel';
+import GlobalErrorTracker from '@/components/analytics/GlobalErrorTracker';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -44,7 +46,9 @@ export default function RootLayout({
     <html lang="ko">
       <body className={inter.className}>
         <GoogleAnalytics />
+        <GlobalErrorTracker />
         {children}
+        <GADebugPanel />
       </body>
     </html>
   );

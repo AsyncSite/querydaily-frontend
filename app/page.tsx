@@ -7,6 +7,11 @@ import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
+import ScrollTracker from '@/components/analytics/ScrollTracker';
+import { useManualCTATracking } from '@/components/analytics/CTATracker';
+import { useFormMetrics } from '@/components/analytics/FormTracker';
+import ItemTracker from '@/components/analytics/ItemTracker';
+import { autoTrackSections } from '@/components/analytics/SectionTracker';
 
 declare global {
   interface Window {
@@ -19,6 +24,24 @@ declare global {
 
 export default function HomePage() {
   const router = useRouter();
+  const { trackCTA } = useManualCTATracking();
+  const betaFormMetrics = useFormMetrics('beta_signup');
+  const purchaseFormMetrics = useFormMetrics('purchase');
+
+  // 폼 필드 추적 헬퍼 함수
+  const trackFormField = (formName: string, fieldName: string, interactionType: string, stepNumber?: number) => {
+    if (window.gtag) {
+      window.gtag('event', 'form_field_interaction', {
+        form_name: formName,
+        field_name: fieldName,
+        interaction_type: interactionType,
+        step_number: stepNumber
+      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📝 Form Field: ${formName}.${fieldName} - ${interactionType}`);
+      }
+    }
+  };
 
   // Force scroll reset on page load
   useEffect(() => {
@@ -125,6 +148,16 @@ export default function HomePage() {
     }
     return () => clearInterval(interval);
   }, [verificationTimer]);
+
+  // Auto-track sections
+  useEffect(() => {
+    // 페이지 로드 후 섹션 자동 추적 초기화
+    const timer = setTimeout(() => {
+      autoTrackSections();
+    }, 1000); // 1초 후 초기화
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Auto-dismiss notifications after 5 seconds
   useEffect(() => {
@@ -362,6 +395,16 @@ export default function HomePage() {
 
   // Handle product selection
   const handleProductSelect = (productId: string) => {
+    // Track CTA click
+    const productNames: Record<string, string> = {
+      'growth-plan': '그로스 플랜',
+      'real-interview': '리얼 인터뷰',
+      'critical-hit': '크리티컬 히트',
+      'last-check': '라스트 체크',
+      'resume-fit': '레주메 핏'
+    };
+    trackCTA(`지금 시작하기 - ${productNames[productId] || productId}`, 'product', { product_id: productId });
+
     setSelectedPurchaseProduct(productId);
     setPurchaseModalOpen(true);
     setPurchaseModalStep(1);
@@ -582,6 +625,8 @@ export default function HomePage() {
 
       // Track signup start
       trackBetaSignupStart();
+      // Also track as CTA click
+      trackCTA('무료 체험 시작', 'modal_submit');
 
       try {
         // 선택된 상품 정보를 포함하여 무료 체험 시작
@@ -643,6 +688,9 @@ export default function HomePage() {
 
   return (
     <div className={styles.container}>
+      {/* Scroll Tracking */}
+      <ScrollTracker />
+
       {/* Notification Modal */}
       {notification && (
         <div className={styles.notificationContainer}>
@@ -737,6 +785,7 @@ export default function HomePage() {
                   className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}
                   onClick={(e) => {
                     e.preventDefault();
+                    trackCTA('상품 선택하기', 'hero');
                     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
@@ -965,7 +1014,13 @@ export default function HomePage() {
 
           <div className={styles.productsGrid}>
             {/* 그로스 플랜 */}
-            <div className={`${styles.productCard} ${styles.productCardWide}`}>
+            <ItemTracker
+              itemId="growth-plan"
+              itemName="그로스 플랜"
+              price={49000}
+              index={0}
+            >
+              <div className={`${styles.productCard} ${styles.productCardWide}`}>
               <div className={styles.productBadge}>MOST POPULAR</div>
               <div className={styles.productHeader}>
                 <span className={styles.productLabel}>20일 집중 훈련</span>
@@ -1007,8 +1062,15 @@ export default function HomePage() {
                 지금 시작하기
               </button>
             </div>
+            </ItemTracker>
 
             {/* 리얼 인터뷰 - 모의면접 */}
+            <ItemTracker
+              itemId="real-interview"
+              itemName="리얼 인터뷰"
+              price={199000}
+              index={1}
+            >
             <div className={styles.productCard}>
               <div className={styles.productBadge}>PREMIUM</div>
               <div className={styles.productHeader}>
@@ -1051,8 +1113,15 @@ export default function HomePage() {
                 지금 시작하기
               </button>
             </div>
+            </ItemTracker>
 
             {/* 크리티컬 히트 */}
+            <ItemTracker
+              itemId="critical-hit"
+              itemName="크리티컬 히트"
+              price={9900}
+              index={2}
+            >
             <div className={styles.productCard}>
               <div className={styles.productHeader}>
                 <span className={styles.productLabel}>단 하나의 결정적 질문</span>
@@ -1094,8 +1163,15 @@ export default function HomePage() {
                 지금 시작하기
               </button>
             </div>
+            </ItemTracker>
 
             {/* 라스트 체크 */}
+            <ItemTracker
+              itemId="last-check"
+              itemName="라스트 체크"
+              price={39000}
+              index={3}
+            >
             <div className={styles.productCard}>
               <div className={styles.productHeader}>
                 <span className={styles.productLabel}>면접 D-1 긴급 대비</span>
@@ -1138,8 +1214,15 @@ export default function HomePage() {
                 준비 중
               </button>
             </div>
+            </ItemTracker>
 
             {/* 레주메 핏 */}
+            <ItemTracker
+              itemId="resume-fit"
+              itemName="레주메 핏"
+              price={15000}
+              index={4}
+            >
             <div className={styles.productCard}>
               <div className={styles.productHeader}>
                 <span className={styles.productLabel}>이력서 전문가 분석</span>
@@ -1181,6 +1264,7 @@ export default function HomePage() {
                 지금 시작하기
               </button>
             </div>
+            </ItemTracker>
           </div>
 
           <div className={styles.productsCta}>
@@ -1909,7 +1993,10 @@ export default function HomePage() {
                     <span className={styles.footerToggleIcon}>{openFooterSection === 'support' ? '−' : '+'}</span>
                   </h4>
                   <div className={`${styles.footerColumnContent} ${openFooterSection === 'support' ? styles.footerColumnContentOpen : ''}`}>
-                    <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" onClick={() => trackExternalLink('kakao_contact')}>문의하기</a>
+                    <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" onClick={() => {
+                      trackExternalLink('kakao_contact');
+                      trackCTA('카카오톡 문의', 'footer_support');
+                    }}>문의하기</a>
                     <a href="/terms">이용약관</a>
                     <a href="/privacy">개인정보처리방침</a>
                     <a href="/refund-policy">환불정책</a>
@@ -2048,6 +2135,13 @@ export default function HomePage() {
                       className={styles.modalInput}
                       value={profileData.email}
                       onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                      onFocus={() => trackFormField('beta_signup', 'email', 'focus', modalStep)}
+                      onBlur={(e) => {
+                        if (e.target.value) {
+                          const type = e.target.value.includes('@') ? 'complete' : 'blur';
+                          trackFormField('beta_signup', 'email', type, modalStep);
+                        }
+                      }}
                       autoFocus
                     />
                   </div>
@@ -2444,6 +2538,13 @@ export default function HomePage() {
                       className={styles.modalInput}
                       value={purchaseEmail}
                       onChange={(e) => setPurchaseEmail(e.target.value)}
+                      onFocus={() => trackFormField('purchase', 'email', 'focus', purchaseModalStep)}
+                      onBlur={(e) => {
+                        if (e.target.value) {
+                          const type = e.target.value.includes('@') ? 'complete' : 'blur';
+                          trackFormField('purchase', 'email', type, purchaseModalStep);
+                        }
+                      }}
                       autoFocus
                     />
                   </div>
@@ -2457,6 +2558,12 @@ export default function HomePage() {
                       className={styles.modalInput}
                       value={purchaseName}
                       onChange={(e) => setPurchaseName(e.target.value)}
+                      onFocus={() => trackFormField('purchase', 'name', 'focus', purchaseModalStep)}
+                      onBlur={(e) => {
+                        if (e.target.value.trim()) {
+                          trackFormField('purchase', 'name', 'complete', purchaseModalStep);
+                        }
+                      }}
                     />
                   </div>
 
@@ -2469,6 +2576,12 @@ export default function HomePage() {
                       className={styles.modalInput}
                       value={purchasePhone}
                       onChange={(e) => setPurchasePhone(e.target.value)}
+                      onFocus={() => trackFormField('purchase', 'phone', 'focus', purchaseModalStep)}
+                      onBlur={(e) => {
+                        if (e.target.value.trim()) {
+                          trackFormField('purchase', 'phone', 'complete', purchaseModalStep);
+                        }
+                      }}
                     />
                   </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { useFormTracking } from '@/hooks/useGATracking';
 import { FORM_NAMES } from '@/lib/analytics/event-types';
 
@@ -59,7 +59,7 @@ export default function FormTracker({
     const formElement = document.querySelector(`[data-form-tracker="${formName}"]`);
     if (!formElement) return;
 
-    const handleFocus = (e: FocusEvent) => {
+    const handleFocus = (e: Event) => {
       const target = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
       if (!target.name) return;
 
@@ -68,7 +68,7 @@ export default function FormTracker({
       trackFieldFocus(fieldName);
     };
 
-    const handleBlur = (e: FocusEvent) => {
+    const handleBlur = (e: Event) => {
       const target = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
       if (!target.name) return;
 

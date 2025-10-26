@@ -149,7 +149,7 @@ export class ExperimentManager {
   private sendToGA(experimentId: string, variant: string) {
     if (typeof window !== 'undefined' && window.gtag) {
       // 사용자 속성으로 설정
-      window.gtag('set', 'user_properties', {
+      (window.gtag as any)('set', 'user_properties', {
         [`exp_${experimentId}`]: variant
       });
 

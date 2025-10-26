@@ -58,7 +58,7 @@ export default function GADebugPanel() {
     }
 
     // gtag 래퍼 함수
-    const wrappedGtag: Gtag.Gtag = function(...args: any[]) {
+    const wrappedGtag: any = function(...args: any[]) {
       // 원래 gtag 함수 호출
       originalGtag.apply(window, args as any);
 

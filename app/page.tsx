@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile } from '@/lib/api';
+import { submitBetaApplication, startFreeTrial, UserProfile, createOrder } from '@/lib/api';
 import styles from './page.module.css';
 import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
 import FloatingFreeTrial from '@/components/FloatingFreeTrial';
@@ -13,14 +13,15 @@ import { useFormMetrics } from '@/components/analytics/FormTracker';
 import ItemTracker from '@/components/analytics/ItemTracker';
 import { autoTrackSections } from '@/components/analytics/SectionTracker';
 
-declare global {
-  interface Window {
-    IMP?: {
-      init: (merchantId: string) => void;
-      request_pay: (params: any, callback: (response: any) => void) => void;
-    };
-  }
-}
+// 이름 마스킹 함수 (가운데만 *)
+const maskName = (name: string): string => {
+  if (!name || name.length === 0) return '익명';
+  if (name.length === 1) return name;
+  if (name.length === 2) return name[0] + '*';
+  if (name.length === 3) return name[0] + '*' + name[2];
+  const middleLength = name.length - 2;
+  return name[0] + '*'.repeat(middleLength) + name[name.length - 1];
+};
 
 export default function HomePage() {
   const router = useRouter();
@@ -60,20 +61,6 @@ export default function HomePage() {
     return () => {
       if ('scrollRestoration' in history) {
         history.scrollRestoration = 'auto';
-      }
-    };
-  }, []);
-
-  // Load Portone SDK
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.iamport.kr/v1/iamport.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
       }
     };
   }, []);
@@ -502,67 +489,119 @@ export default function HomePage() {
     }
   };
 
-  const handleCardPayment = () => {
-    if (!window.IMP) {
-      alert('\uacb0\uc81c \ubaa8\ub4c8\uc774 \ub85c\ub4dc\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.');
-      return;
-    }
+  const handleCardPayment = async () => {
+    try {
+      setIsSubmitting(true);
 
-    // Initialize Portone with test MID
-    window.IMP.init('iamport'); // 포트원 공식 테스트용 가맹점 식별코드
+      // ProductCode 매핑
+      const productCodeMap: Record<string, string> = {
+        'critical-hit': 'CRITICAL_HIT',
+        'growth-plan': 'GROWTH_PLAN',
+        'real-interview': 'REAL_INTERVIEW',
+        'last-check': 'LAST_CHECK',
+        'resume-fit': 'RESUME_FIT'
+      };
 
-    // \uc0c1\ud488\uba85\uacfc \uac00\uaca9 \ub9e4\ud551
-    const productNames: Record<string, string> = {
-      'critical-hit': '\ud06c\ub9ac\ud2f0\uceec \ud788\ud2b8',
-      'growth-plan': '\uadf8\ub85c\uc2a4 \ud50c\ub79c',
-      'real-interview': '\ub9ac\uc5bc \uc778\ud130\ubdf0',
-      'resume-analytics': '\ub77c\uc2a4\ud2b8 \uccb4\ud06c'
-    };
-
-    const productPrices: Record<string, number> = {
-      'critical-hit': 9900,
-      'growth-plan': 49000,
-      'real-interview': 129000,
-      'last-check': 49000,
-      'resume-fit': 59000
-    };
-
-    const orderData = {
-      pg: 'html5_inicis', // 이니시스 웹표준 결제 (테스트)
-      pay_method: 'card',
-      merchant_uid: `QD${Date.now()}`,
-      name: productNames[selectedPurchaseProduct || ''] || '',
-      amount: productPrices[selectedPurchaseProduct || ''] || 0,
-      buyer_email: purchaseEmail || 'test@example.com',
-      buyer_name: purchaseName || 'Guest',
-      buyer_tel: purchasePhone || '010-0000-0000',
-      custom_data: {
-        product: selectedPurchaseProduct
+      const productCode = productCodeMap[selectedPurchaseProduct || ''];
+      if (!productCode) {
+        alert('상품을 선택해주세요');
+        return;
       }
-    };
 
-    window.IMP.request_pay(orderData, (response: any) => {
-      if (response.success) {
-        // Store order data
-        const orderInfo = {
-          orderId: response.merchant_uid,
-          productName: orderData.name,
-          price: orderData.amount,
-          paymentMethod: 'card',
-          email: purchaseEmail,
-          name: purchaseName,
-          phone: purchasePhone || '',
-          paymentId: response.imp_uid,
-          paidAt: new Date().toISOString(),
+      // 백엔드 API 호출하여 주문 생성 (PortOne V2 payload 포함)
+      const response = await createOrder({
+        email: purchaseEmail,
+        name: purchaseName,
+        phone: purchasePhone,
+        productCode: productCode as any,
+        paymentMethod: 'card',
+        resume: purchaseFile || undefined
+      });
+
+      if (!response.success || !response.data) {
+        alert(`주문 생성에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+        return;
+      }
+
+      // 주문 정보 저장
+      const orderInfo = {
+        orderId: response.data.orderId,
+        productName: selectedPurchaseProduct || '',
+        price: response.data.amount || 0,
+        paymentMethod: 'card',
+        email: purchaseEmail,
+        name: purchaseName,
+        phone: purchasePhone || '',
+      };
+      localStorage.setItem('orderData', JSON.stringify(orderInfo));
+
+      // SDK 모드인 경우 PortOne V2 SDK 호출
+      if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
+        // PortOne V2 SDK 동적 import
+        const PortOne = await import('@portone/browser-sdk/v2');
+
+        const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
+
+        // 결제 요청 직전 페이로드 로깅 (민감정보 마스킹)
+        const masked = {
+          ...payload,
+          channelKey: payload.channelKey ? `*${payload.channelKey.slice(-6)}` : undefined,
+          storeId: payload.storeId ? `*${payload.storeId.slice(-6)}` : undefined,
         };
-        localStorage.setItem('orderData', JSON.stringify(orderInfo));
+        console.info('[PortOne SDK] requestPayment payload', masked);
 
-        // Redirect to success page
-        window.location.href = '/order-complete';
+        try {
+          // 백엔드가 보내준 payload 그대로 전달
+          const sdkResponse = await PortOne.requestPayment(payload);
+
+          // 응답 존재 확인
+          if (!sdkResponse) {
+            alert('결제 응답을 받지 못했습니다.');
+            return;
+          }
+
+          // SDK 응답 체크 (문서 기반)
+          if (sdkResponse.code !== undefined) {
+            // 오류 발생 (취소, 실패 등)
+            console.log('[PortOne SDK] Payment cancelled or failed:', {
+              code: sdkResponse.code,
+              message: sdkResponse.message
+            });
+
+            // 사용자 친화적 메시지로 변환
+            let userMessage = '결제를 처리할 수 없습니다.';
+            if (sdkResponse.code === 'USER_CANCEL' || sdkResponse.message?.includes('취소')) {
+              userMessage = '결제가 취소되었습니다.';
+            } else if (sdkResponse.code === 'NETWORK_ERROR') {
+              userMessage = '네트워크 연결을 확인해 주세요.';
+            } else if (sdkResponse.message) {
+              userMessage = sdkResponse.message;
+            }
+
+            alert(userMessage);
+            return;
+          }
+
+          // 성공한 경우
+          console.log('[PortOne SDK] Payment request succeeded, paymentId:', sdkResponse.paymentId);
+          window.location.href = '/order-complete';
+        } catch (error: any) {
+          console.error('[PortOne SDK] Unexpected error:', error);
+          alert(`결제 SDK 오류: ${error.message || '알 수 없는 오류'}`);
+        }
+      } else if (response.data.checkoutUrl) {
+        // URL 모드인 경우 체크아웃 URL로 리다이렉트
+        window.location.href = response.data.checkoutUrl;
       } else {
-        alert(`\uacb0\uc81c\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4: ${response.error_msg}`);
+        // URL도 없고 SDK도 아닌 경우
+        window.location.href = '/order-complete';
       }
-    });
+    } catch (error: any) {
+      console.error('Payment order error:', error);
+      alert(`주문 처리 중 오류가 발생했습니다: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -757,8 +796,9 @@ export default function HomePage() {
             </h1>
 
             <p className={styles.heroSubtitle}>
-              면접관이 <strong>프로젝트 경험</strong>에서 꺼낼 날카로운 질문들.<br/>
-              AI가 분석해 미리 준비하고, 자신 있게 답변하세요.
+              면접관이 고개를 끄덕이는 순간,<br/>
+              "이 친구 제대로 알고 있네"라고 생각하는 순간,<br/>
+              그 순간을 만드는 건 운이 아닙니다. 준비입니다.
             </p>
 
             <div className={styles.heroStats}>
@@ -865,79 +905,317 @@ export default function HomePage() {
           </div>
 
           <h2 className={styles.sectionTitle}>
-            "이력서 기반 질문이라<br/>면접에서 비슷한 질문이 나왔어요"
+            실제 사용자들의<br/>솔직한 후기
           </h2>
           <p className={styles.sectionSubtitle} style={{ fontSize: '1.2rem', color: '#82aaff' }}>
-            실제 면접 합격자들이 경험한 QueryDaily
+            베타 테스터들이 경험한 QueryDaily
           </p>
 
-          <div style={{ display: 'grid', gap: '2rem', marginTop: '3rem' }}>
-            {/* 후기 1 - 맹점 발견 */}
+          {/* 타임라인 컨테이너 */}
+          <div style={{
+            maxWidth: '900px',
+            margin: '3rem auto 0',
+            position: 'relative' as const
+          }}>
+            {/* 타임라인 선 */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              padding: '2rem',
-              borderRadius: '12px',
-              borderLeft: '4px solid #c3e88d'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h3 style={{ fontSize: '1.3rem', color: '#c3e88d', fontWeight: '600' }}>
-                  제 경험의 '부족한 부분'을 정확히 파악했어요
-                </h3>
-                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                  ⭐ 추천도 9/10
-                </span>
+              position: 'absolute' as const,
+              left: '20px',
+              top: '40px',
+              bottom: '40px',
+              width: '2px',
+              background: 'linear-gradient(180deg, rgba(195, 232, 141, 0.3), rgba(130, 170, 255, 0.3), rgba(247, 140, 108, 0.3))',
+              display: 'none',
+            }}></div>
+
+            {/* Day 1 - 첫 질문 */}
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2.5rem' }}>
+              {/* 타임라인 도트 */}
+              <div style={{ flexShrink: 0, position: 'relative' as const }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #c3e88d, #82aaff)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.2rem',
+                  boxShadow: '0 0 20px rgba(195, 232, 141, 0.3)'
+                }}>📩</div>
               </div>
-              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
-                "사용자가 늘어날 상황을 가정하고 서비스의 병목 지점과 대처 방법을 물어보는 질문이 인상 깊었습니다.
-                전혀 다뤄보지 않은 내용이라 <strong style={{ color: '#82aaff' }}>어떻게 답할지 고민</strong>하게 되었고,
-                이력서 정리에 큰 도움이 되었습니다."
-              </p>
+
+              {/* 메시지 카드 */}
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
+                }}>
+                  {/* 본문 */}
+                  <div style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+                      <span style={{
+                        fontSize: '0.7rem',
+                        color: '#89ddff',
+                        background: 'rgba(137, 221, 255, 0.1)',
+                        padding: '4px 10px',
+                        borderRadius: '8px'
+                      }}>✓ 베타 테스터</span>
+                    </div>
+                    <div style={{
+                      background: 'rgba(130, 170, 255, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '8px',
+                      border: '1px solid rgba(130, 170, 255, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        첫 질문이 "프로젝트에 Redis를 사용했다고 하셨는데, Redis 서버가 다운되면
+                        어떻게 처리할 계획이었나요?"였습니다.
+                      </p>
+                    </div>
+                    <div style={{
+                      background: 'rgba(130, 170, 255, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '12px',
+                      border: '1px solid rgba(130, 170, 255, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        솔직히 장애 상황을 고려해본 적이 없어서, 답변을 제대로 못했습니다.
+                        이력서에 쓴 기술 하나하나에 대해 깊이 있는 준비가 필요하다는 걸
+                        처음으로 체감했습니다.
+                      </p>
+                    </div>
+
+                    {/* 프로필 */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #c3e88d, #82aaff)',
+                        filter: 'blur(1.5px)',
+                        opacity: 0.8
+                      }}></div>
+                      <div>
+                        <div style={{
+                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                          color: '#fff',
+                          filter: 'blur(3px)',
+                          userSelect: 'none'
+                        }}>김민준</div>
+                        <div style={{ fontSize: '0.75rem', color: '#89ddff', marginTop: '2px' }}>
+                          백엔드 개발자 • 3년차
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* 후기 2 - 불안감 해소 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              padding: '2rem',
-              borderRadius: '12px',
-              borderLeft: '4px solid #82aaff'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h3 style={{ fontSize: '1.3rem', color: '#82aaff', fontWeight: '600' }}>
-                  막연한 불안감이 줄고 '자신감'이 생겼습니다
-                </h3>
-                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                  ⭐ 추천도 10/10
-                </span>
+            {/* Day 2 - 패턴 발견 */}
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2.5rem' }}>
+              <div style={{ flexShrink: 0 }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #82aaff, #c792ea)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.2rem',
+                  boxShadow: '0 0 20px rgba(130, 170, 255, 0.3)'
+                }}>💡</div>
               </div>
-              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
-                "질문이 굉장히 구체적이고 <strong style={{ color: '#82aaff' }}>실제 면접에서 나올 것 같았어요</strong>.
-                꾸준히 답변을 고민하며 면접에 대한 자신감을 얻었고,
-                <code style={{ background: '#263238', padding: '2px 6px', borderRadius: '3px', fontSize: '0.95em' }}>Saga 패턴</code>
-                같은 새로운 질문을 받으며 사고가 확장되는 느낌을 받았습니다."
-              </p>
+
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
+                }}>
+                  <div style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+                      <span style={{
+                        fontSize: '0.7rem',
+                        color: '#89ddff',
+                        background: 'rgba(137, 221, 255, 0.1)',
+                        padding: '4px 10px',
+                        borderRadius: '8px'
+                      }}>✓ 베타 테스터</span>
+                    </div>
+                    <div style={{
+                      background: 'rgba(130, 170, 255, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '8px',
+                      border: '1px solid rgba(130, 170, 255, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        며칠 사용하니 질문 패턴이 보이기 시작했습니다.
+                        이력서에 "Spring WebFlux 사용"이라고 적은 부분에서
+                        "왜 WebFlux를 선택했는지", "Blocking IO vs Non-blocking IO의 트레이드오프는 무엇인지"
+                        같은 꼬리질문이 계속 나왔습니다.
+                      </p>
+                    </div>
+                    <div style={{
+                      background: 'rgba(130, 170, 255, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '8px',
+                      border: '1px solid rgba(130, 170, 255, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        제가 사용한 기술 하나하나에 명확한 이유가 있어야 한다는 걸 알게 됐습니다.
+                        "그냥 써봤다"는 답변으로는 부족하다는 것도요.
+                      </p>
+                    </div>
+                    <div style={{
+                      background: 'rgba(130, 170, 255, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '12px',
+                      border: '1px solid rgba(130, 170, 255, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        아직 모든 질문에 완벽하게 답변하진 못하지만,
+                        어떤 방향으로 준비해야 하는지는 명확해졌습니다.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #82aaff, #c792ea)',
+                        filter: 'blur(1.5px)',
+                        opacity: 0.8
+                      }}></div>
+                      <div>
+                        <div style={{
+                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                          color: '#fff',
+                          filter: 'blur(3px)',
+                          userSelect: 'none'
+                        }}>박서연</div>
+                        <div style={{ fontSize: '0.75rem', color: '#89ddff', marginTop: '2px' }}>
+                          풀스택 개발자 • 2년차
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* 후기 3 - 실전성 + 가이드 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              padding: '2rem',
-              borderRadius: '12px',
-              borderLeft: '4px solid #f78c6c'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h3 style={{ fontSize: '1.3rem', color: '#f78c6c', fontWeight: '600' }}>
-                  질문의 '깊이'가 다르고, '답변의 가이드'를 줘요
-                </h3>
-                <span style={{ fontSize: '0.85rem', color: '#c792ea', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                  ⭐ 추천도 10/10
-                </span>
+            {/* Day 3 - 면접 성공 */}
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2.5rem' }}>
+              <div style={{ flexShrink: 0 }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #f78c6c, #ffcb6b)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.2rem',
+                  boxShadow: '0 0 20px rgba(247, 140, 108, 0.3)'
+                }}>🎯</div>
               </div>
-              <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#cbd5e0', marginBottom: '1.5rem' }}>
-                "제 이력서 기반으로 '왜
-                <code style={{ background: '#263238', padding: '2px 6px', borderRadius: '3px', fontSize: '0.95em' }}>Elasticsearch</code>를 썼는지'
-                묻는 질문을 받고, 답변을 미리 구조화해볼 수 있었어요.
-                <strong style={{ color: '#f78c6c' }}> STAR 구조화</strong>로 답변의 '가닥'을 잡을 수 있게 도와준 게 최고였습니다."
-              </p>
+
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
+                }}>
+                  <div style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+                      <span style={{
+                        fontSize: '0.7rem',
+                        color: '#89ddff',
+                        background: 'rgba(137, 221, 255, 0.1)',
+                        padding: '4px 10px',
+                        borderRadius: '8px'
+                      }}>✓ 베타 테스터</span>
+                    </div>
+                    <div style={{
+                      background: 'rgba(247, 140, 108, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '8px',
+                      border: '1px solid rgba(247, 140, 108, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        오늘 실제 면접에서 "Elasticsearch는 왜 사용하셨나요?"라는 질문을 받았습니다.
+                      </p>
+                    </div>
+                    <div style={{
+                      background: 'rgba(247, 140, 108, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '8px',
+                      border: '1px solid rgba(247, 140, 108, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        QueryDaily에서 준비했던 답변 구조가 떠올랐습니다.
+                        "상황 → 문제 정의 → 기술 선택 이유 → 성과 수치"
+                        순서로 답변했고, 특히 "왜 MySQL Full-text Search가 아닌 Elasticsearch인지"를
+                        검색 성능 비교 수치와 함께 설명했습니다.
+                      </p>
+                    </div>
+                    <div style={{
+                      background: 'rgba(247, 140, 108, 0.15)',
+                      padding: '14px 16px',
+                      borderRadius: '12px 12px 12px 4px',
+                      marginBottom: '12px',
+                      border: '1px solid rgba(247, 140, 108, 0.2)'
+                    }}>
+                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
+                        면접관분이 추가 질문 없이 다음 주제로 넘어가셨습니다.
+                        준비한 내용을 실전에서 바로 활용할 수 있다는 게 가장 큰 장점인 것 같습니다.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #f78c6c, #ffcb6b)',
+                        filter: 'blur(1.5px)',
+                        opacity: 0.8
+                      }}></div>
+                      <div>
+                        <div style={{
+                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                          color: '#fff',
+                          filter: 'blur(3px)',
+                          userSelect: 'none'
+                        }}>이준호</div>
+                        <div style={{ fontSize: '0.75rem', color: '#89ddff', marginTop: '2px' }}>
+                          백엔드 개발자 • 4년차
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1004,14 +1282,6 @@ export default function HomePage() {
             당신의 경력과 목표에 맞는 상품을 선택하세요
           </p>
 
-          <div className={styles.promotionBanner}>
-            <span className={styles.promotionIcon}>🚀</span>
-            <div className={styles.promotionText}>
-              <span className={styles.promotionTitle}>정식 오픈 기념</span>
-              <span className={styles.promotionDesc}>지금 전 상품 최대 65% 할인가 제공 중!</span>
-            </div>
-          </div>
-
           <div className={styles.productsGrid}>
             {/* 그로스 플랜 */}
             <ItemTracker
@@ -1044,7 +1314,7 @@ export default function HomePage() {
               <div className={styles.productServiceInfo}>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 30일 이내 완료 (평일 기준 20일간 매일 발송)</span>
+                  <span className={styles.serviceInfoValue}>결제 후 30일 이내 완료 (20일간 매일 발송)</span>
                 </div>
                 <div className={styles.serviceInfoItem}>
                   <span className={styles.serviceInfoLabel}>환불 규정</span>
@@ -2481,12 +2751,11 @@ export default function HomePage() {
                             <small>계좌이체로 안전하게 결제</small>
                           </span>
                         </button>
-                        {/* 카드결제 버튼 임시 숨김 */}
-                        {/* <button
+                        <button
                           className={`${styles.paymentMethodBtn} ${styles.cardPaymentBtn}`}
                           onClick={() => {
                             setPaymentMethod('card');
-                            setPurchaseModalStep(2); // KAKAO/INICIS REVIEW: Go to order info first
+                            setPurchaseModalStep(2);
                           }}
                         >
                           <span className={styles.paymentMethodIcon}>💳</span>
@@ -2494,7 +2763,7 @@ export default function HomePage() {
                             <strong>카드결제</strong>
                             <small>신용/체크카드로 간편 결제</small>
                           </span>
-                        </button> */}
+                        </button>
                       </div>
                     </>
                   )}
@@ -2789,13 +3058,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Floating Free Trial - Subtle & Non-intrusive */}
-      <FloatingFreeTrial onOpenModal={() => {
-        setModalOpen(true);
-        setModalStep(1);
-        setFreeTrialVerificationSent(false);
-        setSentVerificationCode('');
-      }} />
 
     </div>
   );

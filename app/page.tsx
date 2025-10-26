@@ -31,7 +31,7 @@ export default function HomePage() {
 
   // 폼 필드 추적 헬퍼 함수
   const trackFormField = (formName: string, fieldName: string, interactionType: string, stepNumber?: number) => {
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'form_field_interaction', {
         form_name: formName,
         field_name: fieldName,

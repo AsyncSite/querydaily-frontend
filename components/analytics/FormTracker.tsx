@@ -267,7 +267,7 @@ export function useFormMetrics(formName: string) {
     trackFormSubmit(success);
 
     // 추가 메트릭 전송
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'form_metrics', {
         form_name: formName,
         completion_rate: completionRate,
@@ -322,7 +322,7 @@ export function autoTrackForms() {
     form.addEventListener('focusin', () => {
       if (!form.dataset.gaStartTracked) {
         form.dataset.gaStartTracked = 'true';
-        if (window.gtag) {
+        if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
           window.gtag('event', 'form_start', {
             form_name: formName
           });
@@ -332,7 +332,7 @@ export function autoTrackForms() {
 
     // 폼 제출 추적
     form.addEventListener('submit', (e) => {
-      if (window.gtag) {
+      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
         window.gtag('event', 'form_submit', {
           form_name: formName,
           success: true

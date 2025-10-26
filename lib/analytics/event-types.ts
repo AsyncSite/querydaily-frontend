@@ -109,6 +109,24 @@ export interface FormFieldInteractionParams extends BaseEventParams {
 }
 
 /**
+ * 폼 시작 파라미터
+ */
+export interface FormStartParams extends BaseEventParams {
+  form_name: string; // 폼 이름 (beta_signup, purchase 등)
+  step_number?: number; // 멀티스텝 폼의 시작 단계
+}
+
+/**
+ * 폼 제출 파라미터
+ */
+export interface FormSubmitParams extends BaseEventParams {
+  form_name: string; // 폼 이름
+  success: boolean; // 제출 성공 여부
+  step_number?: number; // 멀티스텝 폼의 최종 단계
+  submission_time?: number; // 폼 작성 시간 (초)
+}
+
+/**
  * 4. 상품 조회 파라미터
  */
 export interface ViewItemParams extends BaseEventParams {
@@ -206,6 +224,8 @@ export interface GAEventMap {
   [GA_EVENTS.SCROLL_DEPTH]: ScrollDepthParams;
   [GA_EVENTS.CLICK_CTA]: CTAClickParams;
   [GA_EVENTS.FORM_FIELD_INTERACTION]: FormFieldInteractionParams;
+  [GA_EVENTS.FORM_START]: FormStartParams;
+  [GA_EVENTS.FORM_SUBMIT]: FormSubmitParams;
   [GA_EVENTS.VIEW_ITEM]: ViewItemParams;
   [GA_EVENTS.VIEW_SECTION]: ViewSectionParams;
   [GA_EVENTS.ERROR]: ErrorParams;

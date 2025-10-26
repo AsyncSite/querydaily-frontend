@@ -229,7 +229,7 @@ export class ExperimentManager {
     const assignment = this.userAssignments.get(experimentId);
     if (!assignment) return;
 
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'experiment_conversion', {
         experiment_id: experimentId,
         variant: assignment.variant,

@@ -21,7 +21,7 @@ function GoogleAnalyticsInner({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_ID: string
 
   // Track page views
   useEffect(() => {
-    if (!GA_MEASUREMENT_ID || !window.gtag) return;
+    if (!GA_MEASUREMENT_ID || typeof window.gtag === 'undefined') return;
 
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
 

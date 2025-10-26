@@ -52,7 +52,7 @@ class GATracker {
 
   private initialize() {
     // gtag가 로드될 때까지 대기
-    if (typeof window !== 'undefined' && window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       this.isInitialized = true;
     } else {
       // gtag가 아직 로드되지 않았다면 재시도
@@ -201,7 +201,7 @@ class GATracker {
    * 개별 이벤트 전송
    */
   private sendEvent(event: GAEvent) {
-    if (typeof window === 'undefined' || !window.gtag) {
+    if (typeof window === 'undefined' || typeof window.gtag === 'undefined') {
       if (this.debugMode) {
         console.warn('⚠️ GA: gtag not available');
       }

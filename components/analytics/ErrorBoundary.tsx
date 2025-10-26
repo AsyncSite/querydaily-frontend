@@ -109,12 +109,26 @@ export class ErrorBoundary extends Component<Props, State> {
  *
  * 전역 에러 핸들러를 설정하고 모든 에러를 GA로 추적합니다.
  */
+
+// 중복 초기화 방지 플래그
+let globalErrorTrackingInitialized = false;
+
 export function setupGlobalErrorTracking() {
   if (typeof window === 'undefined') return;
 
+  // 이미 초기화된 경우 중복 실행 방지
+  if (globalErrorTrackingInitialized) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('⚠️ Global Error Tracking: Already initialized, skipping');
+    }
+    return;
+  }
+
+  globalErrorTrackingInitialized = true;
+
   // JavaScript 런타임 에러
   window.addEventListener('error', (event) => {
-    if (window.gtag) {
+    if (typeof window.gtag !== 'undefined') {
       window.gtag('event', 'error', {
         error_type: 'javascript',
         error_message: event.message,
@@ -134,7 +148,7 @@ export function setupGlobalErrorTracking() {
       ? event.reason.message
       : String(event.reason);
 
-    if (window.gtag) {
+    if (typeof window.gtag !== 'undefined') {
       window.gtag('event', 'error', {
         error_type: 'promise',
         error_message: errorMessage,
@@ -160,7 +174,7 @@ export function useAPIErrorTracking() {
     statusCode?: number,
     errorMessage?: string
   ) => {
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'error', {
         error_type: 'api',
         error_message: errorMessage || 'API request failed',
@@ -191,7 +205,7 @@ export function trackFormValidationError(
   fieldName: string,
   errorMessage: string
 ) {
-  if (window.gtag) {
+  if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
     window.gtag('event', 'error', {
       error_type: 'validation',
       error_message: errorMessage,
@@ -219,7 +233,7 @@ export function trackFileUploadError(
   fileSize: number,
   errorReason: string
 ) {
-  if (window.gtag) {
+  if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
     window.gtag('event', 'error', {
       error_type: 'upload',
       error_message: errorReason,
@@ -248,7 +262,7 @@ export function trackPaymentError(
   errorMessage: string,
   amount?: number
 ) {
-  if (window.gtag) {
+  if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
     window.gtag('event', 'error', {
       error_type: 'payment',
       error_message: errorMessage,
@@ -339,7 +353,7 @@ export class ErrorTracker {
 
     // 에러들을 GA로 전송
     errorsToSend.forEach(error => {
-      if (window.gtag) {
+      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
         window.gtag('event', 'error', error);
       }
     });

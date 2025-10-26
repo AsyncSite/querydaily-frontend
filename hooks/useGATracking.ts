@@ -49,7 +49,8 @@ interface UseGATrackingReturn {
 export function useGATracking(options: UseGATrackingOptions = {}): UseGATrackingReturn {
   const {
     debugMode = process.env.NODE_ENV === 'development',
-    trackPageViews = true,
+    // 페이지뷰 자동 추적 기본값을 false로 변경 (GoogleAnalytics 컴포넌트에서만 처리)
+    trackPageViews = false,
     trackErrors = true,
   } = options;
 
@@ -60,7 +61,7 @@ export function useGATracking(options: UseGATrackingOptions = {}): UseGATracking
   // GA 초기화 확인
   useEffect(() => {
     const checkReady = () => {
-      if (typeof window !== 'undefined' && window.gtag) {
+      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
         isReady.current = true;
         if (debugMode) {
           console.log('✅ GA Tracking Hook: Ready');
@@ -136,7 +137,7 @@ export function useGATracking(options: UseGATrackingOptions = {}): UseGATracking
 
   // 페이지뷰 수동 추적 함수
   const trackPageView = useCallback(() => {
-    if (typeof window === 'undefined' || !window.gtag) return;
+    if (typeof window === 'undefined' || typeof window.gtag === 'undefined') return;
 
     const pageData = {
       page_path: window.location.pathname,
@@ -170,7 +171,7 @@ export function useGATracking(options: UseGATrackingOptions = {}): UseGATracking
         category = 'javascript';
       }
 
-      const errorParams = {
+      const errorParams: Record<string, any> = {
         error_type: category,
         error_message: errorMessage,
         error_name: errorType,
@@ -199,34 +200,37 @@ export function useGATracking(options: UseGATrackingOptions = {}): UseGATracking
   );
 
   // 전역 에러 핸들러 설정 (선택적)
-  useEffect(() => {
-    if (!trackErrors) return;
+  // 참고: GlobalErrorTracker 컴포넌트를 사용하므로 이 기능은 비활성화됨
+  // GlobalErrorTracker가 이미 전역 에러를 처리하고 있으므로 여기서는 등록하지 않음
 
-    const handleError = (event: ErrorEvent) => {
-      trackError(new Error(event.message), {
-        location: `${event.filename}:${event.lineno}:${event.colno}`,
-        type: 'uncaught_error',
-      });
-    };
-
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      const error = event.reason instanceof Error
-        ? event.reason
-        : new Error(String(event.reason));
-
-      trackError(error, {
-        type: 'unhandled_rejection',
-      });
-    };
-
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
-    return () => {
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-    };
-  }, [trackErrors, trackError]);
+  // useEffect(() => {
+  //   if (!trackErrors) return;
+  //
+  //   const handleError = (event: ErrorEvent) => {
+  //     trackError(new Error(event.message), {
+  //       location: `${event.filename}:${event.lineno}:${event.colno}`,
+  //       type: 'uncaught_error',
+  //     });
+  //   };
+  //
+  //   const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+  //     const error = event.reason instanceof Error
+  //       ? event.reason
+  //       : new Error(String(event.reason));
+  //
+  //     trackError(error, {
+  //       type: 'unhandled_rejection',
+  //     });
+  //   };
+  //
+  //   window.addEventListener('error', handleError);
+  //   window.addEventListener('unhandledrejection', handleUnhandledRejection);
+  //
+  //   return () => {
+  //     window.removeEventListener('error', handleError);
+  //     window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+  //   };
+  // }, [trackErrors, trackError]);
 
   return {
     trackEvent,
@@ -406,7 +410,7 @@ export function useFormTracking(formName: string) {
 export function useCTATracking() {
   const { trackEvent } = useGATracking();
 
-  const trackCTAClick = useCallback(
+  return useCallback(
     (ctaText: string, ctaLocation: string, additionalParams?: Record<string, any>) => {
       // 현재 스크롤 깊이 계산
       const scrollPercentage = Math.round(
@@ -422,8 +426,6 @@ export function useCTATracking() {
     },
     [trackEvent]
   );
-
-  return trackCTAClick;
 }
 
 // Export all

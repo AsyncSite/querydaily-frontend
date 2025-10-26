@@ -142,7 +142,7 @@ export function ItemListTracker({
 }: ItemListTrackerProps) {
   useEffect(() => {
     // 리스트 노출 이벤트
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'view_item_list', {
         item_list_name: listName,
         item_list_id: listId
@@ -167,7 +167,7 @@ export function useItemTracking() {
     price?: number,
     additionalParams?: Record<string, any>
   ) => {
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'view_item', {
         item_id: itemId,
         item_name: itemName,
@@ -185,7 +185,7 @@ export function useItemTracking() {
     price?: number,
     additionalParams?: Record<string, any>
   ) => {
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'select_item', {
         item_id: itemId,
         item_name: itemName,

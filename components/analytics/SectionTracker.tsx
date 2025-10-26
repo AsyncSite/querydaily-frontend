@@ -127,7 +127,7 @@ export function useSectionTracking() {
     sectionName: string,
     additionalParams?: Record<string, any>
   ) => {
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
       window.gtag('event', 'view_section', {
         section_name: sectionName,
         page_path: window.location.pathname,
@@ -170,7 +170,7 @@ export function autoTrackSections() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-            if (window.gtag) {
+            if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
               window.gtag('event', 'view_section', {
                 section_name: sectionName,
                 section_order: index + 1,

@@ -247,7 +247,7 @@ export function enhanceExistingCTAs(
           const text = target.textContent || 'Unknown';
 
           // GA 이벤트 전송
-          if (window.gtag) {
+          if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
             window.gtag('event', 'click_cta', {
               cta_text: text.trim(),
               cta_location: props.location,

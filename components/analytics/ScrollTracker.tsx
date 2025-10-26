@@ -27,6 +27,7 @@ import { useScrollDepthTracking } from '@/hooks/useGATracking';
  */
 export default function ScrollTracker() {
   const pathname = usePathname();
+  // 페이지뷰 자동 추적 비활성화 (GoogleAnalytics 컴포넌트에서 처리)
   const trackedDepths = useScrollDepthTracking([25, 50, 75, 100]);
 
   // 디버그 모드에서 시각적 표시

@@ -299,7 +299,7 @@
 - **모든 6개 태그 구현 완료**
 - 테스트 명령어: `npm run dev`
 - 테스트 URL: http://localhost:3000
-- **상세 테스트 가이드**: [COMPREHENSIVE-TEST-GUIDE.md](./COMPREHENSIVE-TEST-GUIDE.md)
+- **상세 테스트 가이드**: [TESTING-GUIDE.md](./TESTING-GUIDE.md)
 
 ### 다음 작업
 - [ ] 종합 테스트 실행 및 검증
@@ -330,13 +330,11 @@
 
 ### 📚 전체 문서 목록
 - [README.md](./README.md) ⭐ **문서 인덱스**
-- [QUICK-START.md](./QUICK-START.md) ⭐ **빠른 시작**
-- [PROGRESS-SUMMARY.md](./PROGRESS-SUMMARY.md) ✅ 진행 현황
+- [GETTING-STARTED.md](./GETTING-STARTED.md) ⭐ **빠른 시작**
 - [GA-STRATEGY-GUIDE.md](./GA-STRATEGY-GUIDE.md) ✅ 전략 가이드
 
 ### 🧪 테스트 & 검증
-- [TEST-GUIDE.md](./TEST-GUIDE.md) ✅ 기본 테스트
-- [COMPREHENSIVE-TEST-GUIDE.md](./COMPREHENSIVE-TEST-GUIDE.md) ✅ 종합 테스트
+- [TESTING-GUIDE.md](./TESTING-GUIDE.md) ✅ 종합 테스트
 
 ### 📊 설정 & 분석
 - [GA4-CONSOLE-SETUP.md](./GA4-CONSOLE-SETUP.md) ✅ GA4 설정

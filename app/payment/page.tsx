@@ -80,6 +80,32 @@ export default function PaymentPage() {
           )}
         </div>
 
+        {/* 리얼 인터뷰/레주메 핏 특별 안내 */}
+        <div style={{
+          backgroundColor: '#FEF9E7',
+          border: '2px solid #FEE500',
+          borderRadius: '8px',
+          padding: '20px',
+          marginBottom: '20px'
+        }}>
+          <p style={{
+            margin: '0 0 10px 0',
+            color: '#3C1E1E',
+            fontSize: '15px',
+            lineHeight: '1.6'
+          }}>
+            💬 <strong>리얼 인터뷰</strong> 또는 <strong>레주메 핏</strong>을 구매하신 고객님은 입금 확인 후 <strong>카카오톡 채널을 통해 연락</strong>해주세요
+          </p>
+          <p style={{
+            margin: '0',
+            color: '#3C1E1E',
+            fontSize: '14px',
+            lineHeight: '1.6'
+          }}>
+            일정 조율 및 상세 안내가 카카오톡 채널을 통해 진행됩니다
+          </p>
+        </div>
+
         {/* 입금 계좌 정보 */}
         <div className={styles.accountInfo}>
           <h3 className={styles.sectionTitle}>입금 계좌 정보</h3>
@@ -149,7 +175,7 @@ export default function PaymentPage() {
 
           <button
             className={styles.laterBtn}
-            onClick={() => router.push('/products')}
+            onClick={() => router.push('/')}
           >
             나중에 입금할게요
           </button>

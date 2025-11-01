@@ -28,6 +28,8 @@ export default function OrderCompletePage() {
   const [pollingCount, setPollingCount] = useState(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const KAKAO_CHANNEL_CHAT_LINK = 'https://pf.kakao.com/_zxkxmUn/chat';
+
   // 주문 상태 폴링 (카드 결제만)
   useEffect(() => {
     if (!orderData) return;
@@ -60,6 +62,14 @@ export default function OrderCompletePage() {
 
         if (!response.ok) {
           console.error('Failed to check order status:', response.status);
+          // 404 에러 발생 시 폴링 중단
+          if (response.status === 404) {
+            console.error('Order not found (404). Stopping polling.');
+            if (pollingIntervalRef.current) {
+              clearInterval(pollingIntervalRef.current);
+            }
+            setPaymentStatus('TIMEOUT');
+          }
           return;
         }
 
@@ -185,10 +195,55 @@ export default function OrderCompletePage() {
             </h4>
             <ul className={styles.noticeList}>
               <li>24시간 내에 등록하신 이메일로 상품을 발송해드립니다</li>
-              <li>3초 후 자동으로 메인 페이지로 이동합니다</li>
             </ul>
           </div>
         )}
+
+        {/* 카카오톡 채널 안내 - 모든 상품에 표시 */}
+        <div style={{
+          backgroundColor: '#FEF9E7',
+          border: '2px solid #FEE500',
+          borderRadius: '8px',
+          padding: '20px',
+          marginBottom: '20px'
+        }}>
+          <h4 style={{
+            margin: '0 0 15px 0',
+            color: '#3C1E1E',
+            fontSize: '18px',
+            fontWeight: '700'
+          }}>💬 카카오톡 채널 안내</h4>
+          <ul style={{
+            margin: '0',
+            paddingLeft: '20px',
+            color: '#3C1E1E',
+            fontSize: '15px',
+            lineHeight: '1.8'
+          }}>
+            <li>궁금하신 점이나 문의사항이 있으시면 <strong>카카오톡 채널</strong>로 문의해주세요</li>
+            <li><strong>리얼 인터뷰</strong> 또는 <strong>레주메 핏</strong>을 구매하신 고객님은 입금 확인 후 카카오톡 채널을 통해 연락해주세요</li>
+            <li>아래 버튼을 눌러 채널을 추가해주세요</li>
+          </ul>
+          <div style={{ marginTop: '15px', textAlign: 'center' }}>
+            <a
+              href={KAKAO_CHANNEL_CHAT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-block',
+                padding: '12px 24px',
+                backgroundColor: '#FEE500',
+                color: '#3C1E1E',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontWeight: '700',
+                fontSize: '16px'
+              }}
+            >
+              📱 카카오톡 채널 문의하기
+            </a>
+          </div>
+        </div>
 
         {/* Order Summary */}
         <div className={styles.orderSummary}>
@@ -276,7 +331,7 @@ export default function OrderCompletePage() {
           </button>
 
           <a
-            href="https://pf.kakao.com/_zxkxmUn/chat"
+            href={KAKAO_CHANNEL_CHAT_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.secondaryBtn}

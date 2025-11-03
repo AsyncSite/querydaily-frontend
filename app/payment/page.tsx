@@ -187,7 +187,7 @@ export default function PaymentPage() {
             입금 관련 문의사항이 있으신가요?
           </p>
           <a
-            href="https://pf.kakao.com/_zxkxmUn/chat"
+            href="http://pf.kakao.com/_hWMtn/chat"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.contactLink}

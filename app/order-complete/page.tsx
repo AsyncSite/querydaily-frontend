@@ -28,7 +28,7 @@ export default function OrderCompletePage() {
   const [pollingCount, setPollingCount] = useState(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const KAKAO_CHANNEL_CHAT_LINK = 'https://pf.kakao.com/_zxkxmUn/chat';
+  const KAKAO_CHANNEL_CHAT_LINK = 'http://pf.kakao.com/_hWMtn/chat';
 
   // 주문 상태 폴링 (카드 결제만)
   useEffect(() => {

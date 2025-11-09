@@ -156,6 +156,114 @@ export default function HomePage() {
     }
   }, [notification]);
 
+  // Track beta signup form step progression
+  useEffect(() => {
+    if (modalOpen && modalStep > 1) {
+      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+        window.gtag('event', 'form_step_complete', {
+          form_name: 'beta_signup',
+          step_number: modalStep - 1,
+          total_steps: 4,
+          step_name: `Step ${modalStep - 1}`
+        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📊 Beta Form Step ${modalStep - 1} completed`);
+        }
+      }
+    }
+  }, [modalStep, modalOpen]);
+
+  // Track purchase form step progression
+  useEffect(() => {
+    if (purchaseModalOpen && purchaseModalStep > 1) {
+      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+        window.gtag('event', 'form_step_complete', {
+          form_name: 'purchase',
+          step_number: purchaseModalStep - 1,
+          total_steps: 3,
+          step_name: `Step ${purchaseModalStep - 1}`,
+          product_id: selectedPurchaseProduct
+        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📊 Purchase Form Step ${purchaseModalStep - 1} completed (${selectedPurchaseProduct})`);
+        }
+      }
+    }
+  }, [purchaseModalStep, purchaseModalOpen, selectedPurchaseProduct]);
+
+  // Track page engagement time and exit point
+  useEffect(() => {
+    const startTime = Date.now();
+    let lastScrollY = 0;
+    let lastInteractionTime = Date.now();
+    let maxScrollDepth = 0;
+
+    const updateScrollDepth = () => {
+      const scrollPercentage = Math.round(
+        (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+      );
+      maxScrollDepth = Math.max(maxScrollDepth, scrollPercentage);
+      lastScrollY = window.scrollY;
+      lastInteractionTime = Date.now();
+    };
+
+    const handleInteraction = () => {
+      lastInteractionTime = Date.now();
+    };
+
+    const handleBeforeUnload = () => {
+      const engagementTime = Math.round((Date.now() - startTime) / 1000); // seconds
+      const exitPoint = Math.round((lastScrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+
+      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+        // Use sendBeacon for reliable tracking on page unload
+        const data = {
+          event: 'page_engagement',
+          engagement_time_seconds: engagementTime,
+          exit_scroll_depth: exitPoint,
+          max_scroll_depth: maxScrollDepth,
+          page_path: window.location.pathname,
+          last_interaction_seconds_ago: Math.round((Date.now() - lastInteractionTime) / 1000)
+        };
+
+        // Send via gtag
+        window.gtag('event', 'page_engagement', data);
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🕐 Page Engagement: ${engagementTime}s, Exit: ${exitPoint}%, Max: ${maxScrollDepth}%`);
+        }
+      }
+    };
+
+    // Listen to scroll
+    window.addEventListener('scroll', updateScrollDepth, { passive: true });
+
+    // Listen to user interactions
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction, { passive: true });
+
+    // Track page unload
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Also track on visibility change (when user switches tabs)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        handleBeforeUnload();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollDepth);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const testimonials = [
     {
       name: '김**',
@@ -367,10 +475,12 @@ export default function HomePage() {
   }, []);
 
   const handleNext = () => {
+    trackCTA('다음 후기', 'testimonial_slider');
     setCurrentTestimonial(prev => prev + 1);
   };
 
   const handlePrev = () => {
+    trackCTA('이전 후기', 'testimonial_slider');
     setCurrentTestimonial(prev => prev - 1);
   };
 
@@ -767,10 +877,10 @@ export default function HomePage() {
             </button>
 
             <nav className={`${styles.navMenu} ${mobileMenuOpen ? styles.navMenuOpen : ''}`}>
-              <a href="#why" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>왜 QueryDaily</a>
-              <a href="#how-it-works" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>작동 방식</a>
-              <a href="#testimonials" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>후기</a>
-              <a href="#apply" className={`${styles.navLink} ${styles.navLinkCta}`} onClick={() => setMobileMenuOpen(false)}>
+              <a href="#why" className={styles.navLink} onClick={() => { trackCTA('왜 QueryDaily', 'navigation'); setMobileMenuOpen(false); }}>왜 QueryDaily</a>
+              <a href="#how-it-works" className={styles.navLink} onClick={() => { trackCTA('작동 방식', 'navigation'); setMobileMenuOpen(false); }}>작동 방식</a>
+              <a href="#testimonials" className={styles.navLink} onClick={() => { trackCTA('후기', 'navigation'); setMobileMenuOpen(false); }}>후기</a>
+              <a href="#apply" className={`${styles.navLink} ${styles.navLinkCta}`} onClick={() => { trackCTA('시작하기', 'navigation'); setMobileMenuOpen(false); }}>
                 <span>시작하기</span>
                 <span className={styles.navArrow}>→</span>
               </a>
@@ -780,7 +890,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <div className={styles.hero}>
+      <div id="hero" data-section="hero" className={styles.hero}>
         <div className={styles.heroContainer}>
           <div className={styles.heroContent}>
             <div className={styles.heroBadgeContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
@@ -861,7 +971,7 @@ export default function HomePage() {
       </div>
 
       {/* Problem Section */}
-      <div id="why" className={`${styles.section} ${styles.problem}`}>
+      <div id="why" data-section="problem" className={`${styles.section} ${styles.problem}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>혹시 당신의 이야기인가요?</h2>
           <p className={styles.sectionSubtitle} style={{ fontSize: '1.5rem', color: '#c3e88d', marginBottom: '2rem' }}>
@@ -894,7 +1004,7 @@ export default function HomePage() {
       </div>
 
       {/* Tester Review Section */}
-      <div className={`${styles.section} ${styles.realReviews}`} style={{ background: 'rgba(130, 170, 255, 0.02)' }}>
+      <div id="reviews" data-section="tester_reviews" className={`${styles.section} ${styles.realReviews}`} style={{ background: 'rgba(130, 170, 255, 0.02)' }}>
         <div className={styles.sectionContainer}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <div style={{ display: 'inline-block', background: 'rgba(195, 232, 141, 0.1)', padding: '8px 16px', borderRadius: '20px', marginBottom: '1rem' }}>
@@ -1246,7 +1356,7 @@ export default function HomePage() {
       </div>
 
       {/* Solution Section */}
-      <div className={`${styles.section} ${styles.solution}`}>
+      <div id="solution" data-section="solution" className={`${styles.section} ${styles.solution}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>
             면접 준비의 핵심은<br/>'답을 찾는 것'이 아닌, '질문을 아는 것'입니다.
@@ -1273,7 +1383,7 @@ export default function HomePage() {
       </div>
 
       {/* Products Section */}
-      <div id="products" className={`${styles.section} ${styles.productsSection}`}>
+      <div id="products" data-section="products" className={`${styles.section} ${styles.productsSection}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>
             면접 준비를 위한 프리미엄 서비스
@@ -1549,7 +1659,7 @@ export default function HomePage() {
       </div>
 
       {/* How It Works Section - Vertical Timeline */}
-      <div id="how-it-works" className={`${styles.section} ${styles.howItWorks}`}>
+      <div id="how-it-works" data-section="how_it_works" className={`${styles.section} ${styles.howItWorks}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>어떻게 작동하나요?</h2>
           <p className={styles.sectionSubtitle}>단 3단계로 시작하는 챌린지</p>
@@ -1624,7 +1734,7 @@ export default function HomePage() {
       </div>
 
       {/* Question Types Section - Tabbed Interface */}
-      <div className={`${styles.section} ${styles.questionTypes}`}>
+      <div id="question-types" data-section="question_types" className={`${styles.section} ${styles.questionTypes}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>어떤 질문들을 받게 되나요?</h2>
           <p className={styles.sectionSubtitle}>실제 면접관들이 자주 묻는 3가지 유형</p>
@@ -1633,21 +1743,30 @@ export default function HomePage() {
           <div className={styles.questionTabs}>
             <button
               className={`${styles.questionTab} ${activeQuestionTab === 0 ? styles.questionTabActive : ''}`}
-              onClick={() => setActiveQuestionTab(0)}
+              onClick={() => {
+                trackCTA('경험 연결형', 'question_type_tab');
+                setActiveQuestionTab(0);
+              }}
             >
               <span className={styles.tabIcon}>🔗</span>
               <span className={styles.tabLabel}>경험 연결형</span>
             </button>
             <button
               className={`${styles.questionTab} ${activeQuestionTab === 1 ? styles.questionTabActive : ''}`}
-              onClick={() => setActiveQuestionTab(1)}
+              onClick={() => {
+                trackCTA('트레이드오프형', 'question_type_tab');
+                setActiveQuestionTab(1);
+              }}
             >
               <span className={styles.tabIcon}>⚖️</span>
               <span className={styles.tabLabel}>트레이드오프형</span>
             </button>
             <button
               className={`${styles.questionTab} ${activeQuestionTab === 2 ? styles.questionTabActive : ''}`}
-              onClick={() => setActiveQuestionTab(2)}
+              onClick={() => {
+                trackCTA('상황 가정형', 'question_type_tab');
+                setActiveQuestionTab(2);
+              }}
             >
               <span className={styles.tabIcon}>🎯</span>
               <span className={styles.tabLabel}>상황 가정형</span>
@@ -2021,7 +2140,7 @@ export default function HomePage() {
       </div>
 
       {/* Testimonials Section */}
-      <div id="testimonials" className={`${styles.section} ${styles.testimonials}`}>
+      <div id="testimonials" data-section="testimonials" className={`${styles.section} ${styles.testimonials}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>이런 변화를 경험하고 있어요</h2>
 
@@ -2098,7 +2217,7 @@ export default function HomePage() {
       </div>
 
       {/* FAQ Section - Collapsible Accordion */}
-      <div id="faq" className={`${styles.section} ${styles.faqSection}`}>
+      <div id="faq" data-section="faq" className={`${styles.section} ${styles.faqSection}`}>
         <div className={styles.sectionContainer}>
           <h2 className={styles.sectionTitle}>아직 고민되시나요?</h2>
           <p className={styles.sectionSubtitle}>가장 많이 궁금해하시는 점들을 정리했습니다</p>
@@ -2207,7 +2326,10 @@ export default function HomePage() {
               <div key={index} className={styles.faqAccordionItem}>
                 <button
                   className={`${styles.faqAccordionHeader} ${openFaqIndex === index ? styles.faqAccordionHeaderOpen : ''}`}
-                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  onClick={() => {
+                    trackCTA(`FAQ ${index + 1}`, 'faq_accordion', { action: openFaqIndex === index ? 'close' : 'open' });
+                    setOpenFaqIndex(openFaqIndex === index ? null : index);
+                  }}
                 >
                   <div className={styles.faqQuestionContainer}>
                     <span className={styles.faqIcon}>{faq.icon}</span>
@@ -2421,9 +2543,10 @@ export default function HomePage() {
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
                       onClick={() => {
                         if (profileData.email && profileData.email.includes('@')) {
+                          trackCTA('다음 단계로', 'beta_modal_step1');
                           // Send verification email in background (non-blocking)
                           if (!freeTrialVerificationSent) {
-                            const code = Math.floor(100000 + Math.random() * 900000).toString();
+                            const code = Math.floor(100000 + Math.random() + 900000).toString();
                             setSentVerificationCode(code);
                             setFreeTrialVerificationSent(true);
 

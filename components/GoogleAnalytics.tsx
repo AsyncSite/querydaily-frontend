@@ -35,9 +35,12 @@ function GoogleAnalyticsInner({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_ID: string
 }
 
 export default function GoogleAnalytics() {
-  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-24SCZ7Z1E5';
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 
   if (!GA_MEASUREMENT_ID) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ NEXT_PUBLIC_GA_ID is not set. Google Analytics will not be loaded.');
+    }
     return null;
   }
 

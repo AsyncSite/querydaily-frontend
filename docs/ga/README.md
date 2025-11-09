@@ -59,31 +59,36 @@
 
 | 순서 | 문서 | 소요 시간 | 설명 |
 |------|------|----------|------|
-| 1 | **[GETTING-STARTED.md](./GETTING-STARTED.md)** ⭐ | 10분 | 전체 이해, 빠른 시작, 필수 체크리스트 |
-| 2 | **[TESTING-GUIDE.md](./TESTING-GUIDE.md)** | 30분 | 종합 테스트 및 검증 |
-| 3 | **[GA4-CONSOLE-SETUP.md](./GA4-CONSOLE-SETUP.md)** | 1시간 | GA4 Console 상세 설정 |
+| 1 | **[QUICK-START.md](./QUICK-START.md)** 🆕⭐ | 5분 | **2025.11 최신** - 5분 안에 이해하는 핵심 가이드 |
+| 2 | **[VISUALIZATION-GUIDE.md](./VISUALIZATION-GUIDE.md)** 🆕⭐ | 20분 | **비기술 팀원용** - 시각화 및 대시보드 구성 |
+| 3 | **[TESTING-GUIDE.md](./TESTING-GUIDE.md)** | 30분 | 종합 테스트 및 검증 |
+| 4 | **[GA4-CONSOLE-SETUP.md](./GA4-CONSOLE-SETUP.md)** | 1시간 | GA4 Console 기술 상세 설정 |
 
 ### 📖 역할별 가이드
 
-#### 마케터 / 비즈니스 분석가
+#### 🎨 마케터 / 비즈니스 분석가 (비기술직)
 | 문서 | 설명 |
 |------|------|
-| **[GA-STRATEGY-GUIDE.md](./GA-STRATEGY-GUIDE.md)** ⭐ | 퍼널 분석, A/B 테스트, 코호트 분석, ROI 측정 (21K, 최고 품질) |
+| **[QUICK-START.md](./QUICK-START.md)** 🆕⭐ | 5분 만에 이해하는 데이터 추적 현황 |
+| **[VISUALIZATION-GUIDE.md](./VISUALIZATION-GUIDE.md)** 🆕⭐ | **핵심 리포트 5개 + 대시보드 구성** (2025.11 최신) |
+| **[GA-STRATEGY-GUIDE.md](./GA-STRATEGY-GUIDE.md)** | 퍼널 분석, A/B 테스트, 코호트 분석, ROI 측정 |
 | **[FUNNEL-SETUP-GUIDE.md](./FUNNEL-SETUP-GUIDE.md)** | 퍼널 정의, 리포트 템플릿 |
 | **[AB-TESTING-GUIDE.md](./AB-TESTING-GUIDE.md)** | A/B 테스트 시작 방법, 통계 검증 |
 
-#### 개발자
+#### 👨‍💻 개발자
 | 문서 | 설명 |
 |------|------|
 | **[IMPLEMENTATION-REFERENCE.md](./IMPLEMENTATION-REFERENCE.md)** ⭐ | 검증된 패턴, 실전 코드 (27K, 최고 품질) |
-| **[EVENT-REFERENCE.md](./EVENT-REFERENCE.md)** | 6개 핵심 이벤트 레퍼런스, 파라미터 정의 |
+| **[EVENT-REFERENCE.md](./EVENT-REFERENCE.md)** | 10개 핵심 이벤트 레퍼런스 (2025.11 업데이트) |
 | **[TECHNICAL-METRICS-GUIDE.md](./TECHNICAL-METRICS-GUIDE.md)** | 기술 지표 → 비즈니스 가치 연결 (20K) |
 
-#### 프로젝트 매니저
+#### 📊 프로젝트 매니저 / 팀 리더
 | 문서 | 설명 |
 |------|------|
+| **[QUICK-START.md](./QUICK-START.md)** 🆕⭐ | 팀 전체 공유용 - 간결한 현황 파악 |
+| **[VISUALIZATION-GUIDE.md](./VISUALIZATION-GUIDE.md)** 🆕⭐ | 일일/주간 모니터링 루틴 |
 | **[00-IMPLEMENTATION-CHECKLIST.md](./00-IMPLEMENTATION-CHECKLIST.md)** | 마스터 체크리스트, 진행 상황 추적 |
-| **[GA4-CONSOLE-SETUP.md](./GA4-CONSOLE-SETUP.md)** ⭐ | GA4 설정 전체 가이드 (31K, 최고 품질) |
+| **[GA4-CONSOLE-SETUP.md](./GA4-CONSOLE-SETUP.md)** | GA4 설정 전체 가이드 (31K, 2025.11 업데이트) |
 
 ---
 
@@ -235,28 +240,33 @@
 
 ## 📊 문서 목록
 
+### 🆕 2025년 11월 업데이트 (최신)
+
+1. **QUICK-START.md** ⭐ - 5분 빠른 이해 가이드
+2. **VISUALIZATION-GUIDE.md** ⭐ - 시각화 중심 실전 가이드 (비기술 팀원용)
+
 ### 핵심 문서 (시작 필수)
 
-1. **README.md** (이 문서) - 문서 인덱스
-2. **GETTING-STARTED.md** ⭐ - 빠른 시작 가이드
-3. **TESTING-GUIDE.md** - 종합 테스트 가이드
+3. **README.md** (이 문서) - 문서 인덱스
+4. **GETTING-STARTED.md** - 기술 시작 가이드
+5. **TESTING-GUIDE.md** - 종합 테스트 가이드
 
 ### 설정 및 전략
 
-4. **GA4-CONSOLE-SETUP.md** ⭐ - GA4 Console 상세 설정 (31K)
-5. **GA-STRATEGY-GUIDE.md** ⭐ - 퍼널 분석, A/B 테스트 전략 (21K)
-6. **FUNNEL-SETUP-GUIDE.md** - 퍼널 정의 및 리포트
-7. **AB-TESTING-GUIDE.md** - A/B 테스트 실행
+6. **GA4-CONSOLE-SETUP.md** ⭐ - GA4 Console 기술 상세 설정 (2025.11 업데이트)
+7. **GA-STRATEGY-GUIDE.md** ⭐ - 퍼널 분석, A/B 테스트 전략 (21K)
+8. **FUNNEL-SETUP-GUIDE.md** - 퍼널 정의 및 리포트
+9. **AB-TESTING-GUIDE.md** - A/B 테스트 실행
 
 ### 개발자 참고
 
-8. **IMPLEMENTATION-REFERENCE.md** ⭐ - 코드 패턴 및 예제 (27K)
-9. **EVENT-REFERENCE.md** - 이벤트 레퍼런스
-10. **TECHNICAL-METRICS-GUIDE.md** - 기술 지표 가이드 (20K)
+10. **IMPLEMENTATION-REFERENCE.md** ⭐ - 코드 패턴 및 예제 (27K)
+11. **EVENT-REFERENCE.md** - 이벤트 레퍼런스 (10개 이벤트)
+12. **TECHNICAL-METRICS-GUIDE.md** - 기술 지표 가이드 (20K)
 
 ### 프로젝트 관리
 
-11. **00-IMPLEMENTATION-CHECKLIST.md** - 마스터 체크리스트
+13. **00-IMPLEMENTATION-CHECKLIST.md** - 마스터 체크리스트
 
 ---
 
@@ -300,4 +310,21 @@
 
 _모든 문서는 실제 구현과 동기화되어 있습니다._
 
-_최종 업데이트: 2025-01-27_
+_최종 업데이트: 2025-11-09_
+
+## 🆕 2025년 11월 9일 업데이트 하이라이트
+
+**새로운 이벤트:**
+- `form_step_complete`: 폼 단계별 진행 추적
+- `page_engagement`: 체류시간 및 이탈 지점 분석
+- 확장된 `click_cta`: 네비게이션, FAQ, 슬라이더, 탭 추적
+
+**새로운 문서:**
+- **QUICK-START.md**: 5분 안에 이해하는 핵심 가이드
+- **VISUALIZATION-GUIDE.md**: 시각화 중심 실전 가이드 (팀 전체용)
+
+**개선사항:**
+- 커스텀 차원 7개로 확대
+- 커스텀 측정항목 6개 추가
+- 2025년 11월 기준 최신 GA4 UI 반영
+- 비기술 팀원을 위한 시각화 가이드 강화

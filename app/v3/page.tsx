@@ -187,27 +187,27 @@ export default function HomePageV2() {
             {/* Left: Content */}
             <div className={styles.heroContent}>
               <div className={styles.heroBadge}>
-                <span>💬</span>
-                <span>"면접에서 뭘 물어볼지 모르겠어요"</span>
+                <span>🤝</span>
+                <span>혼자 준비하지 마세요</span>
               </div>
 
               <h1 className={styles.heroTitle}>
-                이력서에 쓴 기술,<br/>
-                <span className={styles.highlight}>면접관이 파고들면<br/>답 못하시죠?</span>
+                면접 준비,<br/>
+                <span className={styles.highlight}>뭘 해야 할지 모르겠나요?</span>
               </h1>
 
               <p className={styles.heroSubtitle}>
-                "Redis 써봤어요" → "장애나면 어떻게 하실 건가요?"<br/>
-                이런 질문에 버벅이다가 떨어지는 거, 이제 그만.
+                매일 예상 질문 찾고 답변 만드는 게 지치셨죠.<br/>
+                그 마음, 너무 잘 알아요.
               </p>
 
               <p className={styles.heroDescription}>
-                당신의 이력서를 분석해서, 면접관이 꼭 물어볼 질문을 매일 보내드립니다.<br/>
-                <strong>하루 10분</strong>이면 준비 끝.
+                QueryDaily가 함께합니다. 당신의 이력서로 실제 질문을 매일 보내드릴게요.<br/>
+                <strong>이제 포기하지 않으셔도 됩니다.</strong>
               </p>
 
               <a href="#products" className={styles.heroBtn}>
-                <span>내 이력서로 어떤 질문이 나올까?</span>
+                <span>지금 바로 시작하기</span>
                 <span>→</span>
               </a>
             </div>

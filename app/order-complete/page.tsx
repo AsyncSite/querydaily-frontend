@@ -7,11 +7,11 @@ import styles from './page.module.css';
 type PaymentStatus = 'CHECKING' | 'PENDING' | 'CONFIRMED' | 'TIMEOUT';
 
 interface OrderStatusResponse {
-  orderId: string;
-  status: 'PENDING' | 'COMPLETED';
-  purchaseId?: string;
-  completedAt?: string;
+  intentId: string;
+  status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'EXPIRED';
+  result?: any;
   message?: string;
+  updatedAt?: string;
 }
 
 export default function OrderCompletePage() {
@@ -75,7 +75,7 @@ export default function OrderCompletePage() {
 
         const result: { success: boolean; data: OrderStatusResponse } = await response.json();
 
-        if (result.success && result.data.status === 'COMPLETED') {
+        if (result.success && result.data.status === 'CONFIRMED') {
           setPaymentStatus('CONFIRMED');
           if (pollingIntervalRef.current) {
             clearInterval(pollingIntervalRef.current);
@@ -86,6 +86,12 @@ export default function OrderCompletePage() {
             localStorage.removeItem('orderData');
             router.push('/');
           }, 3000);
+        } else if (result.success && (result.data.status === 'FAILED' || result.data.status === 'EXPIRED')) {
+          // 결제 실패 또는 만료 시 폴링 중단
+          setPaymentStatus('TIMEOUT');
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+          }
         } else if (attempts >= maxAttempts) {
           setPaymentStatus('TIMEOUT');
           if (pollingIntervalRef.current) {

@@ -23,6 +23,18 @@ const maskName = (name: string): string => {
   return name[0] + '*'.repeat(middleLength) + name[name.length - 1];
 };
 
+// 전화번호 유효성 검사 함수
+// 반드시 하이픈 2개 필요: 010-1234-5678, 010-123-4567, 02-1234-5678
+const validatePhone = (phone: string): boolean => {
+  if (!phone || phone.trim() === '') return false;
+  const trimmed = phone.trim();
+
+  // 하이픈 2개 필수
+  const phonePattern = /^0\d{1,2}-\d{3,4}-\d{4}$/;
+
+  return phonePattern.test(trimmed);
+};
+
 export default function HomePage() {
   const router = useRouter();
   const { trackCTA } = useManualCTATracking();
@@ -95,8 +107,11 @@ export default function HomePage() {
   const [verificationCode, setVerificationCode] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
+  const [purchaseNameError, setPurchaseNameError] = useState('');
   const [purchasePhone, setPurchasePhone] = useState('');
+  const [purchasePhoneError, setPurchasePhoneError] = useState('');
   const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
+  const [purchaseEmailError, setPurchaseEmailError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [sentVerificationCode, setSentVerificationCode] = useState('');
@@ -512,8 +527,11 @@ export default function HomePage() {
     setSentVerificationCode('');
     // Reset purchase info
     setPurchaseName('');
+    setPurchaseNameError('');
     setPurchasePhone('');
+    setPurchasePhoneError('');
     setPurchaseEmail(''); // KAKAO/INICIS REVIEW: Reset email
+    setPurchaseEmailError('');
     setPurchaseFile(null);
   };
 
@@ -2929,16 +2947,33 @@ export default function HomePage() {
                       placeholder="your@email.com"
                       className={styles.modalInput}
                       value={purchaseEmail}
-                      onChange={(e) => setPurchaseEmail(e.target.value)}
-                      onFocus={() => trackFormField('purchase', 'email', 'focus', purchaseModalStep)}
-                      onBlur={(e) => {
-                        if (e.target.value) {
-                          const type = e.target.value.includes('@') ? 'complete' : 'blur';
-                          trackFormField('purchase', 'email', type, purchaseModalStep);
+                      onChange={(e) => {
+                        setPurchaseEmail(e.target.value);
+                        // 입력 중에는 에러 메시지 제거
+                        if (purchaseEmailError) {
+                          setPurchaseEmailError('');
                         }
                       }}
+                      onFocus={() => trackFormField('purchase', 'email', 'focus', purchaseModalStep)}
+                      onBlur={(e) => {
+                        const email = e.target.value.trim();
+                        if (email) {
+                          if (!email.includes('@')) {
+                            setPurchaseEmailError('올바른 이메일 주소를 입력해주세요 (예: your@email.com)');
+                          } else {
+                            setPurchaseEmailError('');
+                            trackFormField('purchase', 'email', 'complete', purchaseModalStep);
+                          }
+                        }
+                      }}
+                      style={purchaseEmailError ? { borderColor: '#ff6b6b' } : {}}
                       autoFocus
                     />
+                    {purchaseEmailError && (
+                      <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                        {purchaseEmailError}
+                      </p>
+                    )}
                   </div>
 
                   {/* 이름 입력 */}
@@ -2949,14 +2984,28 @@ export default function HomePage() {
                       placeholder="홍길동"
                       className={styles.modalInput}
                       value={purchaseName}
-                      onChange={(e) => setPurchaseName(e.target.value)}
+                      onChange={(e) => {
+                        setPurchaseName(e.target.value);
+                        // 입력 중에는 에러 메시지 제거
+                        if (purchaseNameError) {
+                          setPurchaseNameError('');
+                        }
+                      }}
                       onFocus={() => trackFormField('purchase', 'name', 'focus', purchaseModalStep)}
                       onBlur={(e) => {
-                        if (e.target.value.trim()) {
+                        const name = e.target.value.trim();
+                        if (name) {
+                          setPurchaseNameError('');
                           trackFormField('purchase', 'name', 'complete', purchaseModalStep);
                         }
                       }}
+                      style={purchaseNameError ? { borderColor: '#ff6b6b' } : {}}
                     />
+                    {purchaseNameError && (
+                      <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                        {purchaseNameError}
+                      </p>
+                    )}
                   </div>
 
                   {/* 연락처 입력 */}
@@ -2967,14 +3016,32 @@ export default function HomePage() {
                       placeholder="010-1234-5678"
                       className={styles.modalInput}
                       value={purchasePhone}
-                      onChange={(e) => setPurchasePhone(e.target.value)}
-                      onFocus={() => trackFormField('purchase', 'phone', 'focus', purchaseModalStep)}
-                      onBlur={(e) => {
-                        if (e.target.value.trim()) {
-                          trackFormField('purchase', 'phone', 'complete', purchaseModalStep);
+                      onChange={(e) => {
+                        setPurchasePhone(e.target.value);
+                        // 입력 중에는 에러 메시지 제거
+                        if (purchasePhoneError) {
+                          setPurchasePhoneError('');
                         }
                       }}
+                      onFocus={() => trackFormField('purchase', 'phone', 'focus', purchaseModalStep)}
+                      onBlur={(e) => {
+                        const phone = e.target.value.trim();
+                        if (phone) {
+                          if (!validatePhone(phone)) {
+                            setPurchasePhoneError('올바른 전화번호 형식을 입력해주세요 (예: 010-1234-5678, 하이픈 필수)');
+                          } else {
+                            setPurchasePhoneError('');
+                            trackFormField('purchase', 'phone', 'complete', purchaseModalStep);
+                          }
+                        }
+                      }}
+                      style={purchasePhoneError ? { borderColor: '#ff6b6b' } : {}}
                     />
+                    {purchasePhoneError && (
+                      <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                        {purchasePhoneError}
+                      </p>
+                    )}
                   </div>
 
                   <div className={styles.modalActions}>
@@ -2987,22 +3054,55 @@ export default function HomePage() {
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
                       onClick={() => {
-                        if (!purchaseEmail.trim() || !purchaseEmail.includes('@')) {
-                          alert('올바른 이메일을 입력해주세요');
-                        } else if (!purchaseName.trim()) {
+                        console.log('=== 폼 검증 시작 ===');
+                        console.log('이메일:', purchaseEmail);
+                        console.log('이름:', purchaseName);
+                        console.log('전화번호:', purchasePhone);
+
+                        // 이메일 검증
+                        if (!purchaseEmail.trim()) {
+                          console.log('이메일 비어있음');
+                          alert('이메일을 입력해주세요');
+                          return;
+                        }
+                        if (!purchaseEmail.includes('@')) {
+                          console.log('이메일 형식 오류');
+                          alert('올바른 이메일 주소를 입력해주세요');
+                          return;
+                        }
+
+                        // 이름 검증
+                        if (!purchaseName.trim()) {
+                          console.log('이름 비어있음');
                           alert('이름을 입력해주세요');
-                        } else if (!purchasePhone.trim()) {
+                          return;
+                        }
+
+                        // 전화번호 검증
+                        if (!purchasePhone.trim()) {
+                          console.log('전화번호 비어있음');
                           alert('연락처를 입력해주세요');
+                          return;
+                        }
+
+                        const isValidPhone = validatePhone(purchasePhone);
+                        console.log('전화번호 검증 결과:', isValidPhone);
+
+                        if (!isValidPhone) {
+                          console.log('전화번호 형식 오류');
+                          alert('올바른 전화번호 형식을 입력해주세요\n\n예시: 010-1234-5678\n(하이픈 필수)');
+                          return;
+                        }
+
+                        console.log('=== 모든 검증 통과 ===');
+
+                        // KAKAO/INICIS REVIEW: Handle different payment methods
+                        if (paymentMethod === 'card') {
+                          handleCardPayment();
                         } else {
-                          // KAKAO/INICIS REVIEW: Handle different payment methods
-                          if (paymentMethod === 'card') {
-                            handleCardPayment();
-                          } else {
-                            setPurchaseModalStep(3); // Go to bank transfer info
-                          }
+                          setPurchaseModalStep(3); // Go to bank transfer info
                         }
                       }}
-                      disabled={!purchaseEmail.includes('@') || !purchaseName.trim() || !purchasePhone.trim()}
                     >
                       다음 단계로
                     </button>

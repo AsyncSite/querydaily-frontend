@@ -57,7 +57,7 @@ export default function OrderCompletePage() {
         setPollingCount(attempts);
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/checkout/payment-intents/${orderData.orderId}/status`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'}/api/checkout/payment-intents/${orderData.orderId}/status`
         );
 
         if (!response.ok) {

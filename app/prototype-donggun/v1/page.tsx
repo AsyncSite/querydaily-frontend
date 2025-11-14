@@ -1,68 +1,18 @@
-/**
- * QueryDaily v1: "내일의 질문, 오늘 답하기"
- *
- * 핵심 컨셉: 시간의 역전
- * - 애플 iPod "주머니 속의 1000곡" (공간의 역전)
- * - QueryDaily "내일의 질문, 오늘 답하기" (시간의 역전)
- *
- * UI 전략:
- * - 3D 카드 플립으로 시간 역전 시각화
- * - 시계 역방향 애니메이션
- * - 카운터 애니메이션
- * - 인터랙티브 토글 (일반 vs 이력서 기반)
- * - 세로 타임라인 스크롤 애니메이션
- *
- * 참고: Linear의 미니멀리즘 + Stripe의 그라디언트
- */
-
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './page.module.css';
+import './styles.css';
 
-export default function V1TimeReversePage() {
+export default function V1Page() {
   const router = useRouter();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [questionToggle, setQuestionToggle] = useState(false); // false: 일반, true: 이력서
+  const [isTextVisible, setIsTextVisible] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
 
-  const statsRef = useRef<HTMLDivElement>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
-
-  // 카드 플립 자동 애니메이션 (8초 주기)
   useEffect(() => {
-    const flipInterval = setInterval(() => {
-      setIsFlipped(prev => !prev);
-    }, 8000);
-    return () => clearInterval(flipInterval);
+    setTimeout(() => setIsTextVisible(true), 300);
   }, []);
 
-  // 카운터 애니메이션
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const target = entry.target as HTMLElement;
-            const finalValue = parseFloat(target.dataset.target || '0');
-            const isDecimal = target.dataset.decimal === 'true';
-            animateCounter(target, finalValue, isDecimal);
-            observer.unobserve(target);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    const counters = document.querySelectorAll('.counter');
-    counters.forEach((counter) => observer.observe(counter));
-
-    return () => observer.disconnect();
-  }, []);
-
-  // 스크롤 트리거 애니메이션
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -70,546 +20,432 @@ export default function V1TimeReversePage() {
           if (entry.isIntersecting) {
             const id = entry.target.getAttribute('data-section');
             if (id) {
-              setVisibleSections((prev) => new Set(prev).add(id));
+              setVisibleSections(prev => new Set([...prev, id]));
             }
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     );
 
-    const sections = document.querySelectorAll('[data-section]');
-    sections.forEach((section) => observer.observe(section));
+    document.querySelectorAll('[data-section]').forEach((el) => {
+      observer.observe(el);
+    });
 
     return () => observer.disconnect();
   }, []);
 
-  const animateCounter = (element: HTMLElement, target: number, isDecimal: boolean) => {
-    const duration = 2000;
-    const steps = 60;
-    const increment = target / steps;
-    let current = 0;
-
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        element.textContent = isDecimal ? target.toFixed(1) : target.toString();
-        clearInterval(timer);
-      } else {
-        element.textContent = isDecimal
-          ? current.toFixed(1)
-          : Math.floor(current).toString();
-      }
-    }, duration / steps);
-  };
-
   return (
-    <div className={styles.container}>
+    <div className="v1-container">
       {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerContainer}>
-          <div className={styles.logo}>
-            <span className={styles.logoText}>
-              Query<span className={styles.logoAccent}>Daily</span>
-            </span>
+      <header className="v1-header">
+        <div className="v1-header-content">
+          <div className="v1-logo">
+            <span className="v1-logo-text">Query</span>
+            <span className="v1-logo-accent">Daily</span>
           </div>
-
-          <button
-            className={styles.hamburger}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="메뉴"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-
-          <nav className={`${styles.nav} ${mobileMenuOpen ? styles.navOpen : ''}`}>
-            <a href="#products" onClick={() => setMobileMenuOpen(false)}>상품</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>이용방법</a>
-            <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-            <a href="#products" className={styles.navCta} onClick={() => setMobileMenuOpen(false)}>
-              시작하기
-            </a>
+          <nav className="v1-nav">
+            <a href="#difference">차별점</a>
+            <a href="#how">사용방법</a>
+            <a href="#pricing">가격</a>
+            <a href="#pricing" className="v1-nav-cta">시작하기</a>
           </nav>
         </div>
       </header>
 
-      {/* Hero Section - 시간 역전 카드 플립 */}
-      <section className={styles.hero}>
-        {/* 배경: 시계 역방향 애니메이션 */}
-        <div className={styles.timeVortex}>
-          <div className={styles.clockCircle}></div>
-          <div className={styles.clockHand}></div>
-        </div>
-        <div className={styles.lightEffect}></div>
-        <div className={styles.lightEffect2}></div>
-
-        <div className={styles.heroContent}>
-          {/* 3D 카드 플립 */}
-          <div className={`${styles.timeCard} ${isFlipped ? styles.flipped : ''}`}>
-            {/* 앞면: 내일 (불안) */}
-            <div className={`${styles.cardSide} ${styles.cardFront}`}>
-              <span className={styles.timeLabel}>내일 면접장</span>
-              <div className={styles.questionMark}>?</div>
-              <p className={styles.emotionText}>불안한 당신</p>
-            </div>
-
-            {/* 뒷면: 오늘 (자신감) */}
-            <div className={`${styles.cardSide} ${styles.cardBack}`}>
-              <span className={styles.timeLabel}>오늘의 준비</span>
-              <div className={styles.checkMark}>✓</div>
-              <p className={styles.emotionText}>준비된 당신</p>
-            </div>
-          </div>
-
-          {/* 메인 타이틀 */}
-          <h1 className={styles.mainTitle}>
-            내일의 질문, <span className={styles.highlightText}>오늘 답하기</span>
+      {/* Hero */}
+      <section className="v1-hero">
+        <div className="v1-hero-bg"></div>
+        <div className="v1-hero-center">
+          <h1 className={`v1-main-headline ${isTextVisible ? 'visible' : ''}`}>
+            내일의 질문, <span className="v1-highlight-text">오늘 답하기</span>
           </h1>
-
-          <p className={styles.subtitle}>
-            당신의 이력서가 면접 질문을 예측합니다
+        </div>
+        <div className="v1-hero-bottom">
+          <p className={`v1-sub-headline ${isTextVisible ? 'visible' : ''}`}>
+            면접관이 묻기 전에 미리 준비합니다
           </p>
-
-          <p className={styles.subDescription}>
-            100명이 넘는 개발자가 매일 연습하고 있습니다
+          <p className={`v1-hero-desc ${isTextVisible ? 'visible' : ''}`}>
+            <strong>하루 10분, 이력서 기반 맞춤 질문</strong>으로<br />
+            면접에서 흔들리지 않는 자신감을 만듭니다
           </p>
-
-          {/* 타임라인 인디케이터 */}
-          <div className={styles.timelineIndicator}>
-            <div className={styles.timePoint}>
-              <span className={styles.timeText}>오전 7시</span>
-              <span className={styles.timeLabel}>질문 도착</span>
-            </div>
-            <div className={styles.timeLine}>
-              <div className={styles.flowLine}></div>
-            </div>
-            <div className={styles.timePoint}>
-              <span className={styles.timeText}>저녁 5시</span>
-              <span className={styles.timeLabel}>질문 도착</span>
-            </div>
-          </div>
-
-          <a href="#products" className={styles.ctaButton}>
-            <span>시간을 역전시키기</span>
-            <div className={styles.ripple}></div>
+          <a href="#pricing" className={`v1-hero-cta ${isTextVisible ? 'visible' : ''}`}>
+            내일의 질문 받아보기 →
           </a>
         </div>
       </section>
 
-      {/* 통계 섹션 - 카운터 애니메이션 */}
-      <section className={styles.statsSection} ref={statsRef}>
-        <div className={styles.statsContainer}>
-          <div className={styles.statItem}>
-            <div className="counter" data-target="100">0</div>
-            <div className={styles.statUnit}>군데</div>
-            <div className={styles.statLabel}>지원했지만</div>
-            <div className={styles.statSublabel}>면접은 단 3번</div>
+      {/* Stats Bar */}
+      <section className="v1-stats-bar">
+        <div className="v1-stats-content">
+          <div className="v1-stat-item-bar">
+            <div className="v1-stat-num-bar">2025년</div>
+            <div className="v1-stat-label-bar">서비스 시작</div>
           </div>
-
-          <div className={styles.statDivider}></div>
-
-          <div className={styles.statItem}>
-            <div className="counter" data-target="87">0</div>
-            <div className={styles.statUnit}>%</div>
-            <div className={styles.statLabel}>경력 1년+</div>
-            <div className={styles.statSublabel}>요구 공고</div>
+          <div className="v1-stat-divider-bar"></div>
+          <div className="v1-stat-item-bar">
+            <div className="v1-stat-num-bar">5.0/5.0</div>
+            <div className="v1-stat-label-bar">사용자 만족도</div>
           </div>
-
-          <div className={styles.statDivider}></div>
-
-          <div className={styles.statItem}>
-            <div className="counter" data-target="3.2" data-decimal="true">0</div>
-            <div className={styles.statUnit}>초</div>
-            <div className={styles.statLabel}>첫인상</div>
-            <div className={styles.statSublabel}>판단 시간</div>
+          <div className="v1-stat-divider-bar"></div>
+          <div className="v1-stat-item-bar">
+            <div className="v1-stat-num-bar">24시간 이내</div>
+            <div className="v1-stat-label-bar">첫 질문 발송</div>
           </div>
-
-          <div className={styles.statDivider}></div>
-
-          <div className={`${styles.statItem} ${styles.statHighlight}`}>
-            <div className={styles.statBut}>BUT</div>
-            <div className={styles.statMessage}>
-              당신은 이미<br/>충분히 경험했습니다
-            </div>
+          <div className="v1-stat-divider-bar"></div>
+          <div className="v1-stat-item-bar">
+            <div className="v1-stat-num-bar">100%</div>
+            <div className="v1-stat-label-bar">환불 보장</div>
           </div>
         </div>
       </section>
 
-      {/* 차별점 섹션 - 인터랙티브 토글 */}
-      <section className={styles.differenceSection} data-section="difference">
-        <div className={`${styles.differenceContainer} ${visibleSections.has('difference') ? styles.visible : ''}`}>
-          <span className={styles.sectionBadge}>💡 핵심 차별점</span>
-          <h2 className={styles.sectionTitle}>
-            이력서가 예측합니다
+      {/* Value Proposition */}
+      <section className="v1-value-section">
+        <div className="v1-value-container">
+          <span className="v1-badge">핵심 가치</span>
+          <h2 className="v1-value-title">
+            이미 경험한 것을<br />
+            질문으로 만듭니다
           </h2>
-          <p className={styles.sectionSubtitle}>
-            ChatGPT는 일반론을 말합니다.<br/>
-            QueryDaily는 당신의 경험을 예측합니다.
+          <p className="v1-value-desc">
+            당신의 이력서에는 프로젝트 경험이 있습니다.<br />
+            면접관은 그 경험을 질문으로 파고듭니다.<br />
+            <strong>QueryDaily는 그 질문을 미리 예측합니다.</strong>
           </p>
-
-          {/* 토글 스위치 */}
-          <div className={styles.toggleContainer}>
-            <button
-              className={`${styles.toggleButton} ${!questionToggle ? styles.active : ''}`}
-              onClick={() => setQuestionToggle(false)}
-            >
-              일반 질문 (ChatGPT)
-            </button>
-            <button
-              className={`${styles.toggleButton} ${questionToggle ? styles.active : ''}`}
-              onClick={() => setQuestionToggle(true)}
-            >
-              이력서 기반 (QueryDaily)
-            </button>
-          </div>
-
-          {/* 질문 디스플레이 */}
-          <div className={styles.questionDisplay}>
-            {!questionToggle ? (
-              // 일반 질문
-              <div className={`${styles.questionPanel} ${styles.fadeIn}`} key="general">
-                <div className={styles.questionItem}>
-                  <span className={styles.questionIcon}>❌</span>
-                  <p>"Spring Boot의 장점은 무엇인가요?"</p>
-                </div>
-                <div className={styles.questionItem}>
-                  <span className={styles.questionIcon}>❌</span>
-                  <p>"JPA를 사용하는 이유는?"</p>
-                </div>
-                <div className={styles.questionItem}>
-                  <span className={styles.questionIcon}>❌</span>
-                  <p>"Redis는 왜 사용하나요?"</p>
-                </div>
-                <div className={styles.verdict}>
-                  <span className={styles.verdictIcon}>😴</span>
-                  <p>누구에게나 똑같은 질문 → 외우기만 하면 됨</p>
-                </div>
-              </div>
-            ) : (
-              // 이력서 기반 질문
-              <div className={`${styles.questionPanel} ${styles.fadeIn}`} key="custom">
-                <div className={styles.questionItem}>
-                  <span className={styles.questionIcon}>✅</span>
-                  <p>"3번 프로젝트에서 Spring Boot를 선택한 이유는? Django가 아닌?"</p>
-                </div>
-                <div className={styles.questionItem}>
-                  <span className={styles.questionIcon}>✅</span>
-                  <p>"JPA N+1 문제를 실제로 겪었나요? 어떻게 해결했나요?"</p>
-                </div>
-                <div className={styles.questionItem}>
-                  <span className={styles.questionIcon}>✅</span>
-                  <p>"Redis 장애 시 대처법은? 실제 경험 말씀해주세요"</p>
-                </div>
-                <div className={`${styles.verdict} ${styles.positive}`}>
-                  <span className={styles.verdictIcon}>🎯</span>
-                  <p>당신만의 경험 → STAR 기법으로 구조화</p>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </section>
 
-      {/* 타임라인 섹션 - 세로 스크롤 애니메이션 */}
-      <section id="how-it-works" className={styles.timelineSection} ref={timelineRef}>
-        <div className={styles.timelineContainer}>
-          <span className={styles.sectionBadge}>⏰ 시간을 역전시키는 3단계</span>
-          <h2 className={styles.sectionTitle}>
-            내일을 오늘 준비하는 방법
-          </h2>
-
-          {/* 중앙 시간축 */}
-          <div className={styles.timeAxis}>
-            <div className={styles.axisLine}></div>
+      {/* Difference Section - Side by Side */}
+      <section id="difference" className="v1-diff-section" data-section="difference">
+        <div className={`v1-diff-container ${visibleSections.has('difference') ? 'visible' : ''}`}>
+          <div className="v1-section-header">
+            <span className="v1-badge">핵심 차별점</span>
+            <h2 className="v1-section-title">일반 질문 vs 이력서 기반 질문</h2>
+            <p className="v1-section-subtitle">
+              ChatGPT는 일반론을 말합니다. QueryDaily는 당신의 경험을 묻습니다.
+            </p>
           </div>
 
-          {/* 단계별 카드 (좌우 교차) */}
-          <div className={styles.timelineSteps}>
-            <div
-              className={`${styles.timelineStep} ${styles.left}`}
-              data-section="step1"
-            >
-              <div className={`${styles.stepCard} ${visibleSections.has('step1') ? styles.visible : ''}`}>
-                <div className={styles.stepTime}>5분</div>
-                <div className={styles.stepIcon}>📄</div>
-                <h3 className={styles.stepTitle}>이력서 분석</h3>
-                <p className={styles.stepDescription}>
-                  AI가 당신의 경험을 읽습니다<br/>
-                  어떤 질문이 나올지 예측합니다
-                </p>
+          <div className="v1-comparison-grid">
+            {/* 일반 질문 */}
+            <div className="v1-comp-card">
+              <div className="v1-comp-header">
+                <span className="v1-comp-icon">❌</span>
+                <h3>일반 질문</h3>
+              </div>
+              <div className="v1-comp-questions">
+                <div className="v1-comp-q-item">
+                  <span className="v1-comp-q-num">Q1</span>
+                  <p>Spring Boot의 장점을 설명해주세요</p>
+                </div>
+                <div className="v1-comp-q-item">
+                  <span className="v1-comp-q-num">Q2</span>
+                  <p>RESTful API란 무엇인가요?</p>
+                </div>
+                <div className="v1-comp-q-item">
+                  <span className="v1-comp-q-num">Q3</span>
+                  <p>데이터베이스 인덱스를 설명해주세요</p>
+                </div>
+              </div>
+              <div className="v1-comp-footer">
+                <p>😕 누구에게나 똑같은 질문<br />→ 일반론 암기</p>
               </div>
             </div>
 
-            <div
-              className={`${styles.timelineStep} ${styles.right}`}
-              data-section="step2"
-            >
-              <div className={`${styles.stepCard} ${visibleSections.has('step2') ? styles.visible : ''}`}>
-                <div className={styles.stepTime}>매일 2회</div>
-                <div className={styles.stepIcon}>🔮</div>
-                <h3 className={styles.stepTitle}>질문 예측</h3>
-                <p className={styles.stepDescription}>
-                  오전 7시, 저녁 5시<br/>
-                  내일의 질문이 도착합니다
-                </p>
+            {/* 이력서 기반 질문 */}
+            <div className="v1-comp-card positive">
+              <div className="v1-comp-header positive">
+                <span className="v1-comp-icon">✅</span>
+                <h3>이력서 기반 질문</h3>
               </div>
-            </div>
-
-            <div
-              className={`${styles.timelineStep} ${styles.left}`}
-              data-section="step3"
-            >
-              <div className={`${styles.stepCard} ${visibleSections.has('step3') ? styles.visible : ''}`}>
-                <div className={styles.stepTime}>10분</div>
-                <div className={styles.stepIcon}>💪</div>
-                <h3 className={styles.stepTitle}>오늘 준비</h3>
-                <p className={styles.stepDescription}>
-                  STAR 기법으로 답변 구조화<br/>
-                  하루 10분, 매일 연습
-                </p>
+              <div className="v1-comp-questions">
+                <div className="v1-comp-q-item">
+                  <span className="v1-comp-q-num positive">Q1</span>
+                  <p>상품 검색 API에서 Elasticsearch를 도입한 구체적인 이유는? 어떤 성능 지표가 개선되었나요?</p>
+                </div>
+                <div className="v1-comp-q-item">
+                  <span className="v1-comp-q-num positive">Q2</span>
+                  <p>결제 시스템에서 동시성 이슈를 어떻게 해결했나요? 비관적 락과 낙관적 락 중 어떤 것을 선택했고 그 이유는?</p>
+                </div>
+                <div className="v1-comp-q-item">
+                  <span className="v1-comp-q-num positive">Q3</span>
+                  <p>user_orders 테이블에 복합 인덱스 (user_id, created_at)를 설계한 근거는? 다른 조합은 고려하지 않았나요?</p>
+                </div>
+              </div>
+              <div className="v1-comp-footer positive">
+                <p>🎯 당신만의 경험<br />→ STAR 기법 답변</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 실제 후기 섹션 */}
-      <section className={styles.testimonialsSection}>
-        <div className={styles.testimonialsContainer}>
-          <span className={styles.sectionBadge}>💬 실제 사용자 후기</span>
-          <h2 className={styles.sectionTitle}>
-            예측이 맞았습니다
-          </h2>
-
-          {/* 만족도 통계 */}
-          <div className={styles.satisfactionStats}>
-            <div className={styles.bigStat}>
-              <div className={styles.bigStatNumber}>5.0/5.0</div>
-              <div className={styles.bigStatLabel}>평균 만족도</div>
-            </div>
-            <div className={styles.statDivider}></div>
-            <div className={styles.bigStat}>
-              <div className={styles.bigStatNumber}>100%</div>
-              <div className={styles.bigStatLabel}>추천 의향</div>
-            </div>
-            <div className={styles.statDivider}></div>
-            <div className={styles.bigStat}>
-              <div className={styles.bigStatNumber}>하루 10분</div>
-              <div className={styles.bigStatLabel}>준비 시간</div>
-            </div>
+      {/* How it Works */}
+      <section id="how" className="v1-how-section" data-section="how">
+        <div className={`v1-how-container ${visibleSections.has('how') ? 'visible' : ''}`}>
+          <div className="v1-section-header">
+            <span className="v1-badge">3단계 프로세스</span>
+            <h2 className="v1-section-title">간단합니다</h2>
           </div>
 
-          {/* 키워드 클라우드 */}
-          <div className={styles.keywordCloud}>
-            <span className={styles.keyword} data-size="xxl">이력서 기반 예측</span>
-            <span className={styles.keyword} data-size="xl">STAR 기법</span>
-            <span className={styles.keyword} data-size="lg">답변 가이드</span>
-            <span className={styles.keyword} data-size="xxl">실전 질문</span>
-            <span className={styles.keyword} data-size="md">매일 연습</span>
-            <span className={styles.keyword} data-size="xl">자신감</span>
-            <span className={styles.keyword} data-size="lg">맞춤 질문</span>
-            <span className={styles.keyword} data-size="md">꼬리 질문 대비</span>
-            <span className={styles.keyword} data-size="xl">정확한 예측</span>
-          </div>
-
-          {/* 만족도 차트 */}
-          <div className={styles.chartGrid}>
-            <div className={styles.chartItem}>
-              <img src="/images/satisfication.png" alt="전반적 만족도" className={styles.chartImage} />
+          <div className="v1-timeline-horizontal">
+            <div className="v1-timeline-step">
+              <div className="v1-timeline-num">1</div>
+              <div className="v1-timeline-content">
+                <h3>이력서 분석</h3>
+                <p>당신의 프로젝트 경험을<br />AI가 분석합니다</p>
+              </div>
             </div>
-            <div className={styles.chartItem}>
-              <img src="/images/chart2.png" alt="구체적으로 도움된 점" className={styles.chartImage} />
+
+            <div className="v1-timeline-arrow">→</div>
+
+            <div className="v1-timeline-step">
+              <div className="v1-timeline-num">2</div>
+              <div className="v1-timeline-content">
+                <h3>질문 예측</h3>
+                <p>면접관이 물을 질문을<br />미리 생성합니다</p>
+              </div>
+            </div>
+
+            <div className="v1-timeline-arrow">→</div>
+
+            <div className="v1-timeline-step">
+              <div className="v1-timeline-num">3</div>
+              <div className="v1-timeline-content">
+                <h3>매일 연습</h3>
+                <p>STAR 기법 가이드로<br />답변을 준비합니다</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 상품 섹션 - 여정 프로그레스 */}
-      <section id="products" className={styles.productsSection}>
-        <div className={styles.productsContainer}>
-          <span className={styles.sectionBadge}>🎯 시작하는 방법</span>
-          <h2 className={styles.sectionTitle}>
-            내일을 오늘 준비하세요
-          </h2>
+      {/* Before/After Testimonials */}
+      <section className="v1-proof-section" data-section="proof">
+        <div className={`v1-proof-container ${visibleSections.has('proof') ? 'visible' : ''}`}>
+          <div className="v1-section-header">
+            <span className="v1-badge">실제 사용자 후기</span>
+            <h2 className="v1-section-title">예측이 맞았습니다</h2>
+          </div>
 
-          {/* 여정 프로그레스 바 */}
-          <div className={styles.journeyProgress}>
-            <div className={styles.progressLine}>
-              <div className={styles.progressPoint} data-step="start">
-                <span>시작</span>
+          <div className="v1-before-after-grid">
+            <div className="v1-ba-card">
+              <div className="v1-ba-header before">
+                <span className="v1-ba-icon">❌</span>
+                <h4>QueryDaily 사용 전</h4>
               </div>
-              <div className={styles.progressPoint} data-step="experience">
-                <span>경험하기</span>
+              <ul className="v1-ba-list">
+                <li>"면접에서 뭐 물어볼지 모르겠어요"</li>
+                <li>"이력서에 쓴 건데 설명 못했어요"</li>
+                <li>"준비는 했는데 불안해요"</li>
+                <li>"ChatGPT로 연습했는데 도움 안 됐어요"</li>
+              </ul>
+            </div>
+
+            <div className="v1-ba-arrow">→</div>
+
+            <div className="v1-ba-card">
+              <div className="v1-ba-header after">
+                <span className="v1-ba-icon">✅</span>
+                <h4>QueryDaily 사용 후</h4>
               </div>
-              <div className={styles.progressPoint} data-step="complete">
-                <span>완주하기</span>
-              </div>
+              <ul className="v1-ba-list positive">
+                <li>"예상 질문이 실제로 나왔어요!"</li>
+                <li>"내 경험을 논리적으로 설명할 수 있어요"</li>
+                <li>"면접장에서 떨지 않았어요"</li>
+                <li>"매일 10분으로 습관이 됐어요"</li>
+              </ul>
             </div>
           </div>
 
-          {/* 상품 카드 2개 */}
-          <div className={styles.productsGrid}>
-            {/* 크리티컬 히트 */}
-            <div className={styles.productCard}>
-              <div className={styles.cardBadge}>입문자용</div>
-              <div className={styles.productHeader}>
-                <h3 className={styles.productName}>크리티컬 히트</h3>
-                <p className={styles.productTagline}>핵심 3질문 예측</p>
-              </div>
-
-              <div className={styles.productDescription}>
-                가장 중요한 3가지 질문을 예측합니다.<br/>
-                오늘 답을 준비하세요
-              </div>
-
-              <div className={styles.featureList}>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>🎯</span>
-                  <span>이력서 기반 핵심 질문 3개</span>
-                </div>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>📚</span>
-                  <span>STAR 기법 답변 가이드</span>
-                </div>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>⚡</span>
-                  <span>결제 후 24시간 내 발송</span>
-                </div>
-              </div>
-
-              <div className={styles.productPrice}>
-                <span className={styles.price}>₩9,900</span>
-                <span className={styles.originalPrice}>정가 ₩15,900</span>
-              </div>
-
-              <button
-                className={styles.productCta}
-                onClick={() => router.push('/v2/products/critical-hit')}
-              >
-                가볍게 시작하기 →
-              </button>
+          <div className="v1-stats-simple">
+            <div className="v1-stat-box">
+              <div className="v1-stat-num">5.0/5.0</div>
+              <div className="v1-stat-label">평균 만족도</div>
             </div>
+            <div className="v1-stat-box">
+              <div className="v1-stat-num">100%</div>
+              <div className="v1-stat-label">추천 의향</div>
+            </div>
+            <div className="v1-stat-box">
+              <div className="v1-stat-num">하루 10분</div>
+              <div className="v1-stat-label">준비 시간</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            {/* 그로스 플랜 */}
-            <div className={`${styles.productCard} ${styles.featured}`}>
-              <div className={styles.cardBadge}>MOST POPULAR</div>
-              <div className={styles.productHeader}>
-                <h3 className={styles.productName}>그로스 플랜</h3>
-                <p className={styles.productTagline}>20일간 모든 질문 예측</p>
-              </div>
+      {/* Pricing */}
+      <section id="pricing" className="v1-pricing-section" data-section="pricing">
+        <div className={`v1-pricing-container ${visibleSections.has('pricing') ? 'visible' : ''}`}>
+          <div className="v1-section-header">
+            <span className="v1-badge">시작하기</span>
+            <h2 className="v1-section-title">내일을 오늘 준비하세요</h2>
+          </div>
 
-              <div className={styles.productDescription}>
-                이력서의 모든 경험을 질문으로 예측합니다.<br/>
+          <div className="v1-pricing-grid">
+            {/* 그로스 플랜 - Featured */}
+            <div className="v1-price-card featured">
+              <div className="v1-card-badge popular">MOST POPULAR</div>
+              <h3 className="v1-card-title">그로스 플랜</h3>
+              <p className="v1-card-subtitle">20일간 모든 질문 예측</p>
+
+              <div className="v1-card-desc">
+                이력서의 모든 경험을 질문으로 예측합니다.<br />
                 20일간 매일 답을 준비하세요
               </div>
 
-              <div className={styles.featureList}>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>📅</span>
-                  <span>매일 오전 7시, 저녁 5시</span>
+              <div className="v1-features">
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
+                  <span>매일 오전 7시, 저녁 5시 발송</span>
                 </div>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>📚</span>
-                  <span>모든 질문에 STAR 가이드</span>
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
+                  <span>총 20개 맞춤 질문 (20일간)</span>
                 </div>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>💡</span>
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
+                  <span>모든 질문에 STAR 기법 가이드</span>
+                </div>
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
                   <span>꼬리 질문 대비 팁</span>
                 </div>
-                <div className={styles.feature}>
-                  <span className={styles.featureIcon}>🎯</span>
-                  <span>총 40개 예상 질문</span>
+              </div>
+
+              <div className="v1-price-box">
+                <span className="v1-price">₩49,000</span>
+                <span className="v1-price-orig">정가 ₩106,000</span>
+              </div>
+
+              <button className="v1-buy-btn featured" onClick={() => router.push('/products/growth-plan')}>
+                본격적으로 준비하기
+              </button>
+            </div>
+
+            {/* 크리티컬 히트 */}
+            <div className="v1-price-card">
+              <div className="v1-card-badge">빠른 경험</div>
+              <h3 className="v1-card-title">크리티컬 히트</h3>
+              <p className="v1-card-subtitle">핵심 3질문 예측</p>
+
+              <div className="v1-card-desc">
+                가장 중요한 3가지 질문을 예측합니다.<br />
+                오늘 답을 준비하세요
+              </div>
+
+              <div className="v1-features">
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
+                  <span>핵심 질문 3개 예측</span>
+                </div>
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
+                  <span>STAR 기법 답변 가이드</span>
+                </div>
+                <div className="v1-feat">
+                  <span className="v1-feat-check">✓</span>
+                  <span>결제 후 24시간 내 발송</span>
+                </div>
+                <div className="v1-feat v1-feat-empty">
+                  <span className="v1-feat-check" style={{visibility: 'hidden'}}>✓</span>
+                  <span style={{visibility: 'hidden'}}>Spacer</span>
                 </div>
               </div>
 
-              <div className={styles.productPrice}>
-                <span className={styles.price}>₩49,000</span>
-                <span className={styles.originalPrice}>정가 ₩106,000</span>
+              <div className="v1-price-box">
+                <span className="v1-price">₩9,900</span>
+                <span className="v1-price-orig">정가 ₩15,900</span>
               </div>
 
-              <button
-                className={`${styles.productCta} ${styles.featured}`}
-                onClick={() => router.push('/v2/products/growth-plan')}
-              >
-                본격적으로 준비하기 →
+              <button className="v1-buy-btn" onClick={() => router.push('/products/critical-hit')}>
+                가볍게 시작하기
               </button>
             </div>
           </div>
 
-          {/* 상품 선택 가이드 */}
-          <div className={styles.productGuide}>
-            <h3 className={styles.guideTitle}>어떤 것을 선택하면 좋을까요?</h3>
-            <div className={styles.guideGrid}>
-              <div className={styles.guideItem}>
-                <p className={styles.guideQuestion}>"일단 어떤 건지 경험해보고 싶어요"</p>
-                <p className={styles.guideAnswer}>→ <strong>크리티컬 히트</strong> (₩9,900)</p>
-              </div>
-              <div className={styles.guideItem}>
-                <p className={styles.guideQuestion}>"모든 질문에 제대로 대비하고 싶어요"</p>
-                <p className={styles.guideAnswer}>→ <strong>그로스 플랜</strong> (₩49,000)</p>
-              </div>
+          <div className="v1-choose-guide">
+            <div className="v1-guide-item">
+              <p className="v1-guide-q">"일단 경험해보고 싶어요"</p>
+              <p className="v1-guide-a">→ <strong>크리티컬 히트</strong></p>
+            </div>
+            <div className="v1-guide-item">
+              <p className="v1-guide-q">"모든 질문에 제대로 대비하고 싶어요"</p>
+              <p className="v1-guide-a">→ <strong>그로스 플랜</strong></p>
             </div>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section id="faq" className={styles.faqSection}>
-        <div className={styles.faqContainer}>
-          <h2 className={styles.sectionTitle}>자주 묻는 질문</h2>
+      <section id="faq" className="v1-faq-section">
+        <div className="v1-faq-container">
+          <h2 className="v1-section-title">자주 묻는 질문</h2>
 
-          <div className={styles.faqList}>
-            <details className={styles.faqItem}>
-              <summary className={styles.faqQuestion}>
+          <div className="v1-faq-list">
+            <details className="v1-faq-item">
+              <summary className="v1-faq-q">
                 <span>이력서 기반 예측이 정확한가요?</span>
-                <span className={styles.faqIcon}>+</span>
+                <span className="v1-faq-icon">+</span>
               </summary>
-              <div className={styles.faqAnswer}>
-                실제 사용자 피드백에서 "면접에서 비슷한 질문이 나왔다"는 평가가 많습니다.<br/><br/>
-                당신의 이력서 경험과 기술을 바탕으로 면접관이 파고들 포인트를 정확히 예측합니다.<br/>
+              <div className="v1-faq-a">
+                실제 사용자 피드백에서 "면접에서 비슷한 질문이 나왔다"는 평가가 많습니다.<br /><br />
+                당신의 이력서 경험과 기술을 바탕으로 면접관이 파고들 포인트를 정확히 예측합니다.<br />
                 현직 시니어 개발자 4명이 질문 품질을 검수합니다.
               </div>
             </details>
 
-            <details className={styles.faqItem}>
-              <summary className={styles.faqQuestion}>
-                <span>STAR 기법이 뭔가요?</span>
-                <span className={styles.faqIcon}>+</span>
+            <details className="v1-faq-item">
+              <summary className="v1-faq-q">
+                <span>ChatGPT랑 뭐가 다른가요?</span>
+                <span className="v1-faq-icon">+</span>
               </summary>
-              <div className={styles.faqAnswer}>
-                경험을 구조화해서 설명하는 방법입니다.<br/><br/>
-                <strong>S</strong>ituation: 어떤 상황이었나요?<br/>
-                <strong>T</strong>ask: 무엇을 해야 했나요?<br/>
-                <strong>A</strong>ction: 어떻게 했나요?<br/>
-                <strong>R</strong>esult: 결과는 어땠나요?<br/><br/>
+              <div className="v1-faq-a">
+                ChatGPT는 일반적인 질문을 생성하지만, QueryDaily는 <strong>당신의 이력서를 분석</strong>하여 맞춤 질문을 만듭니다.<br /><br />
+                또한 매일 자동으로 발송되어 꾸준한 연습이 가능하며, STAR 기법 가이드를 함께 제공합니다.
+              </div>
+            </details>
+
+            <details className="v1-faq-item">
+              <summary className="v1-faq-q">
+                <span>STAR 기법이 뭔가요?</span>
+                <span className="v1-faq-icon">+</span>
+              </summary>
+              <div className="v1-faq-a">
+                경험을 구조화해서 설명하는 방법입니다.<br /><br />
+                <strong>S</strong>ituation: 어떤 상황이었나요?<br />
+                <strong>T</strong>ask: 무엇을 해야 했나요?<br />
+                <strong>A</strong>ction: 어떻게 했나요?<br />
+                <strong>R</strong>esult: 결과는 어땠나요?<br /><br />
                 모든 질문에 STAR 기법 답변 가이드를 제공합니다.
               </div>
             </details>
 
-            <details className={styles.faqItem}>
-              <summary className={styles.faqQuestion}>
+            <details className="v1-faq-item">
+              <summary className="v1-faq-q">
                 <span>환불 정책은 어떻게 되나요?</span>
-                <span className={styles.faqIcon}>+</span>
+                <span className="v1-faq-icon">+</span>
               </summary>
-              <div className={styles.faqAnswer}>
-                <strong>24시간 내 100% 환불 보장</strong><br/><br/>
-                크리티컬 히트: 구매 후 24시간 내<br/>
-                그로스 플랜: 첫 질문 발송 전<br/><br/>
+              <div className="v1-faq-a">
+                크리티컬 히트: 발송 전 100% 환불<br />
+                그로스 플랜: 첫 질문 발송 전 100% 환불, 이후 남은 일수에 대해 일할 계산<br /><br />
                 환불 사유는 묻지 않습니다.
               </div>
             </details>
 
-            <details className={styles.faqItem}>
-              <summary className={styles.faqQuestion}>
+            <details className="v1-faq-item">
+              <summary className="v1-faq-q">
                 <span>어떤 기술 스택을 다루나요?</span>
-                <span className={styles.faqIcon}>+</span>
+                <span className="v1-faq-icon">+</span>
               </summary>
-              <div className={styles.faqAnswer}>
-                <strong>Java/Spring 백엔드 개발자</strong>를 위한 서비스입니다.<br/><br/>
-                Spring Boot, JPA/Hibernate, MySQL/PostgreSQL, Redis, Kafka 등<br/>
-                백엔드 생태계의 핵심 기술을 중심으로 질문을 생성합니다.
+              <div className="v1-faq-a">
+                <strong>백엔드 개발자</strong>를 위한 서비스입니다.<br /><br />
+                Spring, Node.js, Django, FastAPI 등 주요 프레임워크와<br />
+                MySQL, PostgreSQL, MongoDB, Redis 등 데이터베이스,<br />
+                그리고 AWS, Docker, Kubernetes 등<br />
+                <strong>당신의 이력서에 있는 모든 기술</strong>을 다룹니다.
               </div>
             </details>
           </div>
@@ -617,34 +453,30 @@ export default function V1TimeReversePage() {
       </section>
 
       {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerContainer}>
-          <div className={styles.footerContent}>
-            <div className={styles.footerBrand}>
-              <div className={styles.footerLogo}>
+      <footer className="v1-footer">
+        <div className="v1-footer-container">
+          <div className="v1-footer-content">
+            <div className="v1-footer-brand">
+              <div className="v1-footer-logo">
                 Query<span>Daily</span>
               </div>
-              <p className={styles.footerTagline}>내일의 질문, 오늘 답하기</p>
+              <p className="v1-footer-tagline">내일의 질문, 오늘 답하기</p>
             </div>
-
-            <div className={styles.footerLinks}>
-              <div className={styles.footerSection}>
-                <h4>상품</h4>
-                <a href="#products">그로스 플랜</a>
-                <a href="#products">크리티컬 히트</a>
+            <div className="v1-footer-links">
+              <div className="v1-footer-col">
+                <h4>서비스</h4>
+                <a href="#pricing">그로스 플랜</a>
+                <a href="#pricing">크리티컬 히트</a>
               </div>
-
-              <div className={styles.footerSection}>
-                <h4>고객지원</h4>
-                <a href="#faq">FAQ</a>
-                <a href="/terms">이용약관</a>
-                <a href="/privacy">개인정보처리방침</a>
+              <div className="v1-footer-col">
+                <h4>문의</h4>
+                <a href="https://pf.kakao.com/_hWMtn/chat" target="_blank" rel="noopener noreferrer">카카오톡</a>
+                <a href="mailto:official.querydaily@gmail.com">이메일</a>
               </div>
             </div>
           </div>
-
-          <div className={styles.footerBottom}>
-            <p>&copy; 2024 QueryDaily. All rights reserved.</p>
+          <div className="v1-footer-bottom">
+            <p>© 2025 QueryDaily by AsyncSite. All rights reserved.</p>
           </div>
         </div>
       </footer>

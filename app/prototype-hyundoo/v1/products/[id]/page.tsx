@@ -72,6 +72,29 @@ export default function ProductDetailPage() {
   }
 
   return (
+    <>
+      {/* Fixed CTA - 항상 보이는 CTA */}
+      <div className={styles.fixedCta}>
+        <div className={styles.fixedCtaContainer}>
+          <div className={styles.fixedCtaText}>
+            <div className={styles.fixedCtaTitle}>{product.name}</div>
+            <div className={styles.fixedCtaPrice}>
+              {product.priceOriginal && (
+                <span className={styles.fixedPriceOriginal}>₩{product.priceOriginal.toLocaleString()}</span>
+              )}
+              <span className={styles.fixedPriceCurrent}>₩{product.priceCurrent.toLocaleString()}</span>
+            </div>
+          </div>
+          <button
+            className={styles.fixedCtaButton}
+            disabled={!product.available}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            {product.available ? '합격 준비하기' : '준비 중'}
+          </button>
+        </div>
+      </div>
+
     <div className={styles.container}>
       {/* Header */}
       <header className={styles.header}>
@@ -554,5 +577,6 @@ export default function ProductDetailPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

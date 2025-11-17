@@ -39,7 +39,7 @@
 }
 
 .logoAccent {
-  color: #ff3838;
+  color: #8b5cf6;
 }
 
 .backBtn {
@@ -57,7 +57,7 @@
 .backBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
-  border-color: #ff3838;
+  border-color: #8b5cf6;
 }
 
 /* Product Hero */
@@ -85,8 +85,8 @@
 
 .badge {
   display: inline-block;
-  background: #ff3838;
-  color: #000000;
+  background: #8b5cf6;
+  color: #ffffff;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 13px;
@@ -169,13 +169,13 @@
 .priceCurrent {
   font-size: 56px;
   font-weight: 800;
-  color: #ff3838;
+  color: #8b5cf6;
 }
 
 /* Purchase Button */
 .purchaseBtn {
   padding: 24px 64px;
-  background: #ff3838;
+  background: #8b5cf6;
   color: #000000;
   border: none;
   border-radius: 12px;
@@ -190,7 +190,7 @@
 .purchaseBtn:hover:not(:disabled) {
   background: #ff5252;
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(255, 56, 56, 0.4);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.4);
 }
 
 .purchaseBtn:disabled {
@@ -214,14 +214,14 @@
 .imagePlaceholder {
   width: 100%;
   height: 500px;
-  background: linear-gradient(135deg, rgba(255, 56, 56, 0.1) 0%, rgba(255, 56, 56, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  border: 1px solid rgba(255, 56, 56, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .imageIcon {
@@ -271,8 +271,8 @@
 
 .featureCard:hover {
   transform: translateY(-4px);
-  border-color: #ff3838;
-  box-shadow: 0 8px 24px rgba(255, 56, 56, 0.2);
+  border-color: #8b5cf6;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
 }
 
 .featureIcon {
@@ -280,7 +280,7 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 16px;
-  color: #ff3838;
+  color: #8b5cf6;
 }
 
 .featureIcon svg {
@@ -329,7 +329,7 @@
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  background: #ff3838;
+  background: #8b5cf6;
   color: #000000;
   border-radius: 50%;
   display: flex;
@@ -354,7 +354,7 @@
 }
 
 .stepIcon {
-  color: #ff3838;
+  color: #8b5cf6;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -377,11 +377,11 @@
 .qualityBadge {
   font-size: 12px;
   padding: 6px 12px;
-  background: rgba(255, 56, 56, 0.1);
-  color: #ff3838;
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
   border-radius: 6px;
   font-weight: 600;
-  border: 1px solid rgba(255, 56, 56, 0.3);
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .exampleEmail {
@@ -401,7 +401,7 @@
 }
 
 .exampleIcon {
-  color: #ff3838;
+  color: #8b5cf6;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -445,10 +445,10 @@
 }
 
 .questionText {
-  background: rgba(255, 56, 56, 0.05);
+  background: rgba(139, 92, 246, 0.05);
   padding: 16px;
   border-radius: 8px;
-  border-left: 4px solid #ff3838;
+  border-left: 4px solid #8b5cf6;
   font-style: italic;
   color: #ffffff !important;
 }
@@ -470,19 +470,19 @@
   content: '✓';
   position: absolute;
   left: 0;
-  color: #ff3838;
+  color: #8b5cf6;
   font-weight: 700;
 }
 
 .emailCta {
-  color: #ff3838 !important;
+  color: #8b5cf6 !important;
   font-weight: 600;
   cursor: pointer;
 }
 
 .emailHint {
-  background: rgba(255, 56, 56, 0.1);
-  border-left: 3px solid #ff3838;
+  background: rgba(139, 92, 246, 0.1);
+  border-left: 3px solid #8b5cf6;
   padding: 12px 16px;
   margin: 16px 0;
   font-size: 14px;
@@ -508,7 +508,7 @@
 
 .keyword {
   display: inline-block;
-  background: #ff3838;
+  background: #8b5cf6;
   color: #000000;
   padding: 4px 10px;
   border-radius: 4px;
@@ -520,7 +520,7 @@
   background: rgba(0, 0, 0, 0.5);
   padding: 16px;
   border-radius: 8px;
-  border-left: 4px solid #ff3838;
+  border-left: 4px solid #8b5cf6;
   font-size: 14px;
   line-height: 1.8;
   font-style: italic;
@@ -550,7 +550,7 @@
   content: 'Q.';
   position: absolute;
   left: 12px;
-  color: #ff3838;
+  color: #8b5cf6;
   font-weight: 700;
 }
 
@@ -586,14 +586,14 @@
 }
 
 .curriculumItem:hover {
-  border-color: #ff3838;
-  box-shadow: 0 4px 16px rgba(255, 56, 56, 0.2);
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
 }
 
 .curriculumNumber {
   width: 40px;
   height: 40px;
-  background: #ff3838;
+  background: #8b5cf6;
   color: #000000;
   border-radius: 50%;
   display: flex;
@@ -650,7 +650,7 @@
 }
 
 .markdown strong {
-  color: #ff3838;
+  color: #8b5cf6;
   font-weight: 700;
 }
 
@@ -658,8 +658,8 @@
 .footerCta {
   padding: 80px 32px;
   background: linear-gradient(135deg,
-    rgba(255, 56, 56, 0.1) 0%,
-    rgba(255, 56, 56, 0.05) 100%);
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(139, 92, 246, 0.05) 100%);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -772,12 +772,12 @@
 .fixedPriceCurrent {
   font-size: 20px;
   font-weight: 800;
-  color: #ff3838;
+  color: #8b5cf6;
 }
 
 .fixedCtaButton {
   padding: 16px 40px;
-  background: linear-gradient(135deg, #ff3838 0%, #ff6b6b 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
   color: #ffffff;
   font-size: 18px;
   font-weight: 800;
@@ -785,13 +785,13 @@
   border-radius: 100px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(255, 56, 56, 0.4);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
   white-space: nowrap;
 }
 
 .fixedCtaButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 15px 40px rgba(255, 56, 56, 0.6);
+  box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
 }
 
 .fixedCtaButton:disabled {

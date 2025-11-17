@@ -34,7 +34,7 @@ export const products: Product[] = [
     label: '20일 집중 훈련',
     name: '그로스 플랜',
     nameEn: 'Growth Plan',
-    description: '20일간 매일 이력서 맞춤형 면접 질문을 받고, 실전처럼 준비하세요. AI가 분석한 당신의 이력서에서 나올 수 있는 모든 질문을 대비합니다.',
+    description: '20일간 매일 이력서 맞춤형 면접 질문을 받고, 실전처럼 준비하세요. 당신의 이력서에서 나올 수 있는 모든 질문을 대비합니다.',
     detailedDescription: `
 ## 왜 그로스 플랜인가요?
 
@@ -82,7 +82,7 @@ export const products: Product[] = [
     label: '단 하나의 결정적 질문',
     name: '크리티컬 히트',
     nameEn: 'Critical Hit',
-    description: '당신의 이력서에서 가장 중요한 3가지 질문과 프리미엄 답변 가이드. AI가 분석한 핵심 포인트로 면접 준비를 시작하세요.',
+    description: '당신의 이력서에서 가장 중요한 3가지 질문과 프리미엄 답변 가이드. 핵심 포인트로 면접 준비를 시작하세요.',
     detailedDescription: `
 ## 핵심만 빠르게 준비하고 싶다면?
 

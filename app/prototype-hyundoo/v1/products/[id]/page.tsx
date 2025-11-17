@@ -181,7 +181,7 @@ export default function ProductDetailPage() {
                     <FileText size={20} className={styles.stepIcon} /> 이력서 분석
                   </h3>
                   <p className={styles.stepDescription}>
-                    결제 후 업로드한 이력서를 AI가 분석합니다.<br/>
+                    결제 후 업로드한 이력서를 분석합니다.<br/>
                     기술 스택, 프로젝트 경험, 경력 수준을 파악하여 당신만의 프로필을 생성합니다.
                   </p>
                 </div>
@@ -194,7 +194,7 @@ export default function ProductDetailPage() {
                     <Bot size={20} className={styles.stepIcon} /> 질문 생성
                   </h3>
                   <p className={styles.stepDescription}>
-                    AI가 당신의 이력서를 분석하여 맞춤형 질문을 생성합니다.<br/>
+                    당신의 이력서를 분석하여 맞춤형 질문을 생성합니다.<br/>
                     실제 면접에서 나올 법한 시나리오 기반 질문과 예상 꼬리질문까지 포함됩니다.
                   </p>
                 </div>
@@ -366,7 +366,7 @@ export default function ProductDetailPage() {
                     <FileText size={20} className={styles.stepIcon} /> 이력서 분석
                   </h3>
                   <p className={styles.stepDescription}>
-                    업로드한 이력서를 AI가 분석합니다.<br/>
+                    업로드한 이력서를 분석합니다.<br/>
                     기술 스택, 프로젝트 경험, 경력 수준을 파악하여 가장 중요한 3가지 포인트를 선정합니다.
                   </p>
                 </div>

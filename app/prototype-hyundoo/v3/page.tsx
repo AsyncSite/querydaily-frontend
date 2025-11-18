@@ -386,6 +386,84 @@ function LandingPageContent() {
               * 체계적인 준비는 합격률을 2배 이상 향상시킵니다
             </p>
 
+            {/* 준비 방법 섹션 */}
+            <div className={styles.prepMethod}>
+              <h3 className={styles.prepMethodTitle}>
+                준비를 하는 가장 좋은 방법은<br/>
+                그냥 지금 시작하는 것입니다.
+              </h3>
+
+              <p className={styles.prepMethodIntro}>
+                이런 고민, 해보셨죠?
+              </p>
+
+              {/* Before/After 비교 */}
+              <div className={styles.prepComparison}>
+                {/* Before */}
+                <div className={styles.prepBefore}>
+                  <div className={styles.prepLabel}>
+                    <span className={styles.prepIcon}>❌</span>
+                    <span>보통 사람들의 면접 준비</span>
+                  </div>
+                  <ul className={styles.prepList}>
+                    <li>
+                      <span className={styles.prepStep}>📚 면접 질문 검색</span>
+                      <span className={styles.prepProblem}>(어떤 게 나올지 모름)</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>📝 블로그 여기저기 뒤져서</span>
+                      <span className={styles.prepProblem}>모범 답안 정리</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>🤔 이게 내 경험이랑 맞나?</span>
+                      <span className={styles.prepProblem}>혼자 고민</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>⏰ 매일 몇 시간씩...</span>
+                      <span className={styles.prepProblem}>언제 끝날지 모름</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* After */}
+                <div className={styles.prepAfter}>
+                  <div className={styles.prepLabel}>
+                    <span className={styles.prepIcon}>✓</span>
+                    <span>QueryDaily로 준비하는 당신</span>
+                  </div>
+                  <ul className={styles.prepList}>
+                    <li>
+                      <span className={styles.prepStep}>📩 매일 아침 7시, 저녁 5시</span>
+                      <span className={styles.prepSolution}>당신 이력서 기반 질문 도착</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>👀 출근길 지하철에서</span>
+                      <span className={styles.prepSolution}>그냥 읽기만</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>✍️ 버스 기다리면서</span>
+                      <span className={styles.prepSolution}>답변 떠올리기</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>⏱️ 하루 단 10분</span>
+                      <span className={styles.prepSolution}>20일이면 완료</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* 핵심 메시지 */}
+              <div className={styles.prepMessage}>
+                <p className={styles.prepMessageMain}>
+                  진짜 질문. 진짜 경험. 합격하는 답변.
+                </p>
+                <p className={styles.prepMessageSub}>
+                  우리는 이것만 보내드립니다.<br/>
+                  당신은 그냥 받아보기만 하세요.
+                </p>
+              </div>
+            </div>
+
             {/* CTA 넛지 카피 */}
             <div className={styles.ctaNudge}>
               <p className={styles.ctaNudgeMain}>
@@ -660,7 +738,7 @@ function LandingPageContent() {
                 <span className={styles.whoWeAreHighlight}>그래서 알아요.</span>
               </h2>
               <p className={styles.sectionSubtitle}>
-                당신이 왜 떨어지는지.<br/>
+                왜 떨어지는지.<br/>
                 어떻게 하면 붙는지.
               </p>
             </div>

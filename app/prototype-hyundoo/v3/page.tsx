@@ -727,7 +727,7 @@ function LandingPageContent() {
                 </div>
                 <p className={styles.expertStory}>
                   "SI 야근에 지쳐서 100번 넘게 지원했어요."<br/>
-                  → 이제 당신은 100번 안 떨어져도 돼요
+                  → 이제 당신은 그러지 않아도 됩니다
                 </p>
               </div>
 

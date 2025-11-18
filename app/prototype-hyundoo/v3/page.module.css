@@ -1680,6 +1680,191 @@
   opacity: 0.8;
 }
 
+/* 준비 방법 섹션 - Before/After 비교 */
+.prepMethod {
+  margin-top: 80px;
+  padding: 60px 40px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(236, 72, 153, 0.03) 100%);
+  border-radius: 24px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.prepMethodTitle {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
+}
+
+.prepMethodIntro {
+  font-size: 1.15rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0 0 48px 0;
+  font-weight: 500;
+}
+
+.prepComparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.prepBefore,
+.prepAfter {
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid var(--color-bg-tertiary);
+}
+
+.prepBefore {
+  border-left: 4px solid rgba(240, 113, 120, 0.5);
+}
+
+.prepAfter {
+  border-left: 4px solid rgba(195, 232, 141, 0.5);
+  background: linear-gradient(135deg, rgba(195, 232, 141, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+}
+
+.prepLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.prepIcon {
+  font-size: 1.2rem;
+}
+
+.prepList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.prepList li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prepStep {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: block;
+}
+
+.prepProblem {
+  font-size: 0.9rem;
+  color: rgba(240, 113, 120, 0.9);
+  font-weight: 500;
+  padding-left: 20px;
+  display: block;
+}
+
+.prepSolution {
+  font-size: 0.9rem;
+  color: rgba(195, 232, 141, 0.9);
+  font-weight: 500;
+  padding-left: 20px;
+  display: block;
+}
+
+.prepMessage {
+  text-align: center;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.prepMessageMain {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 12px 0;
+  letter-spacing: -0.01em;
+}
+
+.prepMessageSub {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 준비 방법 섹션 - 모바일 반응형 */
+@media (max-width: 768px) {
+  .prepMethod {
+    margin-top: 48px;
+    padding: 40px 24px;
+  }
+
+  .prepMethodTitle {
+    font-size: 1.6rem;
+  }
+
+  .prepMethodIntro {
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+
+  .prepComparison {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .prepBefore,
+  .prepAfter {
+    padding: 24px;
+  }
+
+  .prepLabel {
+    font-size: 0.95rem;
+  }
+
+  .prepList {
+    gap: 16px;
+  }
+
+  .prepStep {
+    font-size: 0.95rem;
+  }
+
+  .prepProblem,
+  .prepSolution {
+    font-size: 0.85rem;
+    padding-left: 16px;
+  }
+
+  .prepMessage {
+    padding: 24px 20px;
+  }
+
+  .prepMessageMain {
+    font-size: 1.3rem;
+  }
+
+  .prepMessageSub {
+    font-size: 0.95rem;
+  }
+}
+
 /* CTA Nudge - 차트 하단 넛지 카피 */
 .ctaNudge {
   margin-top: 56px;

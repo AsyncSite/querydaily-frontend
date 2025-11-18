@@ -18,6 +18,11 @@
     --color-primary-dark: #a8d378;
     --color-primary-light: #d4f0a0;
 
+    /* v2 Theme Variables (defaults for minimal theme) */
+    --color-secondary: #8b5cf6;
+    --color-secondary-light: #a78bfa;
+    --color-text-muted: #6b7280;
+
     --color-accent: #82aaff;
     --color-warning: #ffcb6b;
     --color-error: #f07178;

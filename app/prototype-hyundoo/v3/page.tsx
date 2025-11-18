@@ -240,7 +240,7 @@ function LandingPageContent() {
         <section className={styles.statistics}>
           <div className={styles.statisticsContainer}>
             <h2 className={styles.statisticsTitle}>
-              <span className={styles.highlight}>당신과 합격자 사이</span>, 단 하나의 차이
+              <span className={styles.highlight}>당신과 합격자 사이</span>
             </h2>
 
             {/* Before/After 대비 - 메인 */}
@@ -283,6 +283,7 @@ function LandingPageContent() {
             {/* 증거 박스 */}
             <div className={styles.chartRevealSection}>
               {/* 증거 데이터 */}
+              <p className={styles.evidenceLabel}>합격자들에서 발견되는 패턴</p>
               <p className={styles.evidenceInline}>
                 90% 질문 연습 · 92% 모의 면접 · 55% 비언어 소통
               </p>

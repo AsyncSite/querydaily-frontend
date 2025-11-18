@@ -840,21 +840,6 @@ function LandingPageContent() {
 
               <details className={styles.faqItem}>
                 <summary className={styles.faqQuestion}>
-                  <span>STAR 기법이 뭔가요?</span>
-                  <span className={styles.faqIcon}>+</span>
-                </summary>
-                <div className={styles.faqAnswer}>
-                  경험을 구조화해서 설명하는 방법입니다.<br /><br />
-                  <strong>S</strong>ituation: 어떤 상황이었나요?<br />
-                  <strong>T</strong>ask: 무엇을 해야 했나요?<br />
-                  <strong>A</strong>ction: 어떻게 했나요?<br />
-                  <strong>R</strong>esult: 결과는 어땠나요?<br /><br />
-                  모든 질문에 STAR 기법 답변 가이드를 제공합니다.
-                </div>
-              </details>
-
-              <details className={styles.faqItem}>
-                <summary className={styles.faqQuestion}>
                   <span>환불 정책은 어떻게 되나요?</span>
                   <span className={styles.faqIcon}>+</span>
                 </summary>

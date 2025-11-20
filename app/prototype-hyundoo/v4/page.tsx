@@ -751,7 +751,7 @@ function LandingPageContent() {
                     </li>
                     <li>
                       <span className={styles.prepStep}>4. 하루 단 10분</span>
-                      <span className={styles.prepSolution}>20일이면 완료</span>
+                      <span className={styles.prepSolution}>그게 전부</span>
                     </li>
                   </ul>
                 </div>
@@ -847,108 +847,156 @@ function LandingPageContent() {
           </div>
         </section>
 
-        {/* Urgency Section - 기회 중심 */}
+        {/* Urgency Section - 기회비용 프레이밍 */}
         <section className={styles.statistics}>
           <div className={styles.statisticsContainer}>
-            {/* 기회 인식 훅 */}
+            {/* 후회 훅 */}
             <div style={{
               textAlign: 'center',
-              marginBottom: '2.5rem',
-              padding: '1.5rem',
-              background: 'rgba(255,255,255,0.03)',
-              borderRadius: '16px'
+              marginBottom: '2rem'
             }}>
               <p style={{
-                fontSize: '1.1rem',
-                opacity: 0.7,
-                marginBottom: '1rem',
-                lineHeight: '1.8'
+                fontSize: '1rem',
+                opacity: 0.6,
+                marginBottom: '1.5rem'
               }}>
-                면접 기회는<br/>
-                예고 없이 찾아옵니다.
+                매번 면접 끝나고 드는 생각
               </p>
-              <p style={{
-                fontSize: '1.3rem',
-                fontWeight: '700',
-                margin: 0,
-                lineHeight: '1.6'
+              <div style={{
+                padding: '2rem',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255,255,255,0.08)'
               }}>
-                <span style={{color: 'var(--color-secondary)'}}>준비된 사람만</span> 잡을 수 있습니다.
-              </p>
+                <p style={{
+                  fontSize: '1.4rem',
+                  fontStyle: 'italic',
+                  lineHeight: '1.8',
+                  margin: 0,
+                  opacity: 0.9
+                }}>
+                  "그때 그 질문,<br/>
+                  <span style={{color: 'var(--color-secondary)', fontWeight: '600'}}>더 잘 대답할 수 있었는데...</span>"
+                </p>
+              </div>
             </div>
 
             <h2 style={{
               textAlign: 'center',
-              fontSize: '2rem',
-              fontWeight: '800',
-              lineHeight: '1.5',
-              marginBottom: '2rem'
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              lineHeight: '1.6',
+              marginBottom: '2.5rem'
             }}>
-              다음 기회가 왔을 때<br/>
-              <span style={{color: 'var(--color-secondary)'}}>준비되어 있으시겠습니까?</span>
+              후회는<br/>
+              <span style={{color: 'var(--color-secondary)'}}>면접장을 나서야</span> 찾아옵니다.
             </h2>
 
             <div style={{maxWidth: '480px', margin: '0 auto'}}>
-              {/* 준비의 가치 강조 */}
+              {/* 흔한 후회들 */}
               <div style={{
                 padding: '1.5rem',
-                background: 'rgba(var(--color-accent-rgb), 0.12)',
+                background: 'rgba(255,255,255,0.03)',
                 borderRadius: '12px',
-                marginBottom: '1.5rem',
-                textAlign: 'center'
-              }}>
-                <p style={{fontSize: '1rem', fontWeight: '600', margin: 0, lineHeight: '1.8'}}>
-                  면접 준비에 투자한 시간은<br/>
-                  <span style={{fontSize: '1.3rem', color: 'var(--color-secondary)'}}>합격이라는 결과</span>로<br/>
-                  <strong>반드시 돌아옵니다.</strong>
-                </p>
-              </div>
-
-              <div style={{
-                padding: '2rem',
-                background: 'rgba(var(--color-accent-rgb), 0.08)',
-                borderRadius: '16px',
-                border: '1px solid rgba(var(--color-accent-rgb), 0.2)',
                 marginBottom: '2rem'
               }}>
-                <p style={{fontSize: '1.1rem', lineHeight: '1.8', textAlign: 'center', margin: 0}}>
-                  좋은 기회는 <strong>한 순간에</strong> 오고,<br/>
-                  <strong>빠르게</strong> 지나갑니다.<br/><br/>
-                  <span style={{opacity: 0.8}}>미리 준비해두면, 그 순간을 잡을 수 있습니다.</span>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.5,
+                  marginBottom: '1rem',
+                  textAlign: 'center'
+                }}>
+                  면접 후 가장 많이 하는 말
+                </p>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    margin: 0,
+                    padding: '0.8rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid rgba(255,255,255,0.2)'
+                  }}>
+                    "왜 그렇게 답했을까..."
+                  </p>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    margin: 0,
+                    padding: '0.8rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid rgba(255,255,255,0.2)'
+                  }}>
+                    "그 경험을 말했어야 했는데..."
+                  </p>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    margin: 0,
+                    padding: '0.8rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid rgba(255,255,255,0.2)'
+                  }}>
+                    "준비 좀 할 걸..."
+                  </p>
+                </div>
+              </div>
+
+              {/* 해결책 전환 */}
+              <div style={{
+                padding: '2rem',
+                background: 'linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.15), rgba(var(--color-accent-rgb), 0.05))',
+                borderRadius: '16px',
+                border: '2px solid rgba(var(--color-accent-rgb), 0.3)',
+                marginBottom: '2rem',
+                textAlign: 'center'
+              }}>
+                <p style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  marginBottom: '1rem',
+                  lineHeight: '1.6'
+                }}>
+                  미리 준비했다면<br/>
+                  <span style={{fontSize: '1.3rem', color: 'var(--color-secondary)'}}>후회 대신 자신감</span>이<br/>
+                  남았을 겁니다.
+                </p>
+                <p style={{
+                  fontSize: '0.95rem',
+                  opacity: 0.7,
+                  margin: 0
+                }}>
+                  다음 면접에서는 다르게 하세요.
                 </p>
               </div>
 
+              {/* 준비된 상태의 이점 */}
               <div style={{textAlign: 'center', marginBottom: '2rem'}}>
                 <p style={{fontSize: '1rem', opacity: 0.7, marginBottom: '1.5rem'}}>
-                  지금 준비하면 얻는 것들
+                  준비된 사람은 면접장을 나서며
                 </p>
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap'}}>
                   <div style={{
                     padding: '1rem 1.5rem',
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'rgba(var(--color-accent-rgb), 0.1)',
                     borderRadius: '12px',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    border: '1px solid rgba(var(--color-accent-rgb), 0.2)'
                   }}>
-                    <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.3rem'}}>면접 당일</p>
-                    <p style={{fontSize: '1rem', fontWeight: '600', margin: 0}}>자신감 있는 답변</p>
+                    <p style={{fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)'}}>
+                      "할 만큼 했다"
+                    </p>
                   </div>
                   <div style={{
                     padding: '1rem 1.5rem',
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'rgba(var(--color-accent-rgb), 0.1)',
                     borderRadius: '12px',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    border: '1px solid rgba(var(--color-accent-rgb), 0.2)'
                   }}>
-                    <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.3rem'}}>예상 질문에</p>
-                    <p style={{fontSize: '1rem', fontWeight: '600', margin: 0}}>완벽한 대비</p>
-                  </div>
-                  <div style={{
-                    padding: '1rem 1.5rem',
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.3rem'}}>면접관에게</p>
-                    <p style={{fontSize: '1rem', fontWeight: '600', margin: 0}}>강한 인상</p>
+                    <p style={{fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)'}}>
+                      "최선을 다했다"
+                    </p>
                   </div>
                 </div>
               </div>
@@ -957,11 +1005,11 @@ function LandingPageContent() {
             <div className={styles.ctaNudge} style={{marginTop: '2rem'}}>
               <p className={styles.ctaNudgeMain} style={{fontSize: '1.3rem'}}>
                 다음 면접,<br/>
-                <span style={{color: 'var(--color-secondary)'}}>준비된 상태로 맞이하세요.</span>
+                <span style={{color: 'var(--color-secondary)'}}>후회 없이 끝내세요.</span>
               </p>
               <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem'}}>
-                지금 시작하면<br/>
-                <span className={styles.ctaNudgeHighlight}>20일 후</span> 준비 완료.
+                <span className={styles.ctaNudgeHighlight}>하루 10분만</span> 투자하세요.<br/>
+                그게 전부입니다.
               </p>
             </div>
           </div>
@@ -1030,11 +1078,11 @@ function LandingPageContent() {
                 <div className={styles.planBadge}>MOST POPULAR</div>
 
                 <h3 className={styles.planTitle}>그로스 플랜</h3>
-                <p className={styles.planSubtitle}>20일 후, 어떤 질문에도 흔들리지 않는 당신</p>
+                <p className={styles.planSubtitle}>하루 10분 투자로 어떤 질문에도 흔들리지 않는 당신</p>
 
                 <div className={styles.planDesc}>
                   "이 질문 나올 줄 알았어"<br />
-                  20일간 하루 10분씩 준비하면 면접장에서 이렇게 말하게 돼요
+                  하루 단 10분만 투자하면 면접장에서 이렇게 말하게 돼요
                 </div>
 
                 <div className={styles.features}>
@@ -1044,7 +1092,7 @@ function LandingPageContent() {
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureCheck}>✓</span>
-                    <span>하루에 하나씩, 부담 없이. 20일이면 완벽하게</span>
+                    <span>하루 10분만 투자하세요. 부담 없이, 완벽하게</span>
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureCheck}>✓</span>
@@ -1082,7 +1130,7 @@ function LandingPageContent() {
                   lineHeight: '1.6'
                 }}>
                   하루 2,450원, 커피 한 잔 값으로<br/>
-                  <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>20일 후의 자신감이 달라집니다</span>
+                  <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>하루 10분 투자가 자신감으로 바뀝니다</span>
                 </p>
               </div>
 

@@ -1235,7 +1235,6 @@ function LandingPageContent() {
                     <input
                       type="email"
                       placeholder="your@email.com"
-                      className={styles.modalInput}
                       value={purchaseEmail}
                       onChange={(e) => {
                         setPurchaseEmail(e.target.value);

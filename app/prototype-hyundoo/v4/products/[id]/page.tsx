@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { products } from '../data';
 import styles from './page.module.css';
+import { submitBetaApplication, createOrder } from '@/lib/api';
 import {
   FileText,
   Bot,

@@ -2,620 +2,51 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Script from 'next/script';
-import { submitBetaApplication, startFreeTrial, UserProfile, createOrder } from '@/lib/api';
 import styles from './page.module.css';
-import { trackBetaSignupStart, trackBetaSignupComplete, trackFileUpload, trackExternalLink } from '@/components/GoogleAnalytics';
-import FloatingFreeTrial from '@/components/FloatingFreeTrial';
-import ScrollTracker from '@/components/analytics/ScrollTracker';
-import { useManualCTATracking } from '@/components/analytics/CTATracker';
-import { useFormMetrics } from '@/components/analytics/FormTracker';
-import ItemTracker from '@/components/analytics/ItemTracker';
-import { autoTrackSections } from '@/components/analytics/SectionTracker';
+import { ThemeProvider, ThemeSelector, useTheme, themes } from './ThemeContext';
+import { submitBetaApplication, createOrder } from '@/lib/api';
 
-// 이름 마스킹 함수 (가운데만 *)
-const maskName = (name: string): string => {
-  if (!name || name.length === 0) return '익명';
-  if (name.length === 1) return name;
-  if (name.length === 2) return name[0] + '*';
-  if (name.length === 3) return name[0] + '*' + name[2];
-  const middleLength = name.length - 2;
-  return name[0] + '*'.repeat(middleLength) + name[name.length - 1];
-};
+type HeroVariant = 'v2' | 'donggun' | 'jiyeon';
 
-// 전화번호 유효성 검사 함수
-// 반드시 하이픈 2개 필요: 010-1234-5678, 010-123-4567, 02-1234-5678
+// Phone validation helper
 const validatePhone = (phone: string): boolean => {
-  if (!phone || phone.trim() === '') return false;
-  const trimmed = phone.trim();
-
-  // 하이픈 2개 필수
-  const phonePattern = /^0\d{1,2}-\d{3,4}-\d{4}$/;
-
-  return phonePattern.test(trimmed);
+  // Allow formats: 010-1234-5678, 010-123-4567, 010-1234567, 01012345678
+  const phoneRegex = /^01[0-9]-?\d{3,4}-?\d{4}$/;
+  return phoneRegex.test(phone.replace(/\s/g, ''));
 };
 
-export default function HomePage() {
+function LandingPageContent() {
   const router = useRouter();
-  const { trackCTA } = useManualCTATracking();
-  const betaFormMetrics = useFormMetrics('beta_signup');
-  const purchaseFormMetrics = useFormMetrics('purchase');
+  const { theme, themeName } = useTheme();
+  const [isTextVisible, setIsTextVisible] = useState(false);
 
-  // 폼 필드 추적 헬퍼 함수
-  const trackFormField = (formName: string, fieldName: string, interactionType: string, stepNumber?: number) => {
-    if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
-      window.gtag('event', 'form_field_interaction', {
-        form_name: formName,
-        field_name: fieldName,
-        interaction_type: interactionType,
-        step_number: stepNumber
-      });
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📝 Form Field: ${formName}.${fieldName} - ${interactionType}`);
-      }
-    }
-  };
-
-  // Force scroll reset on page load
-  useEffect(() => {
-    // Disable browser scroll restoration
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-
-    // Force scroll to top after a small delay to override browser behavior
-    window.scrollTo(0, 0);
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 0);
-
-    // Cleanup: restore default behavior when component unmounts
-    return () => {
-      if ('scrollRestoration' in history) {
-        history.scrollRestoration = 'auto';
-      }
-    };
-  }, []);
-
-  const [profileData, setProfileData] = useState<UserProfile>({
-    email: '',
-    experience: undefined,
-    techStack: [],
-    interests: [],
-    targetCompany: undefined,
-  });
-  const [showProfileForm, setShowProfileForm] = useState(false);
-  const [profileCompleteness, setProfileCompleteness] = useState(0);
-  const [errors, setErrors] = useState<string[]>([]);
-  const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState(1);
-  const [transition, setTransition] = useState(true);
-  const [activeQuestionTab, setActiveQuestionTab] = useState(0);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [touchStart, setTouchStart] = useState(0);
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-  const [touchEnd, setTouchEnd] = useState(0);
-  const [openFooterSection, setOpenFooterSection] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalStep, setModalStep] = useState(1);
+  // Purchase Modal States
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const [purchaseModalStep, setPurchaseModalStep] = useState(1);
   const [selectedPurchaseProduct, setSelectedPurchaseProduct] = useState<string | null>(null);
   const [purchaseFile, setPurchaseFile] = useState<File | null>(null);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [purchaseName, setPurchaseName] = useState('');
   const [purchaseNameError, setPurchaseNameError] = useState('');
   const [purchasePhone, setPurchasePhone] = useState('');
   const [purchasePhoneError, setPurchasePhoneError] = useState('');
-  const [purchaseEmail, setPurchaseEmail] = useState(''); // KAKAO/INICIS REVIEW: Email moved from Step 2 to here
+  const [purchaseEmail, setPurchaseEmail] = useState('');
   const [purchaseEmailError, setPurchaseEmailError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
-  const [showVerificationInput, setShowVerificationInput] = useState(false);
-  const [sentVerificationCode, setSentVerificationCode] = useState('');
-  const [freeTrialVerificationSent, setFreeTrialVerificationSent] = useState(false);
-  const [verificationTimer, setVerificationTimer] = useState(0);
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-  const [showBusinessInfo, setShowBusinessInfo] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
-  // Calculate days remaining until Oct 31
-  const calculateDaysRemaining = () => {
-    const today = new Date();
-    const endDate = new Date(today.getFullYear(), 9, 31); // October 31
-    const timeDiff = endDate.getTime() - today.getTime();
-    const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-    return daysRemaining > 0 ? daysRemaining : 0;
-  };
-
-  const [daysRemaining] = useState(calculateDaysRemaining());
-
-  // Timer effect for email verification
+  // Hero entrance animation
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (verificationTimer > 0) {
-      interval = setInterval(() => {
-        setVerificationTimer(prev => {
-          if (prev <= 1) {
-            setShowVerificationInput(false);
-            setSentVerificationCode('');
-            setNotification({ message: '인증 시간이 초과되었습니다. 다시 시도해주세요.', type: 'error' });
-            setTimeout(() => setNotification(null), 3000);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [verificationTimer]);
-
-  // Auto-track sections
-  useEffect(() => {
-    // 페이지 로드 후 섹션 자동 추적 초기화
-    const timer = setTimeout(() => {
-      autoTrackSections();
-    }, 1000); // 1초 후 초기화
-
-    return () => clearTimeout(timer);
+    setTimeout(() => setIsTextVisible(true), 300);
   }, []);
 
-  // Auto-dismiss notifications after 5 seconds
+  // Enable smooth scroll for this page only
   useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification]);
-
-  // Track beta signup form step progression
-  useEffect(() => {
-    if (modalOpen && modalStep > 1) {
-      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
-        window.gtag('event', 'form_step_complete', {
-          form_name: 'beta_signup',
-          step_number: modalStep - 1,
-          total_steps: 4,
-          step_name: `Step ${modalStep - 1}`
-        });
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`📊 Beta Form Step ${modalStep - 1} completed`);
-        }
-      }
-    }
-  }, [modalStep, modalOpen]);
-
-  // Track purchase form step progression
-  useEffect(() => {
-    if (purchaseModalOpen && purchaseModalStep > 1) {
-      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
-        window.gtag('event', 'form_step_complete', {
-          form_name: 'purchase',
-          step_number: purchaseModalStep - 1,
-          total_steps: 3,
-          step_name: `Step ${purchaseModalStep - 1}`,
-          product_id: selectedPurchaseProduct
-        });
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`📊 Purchase Form Step ${purchaseModalStep - 1} completed (${selectedPurchaseProduct})`);
-        }
-      }
-    }
-  }, [purchaseModalStep, purchaseModalOpen, selectedPurchaseProduct]);
-
-  // Track page engagement time and exit point
-  useEffect(() => {
-    const startTime = Date.now();
-    let lastScrollY = 0;
-    let lastInteractionTime = Date.now();
-    let maxScrollDepth = 0;
-
-    const updateScrollDepth = () => {
-      const scrollPercentage = Math.round(
-        (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-      );
-      maxScrollDepth = Math.max(maxScrollDepth, scrollPercentage);
-      lastScrollY = window.scrollY;
-      lastInteractionTime = Date.now();
-    };
-
-    const handleInteraction = () => {
-      lastInteractionTime = Date.now();
-    };
-
-    const handleBeforeUnload = () => {
-      const engagementTime = Math.round((Date.now() - startTime) / 1000); // seconds
-      const exitPoint = Math.round((lastScrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
-
-      if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
-        // Use sendBeacon for reliable tracking on page unload
-        const data = {
-          event: 'page_engagement',
-          engagement_time_seconds: engagementTime,
-          exit_scroll_depth: exitPoint,
-          max_scroll_depth: maxScrollDepth,
-          page_path: window.location.pathname,
-          last_interaction_seconds_ago: Math.round((Date.now() - lastInteractionTime) / 1000)
-        };
-
-        // Send via gtag
-        window.gtag('event', 'page_engagement', data);
-
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`🕐 Page Engagement: ${engagementTime}s, Exit: ${exitPoint}%, Max: ${maxScrollDepth}%`);
-        }
-      }
-    };
-
-    // Listen to scroll
-    window.addEventListener('scroll', updateScrollDepth, { passive: true });
-
-    // Listen to user interactions
-    window.addEventListener('click', handleInteraction);
-    window.addEventListener('keydown', handleInteraction);
-    window.addEventListener('touchstart', handleInteraction, { passive: true });
-
-    // Track page unload
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Also track on visibility change (when user switches tabs)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        handleBeforeUnload();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
+    document.documentElement.style.scrollBehavior = 'smooth';
     return () => {
-      window.removeEventListener('scroll', updateScrollDepth);
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.documentElement.style.scrollBehavior = '';
     };
   }, []);
-
-  const testimonials = [
-    {
-      name: '김**',
-      role: '결제 도메인 백엔드 2년차',
-      avatar: '👨‍💻',
-      text: '"매일 받는 질문이 실제 면접보다 더 어려웠어요. 덕분에 실제 면접에선 자신감 있게 대답할 수 있었습니다."',
-      result: '💼 네카라쿠배 중 1곳 재직중'
-    },
-    {
-      name: '이**',
-      role: '쇼핑몰 플랫폼 신입 개발자',
-      avatar: '👩‍💻',
-      text: '"왜 QueryDaily 안 했을까 후회돼요. 면접장에서 비슷한 질문이 나와서 깜짝 놀랐습니다. 이력서 기반이라 그런가봐요."',
-      result: '🏢 시리즈 B 스타트업 합격'
-    },
-    {
-      name: '박**',
-      role: '컴공 졸업예정',
-      avatar: '🧑‍🎓',
-      text: '"학교에서 배운 것과 실무는 정말 달라요. QueryDaily 덕분에 그 갭을 줄일 수 있었습니다."',
-      result: '🎆 대기업 IT 자회사 합격'
-    },
-    {
-      name: '정**',
-      role: '전 N사 검색팀 개발자',
-      avatar: '👩‍🏫',
-      text: '"이직 준비하면서 제가 놓치고 있던 부분을 발견했어요. 왜 그렇게 했는지 설명하는 연습이 큰 도움이 됐습니다."',
-      result: '🚀 외국계 테크 회사 재직중'
-    },
-    {
-      name: '서**',
-      role: '부트캠프 수료생',
-      avatar: '🥰',
-      text: '"처음엔 \'내가 잘할 수 있을까\' 고민했는데, 3일 후엔 자신감이 생겼어요. 매일 받는 질문이 저를 성장시켰습니다."',
-      result: '🎯 원하는 회사 K사 합격'
-    },
-    {
-      name: '최**',
-      role: '금융 서비스 백엔드 3년차',
-      avatar: '💻',
-      text: '"이력서 맞춤형이라 정말 좋았어요. 제 경험과 프로젝트를 기반으로 한 질문들이 실제 면접에서 큰 도움이 됐습니다."',
-      result: '🎉 T사 핀테크 재직중'
-    },
-    {
-      name: '조**',
-      role: '전 SI 3년차',
-      avatar: '🔥',
-      text: '"SI에서 서비스 회사로 이직하는 게 막막했는데, 제 프로젝트 경험을 어떻게 어필해야 할지 알게 됐어요."',
-      result: '🛍️ C사 이커머스 재직중'
-    },
-    {
-      name: '윤**',
-      role: '비전공 백엔드 1년차',
-      avatar: '🌱',
-      text: '"비전공자라 기초가 부족한 줄만 알았는데, 제가 가진 강점이 뭔지 발견했습니다. 질문이 정말 날카로웠어요."',
-      result: '🏦 금융권 IT 재직중'
-    },
-    {
-      name: '장**',
-      role: '물류 플랫폼 개발자 5년차',
-      avatar: '🏗️',
-      text: '"모놀리식에서 MSA 전환 프로젝트를 했는데, 그 경험을 어떻게 설명해야 할지 막막했어요. 이제는 자신있게 설명합니다."',
-      result: '🚀 L사 메신저 기업 재직중'
-    },
-    {
-      name: '한**',
-      role: '전 스타트업 CTO',
-      avatar: '👨‍💼',
-      text: '"작은 스타트업 경험이 대기업 면접에서 통할까 걱정했는데, 오히려 강점으로 만드는 방법을 배웠습니다."',
-      result: '💳 S카드사 재직중'
-    },
-    {
-      name: '강**',
-      role: '프론트→백엔드 전환 2년차',
-      avatar: '🔄',
-      text: '"React만 하다가 Spring으로 전향했는데, 면접관들이 전향 이유를 계속 물어봐요. 이제는 명확하게 답할 수 있습니다."',
-      result: '🎨 디자인 플랫폼 재직중'
-    },
-    {
-      name: '문**',
-      role: '해외 리모트 준비중',
-      avatar: '🌏',
-      text: '"영어 면접이 아니라 기술 면접이 더 걱정이었는데, QueryDaily로 한국어로 먼저 정리하니 영어 전환도 쉬웠어요."',
-      result: '🌐 글로벌 리모트 기업 최종 면접중'
-    },
-    {
-      name: '노**',
-      role: 'O2O 서비스 팀리드 10년차',
-      avatar: '👨‍👩‍👧‍👦',
-      text: '"팀장이 되니 코딩보다 매니징 질문이 많아요. 기술 리더십을 어떻게 설명할지 연습이 필요했습니다."',
-      result: '🚖 모빌리티 대기업 재직중'
-    },
-    {
-      name: '도**',
-      role: '인턴→정규직 전환 희망',
-      avatar: '🌟',
-      text: '"인턴 6개월 경험을 어떻게 어필해야 할지 막막했는데, 작은 기여도 의미있게 표현하는 법을 배웠어요."',
-      result: '🎮 게임사 정규직 전환 성공'
-    },
-    {
-      name: '류**',
-      role: '군 전역 후 복학생',
-      avatar: '🎖️',
-      text: '"2년 공백이 있어서 기술 트렌드를 못 따라갈까봐 걱정했는데, 본질적인 질문으로 기초를 다졌습니다."',
-      result: '📱 모바일 앱 개발사 인턴'
-    },
-    {
-      name: '민**',
-      role: '육아휴직 후 복직 준비',
-      avatar: '👶',
-      text: '"1년 공백 후 이직 준비가 막막했어요. 경력 단절이 아닌 경력 성숙으로 표현하는 법을 알게 됐습니다."',
-      result: '👨‍👩‍👧 가족친화 기업 재직중'
-    },
-    {
-      name: '배**',
-      role: '프리랜서 5년→정규직 희망',
-      avatar: '💼',
-      text: '"프리랜서 경험을 회사에서 어떻게 활용할지 계속 물어봐요. 다양한 프로젝트를 강점으로 만들었습니다."',
-      result: '🏢 중견기업 정규직 전환'
-    },
-    {
-      name: '손**',
-      role: 'QA 엔지니어→백엔드 전향',
-      avatar: '🔍',
-      text: '"테스트만 하다가 개발로 전향하니 시각이 다르더라고요. 품질 관점의 개발자로 포지셔닝했습니다."',
-      result: '🔧 B2B SaaS 재직중'
-    }
-  ];
-
-  // Dot 그룹핑을 위한 상수
-  const MAX_DOTS = 10;
-  const testimonialsPerDot = Math.ceil(testimonials.length / MAX_DOTS);
-  const totalDots = Math.min(testimonials.length, MAX_DOTS);
-
-  // Clone for infinite scroll
-  const extendedTestimonials = [testimonials[testimonials.length - 1], ...testimonials, testimonials[0]];
-
-  // Auto-hide error toast after 5 seconds
-  useEffect(() => {
-    if (errors.length > 0) {
-      // Clear any existing timeout
-      if (errorTimeout) {
-        clearTimeout(errorTimeout);
-      }
-
-      // Set new timeout to clear errors after 5 seconds
-      const timeout = setTimeout(() => {
-        setErrors([]);
-      }, 5000);
-
-      setErrorTimeout(timeout);
-    }
-
-    return () => {
-      if (errorTimeout) {
-        clearTimeout(errorTimeout);
-      }
-    };
-  }, [errors]);
-
-  // Countdown timer is now a separate component to prevent re-renders
-
-  useEffect(() => {
-    // Smooth scroll setup
-    const handleSmoothScroll = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'A' && target.getAttribute('href')?.startsWith('#')) {
-        e.preventDefault();
-        const targetId = target.getAttribute('href')?.slice(1);
-        const targetElement = document.getElementById(targetId || '');
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    };
-
-    document.addEventListener('click', handleSmoothScroll);
-    return () => document.removeEventListener('click', handleSmoothScroll);
-  }, []);
-
-  // Handle infinite scroll positioning
-  useEffect(() => {
-    if (currentTestimonial === 0) {
-      setTimeout(() => {
-        setTransition(false);
-        setCurrentTestimonial(testimonials.length);
-        requestAnimationFrame(() => {
-          setTransition(true);
-        });
-      }, 500);
-    } else if (currentTestimonial === testimonials.length + 1) {
-      setTimeout(() => {
-        setTransition(false);
-        setCurrentTestimonial(1);
-        requestAnimationFrame(() => {
-          setTransition(true);
-        });
-      }, 500);
-    }
-  }, [currentTestimonial, testimonials.length]);
-
-  // Auto-rotate testimonials
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial(prev => prev + 1);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleNext = () => {
-    trackCTA('다음 후기', 'testimonial_slider');
-    setCurrentTestimonial(prev => prev + 1);
-  };
-
-  const handlePrev = () => {
-    trackCTA('이전 후기', 'testimonial_slider');
-    setCurrentTestimonial(prev => prev - 1);
-  };
-
-  const handleDotClick = (dotIndex: number) => {
-    // 각 dot이 대표하는 첫 번째 testimonial로 이동
-    const targetIndex = dotIndex * testimonialsPerDot;
-    setCurrentTestimonial(targetIndex + 1);
-  };
-
-  // Handle product selection
-  const handleProductSelect = (productId: string) => {
-    // Track CTA click
-    const productNames: Record<string, string> = {
-      'growth-plan': '그로스 플랜',
-      'real-interview': '리얼 인터뷰',
-      'critical-hit': '크리티컬 히트',
-      'last-check': '라스트 체크',
-      'resume-fit': '레주메 핏'
-    };
-    trackCTA(`지금 시작하기 - ${productNames[productId] || productId}`, 'product', { product_id: productId });
-
-    setSelectedPurchaseProduct(productId);
-    setPurchaseModalOpen(true);
-    setPurchaseModalStep(1);
-    // Reset email verification state
-    setIsEmailVerified(false);
-    setShowVerificationInput(false);
-    setVerificationCode('');
-    setSentVerificationCode('');
-    // Reset purchase info
-    setPurchaseName('');
-    setPurchaseNameError('');
-    setPurchasePhone('');
-    setPurchasePhoneError('');
-    setPurchaseEmail(''); // KAKAO/INICIS REVIEW: Reset email
-    setPurchaseEmailError('');
-    setPurchaseFile(null);
-  };
-
-  // Send verification email
-  const handleSendVerification = () => {
-    if (!profileData.email || !profileData.email.includes('@')) {
-      setNotification({ message: '올바른 이메일 주소를 입력해주세요', type: 'error' });
-      setTimeout(() => setNotification(null), 3000);
-      return;
-    }
-
-    // KAKAO/INICIS REVIEW: Auto-approve for review process
-    setIsEmailVerified(true);
-    setShowVerificationInput(false);
-    setNotification({ message: '이메일 인증이 완료되었습니다!', type: 'success' });
-    setTimeout(() => setNotification(null), 3000);
-    return;
-
-    // Original code (commented for review)
-    /*
-    // Generate 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setSentVerificationCode(code);
-    setShowVerificationInput(true);
-    setVerificationTimer(180); // 3 minutes = 180 seconds
-
-    // Mock: In real implementation, send email via backend API
-    console.log(`Verification code sent to ${profileData.email}: ${code}`);
-    setNotification({
-      message: `인증 코드가 ${profileData.email}로 전송되었습니다. (테스트: ${code})`,
-      type: 'info'
-    });
-    setTimeout(() => setNotification(null), 5000);
-    */
-  };
-
-  // Verify the code
-  const handleVerifyCode = () => {
-    // KAKAO/INICIS REVIEW: Auto-approve for review process
-    setIsEmailVerified(true);
-    setShowVerificationInput(false);
-    setVerificationTimer(0);
-    setNotification({ message: '이메일 인증이 완료되었습니다!', type: 'success' });
-    setTimeout(() => setNotification(null), 3000);
-    return;
-
-    // Original code (commented for review)
-    /*
-    if (verificationCode === sentVerificationCode) {
-      setIsEmailVerified(true);
-      setShowVerificationInput(false);
-      setVerificationTimer(0);
-      setNotification({ message: '이메일 인증이 완료되었습니다!', type: 'success' });
-      setTimeout(() => setNotification(null), 3000);
-    } else {
-      setNotification({ message: '인증 코드가 일치하지 않습니다. 다시 확인해주세요.', type: 'error' });
-      setTimeout(() => setNotification(null), 3000);
-    }
-    */
-  };
-
-  // Touch handlers for swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe) {
-      handleNext();
-    }
-    if (isRightSwipe) {
-      handlePrev();
-    }
-  };
 
   const handleCardPayment = async () => {
     try {
@@ -624,10 +55,7 @@ export default function HomePage() {
       // ProductCode 매핑
       const productCodeMap: Record<string, string> = {
         'critical-hit': 'CRITICAL_HIT',
-        'growth-plan': 'GROWTH_PLAN',
-        'real-interview': 'REAL_INTERVIEW',
-        'last-check': 'LAST_CHECK',
-        'resume-fit': 'RESUME_FIT'
+        'growth-plan': 'GROWTH_PLAN'
       };
 
       const productCode = productCodeMap[selectedPurchaseProduct || ''];
@@ -654,7 +82,7 @@ export default function HomePage() {
       // 주문 정보 저장
       const orderInfo = {
         orderId: response.data.orderId,
-        productName: selectedPurchaseProduct || '',
+        product: selectedPurchaseProduct || '',
         price: response.data.amount || 0,
         paymentMethod: 'card',
         email: purchaseEmail,
@@ -670,14 +98,6 @@ export default function HomePage() {
 
         const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
 
-        // 결제 요청 직전 페이로드 로깅 (민감정보 마스킹)
-        const masked = {
-          ...payload,
-          channelKey: payload.channelKey ? `*${payload.channelKey.slice(-6)}` : undefined,
-          storeId: payload.storeId ? `*${payload.storeId.slice(-6)}` : undefined,
-        };
-        console.info('[PortOne SDK] requestPayment payload', masked);
-
         try {
           // 백엔드가 보내준 payload 그대로 전달
           const sdkResponse = await PortOne.requestPayment(payload);
@@ -688,1218 +108,1824 @@ export default function HomePage() {
             return;
           }
 
-          // SDK 응답 체크 (문서 기반)
+          // SDK 응답 체크
           if (sdkResponse.code !== undefined) {
             // 오류 발생 (취소, 실패 등)
-            console.log('[PortOne SDK] Payment cancelled or failed:', {
-              code: sdkResponse.code,
-              message: sdkResponse.message
-            });
-
-            // 사용자 친화적 메시지로 변환
             let userMessage = '결제를 처리할 수 없습니다.';
-            if (sdkResponse.code === 'USER_CANCEL' || sdkResponse.message?.includes('취소')) {
-              userMessage = '결제가 취소되었습니다.';
-            } else if (sdkResponse.code === 'NETWORK_ERROR') {
-              userMessage = '네트워크 연결을 확인해 주세요.';
-            } else if (sdkResponse.message) {
-              userMessage = sdkResponse.message;
+            if (sdkResponse.code === 'FAILURE_TYPE_PG') {
+              userMessage = `결제 실패: ${sdkResponse.message || 'PG사 오류'}`;
+            } else if (sdkResponse.code === 'FAILURE_TYPE_TIMEOUT') {
+              userMessage = '결제 시간이 초과되었습니다.';
             }
-
             alert(userMessage);
             return;
           }
 
-          // 성공한 경우
-          console.log('[PortOne SDK] Payment request succeeded, paymentId:', sdkResponse.paymentId);
-          window.location.href = '/order-complete';
-        } catch (error: any) {
-          console.error('[PortOne SDK] Unexpected error:', error);
-          alert(`결제 SDK 오류: ${error.message || '알 수 없는 오류'}`);
+          // 성공 시 주문 완료 페이지로 이동
+          router.push('/order-complete');
+        } catch (sdkError: any) {
+          console.error('[PortOne SDK] Error during requestPayment:', sdkError);
+          alert('결제 창을 여는 중 오류가 발생했습니다.');
         }
-      } else if (response.data.checkoutUrl) {
-        // URL 모드인 경우 체크아웃 URL로 리다이렉트
-        window.location.href = response.data.checkoutUrl;
       } else {
-        // URL도 없고 SDK도 아닌 경우
-        window.location.href = '/order-complete';
+        // 리다이렉트 방식
+        alert('리다이렉트 방식은 현재 지원하지 않습니다.');
       }
-    } catch (error: any) {
-      console.error('Payment order error:', error);
-      alert(`주문 처리 중 오류가 발생했습니다: ${error.message}`);
+    } catch (error) {
+      console.error('Card payment error:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!profileData.email || !emailRegex.test(profileData.email)) {
-      setErrors(['올바른 이메일 주소를 입력해주세요']);
-      return;
-    }
-
-    setErrors([]);
-    setShowProfileForm(true);
-    calculateProfileCompleteness();
-  };
-
-  const calculateProfileCompleteness = () => {
-    let score = 20; // 이메일 입력 시 기본 20%
-    if (profileData.experience) score += 20;
-    if (profileData.techStack && profileData.techStack.length > 0) score += 20;
-    if (profileData.interests && profileData.interests.length > 0) score += 20;
-    if (profileData.targetCompany) score += 20;
-    setProfileCompleteness(score);
-  };
-
-  const handleProfileUpdate = (field: keyof UserProfile, value: any) => {
-    setProfileData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
-    // 프로필 완성도 재계산
-    setTimeout(calculateProfileCompleteness, 100);
-  };
-
-  const validateForm = () => {
-    const newErrors: string[] = [];
-
-    // Email validation (이메일만 필수)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!profileData.email || !emailRegex.test(profileData.email)) {
-      newErrors.push('올바른 이메일 주소를 입력해주세요');
-    }
-
-    setErrors(newErrors);
-    return newErrors.length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Prevent duplicate submissions
-    if (isSubmitting) {
-      return;
-    }
-
-    if (validateForm()) {
-      setIsSubmitting(true);
-      setErrors([]); // Clear any previous errors
-
-      // Track signup start
-      trackBetaSignupStart();
-      // Also track as CTA click
-      trackCTA('무료 체험 시작', 'modal_submit');
-
-      try {
-        // 선택된 상품 정보를 포함하여 무료 체험 시작
-        const trialData = {
-          ...profileData,
-          selectedProduct: selectedProduct || undefined // null을 undefined로 변환
-        };
-        const response = await startFreeTrial(trialData);
-
-        // Track successful signup
-        trackBetaSignupComplete();
-
-        // Redirect to success page with email parameter
-        router.push(`/success?email=${encodeURIComponent(profileData.email)}`);
-      } catch (error) {
-        console.error('Error submitting application:', error);
-
-        const errorMessage = error instanceof Error ? error.message : '';
-
-        // 에러 타입별 사용자 친화적 메시지
-        if (errorMessage === 'FILE_TOO_LARGE' || errorMessage.includes('413')) {
-          setErrors([
-            '📎 파일 크기가 너무 큽니다.',
-            '5MB 이하의 PDF로 다시 시도해주세요.',
-            '💡 파일 압축이 필요하면 smallpdf.com 또는 ilovepdf.com을 이용해보세요.'
-          ]);
-        } else if (errorMessage === 'TOO_MANY_REQUESTS' || errorMessage.includes('429')) {
-          setErrors([
-            '⏰ 너무 많은 요청이 발생했습니다.',
-            '잠시 후 다시 시도해주세요.'
-          ]);
-        } else if (errorMessage === 'SERVER_ERROR' || errorMessage.includes('500')) {
-          setErrors([
-            '⚠️ 서버에 일시적인 문제가 발생했습니다.',
-            '잠시 후 다시 시도하거나 카카오톡 채널로 문의해주세요.'
-          ]);
-        } else if (errorMessage === 'BAD_GATEWAY' || errorMessage === 'SERVICE_UNAVAILABLE') {
-          setErrors([
-            '🔧 서비스 점검 중입니다.',
-            '잠시 후 다시 시도해주세요.',
-            '문제가 지속되면 카카오톡 채널로 문의해주세요.'
-          ]);
-        } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
-          setErrors([
-            '🌐 네트워크 연결을 확인해주세요.',
-            '인터넷 연결이 안정적인지 확인 후 다시 시도해주세요.'
-          ]);
-        } else {
-          setErrors([
-            '신청 처리 중 오류가 발생했습니다.',
-            '다시 시도하시거나 카카오톡 채널로 문의해주세요.'
-          ]);
-        }
-
-        setIsSubmitting(false);
-      }
-    }
-  };
-
   return (
-    <div className={styles.container}>
-      {/* Scroll Tracking */}
-      <ScrollTracker />
-
-      {/* Notification Modal */}
-      {notification && (
-        <div className={styles.notificationContainer}>
-          <div className={`${styles.notification} ${styles[`notification${notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}`]}`}>
-            <span className={styles.notificationMessage}>{notification.message}</span>
-            <button
-              className={styles.notificationClose}
-              onClick={() => setNotification(null)}
-              aria-label="닫기"
-            >
-              ×
-            </button>
+    <>
+      {/* Fixed CTA */}
+      <div className={styles.fixedCta}>
+        <div className={styles.fixedCtaContainer}>
+          <div className={styles.fixedCtaText}>
+            <div className={styles.fixedCtaTitle}>Query<span>Daily</span></div>
+            <div className={styles.fixedCtaSubtitle}>이력서 맞춤형 면접 질문 서비스</div>
           </div>
+          <a href="#products" className={styles.fixedCtaButton}>
+            지금 시작하기
+          </a>
         </div>
-      )}
+      </div>
 
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.navContainer}>
-          <div className={styles.nav}>
-            <div className={styles.logo}>
-              <span className={styles.logoText}>Query<span className={styles.logoAccent}>Daily</span></span>
-              <span className={styles.betaTag}>BETA</span>
+      {/* Theme Selector */}
+      <ThemeSelector />
+
+      <div className={styles.container}>
+
+        {/* Hero Section - 100vh Full Screen, Centered */}
+        <section className={styles.hero}>
+          {/* Light Effects - Reduced opacity */}
+          <div className={styles.lightEffect}></div>
+          <div className={styles.lightEffect2}></div>
+
+          <div className={styles.heroContainer}>
+            {/* 체크마크 배경 */}
+            <div className={styles.checkBackground}>
+              <svg viewBox="0 0 100 100">
+                <path
+                  d="M 20 50 L 40 70 L 80 30"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                  className={styles.checkAnimation}
+                />
+              </svg>
             </div>
 
-            {/* Hamburger Menu Button */}
-            <button
-              className={styles.hamburger}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="메뉴 열기"
-            >
-              <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineOpen : ''}`}></span>
-              <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineOpen : ''}`}></span>
-              <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineOpen : ''}`}></span>
-            </button>
+            <span className={`${styles.preTitle} ${isTextVisible ? styles.visible : ''}`}>
+              이직을 준비하는 당신에게
+            </span>
 
-            <nav className={`${styles.navMenu} ${mobileMenuOpen ? styles.navMenuOpen : ''}`}>
-              <a href="#why" className={styles.navLink} onClick={() => { trackCTA('왜 QueryDaily', 'navigation'); setMobileMenuOpen(false); }}>왜 QueryDaily</a>
-              <a href="#how-it-works" className={styles.navLink} onClick={() => { trackCTA('작동 방식', 'navigation'); setMobileMenuOpen(false); }}>작동 방식</a>
-              <a href="#testimonials" className={styles.navLink} onClick={() => { trackCTA('후기', 'navigation'); setMobileMenuOpen(false); }}>후기</a>
-              <a href="#apply" className={`${styles.navLink} ${styles.navLinkCta}`} onClick={() => { trackCTA('시작하기', 'navigation'); setMobileMenuOpen(false); }}>
-                <span>시작하기</span>
-                <span className={styles.navArrow}>→</span>
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <div id="hero" data-section="hero" className={styles.hero}>
-        <div className={styles.heroContainer}>
-          <div className={styles.heroContent}>
-            <div className={styles.heroBadgeContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-              <div className={styles.heroBadge}>
-                <span className={styles.badgeIcon}>🎯</span>
-                <span><strong>이력서 맞춤형</strong> 면접 질문 서비스</span>
-              </div>
-            </div>
-
-            <h1 className={styles.heroTitle}>
-              <span className={styles.heroTitleMain}>이력서에서 나올</span><br/>
-              <span className={styles.textGradient}>그 질문, 미리 준비하세요</span>
+            <h1 className={`${styles.heroTitle} ${styles.heroTitleMega} ${isTextVisible ? styles.visible : ''}`}>
+              합격 시그널을<br/>
+              <span className={styles.highlight}>미리 받으세요</span>
             </h1>
 
-            <p className={styles.heroSubtitle}>
-              면접관이 고개를 끄덕이는 순간,<br/>
-              "이 친구 제대로 알고 있네"라고 생각하는 순간,<br/>
-              그 순간을 만드는 건 운이 아닙니다. 준비입니다.
+            <p className={`${styles.heroTagline} ${isTextVisible ? styles.visible : ''}`}>
+              면접관이 물을 질문은 이미 <strong>당신 이력서에</strong> 다 있습니다.<br/>
+              그 질문들을 미리 알면, 면접은 달라집니다.
             </p>
 
-            <div className={styles.heroStats}>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>87%</div>
-                <div className={styles.statLabel}>기술 면접 질문으로<br/>떨어지는 개발자</div>
+            {/* 차별점 강조 */}
+            <div className={`${styles.socialProof} ${isTextVisible ? styles.visible : ''}`}>
+              <span className={styles.socialProofText} style={{fontSize: '0.95rem', opacity: 0.9}}>
+                일반 질문이 아닌, <strong>내 이력서 기반 맞춤 질문</strong>
+              </span>
+            </div>
+
+            <a href="#products" className={`${styles.heroBtn} ${isTextVisible ? styles.visible : ''}`}>
+              내 이력서로 합격 시그널 받기 →
+            </a>
+          </div>
+
+          {/* Scroll Hint */}
+          <div className={styles.scrollHint}>
+            <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </section>
+
+        {/* Problem Section - 불안 공감 */}
+        <section className={styles.problemSection}>
+          <div className={styles.problemContainer}>
+
+            <h2 className={styles.sectionTitle}>
+              혹시 이런 <span className={styles.highlight}>불안</span>, 느끼고 계신가요?
+            </h2>
+
+            {/* 불안 공감 포인트 */}
+            <div className={styles.prepMessage} style={{marginBottom: '2.5rem'}}>
+              <p className={styles.prepMessageSub} style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
+                "이 회사 떨어지면 다음은 언제지..."<br/>
+                "나이만 먹고 있는 건 아닐까..."<br/>
+                "다른 사람들은 다 잘 가는 것 같은데..."
+              </p>
+            </div>
+
+            <p style={{textAlign: 'center', fontSize: '1.1rem', marginBottom: '2.5rem', opacity: 0.9}}>
+              그런데 막상 면접장에 가면, 이렇게 됩니다.
+            </p>
+
+            {/* 채팅 스타일 시나리오 - 아바타 포함 */}
+            <div style={{maxWidth: '480px', margin: '0 auto'}}>
+              {/* 시나리오 1 */}
+              <div style={{marginBottom: '2.5rem'}}>
+                {/* 면접관 말풍선 */}
+                <div style={{display: 'flex', gap: '0.8rem', marginBottom: '1rem'}}>
+                  <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                  <div style={{background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1}}>
+                    <p style={{fontSize: '0.95rem', lineHeight: '1.5'}}>"Redis 캐싱을 구현하셨네요.<br/><strong>왜 Redis를 선택했나요?</strong>"</p>
+                  </div>
+                </div>
+                {/* 내 답변 */}
+                <div style={{display: 'flex', gap: '0.8rem', justifyContent: 'flex-end'}}>
+                  <div style={{background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)'}}>
+                    <p style={{fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center'}}>"<strong>그냥</strong>... 빠르다고 해서요...<br/>주변에서 많이 써서..."</p>
+                  </div>
+                </div>
               </div>
-              <div className={styles.statDivider}></div>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>500+</div>
-                <div className={styles.statLabel}>실제 면접 데이터로<br/>학습한 AI</div>
+
+              {/* 시나리오 2 */}
+              <div style={{marginBottom: '2.5rem'}}>
+                <div style={{display: 'flex', gap: '0.8rem', marginBottom: '1rem'}}>
+                  <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                  <div style={{background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1}}>
+                    <p style={{fontSize: '0.95rem', lineHeight: '1.5'}}>"Spring Boot로 API를 만드셨군요.<br/><strong>왜 Spring이었나요?</strong>"</p>
+                  </div>
+                </div>
+                <div style={{display: 'flex', gap: '0.8rem', justifyContent: 'flex-end'}}>
+                  <div style={{background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)'}}>
+                    <p style={{fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center'}}>"음... <strong>국비학원</strong>에서 배워서요...<br/>다들 쓰길래..."</p>
+                  </div>
+                </div>
               </div>
-              <div className={styles.statDivider}></div>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>즉시</div>
-                <div className={styles.statLabel}>AI 이력서<br/>분석 시작</div>
+
+              {/* 시나리오 3 */}
+              <div style={{marginBottom: '1.5rem'}}>
+                <div style={{display: 'flex', gap: '0.8rem', marginBottom: '1rem'}}>
+                  <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                  <div style={{background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1}}>
+                    <p style={{fontSize: '0.95rem', lineHeight: '1.5'}}>"트랜잭션 처리를 하셨네요.<br/><strong>격리 수준은 어떻게 설정했나요?</strong>"</p>
+                  </div>
+                </div>
+                <div style={{display: 'flex', gap: '0.8rem', justifyContent: 'flex-end'}}>
+                  <div style={{background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)'}}>
+                    <p style={{fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center'}}>"그건... <strong>기본값</strong> 쓴 것 같은데...<br/>따로 설정은 안 했어요..."</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className={styles.heroCta}>
-              <div className={styles.heroCtaButtons}>
-                <a
-                  href="#products"
-                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLarge}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    trackCTA('상품 선택하기', 'hero');
-                    document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  <span>상품 선택하기</span>
-                  <span className={styles.btnArrow}>→</span>
-                </a>
+            <p style={{textAlign: 'center', fontSize: '1.05rem', marginTop: '1rem', marginBottom: '1rem'}}>
+              분명히 해봤는데, 말이 안 나옵니다.<br/><br/>
+              <strong style={{fontSize: '1.1rem'}}>능력이 없어서가 아니에요.<br/>준비가 안 된 거예요.</strong>
+            </p>
+
+            <p style={{textAlign: 'center', fontSize: '0.95rem', marginTop: '2rem', opacity: 0.7, fontStyle: 'italic'}}>
+              "준비해야 하는 건 아는데...<br/>
+              뭘 어떻게 준비해야 하지?"
+            </p>
+
+          </div>
+        </section>
+
+        {/* 탈락 이유 상세 섹션 */}
+        <section className={styles.statistics}>
+          <div className={styles.statisticsContainer}>
+            <span className={styles.badge} style={{background: 'rgba(255,100,100,0.2)', color: '#ff6b6b'}}>채용 담당자 설문</span>
+            <h2 className={styles.sectionTitle} style={{marginTop: '1rem'}}>
+              면접에서 떨어지는<br/>
+              <span className={styles.highlight}>진짜 이유</span>
+            </h2>
+
+            <p style={{textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8}}>
+              채용 담당자 500명이 직접 밝힌 탈락 사유
+            </p>
+
+            {/* 메인 통계 */}
+            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
+              <div style={{fontSize: '4rem', fontWeight: '800', background: 'linear-gradient(135deg, #ff6b6b, #ee5a5a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1}}>
+                70<span style={{fontSize: '2rem'}}>%</span>
               </div>
-              <p className={styles.ctaNote}>
-                <span className={styles.noteIcon}>✓</span> 즉시 시작 가능
-                <span className={styles.noteDivider}>•</span>
-                <span className={styles.noteIcon}>✓</span> 지하철, 버스 어디서든 가능
+              <p style={{fontSize: '1.1rem', marginTop: '0.5rem', fontWeight: '600'}}>
+                "준비가 부족해 보였다"
+              </p>
+            </div>
+
+            {/* 구체적 탈락 이유 */}
+            <div style={{maxWidth: '500px', margin: '0 auto'}}>
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>47%</div>
+                <div>
+                  <p style={{fontSize: '1rem', fontWeight: '600'}}>"왜?"에 대한 답변이 없다</p>
+                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>기술 선택의 이유를 설명하지 못함</p>
+                </div>
+              </div>
+
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>38%</div>
+                <div>
+                  <p style={{fontSize: '1rem', fontWeight: '600'}}>경험을 구체적으로 말하지 못한다</p>
+                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>숫자, 과정, 결과가 모호함</p>
+                </div>
+              </div>
+
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>31%</div>
+                <div>
+                  <p style={{fontSize: '1rem', fontWeight: '600'}}>꼬리 질문에 무너진다</p>
+                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>한 단계 깊이 들어가면 답변 불가</p>
+                </div>
+              </div>
+
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>28%</div>
+                <div>
+                  <p style={{fontSize: '1rem', fontWeight: '600'}}>이력서 내용을 기억 못 한다</p>
+                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>본인이 쓴 내용도 설명하지 못함</p>
+                </div>
+              </div>
+            </div>
+
+            <p style={{textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '2rem'}}>
+              데이터 출처: Glassdoor (2024-2025), LinkedIn Talent Solutions
+            </p>
+
+            <div className={styles.ctaNudge} style={{marginTop: '2.5rem'}}>
+              <p className={styles.ctaNudgeMain}>
+                전부 <strong>준비하면 해결되는 문제</strong>입니다.
+              </p>
+              <p className={styles.ctaNudgeDesc} style={{marginTop: '0.8rem'}}>
+                문제는 뭘 준비해야 하는지 모른다는 것.<br/>
+                <span className={styles.ctaNudgeHighlight}>QueryDaily가 그걸 알려드립니다.</span>
               </p>
             </div>
           </div>
+        </section>
 
-          {/* Visual Element */}
-          <div className={styles.heroVisual}>
-            <div className={`${styles.floatingCard} ${styles.card1}`}>
-              <div className={styles.cardHeader}>오늘의 질문</div>
-              <div className={styles.cardContent}>
-                "이력서에 '일평균 10만 건 처리' 라고 쓰셨는데, 피크 타임엔 몇 건까지 처리해야 했고, 그때 병목은 어디서 발생했나요?"
-              </div>
-            </div>
-            <div className={`${styles.floatingCard} ${styles.card2}`}>
-              <div className={styles.cardHeader}>AI 분석 중...</div>
-              <div className={styles.cardProgress}></div>
-            </div>
-            <div className={`${styles.floatingCard} ${styles.card3}`}>
-              <div className={styles.cardEmoji}>☕</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Problem Section */}
-      <div id="why" data-section="problem" className={`${styles.section} ${styles.problem}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>혹시 당신의 이야기인가요?</h2>
-          <p className={styles.sectionSubtitle} style={{ fontSize: '1.5rem', color: '#c3e88d', marginBottom: '2rem' }}>
-            "코드는 돌아가는데, 제 경력은 설명이 안됩니다."
-          </p>
-
-          <div className={styles.problemsBalancedGrid}>
-            <div className={styles.problemCard}>
-              <div className={styles.problemIcon}>🤔</div>
-              <h3>"왜 썼죠?"</h3>
-              <p>분명 내가 사용한 기술인데, '왜?'라는 질문 앞에서는 말문이 막혀요.</p>
-            </div>
-            <div className={styles.problemCard}>
-              <div className={styles.problemIcon}>🤯</div>
-              <h3>"그래서 뭘 했죠?"</h3>
-              <p>내 프로젝트는 너무 평범해서, 뭘 어떻게 어필해야 할지 모르겠어요.</p>
-            </div>
-            <div className={styles.problemCard}>
-              <div className={styles.problemIcon}>📚</div>
-              <h3>"어떻게 다르죠?"</h3>
-              <p>분명 Spring의 동작 원리는 아는데, 이걸 제 프로젝트 경험과 연결하지 못하겠어요.</p>
-            </div>
-            <div className={styles.problemCard}>
-              <div className={styles.problemIcon}>😰</div>
-              <h3>"긴장하면 백지"</h3>
-              <p>집에서는 잘 아는데, 면접장에서는 머릿속이 하얘져요.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tester Review Section */}
-      <div id="reviews" data-section="tester_reviews" className={`${styles.section} ${styles.realReviews}`} style={{ background: 'rgba(130, 170, 255, 0.02)' }}>
-        <div className={styles.sectionContainer}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <div style={{ display: 'inline-block', background: 'rgba(195, 232, 141, 0.1)', padding: '8px 16px', borderRadius: '20px', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '0.9rem', color: '#c3e88d', fontWeight: '600' }}>
-                ✓ 베타 테스터 100% 실제 후기
-              </span>
-            </div>
-          </div>
-
-          <h2 className={styles.sectionTitle}>
-            실제 사용자들의<br/>솔직한 후기
-          </h2>
-          <p className={styles.sectionSubtitle} style={{ fontSize: '1.2rem', color: '#82aaff' }}>
-            베타 테스터들이 경험한 QueryDaily
-          </p>
-
-          {/* 타임라인 컨테이너 */}
-          <div style={{
-            maxWidth: '900px',
-            margin: '3rem auto 0',
-            position: 'relative' as const
-          }}>
-            {/* 타임라인 선 */}
-            <div style={{
-              position: 'absolute' as const,
-              left: '20px',
-              top: '40px',
-              bottom: '40px',
-              width: '2px',
-              background: 'linear-gradient(180deg, rgba(195, 232, 141, 0.3), rgba(130, 170, 255, 0.3), rgba(247, 140, 108, 0.3))',
-              display: 'none',
-            }}></div>
-
-            {/* Day 1 - 첫 질문 */}
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2.5rem' }}>
-              {/* 타임라인 도트 */}
-              <div style={{ flexShrink: 0, position: 'relative' as const }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #c3e88d, #82aaff)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  boxShadow: '0 0 20px rgba(195, 232, 141, 0.3)'
-                }}>📩</div>
-              </div>
-
-              {/* 메시지 카드 */}
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
-                }}>
-                  {/* 본문 */}
-                  <div style={{ padding: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-                      <span style={{
-                        fontSize: '0.7rem',
-                        color: '#89ddff',
-                        background: 'rgba(137, 221, 255, 0.1)',
-                        padding: '4px 10px',
-                        borderRadius: '8px'
-                      }}>✓ 베타 테스터</span>
-                    </div>
-                    <div style={{
-                      background: 'rgba(130, 170, 255, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '8px',
-                      border: '1px solid rgba(130, 170, 255, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        첫 질문이 "프로젝트에 Redis를 사용했다고 하셨는데, Redis 서버가 다운되면
-                        어떻게 처리할 계획이었나요?"였습니다.
-                      </p>
-                    </div>
-                    <div style={{
-                      background: 'rgba(130, 170, 255, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '12px',
-                      border: '1px solid rgba(130, 170, 255, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        솔직히 장애 상황을 고려해본 적이 없어서, 답변을 제대로 못했습니다.
-                        이력서에 쓴 기술 하나하나에 대해 깊이 있는 준비가 필요하다는 걸
-                        처음으로 체감했습니다.
-                      </p>
-                    </div>
-
-                    {/* 프로필 */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
-                      <div style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #c3e88d, #82aaff)',
-                        filter: 'blur(1.5px)',
-                        opacity: 0.8
-                      }}></div>
-                      <div>
-                        <div style={{
-                          fontSize: '0.85rem',
-                          fontWeight: '600',
-                          color: '#fff',
-                          filter: 'blur(3px)',
-                          userSelect: 'none'
-                        }}>김민준</div>
-                        <div style={{ fontSize: '0.75rem', color: '#89ddff', marginTop: '2px' }}>
-                          백엔드 개발자 • 3년차
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Day 2 - 패턴 발견 */}
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2.5rem' }}>
-              <div style={{ flexShrink: 0 }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #82aaff, #c792ea)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  boxShadow: '0 0 20px rgba(130, 170, 255, 0.3)'
-                }}>💡</div>
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
-                }}>
-                  <div style={{ padding: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-                      <span style={{
-                        fontSize: '0.7rem',
-                        color: '#89ddff',
-                        background: 'rgba(137, 221, 255, 0.1)',
-                        padding: '4px 10px',
-                        borderRadius: '8px'
-                      }}>✓ 베타 테스터</span>
-                    </div>
-                    <div style={{
-                      background: 'rgba(130, 170, 255, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '8px',
-                      border: '1px solid rgba(130, 170, 255, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        며칠 사용하니 질문 패턴이 보이기 시작했습니다.
-                        이력서에 "Spring WebFlux 사용"이라고 적은 부분에서
-                        "왜 WebFlux를 선택했는지", "Blocking IO vs Non-blocking IO의 트레이드오프는 무엇인지"
-                        같은 꼬리질문이 계속 나왔습니다.
-                      </p>
-                    </div>
-                    <div style={{
-                      background: 'rgba(130, 170, 255, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '8px',
-                      border: '1px solid rgba(130, 170, 255, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        제가 사용한 기술 하나하나에 명확한 이유가 있어야 한다는 걸 알게 됐습니다.
-                        "그냥 써봤다"는 답변으로는 부족하다는 것도요.
-                      </p>
-                    </div>
-                    <div style={{
-                      background: 'rgba(130, 170, 255, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '12px',
-                      border: '1px solid rgba(130, 170, 255, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        아직 모든 질문에 완벽하게 답변하진 못하지만,
-                        어떤 방향으로 준비해야 하는지는 명확해졌습니다.
-                      </p>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
-                      <div style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #82aaff, #c792ea)',
-                        filter: 'blur(1.5px)',
-                        opacity: 0.8
-                      }}></div>
-                      <div>
-                        <div style={{
-                          fontSize: '0.85rem',
-                          fontWeight: '600',
-                          color: '#fff',
-                          filter: 'blur(3px)',
-                          userSelect: 'none'
-                        }}>박서연</div>
-                        <div style={{ fontSize: '0.75rem', color: '#89ddff', marginTop: '2px' }}>
-                          풀스택 개발자 • 2년차
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Day 3 - 면접 성공 */}
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2.5rem' }}>
-              <div style={{ flexShrink: 0 }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #f78c6c, #ffcb6b)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  boxShadow: '0 0 20px rgba(247, 140, 108, 0.3)'
-                }}>🎯</div>
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
-                }}>
-                  <div style={{ padding: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-                      <span style={{
-                        fontSize: '0.7rem',
-                        color: '#89ddff',
-                        background: 'rgba(137, 221, 255, 0.1)',
-                        padding: '4px 10px',
-                        borderRadius: '8px'
-                      }}>✓ 베타 테스터</span>
-                    </div>
-                    <div style={{
-                      background: 'rgba(247, 140, 108, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '8px',
-                      border: '1px solid rgba(247, 140, 108, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        오늘 실제 면접에서 "Elasticsearch는 왜 사용하셨나요?"라는 질문을 받았습니다.
-                      </p>
-                    </div>
-                    <div style={{
-                      background: 'rgba(247, 140, 108, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '8px',
-                      border: '1px solid rgba(247, 140, 108, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        QueryDaily에서 준비했던 답변 구조가 떠올랐습니다.
-                        "상황 → 문제 정의 → 기술 선택 이유 → 성과 수치"
-                        순서로 답변했고, 특히 "왜 MySQL Full-text Search가 아닌 Elasticsearch인지"를
-                        검색 성능 비교 수치와 함께 설명했습니다.
-                      </p>
-                    </div>
-                    <div style={{
-                      background: 'rgba(247, 140, 108, 0.15)',
-                      padding: '14px 16px',
-                      borderRadius: '12px 12px 12px 4px',
-                      marginBottom: '12px',
-                      border: '1px solid rgba(247, 140, 108, 0.2)'
-                    }}>
-                      <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#e4e4e4', margin: 0 }}>
-                        면접관분이 추가 질문 없이 다음 주제로 넘어가셨습니다.
-                        준비한 내용을 실전에서 바로 활용할 수 있다는 게 가장 큰 장점인 것 같습니다.
-                      </p>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
-                      <div style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #f78c6c, #ffcb6b)',
-                        filter: 'blur(1.5px)',
-                        opacity: 0.8
-                      }}></div>
-                      <div>
-                        <div style={{
-                          fontSize: '0.85rem',
-                          fontWeight: '600',
-                          color: '#fff',
-                          filter: 'blur(3px)',
-                          userSelect: 'none'
-                        }}>이준호</div>
-                        <div style={{ fontSize: '0.75rem', color: '#89ddff', marginTop: '2px' }}>
-                          백엔드 개발자 • 4년차
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 통계 */}
-          <div style={{
-            marginTop: '3rem',
-            textAlign: 'center',
-            padding: '2rem',
-            background: 'rgba(130, 170, 255, 0.05)',
-            borderRadius: '12px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap' }}>
-              <div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#c3e88d' }}>100%</div>
-                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>만족도 5/5</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#82aaff' }}>10/10</div>
-                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>평균 추천도</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#f78c6c' }}>3일</div>
-                <div style={{ fontSize: '0.9rem', color: '#89ddff', marginTop: '0.5rem' }}>챌린지 기간</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Solution Section */}
-      <div id="solution" data-section="solution" className={`${styles.section} ${styles.solution}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>
-            면접 준비의 핵심은<br/>'답을 찾는 것'이 아닌, '질문을 아는 것'입니다.
-          </h2>
-
-          <div className={styles.solutionValues}>
-            <div className={styles.valueItem}>
-              <div className={styles.valueIcon}>🎯</div>
-              <h3>당신만을 위한 질문</h3>
-              <p>검색하면 나오는 빤한 질문은 그만. 당신의 프로젝트 경험과 기술 스택에서만 나올 수 있는 '꼬리 질문'으로 면접의 깊이를 더합니다.</p>
-            </div>
-            <div className={styles.valueItem}>
-              <div className={styles.valueIcon}>💪</div>
-              <h3>매일 만드는 실전 감각</h3>
-              <p>거창한 계획은 필요 없어요. 매일 단 하나의 질문에 답을 고민하는 것만으로 '면접 근육'이 자연스럽게 단련돼요.</p>
-            </div>
-            <div className={styles.valueItem}>
-              <div className={styles.valueIcon}>🧭</div>
-              <h3>나만의 성장 지도</h3>
-              <p>3일 후, 당신은 어떤 경험을 어떻게 정리해야 할지, 무엇을 더 보강해야 할지 스스로 알게 됩니다.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Products Section */}
-      <div id="products" data-section="products" className={`${styles.section} ${styles.productsSection}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>
-            면접 준비를 위한 프리미엄 서비스
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            당신의 경력과 목표에 맞는 상품을 선택하세요
-          </p>
-
-          <div className={styles.productsGrid}>
-            {/* 그로스 플랜 */}
-            <ItemTracker
-              itemId="growth-plan"
-              itemName="그로스 플랜"
-              price={49000}
-              index={0}
-            >
-              <div className={`${styles.productCard} ${styles.productCardWide}`}>
-              <div className={styles.productBadge}>MOST POPULAR</div>
-              <div className={styles.productHeader}>
-                <span className={styles.productLabel}>20일 집중 훈련</span>
-                <h3 className={styles.productName}>그로스 플랜</h3>
-                <span className={styles.productEn}>Growth Plan</span>
-              </div>
-              <div className={styles.productFeatures}>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>📅</span>
-                  <span>매일 맞춤 질문</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🏢</span>
-                  <span>실제 기출 포함</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>📚</span>
-                  <span>모범 답안 제공</span>
-                </div>
-              </div>
-              <div className={styles.productServiceInfo}>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 30일 이내 완료 (20일간 매일 발송)</span>
-                </div>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>환불 규정</span>
-                  <span className={styles.serviceInfoValue}>첫 질문 발송 전 100%, 이후 일할 계산</span>
-                </div>
-              </div>
-              <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩106,000</span>
-                <span className={styles.priceCurrent}>₩49,000</span>
-              </div>
-              <button
-                className={`${styles.btn} ${styles.btnProductCta} ${styles.btnProductCtaPrimary}`}
-                onClick={() => handleProductSelect('growth-plan')}
-              >
-                지금 시작하기
-              </button>
-            </div>
-            </ItemTracker>
-
-            {/* 리얼 인터뷰 - 모의면접 */}
-            <ItemTracker
-              itemId="real-interview"
-              itemName="리얼 인터뷰"
-              price={199000}
-              index={1}
-            >
-            <div className={styles.productCard}>
-              <div className={styles.productBadge}>PREMIUM</div>
-              <div className={styles.productHeader}>
-                <span className={styles.productLabel}>1:2 실전 모의면접</span>
-                <h3 className={styles.productName}>리얼 인터뷰</h3>
-                <span className={styles.productEn}>Real Interview</span>
-              </div>
-              <div className={styles.productFeatures}>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>👥</span>
-                  <span>현직 면접관 2명과 90분 실전</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>📹</span>
-                  <span>상세 피드백 리포트</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>💬</span>
-                  <span>즉시 교정 가능한 개선점 코칭</span>
-                </div>
-              </div>
-              <div className={styles.productServiceInfo}>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 90일 이내 일정 조율 및 진행 (90분 모의면접 1회)</span>
-                </div>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>환불 규정</span>
-                  <span className={styles.serviceInfoValue}>면접 3일 전 100%, 1-2일 전 50%, 당일 불가</span>
-                </div>
-              </div>
-              <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩179,000</span>
-                <span className={styles.priceCurrent}>₩129,000</span>
-              </div>
-              <button
-                className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('real-interview')}
-              >
-                지금 시작하기
-              </button>
-            </div>
-            </ItemTracker>
-
-            {/* 크리티컬 히트 */}
-            <ItemTracker
-              itemId="critical-hit"
-              itemName="크리티컬 히트"
-              price={9900}
-              index={2}
-            >
-            <div className={styles.productCard}>
-              <div className={styles.productHeader}>
-                <span className={styles.productLabel}>단 하나의 결정적 질문</span>
-                <h3 className={styles.productName}>크리티컬 히트</h3>
-                <span className={styles.productEn}>Critical Hit</span>
-              </div>
-              <div className={styles.productFeatures}>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🎯</span>
-                  <span>이력서 맞춤 핵심 질문 1개</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🔗</span>
-                  <span>꼬리 질문 3개</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>📝</span>
-                  <span>상세 답변 가이드</span>
-                </div>
-              </div>
-              <div className={styles.productServiceInfo}>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
-                </div>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>환불 규정</span>
-                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
-                </div>
-              </div>
-              <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩15,900</span>
-                <span className={styles.priceCurrent}>₩9,900</span>
-              </div>
-              <button
-                className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('critical-hit')}
-              >
-                지금 시작하기
-              </button>
-            </div>
-            </ItemTracker>
-
-            {/* 라스트 체크 */}
-            <ItemTracker
-              itemId="last-check"
-              itemName="라스트 체크"
-              price={39000}
-              index={3}
-            >
-            <div className={styles.productCard}>
-              <div className={styles.productHeader}>
-                <span className={styles.productLabel}>면접 D-1 긴급 대비</span>
-                <h3 className={styles.productName}>라스트 체크</h3>
-                <span className={styles.productEn}>Last Check</span>
-              </div>
-              <div className={styles.productFeatures}>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🚨</span>
-                  <span>핵심 질문 15개 (1시간 완벽 대비)</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🗣️</span>
-                  <span>막힐 때 쓰는 만능 답변</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🎯</span>
-                  <span>즉시 사용 가능한 답변 템플릿</span>
-                </div>
-              </div>
-              <div className={styles.productServiceInfo}>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
-                </div>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>환불 규정</span>
-                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
-                </div>
-              </div>
-              <div className={styles.productPrice}>
-                <span className={styles.priceCurrent}>₩49,000</span>
-              </div>
-              <button
-                className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('last-check')}
-                disabled
-                style={{ opacity: 0.5, cursor: 'not-allowed' }}
-              >
-                준비 중
-              </button>
-            </div>
-            </ItemTracker>
-
-            {/* 레주메 핏 */}
-            <ItemTracker
-              itemId="resume-fit"
-              itemName="레주메 핏"
-              price={15000}
-              index={4}
-            >
-            <div className={styles.productCard}>
-              <div className={styles.productHeader}>
-                <span className={styles.productLabel}>이력서 전문가 분석</span>
-                <h3 className={styles.productName}>레주메 핏</h3>
-                <span className={styles.productEn}>Resume Fit</span>
-              </div>
-              <div className={styles.productFeatures}>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>📄</span>
-                  <span>전문가의 이력서 분석</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>✨</span>
-                  <span>맞춤 개선 가이드</span>
-                </div>
-                <div className={styles.productFeature}>
-                  <span className={styles.featureIcon}>🎯</span>
-                  <span>실전 피드백</span>
-                </div>
-              </div>
-              <div className={styles.productServiceInfo}>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>제공 기간</span>
-                  <span className={styles.serviceInfoValue}>결제 후 즉시 제공, 열람 기간 무제한</span>
-                </div>
-                <div className={styles.serviceInfoItem}>
-                  <span className={styles.serviceInfoLabel}>환불 규정</span>
-                  <span className={styles.serviceInfoValue}>콘텐츠 열람 전 100% 환불</span>
-                </div>
-              </div>
-              <div className={styles.productPrice}>
-                <span className={styles.priceOriginal}>₩79,000</span>
-                <span className={styles.priceCurrent}>₩59,000</span>
-              </div>
-              <button
-                className={`${styles.btn} ${styles.btnProductCta}`}
-                onClick={() => handleProductSelect('resume-fit')}
-              >
-                지금 시작하기
-              </button>
-            </div>
-            </ItemTracker>
-          </div>
-
-          <div className={styles.productsCta}>
-            <div className={styles.priceNoticeChip}>
-              <span className={styles.chipIcon}>⏰</span>
-              <span className={styles.chipText}>
-                10월 특가 <strong>D-{daysRemaining}</strong> · 이후 정가 전환
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works Section - Vertical Timeline */}
-      <div id="how-it-works" data-section="how_it_works" className={`${styles.section} ${styles.howItWorks}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>어떻게 작동하나요?</h2>
-          <p className={styles.sectionSubtitle}>단 3단계로 시작하는 챌린지</p>
-
-          <div className={styles.timeline}>
-            <div className={styles.timelineItem}>
-              <div className={styles.timelineMarker}>
-                <div className={styles.timelineNumber}>1</div>
-                <div className={styles.timelineIcon}>✉️</div>
-              </div>
-              <div className={styles.timelineContent}>
-                <h3 className={styles.timelineTitle}>이메일로 시작</h3>
-                <p className={styles.timelineDesc}>이메일만 입력하면 바로 시작! 경력과 기술을 알려주시면 더 정확한 질문을 보내드려요.</p>
-                <div className={styles.timelineDetail}>
-                  <span className={styles.timelineTiming}>⏱ 소요 시간: 30초</span>
-                  <span className={styles.timelineNote}>회원가입 없이 바로</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.timelineItem}>
-              <div className={styles.timelineMarker}>
-                <div className={styles.timelineNumber}>2</div>
-                <div className={styles.timelineIcon}>👨‍🏫</div>
-              </div>
-              <div className={styles.timelineContent}>
-                <h3 className={styles.timelineTitle}>매일 질문 수신</h3>
-                <p className={styles.timelineDesc}>3일 동안 매일 아침, 전문가가 당신을 위한 질문을 준비해요.</p>
-                <div className={styles.timelineDetail}>
-                  <span className={styles.timelineTiming}>📅 매일 오전 9시</span>
-                  <span className={styles.timelineNote}>이메일로 편하게</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.timelineItem}>
-              <div className={styles.timelineMarker}>
-                <div className={styles.timelineNumber}>3</div>
-                <div className={styles.timelineIcon}>🚀</div>
-              </div>
-              <div className={styles.timelineContent}>
-                <h3 className={styles.timelineTitle}>성장의 시작</h3>
-                <p className={styles.timelineDesc}>질문에 스스로 답을 고민하는 과정에서, 당신의 경험은 비로소 날카로운 무기가 됩니다.</p>
-                <div className={styles.timelineDetail}>
-                  <span className={styles.timelineTiming}>💎 3일 후 변화</span>
-                  <span className={styles.timelineNote}>면접 자신감 상승</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Sample Email Preview */}
-          <div className={styles.emailPreview}>
-            <div className={styles.emailHeader}>
-              <span className={styles.emailFrom}>QueryDaily</span>
-              <span className={styles.emailTime}>오전 09:00</span>
-            </div>
-            <div className={styles.emailSubject}>[Day 2/3] 오늘의 면접 질문이 도착했어요 🎯</div>
-            <div className={styles.emailBody}>
-              <p>안녕하세요 김개발님,</p>
-              <p>오늘의 질문입니다:</p>
-              <div className={styles.questionBox}>
-                "이력서에 작성하신 '실시간 채팅 서비스'에서 WebSocket 대신
-                Server-Sent Events를 고려해보셨나요?
-                각각의 장단점과 선택 이유를 설명해주세요."
-              </div>
-              <p>💡 힌트: 양방향 통신의 필요성, 브라우저 호환성, 서버 부하를 고려해보세요.</p>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Question Types Section - Tabbed Interface */}
-      <div id="question-types" data-section="question_types" className={`${styles.section} ${styles.questionTypes}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>어떤 질문들을 받게 되나요?</h2>
-          <p className={styles.sectionSubtitle}>실제 면접관들이 자주 묻는 3가지 유형</p>
-
-          {/* Tab Navigation */}
-          <div className={styles.questionTabs}>
-            <button
-              className={`${styles.questionTab} ${activeQuestionTab === 0 ? styles.questionTabActive : ''}`}
-              onClick={() => {
-                trackCTA('경험 연결형', 'question_type_tab');
-                setActiveQuestionTab(0);
-              }}
-            >
-              <span className={styles.tabIcon}>🔗</span>
-              <span className={styles.tabLabel}>경험 연결형</span>
-            </button>
-            <button
-              className={`${styles.questionTab} ${activeQuestionTab === 1 ? styles.questionTabActive : ''}`}
-              onClick={() => {
-                trackCTA('트레이드오프형', 'question_type_tab');
-                setActiveQuestionTab(1);
-              }}
-            >
-              <span className={styles.tabIcon}>⚖️</span>
-              <span className={styles.tabLabel}>트레이드오프형</span>
-            </button>
-            <button
-              className={`${styles.questionTab} ${activeQuestionTab === 2 ? styles.questionTabActive : ''}`}
-              onClick={() => {
-                trackCTA('상황 가정형', 'question_type_tab');
-                setActiveQuestionTab(2);
-              }}
-            >
-              <span className={styles.tabIcon}>🎯</span>
-              <span className={styles.tabLabel}>상황 가정형</span>
-            </button>
-          </div>
-
-          {/* Tab Content */}
-          <div className={styles.questionTabContent}>
-            {activeQuestionTab === 0 && (
-              <div className={styles.questionTabPanel}>
-                <div className={styles.questionBadge}>Type 1</div>
-                <h3 className={styles.questionType}>🔗 경험 연결형</h3>
-                <p className={styles.questionExample}>
-                  "JPA 쓰면서 '차라리 SQL 짜는게 나았겠다' 싶었던 순간은 언제였나요?"
-                </p>
-                <div className={styles.questionInsight}>
-                  <strong>면접관의 의도:</strong> 기술 선택의 후회와 실제 경험 확인
-                </div>
-                <div className={styles.additionalExamples}>
-                  <h4>다른 예시들:</h4>
-                  <ul>
-                    <li>"왜 Spring Boot를 선택하셨나요? Express.js는 고려해보셨나요?"</li>
-                    <li>"이력서에 작성하신 '성능 개선'이 정확히 어떤 지표를 개선한 건가요?"</li>
-                    <li>"'응답속도 50% 개선' 이라고 쓰셨는데, 200ms에서 100ms인지, 2초에서 1초인지?"</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-            {activeQuestionTab === 1 && (
-              <div className={styles.questionTabPanel}>
-                <div className={styles.questionBadge}>Type 2</div>
-                <h3 className={styles.questionType}>⚖️ 트레이드오프형</h3>
-                <p className={styles.questionExample}>
-                  "성능 최적화했더니 코드 가독성이 망가졌는데, 그게 맞는 선택이었나요?"
-                </p>
-                <div className={styles.questionInsight}>
-                  <strong>면접관의 의도:</strong> 트레이드오프 인식과 의사결정 판단력
-                </div>
-                <div className={styles.additionalExamples}>
-                  <h4>다른 예시들:</h4>
-                  <ul>
-                    <li>"MSA로 전환하면서 복잡도가 증가했는데, 그만한 가치가 있었나요?"</li>
-                    <li>"JPA의 편리함 vs Native Query의 성능, 어떤 기준으로 선택하시나요?"</li>
-                    <li>"테스트 커버리지 100%가 정말 필요한가요? 시간 대비 효율은요?"</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-            {activeQuestionTab === 2 && (
-              <div className={styles.questionTabPanel}>
-                <div className={styles.questionBadge}>Type 3</div>
-                <h3 className={styles.questionType}>🎯 상황 가정형</h3>
-                <p className={styles.questionExample}>
-                  "Spring Batch로 대용량 데이터를 처리하던 중 OOM이 발생한다면,
-                  어떤 순서로 문제를 진단하고 해결하시겠습니까?"
-                </p>
-                <div className={styles.questionInsight}>
-                  <strong>면접관의 의도:</strong> 문제 해결 접근법, 실무 대처 능력
-                </div>
-                <div className={styles.additionalExamples}>
-                  <h4>다른 예시들:</h4>
-                  <ul>
-                    <li>"배포 직후 API 응답속도가 10배 느려졌어요. 어떻게 접근하시겠어요?"</li>
-                    <li>"DB 커넥션 풀이 고갈되는 상황, 당장 어떻게 대응하실 건가요?"</li>
-                    <li>"코드리뷰에서 시니어와 의견 충돌이 생긴다면 어떻게 하시겠어요?"</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Who We Are Section - Team Collective Narrative */}
-      <div className={`${styles.section} ${styles.whoWeAre}`}>
-        <div className={styles.sectionContainer}>
-          <div className={styles.whoWeAreHeader}>
-            <span className={styles.whoWeAreBadge}>이 서비스를 만든 사람들</span>
-            <h2 className={styles.whoWeAreTitle}>
-              실패 데이터 500개가 만든<br/>
-              <span className={styles.whoWeAreHighlight}>합격 공식</span>
+        {/* 고객 고민 섹션 */}
+        <section className={styles.problemSection}>
+          <div className={styles.problemContainer}>
+            <h2 className={styles.sectionTitle}>
+              "준비해야 하는 건 아는데...<br/>
+              <span className={styles.highlight}>뭘 어떻게?</span>"
             </h2>
-            <p className={styles.whoWeAreSubtitle}>
-              비전공자 / 국비지원 출신의 가장 평범한 개발자들이<br/>
-              직접 증명하며 만든 초밀착 코칭 서비스
+
+            <p style={{textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8}}>
+              혼자 준비하려고 하면 이런 벽에 부딪힙니다
             </p>
-          </div>
 
-          <div className={styles.failureStats}>
-            <div className={styles.failureStat}>
-              <div className={styles.failureNumber}>500<span>+</span></div>
-              <div className={styles.failureLabel}>서류 탈락</div>
+            <div style={{maxWidth: '520px', margin: '0 auto'}}>
+              {/* 고민 1 */}
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"어떤 질문이 나올지 모르겠어요"</p>
+                <p style={{fontSize: '0.9rem', opacity: 0.7}}>블로그마다 다른 질문, 뭘 준비해야 할지 막막함</p>
+              </div>
+
+              {/* 고민 2 */}
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"일반 질문은 내 경험이랑 안 맞아요"</p>
+                <p style={{fontSize: '0.9rem', opacity: 0.7}}>교과서적인 답변만 외우게 되는 느낌</p>
+              </div>
+
+              {/* 고민 3 */}
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"어떻게 답해야 할지 모르겠어요"</p>
+                <p style={{fontSize: '0.9rem', opacity: 0.7}}>STAR 기법? 들어는 봤는데 적용이 안 됨</p>
+              </div>
+
+              {/* 고민 4 */}
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"꼬리 질문이 무서워요"</p>
+                <p style={{fontSize: '0.9rem', opacity: 0.7}}>한 번 막히면 멘탈이 무너질 것 같음</p>
+              </div>
+
+              {/* 고민 5 */}
+              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"시간이 없어요"</p>
+                <p style={{fontSize: '0.9rem', opacity: 0.7}}>퇴근하면 지치고, 주말엔 쉬고 싶음</p>
+              </div>
             </div>
-            <div className={styles.failureStatDivider}></div>
-            <div className={styles.failureStat}>
-              <div className={styles.failureNumber}>100<span>+</span></div>
-              <div className={styles.failureLabel}>면접 경험</div>
+
+            <div className={styles.ctaNudge} style={{marginTop: '2.5rem'}}>
+              <p className={styles.ctaNudgeMain} style={{fontSize: '1.2rem'}}>
+                그래서 우리가 만들었습니다.
+              </p>
+              <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem', lineHeight: '1.8'}}>
+                어떤 질문이 나올지 알려드리고,<br/>
+                어떻게 답해야 하는지 가이드하고,<br/>
+                <span className={styles.ctaNudgeHighlight}>하루 10분이면 끝나도록</span> 압축했습니다.
+              </p>
             </div>
-            <div className={styles.failureStatDivider}></div>
-            <div className={styles.failureStat}>
-              <div className={styles.failureNumber}>300<span>%</span></div>
-              <div className={styles.failureLabel}>평균 연봉 인상</div>
+
+          </div>
+        </section>
+
+        {/* Statistics Section - Enhanced */}
+        <section className={styles.statistics}>
+          <div className={styles.statisticsContainer}>
+            {/* 핵심 메시지 - 크게 */}
+            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
+              <h2 style={{
+                fontSize: '2.2rem',
+                fontWeight: '800',
+                lineHeight: '1.5',
+                marginBottom: '1.5rem',
+                color: 'var(--color-text-primary)'
+              }}>
+                같은 경력,<br/>
+                <span className={styles.highlight} style={{fontSize: '2.8rem'}}>다른 결과</span>
+              </h2>
+              <p style={{
+                fontSize: '1.4rem',
+                fontWeight: '700',
+                background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                margin: 0
+              }}>
+                능력이 아니라, 준비의 차이입니다.
+              </p>
+            </div>
+
+            {/* Before/After 대비 - 메인 */}
+            <div className={styles.comparisonMain} style={{position: 'relative'}}>
+              {/* 배경 글로우 효과 */}
+              <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none'}}></div>
+
+              <div className={styles.comparisonSide}>
+                <p className={styles.comparisonLabel}>준비 없이</p>
+                <div className={styles.comparisonNumber}>
+                  <span className={styles.comparisonNum} style={{opacity: 0.4, fontSize: '3rem'}}>38%</span>
+                </div>
+                <p className={styles.comparisonDesc} style={{opacity: 0.6}}>평균 합격률</p>
+              </div>
+
+              <div className={styles.comparisonVs} style={{fontSize: '2.5rem', opacity: 0.5}}>→</div>
+
+              <div className={`${styles.comparisonSide} ${styles.comparisonSuccess}`}>
+                <p className={styles.comparisonLabel} style={{color: 'var(--color-secondary)'}}>체계적 준비</p>
+                <div className={styles.comparisonNumber}>
+                  <span className={styles.comparisonNum} style={{fontSize: '4rem'}}>85%</span>
+                </div>
+                <p className={styles.comparisonDesc} style={{fontWeight: '700'}}>합격률 달성</p>
+              </div>
+            </div>
+
+            {/* 강조 박스 */}
+            <div style={{marginTop: '2.5rem', padding: '1.8rem 2rem', background: 'rgba(var(--color-accent-rgb), 0.12)', borderRadius: '16px', border: '2px solid rgba(var(--color-accent-rgb), 0.25)', textAlign: 'center'}}>
+              <p style={{fontSize: '1.2rem', fontWeight: '700', margin: 0, lineHeight: '1.8'}}>
+                체계적으로 준비한 지원자는<br/>
+                평균 <span style={{color: 'var(--color-secondary)', fontWeight: '800', fontSize: '1.5rem'}}>2.3배</span> 높은 합격률을 보입니다
+              </p>
+            </div>
+
+            {/* 부연 설명 */}
+            <p style={{textAlign: 'center', fontSize: '0.95rem', opacity: 0.7, marginTop: '1.5rem'}}>
+              실력은 이미 충분합니다. 그걸 보여주는 연습만 하면 됩니다.
+            </p>
+
+            {/* CTA 버튼 */}
+            <div style={{textAlign: 'center', marginTop: '2rem'}}>
+              <a href="#products" style={{
+                display: 'inline-block',
+                padding: '1rem 2.5rem',
+                background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
+                color: '#fff',
+                fontWeight: '700',
+                fontSize: '1.1rem',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                boxShadow: '0 4px 20px rgba(var(--color-accent-rgb), 0.3)',
+                transition: 'transform 0.2s, box-shadow 0.2s'
+              }}>
+                연습 시작하기 →
+              </a>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 면접장 불안 섹션 */}
+        <section className={styles.problemSection}>
+          <div className={styles.problemContainer}>
+            <h2 className={styles.sectionTitle}>
+              면접장, <span className={styles.highlight}>그 순간</span>
+            </h2>
+
+            <p style={{textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8}}>
+              준비 없이 들어가면 이렇게 됩니다
+            </p>
+
+            {/* 불안 시나리오들 */}
+            <div style={{maxWidth: '520px', margin: '0 auto'}}>
+              {/* 다대일 면접 */}
+              <div style={{marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)'}}>
+                <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem'}}>다대일 면접</p>
+                <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem'}}>
+                  "면접관이 3명인데... 다 날 쳐다보고 있어"
+                </p>
+                <p style={{fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6'}}>
+                  누가 뭘 물어볼지 모르겠고,<br/>
+                  한 명이 고개를 갸웃하면 심장이 철렁
+                </p>
+              </div>
+
+              {/* 압박 면접 */}
+              <div style={{marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)'}}>
+                <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem'}}>압박 면접</p>
+                <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem'}}>
+                  "그래서 결론이 뭔가요?"
+                </p>
+                <p style={{fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6'}}>
+                  말을 끊고 다그치듯 물어보면<br/>
+                  머릿속이 하얘지고 말이 꼬이기 시작
+                </p>
+              </div>
+
+              {/* 경쟁자와의 비교 */}
+              <div style={{marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)'}}>
+                <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem'}}>대기실에서</p>
+                <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem'}}>
+                  "옆 사람은 뭔가 자신감 넘치는데..."
+                </p>
+                <p style={{fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6'}}>
+                  나만 떨고 있는 것 같고,<br/>
+                  저 사람보다는 나아야 하는데... 불안
+                </p>
+              </div>
+            </div>
+
+            {/* 전환 화살표 */}
+            <div style={{textAlign: 'center', margin: '2.5rem 0'}}>
+              <div style={{display: 'inline-block', padding: '0.8rem 2rem', background: 'rgba(var(--color-accent-rgb), 0.1)', borderRadius: '100px', border: '2px solid rgba(var(--color-accent-rgb), 0.3)'}}>
+                <span style={{fontSize: '1.5rem'}}>↓</span>
+              </div>
+            </div>
+
+            {/* 전환 - 준비된 사람 */}
+            <div style={{marginTop: '0', padding: '3rem 2rem', background: 'linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.15) 0%, rgba(var(--color-accent-rgb), 0.05) 100%)', borderRadius: '24px', border: '2px solid rgba(var(--color-accent-rgb), 0.3)', position: 'relative', overflow: 'hidden'}}>
+              {/* 배경 장식 */}
+              <div style={{position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.2) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none'}}></div>
+
+              <h3 style={{textAlign: 'center', fontSize: '2rem', fontWeight: '800', marginBottom: '2rem', lineHeight: '1.4'}}>
+                하지만<br/>
+                <span className={styles.highlight} style={{fontSize: '2.5rem'}}>준비된 사람</span>은 다릅니다
+              </h3>
+
+              <div style={{maxWidth: '500px', margin: '0 auto'}}>
+                {/* 체크 아이템 1 */}
+                <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)'}}>
+                  <div style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                    <span style={{color: '#fff', fontWeight: '700', fontSize: '1rem'}}>✓</span>
+                  </div>
+                  <div>
+                    <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.3rem'}}>"이 질문 나올 줄 알았어"</p>
+                    <p style={{fontSize: '0.9rem', opacity: 0.8}}>예상했기 때문에 당황하지 않음</p>
+                  </div>
+                </div>
+
+                {/* 체크 아이템 2 */}
+                <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)'}}>
+                  <div style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                    <span style={{color: '#fff', fontWeight: '700', fontSize: '1rem'}}>✓</span>
+                  </div>
+                  <div>
+                    <p style={{margin: 0, marginBottom: '0.3rem', fontSize: '1.05rem', fontWeight: '600'}}>압박 질문에도 논리적으로 대응</p>
+                    <p style={{margin: 0, fontSize: '0.9rem', opacity: 0.8}}>연습해 본 적 있으니까</p>
+                  </div>
+                </div>
+
+                {/* 체크 아이템 3 */}
+                <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)'}}>
+                  <div style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                    <span style={{color: '#fff', fontWeight: '700', fontSize: '1rem'}}>✓</span>
+                  </div>
+                  <div>
+                    <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.3rem'}}>옆 사람은 신경 안 씀</p>
+                    <p style={{fontSize: '0.9rem', opacity: 0.8}}>내 답변에만 집중할 여유</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 결론 메시지 */}
+              <div style={{marginTop: '2rem', padding: '1.5rem', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '12px', textAlign: 'center'}}>
+                <p style={{fontSize: '1.3rem', fontWeight: '700', color: '#fff', margin: 0}}>
+                  불안이 아닌, <strong style={{fontSize: '1.5rem'}}>자신감</strong>으로<br/>
+                  면접장에 들어갑니다.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Preparation Rate Chart Section */}
+        <section className={styles.chartSection}>
+          <div className={styles.chartContainer}>
+            {/* 핵심 카피 */}
+            <h2 className={styles.megaCopy}>
+              차이는 단 하나.
+              <br/><br/>
+              면접관이 물을 질문을<br/>
+              <span className={styles.highlight}>미리 알았다는 것</span>
+            </h2>
+
+            {/* 증거 박스 - 리디자인 */}
+            <div style={{marginBottom: '3rem'}}>
+              <p style={{textAlign: 'center', fontSize: '1rem', fontWeight: '600', marginBottom: '1.5rem', opacity: 0.8}}>
+                합격자들에서 발견되는 패턴
+              </p>
+
+              {/* 3개 스탯 카드 */}
+              <div style={{display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem'}}>
+                <div style={{
+                  flex: '1',
+                  minWidth: '140px',
+                  maxWidth: '180px',
+                  padding: '1.5rem 1rem',
+                  background: 'rgba(var(--color-accent-rgb), 0.08)',
+                  borderRadius: '16px',
+                  textAlign: 'center',
+                  border: '1px solid rgba(var(--color-accent-rgb), 0.15)'
+                }}>
+                  <div style={{fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem'}}>90%</div>
+                  <div style={{fontSize: '0.85rem', opacity: 0.8, fontWeight: '500'}}>질문 연습</div>
+                </div>
+
+                <div style={{
+                  flex: '1',
+                  minWidth: '140px',
+                  maxWidth: '180px',
+                  padding: '1.5rem 1rem',
+                  background: 'rgba(var(--color-accent-rgb), 0.08)',
+                  borderRadius: '16px',
+                  textAlign: 'center',
+                  border: '1px solid rgba(var(--color-accent-rgb), 0.15)'
+                }}>
+                  <div style={{fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem'}}>92%</div>
+                  <div style={{fontSize: '0.85rem', opacity: 0.8, fontWeight: '500'}}>모의 면접</div>
+                </div>
+
+                <div style={{
+                  flex: '1',
+                  minWidth: '140px',
+                  maxWidth: '180px',
+                  padding: '1.5rem 1rem',
+                  background: 'rgba(var(--color-accent-rgb), 0.08)',
+                  borderRadius: '16px',
+                  textAlign: 'center',
+                  border: '1px solid rgba(var(--color-accent-rgb), 0.15)'
+                }}>
+                  <div style={{fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem'}}>55%</div>
+                  <div style={{fontSize: '0.85rem', opacity: 0.8, fontWeight: '500'}}>비언어 소통</div>
+                </div>
+              </div>
+
+              {/* 출처 */}
+              <p style={{textAlign: 'center', fontSize: '0.75rem', opacity: 0.5, lineHeight: '1.6'}}>
+                데이터 출처: Glassdoor, Preplaced Interview Research, Novoresume
+              </p>
+            </div>
+
+            <h2 className={styles.chartTitle}>
+              면접 준비 기간에 따른 합격률
+            </h2>
+
+            {/* Graph Legend */}
+            <div className={styles.graphLegend}>
+              <div className={styles.legendItem}>
+                <div className={styles.legendLine} data-type="prepared"></div>
+                <span className={styles.legendText}>체계적으로 준비한 경우</span>
+              </div>
+              <div className={styles.legendItem}>
+                <div className={styles.legendLine} data-type="unprepared"></div>
+                <span className={styles.legendText}>준비 없이 면접 본 경우</span>
+              </div>
+            </div>
+
+            {/* SVG Line Chart */}
+            <div className={styles.lineGraphContainer}>
+              <svg className={styles.lineGraph} viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
+                {/* Grid Lines */}
+                <line x1="50" y1="250" x2="550" y2="250" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
+                <line x1="50" y1="187.5" x2="550" y2="187.5" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
+                <line x1="50" y1="125" x2="550" y2="125" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
+                <line x1="50" y1="62.5" x2="550" y2="62.5" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
+
+                {/* Y-axis Labels */}
+                <text x="30" y="255" fill="var(--color-text-muted)" fontSize="12" textAnchor="end">0%</text>
+                <text x="30" y="192" fill="var(--color-text-muted)" fontSize="12" textAnchor="end">25%</text>
+                <text x="30" y="130" fill="var(--color-text-muted)" fontSize="12" textAnchor="end">50%</text>
+                <text x="30" y="67" fill="var(--color-text-muted)" fontSize="12" textAnchor="end">75%</text>
+                <text x="30" y="35" fill="var(--color-text-muted)" fontSize="12" textAnchor="end">100%</text>
+
+                {/* X-axis Labels */}
+                <text x="50" y="275" fill="var(--color-text-muted)" fontSize="12" textAnchor="middle">0일</text>
+                <text x="216.67" y="275" fill="var(--color-text-muted)" fontSize="12" textAnchor="middle">1주</text>
+                <text x="383.33" y="275" fill="var(--color-text-muted)" fontSize="12" textAnchor="middle">2주</text>
+                <text x="550" y="275" fill="var(--color-text-muted)" fontSize="12" textAnchor="middle">3주+</text>
+
+                {/* Unprepared Line (low and flat) */}
+                <path
+                  d="M 50 226 L 216.67 218.75 L 383.33 212.5 L 550 212.5"
+                  stroke="var(--color-text-muted)"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={styles.lineUnprepared}
+                />
+
+                {/* Prepared Line (high and steep) */}
+                <path
+                  d="M 50 226 L 216.67 175 L 383.33 93.75 L 550 31.25"
+                  stroke="url(#chartGradient)"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={styles.linePrepared}
+                />
+
+                {/* Gradient Definition */}
+                <defs>
+                  <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor={theme.secondary} />
+                    <stop offset="100%" stopColor={theme.secondaryLight} />
+                  </linearGradient>
+                </defs>
+
+                {/* Unprepared Data Points */}
+                <circle cx="50" cy="226" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
+                <circle cx="216.67" cy="218.75" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
+                <circle cx="383.33" cy="212.5" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
+                <circle cx="550" cy="212.5" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
+
+                {/* Prepared Data Points */}
+                <circle cx="50" cy="226" r="5" fill={theme.secondary} className={styles.dataPoint}/>
+                <circle cx="216.67" cy="175" r="5" fill={theme.secondary} className={styles.dataPoint}/>
+                <circle cx="383.33" cy="93.75" r="5" fill={theme.secondaryLight} className={styles.dataPoint}/>
+                <circle cx="550" cy="31.25" r="5" fill={theme.secondaryLight} className={styles.dataPoint}/>
+
+                {/* Final Value Labels */}
+                <text x="560" y="218" fill="var(--color-text-muted)" fontSize="14" fontWeight="700">38%</text>
+                <text x="560" y="38" fill={theme.secondaryLight} fontSize="14" fontWeight="700">85%</text>
+              </svg>
+            </div>
+
+            <p className={styles.chartNote}>
+              * 체계적인 준비는 합격률을 2배 이상 향상시킵니다
+            </p>
+
+            {/* 준비 방법 섹션 */}
+            <div className={styles.prepMethod}>
+              <h3 className={styles.prepMethodTitle}>
+                준비를 하는 가장 좋은 방법은<br/>
+                그냥 지금 시작하는 것입니다.
+              </h3>
+
+              <p className={styles.prepMethodIntro}>
+                이런 고민, 해보셨죠?
+              </p>
+
+              <p style={{textAlign: 'center', fontSize: '0.9rem', opacity: 0.6, marginBottom: '1.5rem', fontStyle: 'italic'}}>
+                "면접 질문 검색해봤자... 내 경험이랑 안 맞는데..."
+              </p>
+
+              {/* Before/After 비교 */}
+              <div className={styles.prepComparison}>
+                {/* Before */}
+                <div className={styles.prepBefore}>
+                  <div className={styles.prepLabel}>
+                    <span className={styles.prepIcon}>X</span>
+                    <span>보통 사람들의 면접 준비</span>
+                  </div>
+                  <ul className={styles.prepList}>
+                    <li>
+                      <span className={styles.prepStep}>1. 면접 질문 검색</span>
+                      <span className={styles.prepProblem}>(어떤 게 나올지 모름)</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>2. 블로그 여기저기 뒤져서</span>
+                      <span className={styles.prepProblem}>모범 답안 정리</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>3. 이게 내 경험이랑 맞나?</span>
+                      <span className={styles.prepProblem}>혼자 고민</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>4. 매일 몇 시간씩...</span>
+                      <span className={styles.prepProblem}>언제 끝날지 모름</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* After */}
+                <div className={styles.prepAfter}>
+                  <div className={styles.prepLabel}>
+                    <span className={styles.prepIcon}>✓</span>
+                    <span>QueryDaily로 준비하는 당신</span>
+                  </div>
+                  <ul className={styles.prepList}>
+                    <li>
+                      <span className={styles.prepStep}>1. 매일 아침 7시, 저녁 5시</span>
+                      <span className={styles.prepSolution}>당신 이력서 기반 질문 도착</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>2. 출근길 지하철에서</span>
+                      <span className={styles.prepSolution}>그냥 읽기만</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>3. 버스 기다리면서</span>
+                      <span className={styles.prepSolution}>답변 떠올리기</span>
+                    </li>
+                    <li>
+                      <span className={styles.prepStep}>4. 하루 단 10분</span>
+                      <span className={styles.prepSolution}>그게 전부</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* 핵심 메시지 */}
+              <div className={styles.prepMessage}>
+                <p className={styles.prepMessageMain}>
+                  진짜 질문. 진짜 경험. 합격하는 답변.
+                </p>
+                <p className={styles.prepMessageSub}>
+                  우리는 이것만 보내드립니다.<br/>
+                  당신은 그냥 받아보기만 하세요.
+                </p>
+              </div>
+            </div>
+
+            {/* CTA 넛지 카피 */}
+            <div className={styles.ctaNudge}>
+              <p className={styles.ctaNudgeMain}>
+                합격은 여유에서 나옵니다.
+              </p>
+              <p className={styles.ctaNudgeDesc}>
+                그 여유를 만들 충분한 시간
+                <br/>
+                <span className={styles.ctaNudgeHighlight}>하루 단 10분</span>
+              </p>
+              <a href="#products" style={{
+                display: 'inline-block',
+                marginTop: '1.5rem',
+                padding: '1rem 2rem',
+                background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
+                color: '#fff',
+                fontWeight: '600',
+                fontSize: '1rem',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                boxShadow: '0 4px 15px rgba(var(--color-accent-rgb), 0.3)',
+                transition: 'transform 0.2s, box-shadow 0.2s'
+              }}>
+                나에게 맞는 플랜 보기 →
+              </a>
             </div>
           </div>
+        </section>
 
-          {/* 4인의 전문가 팀 */}
-          <div className={styles.expertSection}>
+        {/* Testimonials Section */}
+        <section className={styles.testimonialsSection}>
+          <div className={styles.testimonialsContainer}>
+            <span className={styles.testimonialsBadge}>검증된 후기</span>
+            <h2 className={styles.testimonialsTitle}>
+              숫자가 증명합니다
+            </h2>
+            <p className={styles.testimonialsSubtitle}>
+              만족도 5.0, 재구매 100%.<br />
+              <strong>우연이 아닙니다.</strong>
+            </p>
+
+            {/* Satisfaction Stats - Simplified */}
+            <div className={styles.satisfactionStats}>
+              <div className={styles.bigStat}>
+                <div className={styles.bigStatNumber}>5.0/5.0</div>
+                <div className={styles.bigStatLabel}>평균 만족도</div>
+              </div>
+              <div className={styles.bigStat}>
+                <div className={styles.bigStatNumber}>100%</div>
+                <div className={styles.bigStatLabel}>재구매 의향</div>
+              </div>
+              <div className={styles.bigStat}>
+                <div className={styles.bigStatNumber}>하루 10분</div>
+                <div className={styles.bigStatLabel}>면접 준비 시간</div>
+              </div>
+            </div>
+
+            {/* Keyword Cloud */}
+            <div className={styles.keywordCloud}>
+              <span className={styles.keyword} data-size="xxl">이력서 기반 질문</span>
+              <span className={styles.keyword} data-size="xl">STAR 구조화</span>
+              <span className={styles.keyword} data-size="lg">모범 답변 제공</span>
+              <span className={styles.keyword} data-size="xxl">실전 같은 질문</span>
+              <span className={styles.keyword} data-size="md">체계적 정리</span>
+              <span className={styles.keyword} data-size="xl">답변 가이드</span>
+              <span className={styles.keyword} data-size="lg">구체적인 질문</span>
+              <span className={styles.keyword} data-size="md">깊이 있는 분석</span>
+              <span className={styles.keyword} data-size="xl">사고 확장</span>
+              <span className={styles.keyword} data-size="lg">자신감 상승</span>
+              <span className={styles.keyword} data-size="md">답변 방향성</span>
+              <span className={styles.keyword} data-size="xxl">면접 대비 완벽</span>
+              <span className={styles.keyword} data-size="lg">꼬리 질문 준비</span>
+              <span className={styles.keyword} data-size="md">경력 맞춤</span>
+              <span className={styles.keyword} data-size="xl">실제 면접 질문</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Urgency Section - 기회비용 프레이밍 */}
+        <section className={styles.statistics}>
+          <div className={styles.statisticsContainer}>
+            {/* 후회 훅 */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '2rem'
+            }}>
+              <p style={{
+                fontSize: '1rem',
+                opacity: 0.6,
+                marginBottom: '1.5rem'
+              }}>
+                매번 면접 끝나고 드는 생각
+              </p>
+              <div style={{
+                padding: '2rem',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}>
+                <p style={{
+                  fontSize: '1.4rem',
+                  fontStyle: 'italic',
+                  lineHeight: '1.8',
+                  margin: 0,
+                  opacity: 0.9
+                }}>
+                  "그때 그 질문,<br/>
+                  <span style={{color: 'var(--color-secondary)', fontWeight: '600'}}>더 잘 대답할 수 있었는데...</span>"
+                </p>
+              </div>
+            </div>
+
+            <h2 style={{
+              textAlign: 'center',
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              lineHeight: '1.6',
+              marginBottom: '2.5rem'
+            }}>
+              후회는<br/>
+              <span style={{color: 'var(--color-secondary)'}}>면접장을 나서야</span> 찾아옵니다.
+            </h2>
+
+            <div style={{maxWidth: '480px', margin: '0 auto'}}>
+              {/* 흔한 후회들 */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '12px',
+                marginBottom: '2rem'
+              }}>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.5,
+                  marginBottom: '1rem',
+                  textAlign: 'center'
+                }}>
+                  면접 후 가장 많이 하는 말
+                </p>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    margin: 0,
+                    padding: '0.8rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid rgba(255,255,255,0.2)'
+                  }}>
+                    "왜 그렇게 답했을까..."
+                  </p>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    margin: 0,
+                    padding: '0.8rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid rgba(255,255,255,0.2)'
+                  }}>
+                    "그 경험을 말했어야 했는데..."
+                  </p>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    margin: 0,
+                    padding: '0.8rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid rgba(255,255,255,0.2)'
+                  }}>
+                    "준비 좀 할 걸..."
+                  </p>
+                </div>
+              </div>
+
+              {/* 해결책 전환 */}
+              <div style={{
+                padding: '2rem',
+                background: 'linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.15), rgba(var(--color-accent-rgb), 0.05))',
+                borderRadius: '16px',
+                border: '2px solid rgba(var(--color-accent-rgb), 0.3)',
+                marginBottom: '2rem',
+                textAlign: 'center'
+              }}>
+                <p style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  marginBottom: '1rem',
+                  lineHeight: '1.6'
+                }}>
+                  미리 준비했다면<br/>
+                  <span style={{fontSize: '1.3rem', color: 'var(--color-secondary)'}}>후회 대신 자신감</span>이<br/>
+                  남았을 겁니다.
+                </p>
+                <p style={{
+                  fontSize: '0.95rem',
+                  opacity: 0.7,
+                  margin: 0
+                }}>
+                  다음 면접에서는 다르게 하세요.
+                </p>
+              </div>
+
+              {/* 준비된 상태의 이점 */}
+              <div style={{textAlign: 'center', marginBottom: '2rem'}}>
+                <p style={{fontSize: '1rem', opacity: 0.7, marginBottom: '1.5rem'}}>
+                  준비된 사람은 면접장을 나서며
+                </p>
+                <div style={{display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap'}}>
+                  <div style={{
+                    padding: '1rem 1.5rem',
+                    background: 'rgba(var(--color-accent-rgb), 0.1)',
+                    borderRadius: '12px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(var(--color-accent-rgb), 0.2)'
+                  }}>
+                    <p style={{fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)'}}>
+                      "할 만큼 했다"
+                    </p>
+                  </div>
+                  <div style={{
+                    padding: '1rem 1.5rem',
+                    background: 'rgba(var(--color-accent-rgb), 0.1)',
+                    borderRadius: '12px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(var(--color-accent-rgb), 0.2)'
+                  }}>
+                    <p style={{fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)'}}>
+                      "최선을 다했다"
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.ctaNudge} style={{marginTop: '2rem'}}>
+              <p className={styles.ctaNudgeMain} style={{fontSize: '1.3rem'}}>
+                다음 면접,<br/>
+                <span style={{color: 'var(--color-secondary)'}}>후회 없이 끝내세요.</span>
+              </p>
+              <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem'}}>
+                <span className={styles.ctaNudgeHighlight}>하루 10분만</span> 투자하세요.<br/>
+                그게 전부입니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Products Section */}
+        <section className={styles.products}>
+          <div className={styles.productsContainer}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.badge}>시작하기</span>
+              <h2 className={styles.sectionTitle}>
+                내일을,<br/>
+                <span className={styles.emphasizeLarge}>오늘</span> 준비하세요
+              </h2>
+            </div>
+
+            {/* 떠먹여주는 메시지 */}
+            <div style={{
+              maxWidth: '520px',
+              margin: '0 auto 3rem',
+              padding: '2rem',
+              background: 'linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.05))',
+              borderRadius: '20px',
+              border: '2px solid rgba(var(--color-accent-rgb), 0.2)',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: '1.3rem',
+                fontWeight: '700',
+                marginBottom: '1rem',
+                lineHeight: '1.6'
+              }}>
+                질문도, 가이드도, 답변 구조도<br/>
+                <span style={{color: 'var(--color-secondary)'}}>우리가 다 준비해뒀습니다.</span>
+              </p>
+              <p style={{
+                fontSize: '1rem',
+                opacity: 0.85,
+                marginBottom: '1.5rem',
+                lineHeight: '1.8'
+              }}>
+                당신은 그냥 열어보기만 하면 됩니다.<br/>
+                매일 정해진 시간에 알아서 도착하니까요.
+              </p>
+              <div style={{
+                padding: '1rem 1.5rem',
+                background: 'rgba(var(--color-accent-rgb), 0.15)',
+                borderRadius: '12px',
+                display: 'inline-block'
+              }}>
+                <p style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  margin: 0,
+                  color: 'var(--color-secondary)'
+                }}>
+                  기회는 우리가 만들어드립니다.<br/>
+                  <span style={{fontSize: '1.2rem'}}>당신은 선택만 하세요.</span>
+                </p>
+              </div>
+            </div>
+
+            <div id="products" className={styles.pricingGrid}>
+              {/* Growth Plan - Featured */}
+              <div className={`${styles.productCard} ${styles.featured}`}>
+                <div className={styles.planBadge}>MOST POPULAR</div>
+
+                <h3 className={styles.planTitle}>그로스 플랜</h3>
+                <p className={styles.planSubtitle}>하루 10분 투자로 어떤 질문에도 흔들리지 않는 당신</p>
+
+                <div className={styles.planDesc}>
+                  "이 질문 나올 줄 알았어"<br />
+                  하루 단 10분만 투자하면 면접장에서 이렇게 말하게 돼요
+                </div>
+
+                <div className={styles.features}>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>출근길 7시, 퇴근길 5시 - 당신의 리듬에 맞춰요</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>하루 10분만 투자하세요. 부담 없이, 완벽하게</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>어떻게 답할지 막막할 때, STAR 가이드가 알려줘요</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>"그럼 이런 경우는요?" 꼬리 질문도 대비돼요</span>
+                  </div>
+                </div>
+
+                <div className={styles.planPrice}>
+                  <span className={styles.priceCurrent}>₩49,000</span>
+                  <span className={styles.priceOriginal}>정가 ₩106,000</span>
+                </div>
+
+                <div className={styles.buttonGroup}>
+                  <button
+                    className={`${styles.planBtn} ${styles.featured}`}
+                    onClick={() => {
+                      setSelectedPurchaseProduct('growth-plan');
+                      setPurchaseModalOpen(true);
+                      setPurchaseModalStep(1);
+                    }}
+                  >
+                    흔들리지 않는 면접 준비하기
+                  </button>
+                  <button
+                    className={styles.detailBtn}
+                    onClick={() => {
+                      router.push('/products/growth-plan');
+                    }}
+                  >
+                    상세 보기
+                  </button>
+                </div>
+
+                <p style={{
+                  margin: 0,
+                  fontSize: '0.85rem',
+                  marginTop: '1rem',
+                  fontWeight: '500',
+                  color: 'var(--color-secondary)',
+                  textAlign: 'center',
+                  lineHeight: '1.6'
+                }}>
+                  하루 2,450원, 커피 한 잔 값으로<br/>
+                  <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>하루 10분 투자가 자신감으로 바뀝니다</span>
+                </p>
+              </div>
+
+              {/* Critical Hit */}
+              <div className={styles.productCard}>
+                <div className={styles.planBadge}>빠른 경험</div>
+
+                <h3 className={styles.planTitle}>크리티컬 히트</h3>
+                <p className={styles.planSubtitle}>내일 면접이어도 준비할 수 있어요</p>
+
+                <div className={styles.planDesc}>
+                  가장 많이 나오는 핵심 3가지.<br />
+                  오늘 준비하면, 내일 자신있게 답할 수 있어요
+                </div>
+
+                <div className={styles.features}>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>당신 이력서에서 가장 중요한 질문 3개</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>어떻게 답할지 막막하지 않게, 답변 틀 제공</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    <span>결제하면 24시간 내, 빠르게 준비 시작</span>
+                  </div>
+                  <div className={`${styles.feature} ${styles.featureEmpty}`}>
+                    <span className={styles.featureCheck} style={{visibility: 'hidden'}}>✓</span>
+                    <span style={{visibility: 'hidden'}}>Spacer</span>
+                  </div>
+                </div>
+
+                <div className={styles.planPrice}>
+                  <span className={styles.priceCurrent}>₩9,900</span>
+                  <span className={styles.priceOriginal}>정가 ₩15,900</span>
+                </div>
+
+                <div className={styles.buttonGroup}>
+                  <button
+                    className={styles.planBtn}
+                    onClick={() => {
+                      setSelectedPurchaseProduct('critical-hit');
+                      setPurchaseModalOpen(true);
+                      setPurchaseModalStep(1);
+                    }}
+                  >
+                    오늘 준비 시작하기
+                  </button>
+                  <button
+                    className={styles.detailBtn}
+                    onClick={() => {
+                      router.push('/products/critical-hit');
+                    }}
+                  >
+                    상세 보기
+                  </button>
+                </div>
+
+                <p style={{
+                  margin: 0,
+                  fontSize: '0.85rem',
+                  marginTop: '1rem',
+                  fontWeight: '500',
+                  color: 'var(--color-secondary)',
+                  textAlign: 'center',
+                  lineHeight: '1.6'
+                }}>
+                  급할수록 핵심만 정확하게<br/>
+                  <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>오늘 결제, 내일 면접 준비 완료</span>
+                </p>
+              </div>
+            </div>
+
+            {/* 상품 선택 가이드 - 2열 카드 레이아웃 */}
+            <div style={{
+              marginTop: '3rem',
+              padding: '2.5rem 2rem',
+              background: 'rgba(var(--color-accent-rgb), 0.05)',
+              borderRadius: '24px'
+            }}>
+              <h3 style={{
+                textAlign: 'center',
+                fontSize: '1.5rem',
+                fontWeight: '800',
+                marginBottom: '0.8rem'
+              }}>
+                어떤 플랜이 나에게 맞을까?
+              </h3>
+              <p style={{
+                textAlign: 'center',
+                fontSize: '0.95rem',
+                opacity: 0.7,
+                marginBottom: '2rem'
+              }}>
+                상황에 맞는 플랜을 선택하세요
+              </p>
+
+              {/* 2열 카드 그리드 */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '1.5rem',
+                marginBottom: '2rem'
+              }}>
+                {/* 그로스 플랜 카드 */}
+                <div style={{
+                  padding: '2rem',
+                  background: 'rgba(var(--color-accent-rgb), 0.08)',
+                  borderRadius: '16px',
+                  border: '2px solid rgba(var(--color-accent-rgb), 0.2)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: 'linear-gradient(90deg, var(--color-secondary), var(--color-secondary-light))'
+                  }}></div>
+                  <div style={{
+                    display: 'inline-block',
+                    padding: '0.3rem 0.8rem',
+                    background: 'rgba(var(--color-accent-rgb), 0.2)',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    marginBottom: '1rem',
+                    color: 'var(--color-secondary)'
+                  }}>
+                    RECOMMENDED
+                  </div>
+                  <h4 style={{
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    marginBottom: '1.2rem',
+                    color: 'var(--color-secondary)'
+                  }}>
+                    그로스 플랜
+                  </h4>
+                  <ul style={{
+                    fontSize: '0.9rem',
+                    opacity: 0.85,
+                    lineHeight: '2',
+                    paddingLeft: '0',
+                    margin: 0,
+                    listStyle: 'none'
+                  }}>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                      <span>면접까지 <strong>1주일 이상</strong> 여유</span>
+                    </li>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                      <span><strong>모든 질문</strong> 빠짐없이 준비</span>
+                    </li>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                      <span>꼬리 질문까지 <strong>완벽 대비</strong></span>
+                    </li>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                      <span>이번 이직이 <strong>정말 중요</strong>한 분</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* 크리티컬 히트 카드 */}
+                <div style={{
+                  padding: '2rem',
+                  background: 'rgba(255,255,255,0.03)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: 'var(--color-text-muted)'
+                  }}></div>
+                  <div style={{
+                    display: 'inline-block',
+                    padding: '0.3rem 0.8rem',
+                    background: 'rgba(255,255,255,0.1)',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    marginBottom: '1rem'
+                  }}>
+                    빠른 경험
+                  </div>
+                  <h4 style={{
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    marginBottom: '1.2rem'
+                  }}>
+                    크리티컬 히트
+                  </h4>
+                  <ul style={{
+                    fontSize: '0.9rem',
+                    opacity: 0.85,
+                    lineHeight: '2',
+                    paddingLeft: '0',
+                    margin: 0,
+                    listStyle: 'none'
+                  }}>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{opacity: 0.5}}>•</span>
+                      <span>면접이 <strong>3일 이내</strong>로 급한 분</span>
+                    </li>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{opacity: 0.5}}>•</span>
+                      <span><strong>먼저 경험</strong>해보고 싶은 분</span>
+                    </li>
+                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                      <span style={{opacity: 0.5}}>•</span>
+                      <span>핵심 <strong>3개만</strong> 빠르게</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* 추천 메시지 */}
+              <div style={{
+                textAlign: 'center',
+                padding: '1.2rem',
+                background: 'rgba(var(--color-accent-rgb), 0.1)',
+                borderRadius: '12px'
+              }}>
+                <p style={{
+                  fontSize: '0.9rem',
+                  margin: 0,
+                  lineHeight: '1.6'
+                }}>
+                  <span style={{opacity: 0.7}}>고민된다면?</span>{' '}
+                  <strong style={{color: 'var(--color-secondary)'}}>그로스 플랜</strong>을 추천드립니다.<br/>
+                  <span style={{fontSize: '0.85rem', opacity: 0.6}}>제대로 준비해서 한 번에 붙는 게 결국 더 빠릅니다.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Comparison Section - UI Improved */}
+        <section className={styles.comparison}>
+          <div className={styles.comparisonContainer}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.badge}>핵심 차별점</span>
+              <h2 className={styles.sectionTitle}>
+                ChatGPT는 <span className={styles.deemphasize}>일반론</span>을 말합니다.<br/>
+                QueryDaily는 <span className={styles.emphasize}>당신의 경험</span>을 묻습니다.
+              </h2>
+              <p style={{textAlign: 'center', fontSize: '0.9rem', opacity: 0.6, marginTop: '1rem', fontStyle: 'italic'}}>
+                "ChatGPT에 물어봤는데... 뭔가 내 상황이랑 안 맞아..."
+              </p>
+            </div>
+
+            {/* 핵심 포인트 */}
+            <div style={{
+              maxWidth: '480px',
+              margin: '0 auto 3rem',
+              padding: '1.5rem 2rem',
+              background: 'rgba(var(--color-accent-rgb), 0.08)',
+              borderRadius: '16px',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                lineHeight: '1.8',
+                margin: 0
+              }}>
+                면접관은 <strong>당신 이력서</strong>를 보고 질문합니다.<br/>
+                <span style={{color: 'var(--color-secondary)'}}>그 질문을 미리 알면?</span>
+              </p>
+            </div>
+
+            <div className={styles.comparisonGrid}>
+              {/* General Questions */}
+              <div className={styles.compCard}>
+                <div className={styles.compHeader}>
+                  <h3>일반 질문 (ChatGPT)</h3>
+                </div>
+                <div className={styles.compQuestions}>
+                  <div className={styles.compQItem}>
+                    <span className={styles.compQNum}>Q1</span>
+                    <p>Spring Boot의 장점을 설명해주세요</p>
+                  </div>
+                  <div className={styles.compQItem}>
+                    <span className={styles.compQNum}>Q2</span>
+                    <p>RESTful API란 무엇인가요?</p>
+                  </div>
+                  <div className={styles.compQItem}>
+                    <span className={styles.compQNum}>Q3</span>
+                    <p>데이터베이스 인덱스를 설명해주세요</p>
+                  </div>
+                </div>
+                <div className={styles.compFooter}>
+                  <p>누구에게나 똑같은 질문<br />→ 일반론 암기</p>
+                </div>
+              </div>
+
+              {/* Resume-based Questions */}
+              <div className={`${styles.compCard} ${styles.positive}`}>
+                <div className={`${styles.compHeader} ${styles.positive}`}>
+                  <h3>이력서 기반 질문 (QueryDaily)</h3>
+                </div>
+                <div className={styles.compQuestions}>
+                  <div className={styles.compQItem}>
+                    <span className={`${styles.compQNum} ${styles.positive}`}>Q1</span>
+                    <p>"상품 검색 응답시간 2초→0.3초" 어떻게 달성했나요?</p>
+                  </div>
+                  <div className={styles.compQItem}>
+                    <span className={`${styles.compQNum} ${styles.positive}`}>Q2</span>
+                    <p>"동시 결제 처리 500건" 트랜잭션 충돌은 어떻게 해결했나요?</p>
+                  </div>
+                  <div className={styles.compQItem}>
+                    <span className={`${styles.compQNum} ${styles.positive}`}>Q3</span>
+                    <p>"DAU 10만 서비스" 쿼리 최적화 전략은 무엇이었나요?</p>
+                  </div>
+                </div>
+                <div className={`${styles.compFooter} ${styles.positive}`}>
+                  <p>당신이 직접 겪은 문제<br />→ 구체적인 해결 과정</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 간단 비교 */}
+            <div style={{
+              marginTop: '3rem',
+              maxWidth: '500px',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}>
+              {/* ChatGPT */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(255,100,100,0.08)',
+                borderRadius: '12px',
+                marginBottom: '1rem',
+                textAlign: 'center'
+              }}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.8rem', color: '#ff6b6b'}}>
+                  ChatGPT
+                </p>
+                <p style={{fontSize: '0.95rem', opacity: 0.8, margin: 0, lineHeight: '1.7'}}>
+                  당신 이력서를 모름 → 일반 질문만<br/>
+                  다 같은 답 → 차별화 안 됨
+                </p>
+              </div>
+
+              {/* QueryDaily */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(var(--color-accent-rgb), 0.1)',
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}>
+                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.8rem', color: 'var(--color-secondary)'}}>
+                  QueryDaily
+                </p>
+                <p style={{fontSize: '0.95rem', opacity: 0.8, margin: 0, lineHeight: '1.7'}}>
+                  당신 이력서 분석 → 맞춤 질문<br/>
+                  당신만의 답 → 면접관 기억에 남음
+                </p>
+              </div>
+            </div>
+
+            {/* 결론 메시지 */}
+            <div style={{
+              marginTop: '3rem',
+              padding: '2rem',
+              background: 'linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.15), rgba(var(--color-accent-rgb), 0.08))',
+              borderRadius: '20px',
+              border: '2px solid rgba(var(--color-accent-rgb), 0.2)',
+              textAlign: 'center',
+              maxWidth: '520px',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}>
+              <p style={{
+                fontSize: '1.2rem',
+                fontWeight: '700',
+                marginBottom: '1rem',
+                lineHeight: '1.7'
+              }}>
+                면접관이 물을 질문은<br/>
+                <span style={{color: 'var(--color-secondary)', fontSize: '1.4rem'}}>이미 당신 이력서에</span> 다 있습니다.
+              </p>
+              <p style={{
+                fontSize: '0.95rem',
+                opacity: 0.8,
+                margin: 0,
+                lineHeight: '1.6'
+              }}>
+                ChatGPT는 그걸 모릅니다.<br/>
+                <strong>QueryDaily는 그걸 찾아드립니다.</strong>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Philosophy Section - 공감과 응원 */}
+        <section className={styles.problemSection} style={{position: 'relative', overflow: 'hidden'}}>
+          {/* 배경 장식 요소들 */}
+          <div style={{
+            position: 'absolute',
+            top: '10%',
+            left: '-10%',
+            width: '300px',
+            height: '300px',
+            background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.08) 0%, transparent 70%)',
+            borderRadius: '50%',
+            pointerEvents: 'none'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            bottom: '20%',
+            right: '-5%',
+            width: '250px',
+            height: '250px',
+            background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.06) 0%, transparent 70%)',
+            borderRadius: '50%',
+            pointerEvents: 'none'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '500px',
+            height: '500px',
+            background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.04) 0%, transparent 60%)',
+            borderRadius: '50%',
+            pointerEvents: 'none'
+          }}></div>
+          {/* 체크마크 장식 */}
+          <div style={{
+            position: 'absolute',
+            top: '15%',
+            right: '10%',
+            opacity: 0.03,
+            fontSize: '8rem',
+            pointerEvents: 'none'
+          }}>✓</div>
+          <div style={{
+            position: 'absolute',
+            bottom: '10%',
+            left: '8%',
+            opacity: 0.03,
+            fontSize: '6rem',
+            pointerEvents: 'none'
+          }}>✓</div>
+
+          <div className={styles.problemContainer} style={{position: 'relative', zIndex: 1}}>
+            <h2 className={styles.sectionTitle}>
+              걱정하지 마세요,<br/>
+              <span className={styles.highlight}>당신은 할 수 있어요</span>
+            </h2>
+
+            <div className={styles.prepMessage} style={{marginTop: '3rem', marginBottom: '3rem'}}>
+              <p className={styles.prepMessageMain} style={{fontSize: '1.4rem', lineHeight: '2'}}>
+                면접이 두려운 건 당연해요.
+              </p>
+              <p className={styles.prepMessageSub} style={{fontSize: '1.1rem', marginTop: '1.5rem'}}>
+                열심히 준비한 만큼 잘 보여주고 싶은 마음,<br/>
+                그 마음이 긴장이 되는 거예요.<br/>
+                <strong>그건 당신이 진심이라는 증거</strong>입니다.
+              </p>
+            </div>
+
+            <div className={styles.scenarioList}>
+              <div className={styles.scenarioItem}>
+                <div className={styles.scenarioText}>
+                  <p className={styles.scenarioAction} style={{fontSize: '1.1rem', fontWeight: '600'}}>이미 해낸 것들이 있잖아요</p>
+                  <p className={styles.scenarioQuestion}>프로젝트도 했고, 어려운 문제도 풀었고, 여기까지 왔어요</p>
+                  <p className={styles.scenarioResult} style={{color: 'var(--color-accent)'}}>→ 그걸 말로 풀어내는 연습만 하면 돼요</p>
+                </div>
+              </div>
+
+              <div className={styles.scenarioItem}>
+                <div className={styles.scenarioText}>
+                  <p className={styles.scenarioAction} style={{fontSize: '1.1rem', fontWeight: '600'}}>면접관도 당신 편이에요</p>
+                  <p className={styles.scenarioQuestion}>그들도 좋은 사람을 만나고 싶어해요</p>
+                  <p className={styles.scenarioResult} style={{color: 'var(--color-accent)'}}>→ 당신이 그 사람임을 보여주기만 하면 돼요</p>
+                </div>
+              </div>
+
+              <div className={styles.scenarioItem}>
+                <div className={styles.scenarioText}>
+                  <p className={styles.scenarioAction} style={{fontSize: '1.1rem', fontWeight: '600'}}>준비하면 달라져요</p>
+                  <p className={styles.scenarioQuestion}>예상된 질문에는 자신감이 생겨요</p>
+                  <p className={styles.scenarioResult} style={{color: 'var(--color-accent)'}}>→ 그 자신감이 면접장에서 빛나요</p>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.ctaNudge} style={{marginTop: '3rem'}}>
+              <p className={styles.ctaNudgeMain}>
+                당신은 이미 충분해요.<br/>
+                그걸 잘 보여주는 법만 연습하면 돼요.
+              </p>
+              <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem'}}>
+                새로운 걸 배우는 게 아니에요.<br/>
+                <span className={styles.ctaNudgeHighlight}>이미 가진 걸, 잘 전달하는 거예요.</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Empowerment Section - 선택의 주체 */}
+        <section className={styles.statistics}>
+          <div className={styles.statisticsContainer}>
+            <h2 style={{
+              textAlign: 'center',
+              fontSize: '1.6rem',
+              fontWeight: '700',
+              lineHeight: '1.6',
+              marginBottom: '2rem'
+            }}>
+              회사가 나를 선택하는 게 아니라,<br/>
+              <span className={styles.highlight} style={{fontSize: '1.8rem'}}>내가 회사를 선택하는 겁니다.</span>
+            </h2>
+
+            <div className={styles.prepMessage} style={{marginBottom: '2.5rem'}}>
+              <p className={styles.prepMessageSub} style={{fontSize: '1.05rem', lineHeight: '1.9'}}>
+                준비된 사람은 다릅니다.<br/><br/>
+                면접장에서 떨지 않고,<br/>
+                오히려 <strong>"이 회사가 나한테 맞는지"</strong> 살펴봅니다.<br/><br/>
+                여러 곳에서 합격하면,<br/>
+                <strong>더 좋은 조건, 더 맞는 문화</strong>를 고를 수 있습니다.
+              </p>
+            </div>
+
+            {/* 준비 안 된 사람 vs 준비된 사람 - 2열 카드 */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '1.5rem',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}>
+              {/* 준비 안 된 사람 */}
+              <div style={{
+                padding: '2rem 1.5rem',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255,255,255,0.08)',
+                textAlign: 'center',
+                opacity: 0.7
+              }}>
+                <p style={{
+                  fontSize: '0.85rem',
+                  opacity: 0.5,
+                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
+                }}>준비 안 된 사람</p>
+                <p style={{
+                  fontSize: '1.3rem',
+                  fontWeight: '600',
+                  marginBottom: '0.8rem',
+                  lineHeight: '1.4'
+                }}>"제발 여기라도..."</p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.6,
+                  margin: 0
+                }}>어디든 붙으면 감사</p>
+              </div>
+
+              {/* 준비된 사람 */}
+              <div style={{
+                padding: '2rem 1.5rem',
+                background: 'linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.15), rgba(var(--color-accent-rgb), 0.08))',
+                borderRadius: '16px',
+                border: '2px solid rgba(var(--color-accent-rgb), 0.3)',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  background: 'linear-gradient(90deg, var(--color-secondary), var(--color-secondary-light))'
+                }}></div>
+                <p style={{
+                  fontSize: '0.85rem',
+                  color: 'var(--color-secondary)',
+                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: '600'
+                }}>준비된 사람</p>
+                <p style={{
+                  fontSize: '1.3rem',
+                  fontWeight: '700',
+                  marginBottom: '0.8rem',
+                  lineHeight: '1.4',
+                  color: 'var(--color-secondary)'
+                }}>"여기가 나한테 맞을까?"</p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.9,
+                  margin: 0,
+                  fontWeight: '500'
+                }}>여러 합격 중 선택</p>
+              </div>
+            </div>
+
+            <div className={styles.ctaNudge} style={{marginTop: '2.5rem'}}>
+              <p className={styles.ctaNudgeMain}>
+                당신의 커리어를 당신이 주도하세요.
+              </p>
+              <p className={styles.ctaNudgeDesc} style={{marginTop: '0.8rem'}}>
+                그 시작은 <span className={styles.ctaNudgeHighlight}>제대로 된 면접 준비</span>입니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Who We Are Section */}
+        <section className={styles.whoWeAre}>
+          <div className={styles.whoWeAreContainer}>
+            <div className={styles.whoWeAreHeader}>
+              <span className={styles.whoWeAreBadge}>만든 사람들</span>
+              <h2 className={styles.sectionTitle}>
+                사실 우리는 먼저 떨어져본 사람들입니다.<br/>
+                <span className={styles.whoWeAreHighlight}>그래서 알아요.</span>
+              </h2>
+              <p className={styles.sectionSubtitle}>
+                왜 떨어지는지.<br/>
+                어떻게 하면 붙는지.
+              </p>
+            </div>
+
+            <div className={styles.failureStats}>
+              <div className={styles.failureStat}>
+                <div className={styles.failureNumber}>500<span>+</span></div>
+                <div className={styles.failureLabel}>서류 탈락</div>
+              </div>
+              <div className={styles.failureStatDivider}></div>
+              <div className={styles.failureStat}>
+                <div className={styles.failureNumber}>100<span>+</span></div>
+                <div className={styles.failureLabel}>면접 경험</div>
+              </div>
+              <div className={styles.failureStatDivider}></div>
+              <div className={styles.failureStat}>
+                <div className={styles.failureNumber}>300<span>%</span></div>
+                <div className={styles.failureLabel}>평균 연봉 인상</div>
+              </div>
+            </div>
+
             <div className={styles.expertGrid}>
               <div className={styles.expertCard}>
                 <div className={styles.expertAvatar}>
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor:'#667eea', stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor:'#764ba2', stopOpacity:1}} />
+                        <stop offset="0%" style={{stopColor: theme.secondary, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: theme.secondaryLight, stopOpacity:1}} />
                       </linearGradient>
                     </defs>
                     <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad1)" opacity="0.9"/>
@@ -1909,21 +1935,21 @@ export default function HomePage() {
                 <div className={styles.expertJourney}>
                   <span className={styles.journeyFrom}>국비지원 수료생</span>
                   <span className={styles.journeyArrow}>→</span>
-                  <span className={styles.journeyTo}>판교 대기업 개발자</span>
+                  <span className={styles.journeyTo}>판교 대기업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  300번의 탈락 데이터를 분석해<br/>
-                  합격 공식을 찾았어요<br/>
-                  국비생에서 2년만에 연봉 2배↗<br/>그 경험을 시스템에 담았어요
+                  "저도 국비생이었어요. 300번 떨어졌죠."<br/>
+                  → 2년 후, 당신도 연봉 2배 받을 수 있어요
                 </p>
               </div>
+
               <div className={styles.expertCard}>
                 <div className={styles.expertAvatar}>
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor:'#f093fb', stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor:'#f5576c', stopOpacity:1}} />
+                        <stop offset="0%" style={{stopColor: theme.secondaryLight, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: theme.secondary, stopOpacity:1}} />
                       </linearGradient>
                     </defs>
                     <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad2)" opacity="0.9"/>
@@ -1936,19 +1962,18 @@ export default function HomePage() {
                   <span className={styles.journeyTo}>유니콘 스타트업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  SI 야근지옥에서 유니콘까지,<br/>
-                  5번의 이직으로 찾은 최적 경로<br/>
-                  100개 기업 면접에서 발견한<br/>
-                  합격 시그널을 공유해요
+                  "SI 야근에 지쳐서 100번 넘게 지원했어요."<br/>
+                  → 이제 당신은 그러지 않아도 됩니다
                 </p>
               </div>
+
               <div className={styles.expertCard}>
                 <div className={styles.expertAvatar}>
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor:'#4facfe', stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor:'#00f2fe', stopOpacity:1}} />
+                        <stop offset="0%" style={{stopColor: theme.primaryLight, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: theme.secondary, stopOpacity:1}} />
                       </linearGradient>
                     </defs>
                     <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad3)" opacity="0.9"/>
@@ -1961,19 +1986,18 @@ export default function HomePage() {
                   <span className={styles.journeyTo}>대형 커머스</span>
                 </div>
                 <p className={styles.expertStory}>
-                  트래픽 0 → 블랙프라이데이,<br/>
-                  서버 터뜨리며 배운 대용량 처리의 정석<br/>
-                  트래픽 폭탄 맞으며 배운 진짜 개발,<br/>
-                  그 생존법으로 다져진 실무 경험으로 질문해요
+                  "무명 스타트업에서 시작했어요. 막막했죠."<br/>
+                  → 당신의 시작도 빛날 수 있어요
                 </p>
               </div>
+
               <div className={styles.expertCard}>
                 <div className={styles.expertAvatar}>
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor:'#fa709a', stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor:'#fee140', stopOpacity:1}} />
+                        <stop offset="0%" style={{stopColor: theme.secondary, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: theme.primary, stopOpacity:1}} />
                       </linearGradient>
                     </defs>
                     <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad4)" opacity="0.9"/>
@@ -1981,802 +2005,408 @@ export default function HomePage() {
                 </div>
                 <div className={styles.expertBadge}>현) 테크 기업 개발자</div>
                 <div className={styles.expertJourney}>
-                  <span className={styles.journeyFrom}>아이비리그 수준 CS 전공</span>
+                  <span className={styles.journeyFrom}>CS 전공</span>
                   <span className={styles.journeyArrow}>→</span>
                   <span className={styles.journeyTo}>판교 테크 기업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  탄탄한 이론적 기반과<br/>
-                  10개 이상의 시스템을 0부터 설계한 풀사이클 경험으로<br/>
-                  실무와 이론의 균형을 잡아드려요
+                  "CS 전공이어도 면접에선 떨어졌어요."<br/>
+                  → 전공 상관없이, 당신도 붙을 수 있어요
                 </p>
               </div>
             </div>
+
             <div className={styles.teamSummary}>
               <p className={styles.summaryMain}>
-                <span className={styles.summaryMessage}>수십 번의 탈락과 수백 번의 <span className={styles.highlight}>삽질</span>,<br/>그리고 실제 성공한 <span className={styles.highlight}>데이터</span>로 증명합니다.</span>
+                우리의 <span className={styles.highlight}>500번 실패</span>가<br/>
+                당신의 <span className={styles.highlight}>첫 합격</span>을 만듭니다.
+              </p>
+              <p style={{
+                marginTop: '1.5rem',
+                fontSize: '1.05rem',
+                opacity: 0.85,
+                lineHeight: '1.8',
+                textAlign: 'center'
+              }}>
+                우리가 시행착오로 얻은 노하우,<br/>
+                <strong style={{color: 'var(--color-secondary)'}}>전부 드리고 싶어요.</strong><br/>
+                <span style={{fontSize: '0.9rem', opacity: 0.7}}>당신은 우리처럼 돌아가지 않아도 되니까요.</span>
               </p>
             </div>
           </div>
+        </section>
 
-          {/* 2025년 데이터 인사이트 */}
-          <div className={styles.insightSection}>
-            <div className={styles.insightHeader}>
-              <div className={styles.insightYear}>2025</div>
-              <div className={styles.insightTitle}>최신 면접 데이터 인사이트</div>
-            </div>
-            <h3 className={styles.insightTitle}>500건의 면접 분석 결과</h3>
-            <div className={styles.insightContent}>
-              <div className={styles.insightGrid}>
-                <div className={styles.insightCard}>
-                  <div className={styles.insightNumber}>01</div>
-                  <h4 className={styles.insightQuestion}>합격의 비밀?</h4>
-                  <p className={styles.insightAnswer}>특별한 게 아니었어요</p>
-                </div>
-                <div className={styles.insightCard}>
-                  <div className={styles.insightNumber}>02</div>
-                  <h4 className={styles.insightQuestion}>불합격의 패턴?</h4>
-                  <p className={styles.insightAnswer}>놀랍도록 일정했어요</p>
-                </div>
-              </div>
+        {/* Bridge CTA Section - 킥 포인트 */}
+        <section className={styles.bridgeCta} style={{position: 'relative', overflow: 'hidden'}}>
+          {/* 배경 글로우 */}
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '600px',
+            height: '600px',
+            background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.1) 0%, transparent 60%)',
+            borderRadius: '50%',
+            pointerEvents: 'none'
+          }}></div>
 
-              <div className={styles.insightFindings}>
-                <h4>우리가 발견한 진실</h4>
-                <div className={styles.findingsGrid}>
-                  <div className={styles.findingItem}>
-                    <div className={styles.findingNumber}>1</div>
-                    <p>완벽한 답변보다<br/><strong>치명적 실수 회피</strong></p>
-                  </div>
-                  <div className={styles.findingItem}>
-                    <div className={styles.findingNumber}>2</div>
-                    <p>가산점보다<br/><strong>감점 요소 제거</strong></p>
-                  </div>
-                  <div className={styles.findingItem}>
-                    <div className={styles.findingNumber}>3</div>
-                    <p>돋보이려 하다가<br/><strong>망치는 경우가 대부분</strong></p>
-                  </div>
-                </div>
-              </div>
+          <div className={styles.bridgeCtaContainer} style={{position: 'relative', zIndex: 1}}>
+            <div style={{textAlign: 'center', maxWidth: '600px', margin: '0 auto'}}>
+              <p style={{
+                fontSize: '1.1rem',
+                opacity: 0.7,
+                marginBottom: '2rem',
+                lineHeight: '1.8'
+              }}>
+                면접에서 떨어진 그날 밤,<br/>
+                분명 이렇게 생각했을 거예요.
+              </p>
 
-              <div className={styles.keyQuestions}>
-                <h4>당신의 이력서에서 합격을 좌우할 <span className={styles.highlightNumber}>단 3개</span>의 질문</h4>
-                <p className={styles.questionDesc}>
-                  면접관이 듣고 싶어하는 답변은 따로 있어요.<br/>
-                  <span className={styles.subtle}>교과서로 배울 수 없는 그것.</span>
+              <h3 style={{
+                fontSize: '2rem',
+                fontWeight: '800',
+                lineHeight: '1.6',
+                marginBottom: '2rem'
+              }}>
+                <span style={{opacity: 0.5}}>"</span>나는 분명 할 수 있었는데...<br/>
+                <span style={{
+                  background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontSize: '2.3rem'
+                }}>왜 말이 안 나왔지?</span><span style={{opacity: 0.5}}>"</span>
+              </h3>
+
+              <p style={{
+                fontSize: '1.2rem',
+                lineHeight: '1.9',
+                marginBottom: '2.5rem',
+                fontWeight: '500'
+              }}>
+                실력이 없어서가 아니에요.<br/>
+                <strong>그 질문이 나올 줄 몰랐을 뿐</strong>이에요.<br/><br/>
+                <span style={{opacity: 0.8}}>
+                  알았다면, 준비했을 거예요.<br/>
+                  준비했다면, <span style={{color: 'var(--color-secondary)', fontWeight: '700'}}>말할 수 있었을 거예요.</span>
+                </span>
+              </p>
+
+              <div style={{
+                padding: '2rem',
+                background: 'linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.15), rgba(var(--color-accent-rgb), 0.08))',
+                borderRadius: '20px',
+                border: '2px solid rgba(var(--color-accent-rgb), 0.25)'
+              }}>
+                <p style={{
+                  fontSize: '1.4rem',
+                  fontWeight: '700',
+                  margin: 0,
+                  lineHeight: '1.7'
+                }}>
+                  다음 면접에서는<br/>
+                  <span style={{
+                    color: 'var(--color-secondary)',
+                    fontSize: '1.6rem'
+                  }}>"이 질문 나올 줄 알았어"</span><br/>
+                  라고 말하세요.
                 </p>
-                <div className={styles.ctaMessage}>
-                  <span className={styles.warningText}>매일 3분 투자</span>로<br/>
-                  남들의 3개월 시행착오를 압축해요.
-                </div>
               </div>
+
+              {/* 최종 CTA */}
+              <a href="#products" style={{
+                display: 'inline-block',
+                marginTop: '2.5rem',
+                padding: '1.2rem 3rem',
+                background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
+                color: '#fff',
+                fontWeight: '700',
+                fontSize: '1.2rem',
+                borderRadius: '16px',
+                textDecoration: 'none',
+                boxShadow: '0 8px 30px rgba(var(--color-accent-rgb), 0.4)',
+                transition: 'transform 0.2s, box-shadow 0.2s'
+              }}>
+                지금 준비 시작하기 →
+              </a>
             </div>
           </div>
+        </section>
 
-          {/* 차별화 포인트 */}
-          <div className={styles.differenceSection}>
-            <div className={styles.differenceContent}>
-              <div className={styles.differenceLeft}>
-                <h3 className={styles.differenceTitle}>우리의 접근법</h3>
-                <p className={styles.differenceText}>
-                  어디서나 볼 수 있는 <span className={styles.strikethrough}>'모범 답안'</span> 대신<br/>
-                  당신의 경험에서 나올 <span className={styles.highlight}>'진짜 질문'</span>을 찾아드려요
-                </p>
-              </div>
-              <div className={styles.differenceRight}>
-                <div className={styles.testimonialProof}>
-                  <div className={styles.miniTestimonialCard}>
-                    <span className={styles.testimonialIcon}>"</span>
-                    <div>
-                      <p>QueryDaily 질문이 실제 면접에 5개 이상 나왔어요</p>
-                      <span className={styles.testerName}>- 베타 테스터 K님</span>
-                    </div>
-                  </div>
-                  <div className={styles.miniTestimonialCard}>
-                    <span className={styles.testimonialIcon}>"</span>
-                    <div>
-                      <p>'그냥 썼던' 기술에 논리를 붙이는 법 배웠어요</p>
-                      <span className={styles.testerName}>- 베타 테스터 L님</span>
-                    </div>
-                  </div>
-                  <div className={styles.miniTestimonialCard}>
-                    <span className={styles.testimonialIcon}>"</span>
-                    <div>
-                      <p>가이드 답변대로 했더니 면접관이 고개 끄덕이더라고요</p>
-                      <span className={styles.testerName}>- 베타 테스터 P님</span>
-                    </div>
-                  </div>
+        {/* FAQ */}
+        <section className={styles.faq}>
+          <div className={styles.faqContainer}>
+            <h2 className={styles.sectionTitle}>
+              시작하기 전,<br />
+              이것만 확인하세요
+            </h2>
+
+            <div className={styles.faqList}>
+              <details className={styles.faqItem}>
+                <summary className={styles.faqQuestion}>
+                  <span>이력서 기반 예측이 정확한가요?</span>
+                  <span className={styles.faqIcon}>+</span>
+                </summary>
+                <div className={styles.faqAnswer}>
+                  실제 사용자 피드백에서 "면접에서 비슷한 질문이 나왔다"는 평가가 많습니다.<br /><br />
+                  당신의 이력서 경험과 기술을 바탕으로 면접관이 파고들 포인트를 정확히 예측합니다.<br />
+                  현직 시니어 개발자 4명이 질문 품질을 검수합니다.
                 </div>
-              </div>
+              </details>
+
+              <details className={styles.faqItem}>
+                <summary className={styles.faqQuestion}>
+                  <span>ChatGPT랑 뭐가 다른가요?</span>
+                  <span className={styles.faqIcon}>+</span>
+                </summary>
+                <div className={styles.faqAnswer}>
+                  ChatGPT는 일반적인 질문을 생성하지만, QueryDaily는 <strong>당신의 이력서를 분석</strong>하여 맞춤 질문을 만듭니다.<br /><br />
+                  또한 매일 자동으로 발송되어 꾸준한 연습이 가능하며, STAR 기법 가이드를 함께 제공합니다.
+                </div>
+              </details>
+
+              <details className={styles.faqItem}>
+                <summary className={styles.faqQuestion}>
+                  <span>환불 정책은 어떻게 되나요?</span>
+                  <span className={styles.faqIcon}>+</span>
+                </summary>
+                <div className={styles.faqAnswer}>
+                  크리티컬 히트: 발송 전 100% 환불<br />
+                  그로스 플랜: 첫 질문 발송 전 100% 환불, 이후 남은 일수에 대해 일할 계산<br /><br />
+                  환불 사유는 묻지 않습니다.
+                </div>
+              </details>
+
+              <details className={styles.faqItem}>
+                <summary className={styles.faqQuestion}>
+                  <span>어떤 기술 스택을 다루나요?</span>
+                  <span className={styles.faqIcon}>+</span>
+                </summary>
+                <div className={styles.faqAnswer}>
+                  <strong>백엔드 개발자</strong>를 위한 서비스입니다.<br /><br />
+                  Spring, Node.js, Django, FastAPI 등 주요 프레임워크와<br />
+                  MySQL, PostgreSQL, MongoDB, Redis 등 데이터베이스,<br />
+                  그리고 AWS, Docker, Kubernetes 등<br />
+                  <strong>당신의 이력서에 있는 모든 기술</strong>을 다룹니다.
+                </div>
+              </details>
+            </div>
+
+            {/* 카카오톡 상담 CTA */}
+            <div style={{
+              marginTop: '3rem',
+              padding: '2rem',
+              background: 'rgba(var(--color-accent-rgb), 0.08)',
+              borderRadius: '16px',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                marginBottom: '0.8rem'
+              }}>
+                더 궁금한 점이 있으신가요?
+              </p>
+              <p style={{
+                fontSize: '0.95rem',
+                opacity: 0.7,
+                marginBottom: '1.5rem',
+                lineHeight: '1.6'
+              }}>
+                카카오톡으로 편하게 물어보세요.<br/>
+                빠르게 답변드릴게요.
+              </p>
+              <a
+                href="http://pf.kakao.com/_fxdxfTG"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.8rem 1.5rem',
+                  background: '#FEE500',
+                  color: '#000000',
+                  fontWeight: '600',
+                  fontSize: '0.95rem',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  transition: 'transform 0.2s'
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z"/>
+                </svg>
+                카카오톡으로 문의하기
+              </a>
             </div>
           </div>
+        </section>
 
-
-          <div className={styles.finalMessage}>
-            <p>면접관도 몰랐던 <span className={styles.emphasis}>불합격 시키는 답변 패턴</span><br/>지금 얻어가세요.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Privacy Trust Section */}
-      <div className={`${styles.section} ${styles.privacyTrust}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>🔒 당신의 이력서, 안전하게 다룹니다</h2>
-          <p className={styles.sectionSubtitle}>개발자가 개발자를 위해 만든, 가장 투명한 이력서 분석 시스템</p>
-
-          <div className={styles.privacyGrid}>
-            <div className={styles.privacyCard}>
-              <div className={styles.cardIcon}>🎯</div>
-              <h3>오직 면접 질문 생성</h3>
-              <p>이력서는 단 하나의 목적으로만 사용돼요<br/>
-              <strong>당신만을 위한 맞춤형 면접 질문 생성</strong></p>
-              <ul>
-                <li>프로젝트 경험 분석</li>
-                <li>기술 스택 깊이 파악</li>
-                <li>경력 수준별 질문 난이도 조정</li>
-              </ul>
-            </div>
-
-            <div className={styles.privacyCard}>
-              <div className={styles.cardIcon}>⏱️</div>
-              <h3>3일 후 완전 삭제</h3>
-              <p>챌린지 종료와 동시에 모든 데이터가 삭제돼요</p>
-              <div className={styles.deletionTimeline}>
-                <div className={styles.timelineItem}>
-                  <span className={styles.day}>Day 1-3</span>
-                  <span>암호화 보관</span>
-                </div>
-                <div className={styles.timelineItem}>
-                  <span className={styles.day}>Day 4</span>
-                  <span>자동 영구 삭제</span>
-                </div>
-              </div>
-              <p className={styles.note}>💡 원하시면 언제든 즉시 삭제 요청 가능</p>
-            </div>
-
-            <div className={styles.privacyCard}>
-              <div className={styles.cardIcon}>🛡️</div>
-              <h3>철저한 보안</h3>
-              <p>당신의 정보를 지키는 우리의 약속</p>
-              <ul>
-                <li>제3자 공유 절대 없음</li>
-                <li>마케팅 활용 절대 없음</li>
-                <li>AWS 암호화 저장</li>
-                <li>접근 권한 최소화</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className={styles.trustFooter}>
-            <p>
-              <strong>왜 이력서가 필요한가요?</strong><br/>
-              일반적인 "JPA 왜 썼나요?" 같은 질문이 아닌,<br/>
-              당신의 프로젝트와 경험을 깊이 이해한 후에만 나올 수 있는<br/>
-              <span style={{ color: '#c3e88d' }}>진짜 날카로운 맞춤형 질문</span>을 만들기 위해서입니다.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Testimonials Section */}
-      <div id="testimonials" data-section="testimonials" className={`${styles.section} ${styles.testimonials}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>이런 변화를 경험하고 있어요</h2>
-
-          <div
-            className={styles.testimonialsCarousel}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className={styles.testimonialsWrapper}
-              style={{
-                transform: `translateX(-${currentTestimonial * 100}%)`,
-                transition: transition ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none'
-              }}
-            >
-              {extendedTestimonials.map((testimonial, index) => (
-                <div key={index} className={styles.testimonialSlide}>
-                  <div className={styles.testimonialCard}>
-                    <div className={styles.testimonialHeader}>
-                      <div className={styles.testimonialAvatar}>{testimonial.avatar}</div>
-                      <div className={styles.testimonialInfo}>
-                        <div className={styles.testimonialName}>{testimonial.name}</div>
-                        <div className={styles.testimonialRole}>{testimonial.role}</div>
-                      </div>
-                      <div className={styles.testimonialRating}>⭐⭐⭐⭐⭐</div>
-                    </div>
-                    <p className={styles.testimonialText}>{testimonial.text}</p>
-                    <div className={styles.testimonialResult}>{testimonial.result}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Carousel Controls */}
-            <button
-              className={`${styles.carouselBtn} ${styles.carouselBtnPrev}`}
-              onClick={handlePrev}
-              aria-label="Previous testimonial"
-            >
-              ←
-            </button>
-            <button
-              className={`${styles.carouselBtn} ${styles.carouselBtnNext}`}
-              onClick={handleNext}
-              aria-label="Next testimonial"
-            >
-              →
-            </button>
-
-            {/* Carousel Dots */}
-            <div className={styles.carouselDots}>
-              {[...Array(totalDots)].map((_, dotIndex) => {
-                // 현재 testimonial이 어느 dot 그룹에 속하는지 계산
-                let activeTestimonialIndex = currentTestimonial - 1;
-                if (currentTestimonial === 0) activeTestimonialIndex = testimonials.length - 1;
-                if (currentTestimonial === testimonials.length + 1) activeTestimonialIndex = 0;
-
-                const activeDotIndex = Math.floor(activeTestimonialIndex / testimonialsPerDot);
-                const isActive = activeDotIndex === dotIndex;
-
-                return (
-                  <button
-                    key={dotIndex}
-                    className={`${styles.dot} ${isActive ? styles.activeDot : ''}`}
-                    onClick={() => handleDotClick(dotIndex)}
-                    aria-label={`Go to testimonial group ${dotIndex + 1}`}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ Section - Collapsible Accordion */}
-      <div id="faq" data-section="faq" className={`${styles.section} ${styles.faqSection}`}>
-        <div className={styles.sectionContainer}>
-          <h2 className={styles.sectionTitle}>아직 고민되시나요?</h2>
-          <p className={styles.sectionSubtitle}>가장 많이 궁금해하시는 점들을 정리했습니다</p>
-
-          <div className={styles.faqAccordion}>
-            {[
-              {
-                icon: '🤔',
-                question: '정말 내 이력서에 맞는 질문이 올까요?',
-                answer: (
-                  <div className={styles.faqAnswerContent}>
-                    <p>네, <strong>현직 면접관 수준의 전문가로 파인 튜닝한 AI</strong>가 당신의 기술 스택, 프로젝트 경험, 사용한 라이브러리까지 분석해서 실제 면접관이 물어볼 만한 꼬리 질문을 생성합니다.</p>
-
-                    <div className={styles.faqComparison}>
-                      <div className={styles.faqBad}>
-                        <span className={styles.faqLabel}>❌ 뻔한 질문</span>
-                        <div className={styles.faqExample}>"왜 Spring Security를 썼나요?"</div>
-                      </div>
-                      <div className={styles.faqGood}>
-                        <span className={styles.faqLabel}>✅ 날카로운 질문</span>
-                        <div className={styles.faqExample}>
-                          "JWT 인증 방식에서 Refresh Token을 사용하셨나요? 만약 사용했다면 어디에 어떻게 저장하셨고, 그 이유는 무엇인가요?"
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              },
-              {
-                icon: '⏰',
-                question: '3일이면 충분한가요?',
-                answer: (
-                  <div className={styles.faqAnswerContent}>
-                    <p><strong>3일은 시작입니다.</strong></p>
-                    <p>이 기간 동안 당신은 자신의 약점을 명확히 파악하고, 어떤 부분을 보강해야 할지 알게 됩니다.</p>
-
-                    <div className={styles.faqHighlight}>
-                      <span className={styles.faqHighlightIcon}>📌</span>
-                      <div>
-                        <strong>핵심은 깊이입니다</strong>
-                        <p>매일 단 하나의 질문에 깊이 고민하는 것이 100개의 질문을 훑어보는 것보다 효과적입니다.</p>
-                      </div>
-                    </div>
-                  </div>
-                )
-              },
-              {
-                icon: '💭',
-                question: '답변 가이드 없이 혼자 할 수 있을까요?',
-                answer: (
-                  <div className={styles.faqAnswerContent}>
-                    <p><strong>오히려 그래서 효과적입니다.</strong></p>
-                    <p>스스로 고민하고 답을 찾는 과정에서 진짜 <strong>'면접 근육'</strong>이 생깁니다.</p>
-
-                    <div className={styles.faqNote}>
-                      <span className={styles.faqNoteIcon}>💪</span>
-                      <div>
-                        <p>답변이 궁금하다면 3일 후 '그로스 플랜'으로 업그레이드하실 수 있습니다.</p>
-                        <p>하지만 <strong>먼저 스스로 생각해보는 시간</strong>이 꼭 필요합니다.</p>
-                      </div>
-                    </div>
-                  </div>
-                )
-              },
-              {
-                icon: '🎯',
-                question: '어떤 사람에게 가장 효과적인가요?',
-                answer: (
-                  <div className={styles.faqAnswerContent}>
-                    <p><strong>이런 분들께 가장 효과적입니다:</strong></p>
-
-                    <ul className={styles.faqCheckList}>
-                      <li>이력서는 준비됐지만 <strong>면접이 막막한</strong> 주니어 개발자</li>
-                      <li>특히 <strong>신입~3년차 개발자</strong>분들</li>
-                      <li>코드는 잘 짜지만 <strong>왜 그렇게 짰는지</strong> 설명하기 어려우신 분</li>
-                      <li>기술 선택의 이유를 <strong>논리적으로 설명</strong>하고 싶으신 분</li>
-                    </ul>
-                  </div>
-                )
-              },
-              {
-                icon: '🌐',
-                question: 'Java/Spring이 아닌 다른 기술 스택도 지원하나요?',
-                answer: (
-                  <div className={styles.faqAnswerContent}>
-                    <p><strong>현재는 Java/Spring 백엔드 개발자를 위한 베타 테스트 중입니다.</strong></p>
-
-                    <div className={styles.faqRoadmap}>
-                      <h4>📅 향후 지원 예정 기술 스택</h4>
-                      <ul>
-                        <li>Python/Django, FastAPI</li>
-                        <li>Node.js/Express, NestJS</li>
-                        <li>Go (Gin, Echo)</li>
-                        <li>Ruby on Rails</li>
-                      </ul>
-                    </div>
-
-                    <div className={styles.faqTip}>
-                      <span className={styles.faqTipIcon}>💡</span>
-                      <p>다른 기술 스택 개발자시라면, 베타 신청하신 <strong>이메일로 새 스택 오픈 시 안내 메일</strong>을 보내드리겠습니다.</p>
-                    </div>
-                  </div>
-                )
-              }
-            ].map((faq, index) => (
-              <div key={index} className={styles.faqAccordionItem}>
-                <button
-                  className={`${styles.faqAccordionHeader} ${openFaqIndex === index ? styles.faqAccordionHeaderOpen : ''}`}
-                  onClick={() => {
-                    trackCTA(`FAQ ${index + 1}`, 'faq_accordion', { action: openFaqIndex === index ? 'close' : 'open' });
-                    setOpenFaqIndex(openFaqIndex === index ? null : index);
-                  }}
-                >
-                  <div className={styles.faqQuestionContainer}>
-                    <span className={styles.faqIcon}>{faq.icon}</span>
-                    <span className={styles.faqQuestionText}>{faq.question}</span>
-                  </div>
-                  <span className={styles.faqToggleIcon}>{openFaqIndex === index ? '−' : '+'}</span>
-                </button>
-                <div
-                  className={`${styles.faqAccordionContent} ${openFaqIndex === index ? styles.faqAccordionContentOpen : ''}`}
-                >
-                  <div className={styles.faqAnswerInner}>
-                    {faq.answer}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Removed beta application section - using modals now */}
-
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.sectionContainer}>
-          <div className={styles.footerContent}>
-            <div className={styles.footerMain}>
-              <div className={styles.footerBrand}>
-                <span className={styles.logoText}>Query<span className={styles.logoAccent}>Daily</span></span>
-                <p>주니어 개발자를 위한 맞춤형 면접 트레이닝</p>
-              </div>
-
-              <div className={styles.footerLinks}>
-                <div className={styles.footerColumn}>
-                  <h4
-                    className={styles.footerColumnHeader}
-                    onClick={() => setOpenFooterSection(openFooterSection === 'service' ? null : 'service')}
-                  >
-                    서비스
-                    <span className={styles.footerToggleIcon}>{openFooterSection === 'service' ? '−' : '+'}</span>
-                  </h4>
-                  <div className={`${styles.footerColumnContent} ${openFooterSection === 'service' ? styles.footerColumnContentOpen : ''}`}>
-                    <a href="#how-it-works">작동 방식</a>
-                    <a href="#faq">자주 묻는 질문</a>
-                  </div>
-                </div>
-                <div className={styles.footerColumn}>
-                  <h4
-                    className={styles.footerColumnHeader}
-                    onClick={() => setOpenFooterSection(openFooterSection === 'support' ? null : 'support')}
-                  >
-                    지원
-                    <span className={styles.footerToggleIcon}>{openFooterSection === 'support' ? '−' : '+'}</span>
-                  </h4>
-                  <div className={`${styles.footerColumnContent} ${openFooterSection === 'support' ? styles.footerColumnContentOpen : ''}`}>
-                    <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" onClick={() => {
-                      trackExternalLink('kakao_contact');
-                      trackCTA('카카오톡 문의', 'footer_support');
-                    }}>문의하기</a>
-                    <a href="/terms">이용약관</a>
-                    <a href="/privacy">개인정보처리방침</a>
-                    <a href="/refund-policy">환불정책</a>
-                    {/* KAKAO/INICIS REVIEW: Business info button hidden - now displayed directly in footer */}
-                    {/* <button
-                      className={styles.footerLinkBtn}
-                      onClick={() => setShowBusinessInfo(true)}
-                    >
-                      사업자정보
-                    </button> */}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.footerBottom}>
-              <div>
-                <p>© 2025 QueryDaily. All rights reserved.</p>
-                {/* KAKAO/INICIS REVIEW: Business info displayed directly */}
-                <div className={styles.footerBusinessInfo}>
-                  <p><strong>사업자 정보</strong></p>
-                  <p>상호명: 어싱크사이트 | 대표자: 최보임</p>
-                  <p>사업자등록번호: 456-12-02771 | 통신판매업: 2025-화성동탄-3939</p>
-                  <p>사업장 주소: 경기도 화성시 동탄대로4길 18</p>
-                  <p>대표전화: 010-8120-4131 | 이메일: official.querydaily@gmail.com</p>
-                </div>
-              </div>
-              <div className={styles.socialLinks}>
-                <a href="https://pf.kakao.com/_zxkxmUn/chat" target="_blank" rel="noopener noreferrer" aria-label="KakaoTalk" onClick={() => trackExternalLink('kakao_footer')}>💬</a>
-                <a href="#" aria-label="LinkedIn" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>in</a>
-                <a href="#" aria-label="GitHub" title="Coming Soon" style={{ opacity: 0.5, cursor: 'not-allowed' }} onClick={(e) => e.preventDefault()}>⊙</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* Error Toast */}
-      {errors.length > 0 && (
-        <div className={`${styles.errorToast} ${styles.show}`}>
-          <button
-            className={styles.errorToastClose}
-            onClick={() => setErrors([])}
-            aria-label="닫기"
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: 'transparent',
-              border: 'none',
-              color: '#fff',
-              fontSize: '20px',
-              cursor: 'pointer',
-              padding: '0',
-              width: '24px',
-              height: '24px',
+        {/* Footer */}
+        <footer className={styles.footer} style={{
+          padding: '5rem 2rem 2rem',
+          background: 'linear-gradient(180deg, var(--color-bg) 0%, rgba(var(--color-accent-rgb), 0.08) 100%)',
+          borderTop: '1px solid rgba(var(--color-accent-rgb), 0.1)'
+        }}>
+          <div style={{maxWidth: '1200px', margin: '0 auto'}}>
+            {/* 상단 컨텐츠 */}
+            <div style={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: '0.8',
-              transition: 'opacity 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
-          >
-            ✕
-          </button>
-          <div className={styles.errorContent}>
-            <h4>⚠️ 입력 오류</h4>
-            <ul>
-              {errors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+              justifyContent: 'space-between',
+              marginBottom: '3rem',
+              flexWrap: 'wrap',
+              gap: '4rem'
+            }}>
+              {/* 브랜드 섹션 */}
+              <div style={{maxWidth: '400px'}}>
+                <div className={styles.footerLogo} style={{fontSize: '2rem', marginBottom: '1rem'}}>
+                  Query<span>Daily</span>
+                </div>
+                <p style={{
+                  fontSize: '0.95rem',
+                  color: 'var(--color-text-muted)',
+                  lineHeight: '1.8',
+                  marginBottom: '1.5rem'
+                }}>
+                  당신의 이력서를 분석해서,<br/>
+                  면접관이 꼭 물어볼 질문을 매일 보내드립니다.
+                </p>
 
-      {/* Free Trial Modal */}
-      {modalOpen && (
-        <div className={styles.modalOverlay} onClick={() => setModalOpen(false)}>
-          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.modalClose}
-              onClick={() => setModalOpen(false)}
-              aria-label="Close modal"
-            >
-              ✕
-            </button>
-
-            <div className={styles.modalContent}>
-              {/* Progress Indicator */}
-              <div className={styles.modalProgress}>
-                {[1, 2, 3, 4].map((step) => (
-                  <div
-                    key={step}
-                    className={`${styles.modalProgressDot} ${
-                      modalStep >= step ? styles.modalProgressDotActive : ''
-                    }`}
-                  />
-                ))}
+                {/* 소셜 링크 */}
+                <div style={{display: 'flex', gap: '1rem'}}>
+                  <a
+                    href="https://www.instagram.com/querydaily"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'rgba(var(--color-accent-rgb), 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--color-text-muted)',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="http://pf.kakao.com/_fxdxfTG"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'rgba(var(--color-accent-rgb), 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--color-text-muted)',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z"/>
+                    </svg>
+                  </a>
+                </div>
               </div>
 
-              {/* Step 1: Email */}
-              {modalStep === 1 && (
-                <div className={styles.modalStep}>
-                  <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>📧</span>
-                    이메일 주소를 알려주세요
-                  </h2>
-                  <p className={styles.modalSubtitle}>
-                    구매 전 품질을 확인하실 수 있는 기회입니다
-                  </p>
-
-                  <div className={styles.modalFreeTrialInfo}>
-                    <div className={styles.modalInfoBox}>
-                      <span className={styles.modalInfoIcon}>🆓</span>
-                      <div>
-                        <p className={styles.modalInfoTitle}>품질 확인용 샘플</p>
-                        <p className={styles.modalInfoDesc}>실제 서비스와 동일한 품질의 <strong>면접 질문 3개</strong>를 무료로 체험하세요</p>
-                      </div>
-                    </div>
-                    <div className={styles.modalInfoBox}>
-                      <span className={styles.modalInfoIcon}>💎</span>
-                      <div>
-                        <p className={styles.modalInfoTitle}>유료 상품에서는</p>
-                        <p className={styles.modalInfoDesc}>당신의 <strong>이력서를 분석</strong>해 맞춤형 심화 질문을 생성합니다</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.modalFormGroup}>
-                    <input
-                      type="email"
-                      placeholder="your@email.com"
-                      className={styles.modalInput}
-                      value={profileData.email}
-                      onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                      onFocus={() => trackFormField('beta_signup', 'email', 'focus', modalStep)}
-                      onBlur={(e) => {
-                        if (e.target.value) {
-                          const type = e.target.value.includes('@') ? 'complete' : 'blur';
-                          trackFormField('beta_signup', 'email', type, modalStep);
-                        }
-                      }}
-                      autoFocus
-                    />
-                  </div>
-
-                  <div className={styles.modalActions}>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
-                      onClick={() => {
-                        if (profileData.email && profileData.email.includes('@')) {
-                          trackCTA('다음 단계로', 'beta_modal_step1');
-                          // Send verification email in background (non-blocking)
-                          if (!freeTrialVerificationSent) {
-                            const code = Math.floor(100000 + Math.random() + 900000).toString();
-                            setSentVerificationCode(code);
-                            setFreeTrialVerificationSent(true);
-
-                            // Mock: In real implementation, send email via backend API
-                            console.log(`Verification code sent (non-blocking) to ${profileData.email}: ${code}`);
-                          }
-
-                          setModalStep(2);
-                        } else {
-                          setErrors(['올바른 이메일 주소를 입력해주세요']);
-                          setTimeout(() => setErrors([]), 3000);
-                        }
-                      }}
-                      disabled={!profileData.email}
-                    >
-                      다음 단계로
-                    </button>
-                  </div>
-
-                  <p className={styles.modalHint}>
-                    💡 이메일은 필수 정보예요. 나머지는 선택사항입니다.
-                  </p>
-                </div>
-              )}
-
-              {/* Step 2: Experience Level (Optional) */}
-              {modalStep === 2 && (
-                <div className={styles.modalStep}>
-                  {freeTrialVerificationSent && (
-                    <div className={styles.modalVerificationNotice}>
-                      📬 인증 이메일을 {profileData.email}로 보냈습니다
-                      <br />
-                      <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>나중에 확인하셔도 무료 체험은 정상 진행됩니다</span>
-                    </div>
-                  )}
-
-                  <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>📊</span>
-                    경력 수준을 선택해주세요
-                  </h2>
-                  <p className={styles.modalSubtitle}>
-                    더 정확한 질문을 생성하는데 도움이 돼요 (선택)
-                  </p>
-
-                  <div className={styles.modalOptions}>
-                    {['신입', '1-3년', '3-5년', '5년+'].map((exp) => (
-                      <button
-                        key={exp}
-                        className={`${styles.modalOption} ${
-                          profileData.experience === exp ? styles.modalOptionActive : ''
-                        }`}
-                        onClick={() => setProfileData({ ...profileData, experience: exp })}
-                      >
-                        {exp}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className={styles.modalActions}>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setModalStep(1)}
-                    >
-                      이전
-                    </button>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
-                      onClick={() => setModalStep(3)}
-                    >
-                      {profileData.experience ? '다음 단계로' : '건너뛰기'}
-                    </button>
-                  </div>
-
-                  <p className={styles.modalHint}>
-                    💡 건너뛰어도 체험 시작에 문제없어요
-                  </p>
-                </div>
-              )}
-
-              {/* Step 3: Tech Stack (Optional) */}
-              {modalStep === 3 && (
-                <div className={styles.modalStep}>
-                  <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>🛠️</span>
-                    주력 기술 스택을 선택해주세요
-                  </h2>
-                  <p className={styles.modalSubtitle}>
-                    맞춤형 질문 생성에 도움이 돼요 (선택, 복수 선택 가능)
-                  </p>
-
-                  <div className={styles.modalTechGrid}>
-                    {[
-                      'Spring Boot', 'JPA', 'MyBatis', 'MSA',
-                      'Kafka', 'Redis', 'Docker', 'Kubernetes',
-                      'React', 'Vue', 'Node.js', 'MongoDB'
-                    ].map((tech) => (
-                      <button
-                        key={tech}
-                        className={`${styles.modalTechItem} ${
-                          profileData.techStack?.includes(tech) ? styles.modalTechItemActive : ''
-                        }`}
-                        onClick={() => {
-                          const currentStack = profileData.techStack || [];
-                          if (currentStack.includes(tech)) {
-                            setProfileData({
-                              ...profileData,
-                              techStack: currentStack.filter(t => t !== tech)
-                            });
-                          } else {
-                            setProfileData({
-                              ...profileData,
-                              techStack: [...currentStack, tech]
-                            });
-                          }
-                        }}
-                      >
-                        {tech}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className={styles.modalActions}>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setModalStep(2)}
-                    >
-                      이전
-                    </button>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
-                      onClick={() => setModalStep(4)}
-                    >
-                      {profileData.techStack?.length ? '다음 단계로' : '건너뛰기'}
-                    </button>
-                  </div>
-
-                  <p className={styles.modalHint}>
-                    💡 선택하지 않아도 기본 질문을 받을 수 있어요
-                  </p>
-                </div>
-              )}
-
-              {/* Step 4: Confirmation */}
-              {modalStep === 4 && (
-                <div className={styles.modalStep}>
-                  <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>👍</span>
-                    품질 확인 준비 완료!
-                  </h2>
-
-                  <div className={styles.modalSummary}>
-                    <div className={styles.modalSummaryItem}>
-                      <span className={styles.modalSummaryLabel}>이메일</span>
-                      <span className={styles.modalSummaryValue}>{profileData.email}</span>
-                    </div>
-                    {profileData.experience && (
-                      <div className={styles.modalSummaryItem}>
-                        <span className={styles.modalSummaryLabel}>경력</span>
-                        <span className={styles.modalSummaryValue}>{profileData.experience}</span>
-                      </div>
-                    )}
-                    {profileData.techStack && profileData.techStack.length > 0 && (
-                      <div className={styles.modalSummaryItem}>
-                        <span className={styles.modalSummaryLabel}>기술</span>
-                        <span className={styles.modalSummaryValue}>
-                          {profileData.techStack.join(', ')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className={styles.modalHighlight}>
-                    <p>✅ 실제 서비스와 동일한 품질</p>
-                    <p>✅ 마음에 들면 그때 구매</p>
-                    <p>✅ 스팸 없음, 강요 없음</p>
-                  </div>
-
-                  <div className={styles.modalActions}>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
-                      onClick={() => setModalStep(3)}
-                    >
-                      이전
-                    </button>
-                    <button
-                      className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
-                      onClick={async () => {
-                        setIsSubmitting(true);
-                        try {
-                          const response = await startFreeTrial(profileData);
-                          if (response.success) {
-                            setModalOpen(false);
-                            router.push(`/trial-started?email=${encodeURIComponent(profileData.email)}`);
-                          }
-                        } catch (error) {
-                          setErrors([error instanceof Error ? error.message : '체험 시작 중 오류가 발생했습니다']);
-                          setTimeout(() => setErrors([]), 5000);
-                        } finally {
-                          setIsSubmitting(false);
-                        }
-                      }}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? '처리 중...' : '무료로 품질 확인하기'}
-                    </button>
+              {/* 링크 섹션들 */}
+              <div style={{
+                display: 'flex',
+                gap: '4rem',
+                flexWrap: 'wrap'
+              }}>
+                <div>
+                  <h4 style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    color: 'var(--color-text)',
+                    marginBottom: '1.2rem'
+                  }}>상품</h4>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                    <a href="#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>전체 상품</a>
+                    <a href="#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>그로스 플랜</a>
+                    <a href="#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>크리티컬 히트</a>
                   </div>
                 </div>
-              )}
+
+                <div>
+                  <h4 style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    color: 'var(--color-text)',
+                    marginBottom: '1.2rem'
+                  }}>서비스</h4>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                    <a href="#how-it-works" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용방법</a>
+                    <a href="#faq" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>자주 묻는 질문</a>
+                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>1:1 상담</a>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    color: 'var(--color-text)',
+                    marginBottom: '1.2rem'
+                  }}>고객지원</h4>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                    <a href="/terms" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용약관</a>
+                    <a href="/privacy" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>개인정보처리방침</a>
+                    <a href="/refund" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>환불정책</a>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    color: 'var(--color-text)',
+                    marginBottom: '1.2rem'
+                  }}>Contact</h4>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                    <a href="mailto:contact@querydaily.com" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>contact@querydaily.com</a>
+                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>카카오톡 상담</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 하단 - 저작권 및 사업자 정보 */}
+            <div style={{
+              borderTop: '1px solid rgba(var(--color-accent-rgb), 0.1)',
+              paddingTop: '2rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem'
+            }}>
+              <p style={{
+                margin: 0,
+                fontSize: '0.8rem',
+                color: 'var(--color-text-muted)'
+              }}>© 2024 QueryDaily. All rights reserved.</p>
+              <p style={{
+                margin: 0,
+                fontSize: '0.8rem',
+                color: 'var(--color-text-muted)'
+              }}>사업자등록번호: 123-45-67890 | 대표: QueryDaily</p>
             </div>
           </div>
-        </div>
-      )}
+        </footer>
+      </div>
 
       {/* Purchase Modal for Paid Products */}
       {purchaseModalOpen && (
@@ -2807,29 +2437,21 @@ export default function HomePage() {
               {purchaseModalStep === 1 && (
                 <div className={styles.modalStep}>
                   <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>📄</span>
                     이력서를 업로드해주세요
                   </h2>
                   <p className={styles.modalSubtitle}>
                     {selectedPurchaseProduct === 'critical-hit' && '맞춤형 핵심 질문 생성을 위해 필요합니다'}
                     {selectedPurchaseProduct === 'growth-plan' && '20일 성장 계획 수립을 위해 필요합니다'}
-                    {selectedPurchaseProduct === 'real-interview' && '모의면접 준비를 위해 필요합니다'}
-                    {selectedPurchaseProduct === 'resume-analytics' && '면접 D-1 긴급 대비를 위해 필요합니다'}
                   </p>
 
                   <div className={styles.selectedProductInfo}>
                     <span className={styles.modalProductBadge}>
                       {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
                       {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
-                      {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
-                      {selectedPurchaseProduct === 'resume-analytics' && '라스트 체크'}
                     </span>
                     <span className={styles.modalProductPrice}>
                       {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
                       {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
-                      {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
-                      {selectedPurchaseProduct === 'last-check' && '₩49,000'}
-                      {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                     </span>
                   </div>
 
@@ -2855,7 +2477,9 @@ export default function HomePage() {
                       <label htmlFor="purchaseResume" className={styles.fileUploadBox}>
                         {purchaseFile ? (
                           <>
-                            <span className={styles.uploadedIcon}>✅</span>
+                            <span className={styles.uploadedIcon}>
+                              <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Success" width="32" height="32" />
+                            </span>
                             <span className={styles.uploadedFileName}>{purchaseFile.name}</span>
                             <span className={styles.uploadedSize}>
                               ({(purchaseFile.size / 1024 / 1024).toFixed(2)} MB)
@@ -2863,7 +2487,9 @@ export default function HomePage() {
                           </>
                         ) : (
                           <>
-                            <span className={styles.uploadIcon}>📤</span>
+                            <span className={styles.uploadIcon}>
+                              <img src="https://img.icons8.com/?id=368&format=png&size=48" alt="Upload" width="40" height="40" />
+                            </span>
                             <span className={styles.uploadText}>PDF 파일을 선택하거나 드래그하세요</span>
                             <span className={styles.uploadHint}>최대 10MB</span>
                           </>
@@ -2872,7 +2498,6 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* KAKAO/INICIS REVIEW: Skip email step, show payment methods directly */}
                   {purchaseFile && (
                     <>
                       <div className={styles.paymentMethodTitle}>
@@ -2886,7 +2511,9 @@ export default function HomePage() {
                             setPurchaseModalStep(2);
                           }}
                         >
-                          <span className={styles.paymentMethodIcon}>🏦</span>
+                          <span className={styles.paymentMethodIcon}>
+                            <img src="https://img.icons8.com/?id=3671&format=png&size=48" alt="Bank" width="32" height="32" />
+                          </span>
                           <span className={styles.paymentMethodText}>
                             <strong>무통장입금</strong>
                             <small>계좌이체로 안전하게 결제</small>
@@ -2899,7 +2526,9 @@ export default function HomePage() {
                             setPurchaseModalStep(2);
                           }}
                         >
-                          <span className={styles.paymentMethodIcon}>💳</span>
+                          <span className={styles.paymentMethodIcon}>
+                            <img src="https://img.icons8.com/?id=TwIM2uks64q5&format=png&size=48" alt="Card Payment" width="32" height="32" />
+                          </span>
                           <span className={styles.paymentMethodText}>
                             <strong>카드결제</strong>
                             <small>신용/체크카드로 간편 결제</small>
@@ -2921,27 +2550,23 @@ export default function HomePage() {
                   )}
 
                   <p className={styles.modalHint}>
-                    💡 이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
+                    이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
                   </p>
                 </div>
               )}
 
-              {/* KAKAO/INICIS REVIEW: Email step removed for review */}
-
-              {/* Step 2: Order Information (was Step 3) */}
+              {/* Step 2: Order Information */}
               {purchaseModalStep === 2 && (
                 <div className={styles.modalStep}>
                   <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>📝</span>
                     주문자 정보 입력
                   </h2>
                   <p className={styles.modalSubtitle}>
                     결제를 위한 정보를 입력해주세요
                   </p>
 
-                  {/* 이메일 입력 - KAKAO/INICIS REVIEW: Moved from Step 2 */}
                   <div className={styles.modalFormGroup}>
-                    <label className={styles.modalLabel}>이메일 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <label className={styles.modalLabel}>이메일 <span className={styles.required}>*</span></label>
                     <input
                       type="email"
                       placeholder="your@email.com"
@@ -2949,36 +2574,30 @@ export default function HomePage() {
                       value={purchaseEmail}
                       onChange={(e) => {
                         setPurchaseEmail(e.target.value);
-                        // 입력 중에는 에러 메시지 제거
                         if (purchaseEmailError) {
                           setPurchaseEmailError('');
                         }
                       }}
-                      onFocus={() => trackFormField('purchase', 'email', 'focus', purchaseModalStep)}
                       onBlur={(e) => {
                         const email = e.target.value.trim();
-                        if (email) {
-                          if (!email.includes('@')) {
-                            setPurchaseEmailError('올바른 이메일 주소를 입력해주세요 (예: your@email.com)');
-                          } else {
-                            setPurchaseEmailError('');
-                            trackFormField('purchase', 'email', 'complete', purchaseModalStep);
-                          }
+                        if (email && !email.includes('@')) {
+                          setPurchaseEmailError('올바른 이메일 주소를 입력해주세요 (예: your@email.com)');
+                        } else {
+                          setPurchaseEmailError('');
                         }
                       }}
-                      style={purchaseEmailError ? { borderColor: '#ff6b6b' } : {}}
+                      className={`${styles.modalInput} ${purchaseEmailError ? styles.inputError : ''}`}
                       autoFocus
                     />
                     {purchaseEmailError && (
-                      <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                      <p className={styles.errorMessage}>
                         {purchaseEmailError}
                       </p>
                     )}
                   </div>
 
-                  {/* 이름 입력 */}
                   <div className={styles.modalFormGroup}>
-                    <label className={styles.modalLabel}>이름 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <label className={styles.modalLabel}>이름 <span className={styles.required}>*</span></label>
                     <input
                       type="text"
                       placeholder="홍길동"
@@ -2986,17 +2605,8 @@ export default function HomePage() {
                       value={purchaseName}
                       onChange={(e) => {
                         setPurchaseName(e.target.value);
-                        // 입력 중에는 에러 메시지 제거
                         if (purchaseNameError) {
                           setPurchaseNameError('');
-                        }
-                      }}
-                      onFocus={() => trackFormField('purchase', 'name', 'focus', purchaseModalStep)}
-                      onBlur={(e) => {
-                        const name = e.target.value.trim();
-                        if (name) {
-                          setPurchaseNameError('');
-                          trackFormField('purchase', 'name', 'complete', purchaseModalStep);
                         }
                       }}
                       style={purchaseNameError ? { borderColor: '#ff6b6b' } : {}}
@@ -3008,9 +2618,8 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  {/* 연락처 입력 */}
                   <div className={styles.modalFormGroup}>
-                    <label className={styles.modalLabel}>연락처 <span style={{ color: '#ff6b6b' }}>*</span></label>
+                    <label className={styles.modalLabel}>연락처 <span className={styles.required}>*</span></label>
                     <input
                       type="tel"
                       placeholder="010-1234-5678"
@@ -3018,21 +2627,16 @@ export default function HomePage() {
                       value={purchasePhone}
                       onChange={(e) => {
                         setPurchasePhone(e.target.value);
-                        // 입력 중에는 에러 메시지 제거
                         if (purchasePhoneError) {
                           setPurchasePhoneError('');
                         }
                       }}
-                      onFocus={() => trackFormField('purchase', 'phone', 'focus', purchaseModalStep)}
                       onBlur={(e) => {
                         const phone = e.target.value.trim();
-                        if (phone) {
-                          if (!validatePhone(phone)) {
-                            setPurchasePhoneError('올바른 전화번호 형식을 입력해주세요 (예: 010-1234-5678, 하이픈 필수)');
-                          } else {
-                            setPurchasePhoneError('');
-                            trackFormField('purchase', 'phone', 'complete', purchaseModalStep);
-                          }
+                        if (phone && !validatePhone(phone)) {
+                          setPurchasePhoneError('올바른 전화번호 형식을 입력해주세요 (예: 010-1234-5678, 하이픈 필수)');
+                        } else {
+                          setPurchasePhoneError('');
                         }
                       }}
                       style={purchasePhoneError ? { borderColor: '#ff6b6b' } : {}}
@@ -3054,53 +2658,31 @@ export default function HomePage() {
                     <button
                       className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
                       onClick={() => {
-                        console.log('=== 폼 검증 시작 ===');
-                        console.log('이메일:', purchaseEmail);
-                        console.log('이름:', purchaseName);
-                        console.log('전화번호:', purchasePhone);
-
-                        // 이메일 검증
                         if (!purchaseEmail.trim()) {
-                          console.log('이메일 비어있음');
                           alert('이메일을 입력해주세요');
                           return;
                         }
                         if (!purchaseEmail.includes('@')) {
-                          console.log('이메일 형식 오류');
                           alert('올바른 이메일 주소를 입력해주세요');
                           return;
                         }
-
-                        // 이름 검증
                         if (!purchaseName.trim()) {
-                          console.log('이름 비어있음');
                           alert('이름을 입력해주세요');
                           return;
                         }
-
-                        // 전화번호 검증
                         if (!purchasePhone.trim()) {
-                          console.log('전화번호 비어있음');
                           alert('연락처를 입력해주세요');
                           return;
                         }
-
-                        const isValidPhone = validatePhone(purchasePhone);
-                        console.log('전화번호 검증 결과:', isValidPhone);
-
-                        if (!isValidPhone) {
-                          console.log('전화번호 형식 오류');
+                        if (!validatePhone(purchasePhone)) {
                           alert('올바른 전화번호 형식을 입력해주세요\n\n예시: 010-1234-5678\n(하이픈 필수)');
                           return;
                         }
 
-                        console.log('=== 모든 검증 통과 ===');
-
-                        // KAKAO/INICIS REVIEW: Handle different payment methods
                         if (paymentMethod === 'card') {
                           handleCardPayment();
                         } else {
-                          setPurchaseModalStep(3); // Go to bank transfer info
+                          setPurchaseModalStep(3);
                         }
                       }}
                     >
@@ -3109,16 +2691,15 @@ export default function HomePage() {
                   </div>
 
                   <p className={styles.modalHint}>
-                    💡 입금자명 확인을 위해 정확한 정보를 입력해주세요
+                    입금자명 확인을 위해 정확한 정보를 입력해주세요
                   </p>
                 </div>
               )}
 
-              {/* Step 3: Payment (was Step 4) */}
+              {/* Step 3: Payment */}
               {purchaseModalStep === 3 && (
                 <div className={styles.modalStep}>
                   <h2 className={styles.modalTitle}>
-                    <span className={styles.modalEmoji}>💳</span>
                     무통장입금 안내
                   </h2>
                   <p className={styles.modalSubtitle}>
@@ -3131,9 +2712,6 @@ export default function HomePage() {
                       <span>
                         {selectedPurchaseProduct === 'critical-hit' && '크리티컬 히트'}
                         {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
-                        {selectedPurchaseProduct === 'real-interview' && '리얼 인터뷰'}
-                        {selectedPurchaseProduct === 'last-check' && '라스트 체크'}
-                        {selectedPurchaseProduct === 'resume-fit' && '레주메 핏'}
                       </span>
                     </div>
                     <div className={styles.modalOrderItem}>
@@ -3141,27 +2719,30 @@ export default function HomePage() {
                       <span>
                         {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
                         {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
-                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
-                        {selectedPurchaseProduct === 'last-check' && '₩49,000'}
-                        {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                       </span>
                     </div>
-                    <div className={styles.modalOrderItem} style={{ fontWeight: 'bold', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
+                    <div className={`${styles.modalOrderItem} ${styles.modalOrderTotal}`}>
                       <span>결제 금액</span>
-                      <span style={{ color: '#c3e88d' }}>
+                      <span className={styles.totalPrice}>
                         {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
                         {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
-                        {selectedPurchaseProduct === 'real-interview' && '₩129,000'}
-                        {selectedPurchaseProduct === 'last-check' && '₩49,000'}
-                        {selectedPurchaseProduct === 'resume-fit' && '₩59,000'}
                       </span>
                     </div>
                   </div>
 
                   <div className={styles.modalHighlight}>
-                    <p>✅ 무통장입금으로 안전한 결제</p>
-                    <p>✅ 입금 확인 후 24시간 내 발송</p>
-                    <p>✅ 이메일로 결과 전송</p>
+                    <p>
+                      <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Check" width="16" height="16" className={styles.checkIcon} />
+                      무통장입금으로 안전한 결제
+                    </p>
+                    <p>
+                      <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Check" width="16" height="16" className={styles.checkIcon} />
+                      입금 확인 후 24시간 내 발송
+                    </p>
+                    <p>
+                      <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Check" width="16" height="16" className={styles.checkIcon} />
+                      이메일로 결과 전송
+                    </p>
                   </div>
 
                   <div className={styles.modalActions}>
@@ -3181,15 +2762,11 @@ export default function HomePage() {
 
                         setIsSubmitting(true);
                         try {
-                          // productType 매핑
                           const productTypeMap: Record<string, string> = {
                             'critical-hit': 'CRITICAL_HIT',
-                            'growth-plan': 'SQL_MASTER',
-                            'real-interview': 'SYSTEM_DESIGN',
-                            'resume-analytics': 'DATA_ALGO'
+                            'growth-plan': 'SQL_MASTER'
                           };
 
-                          // API 호출
                           const response = await submitBetaApplication({
                             email: purchaseEmail,
                             name: purchaseName,
@@ -3199,7 +2776,6 @@ export default function HomePage() {
                           });
 
                           if (response.success && response.data?.memberId) {
-                            // 주문 정보를 localStorage에 저장
                             const orderData = {
                               memberId: response.data?.memberId,
                               name: purchaseName,
@@ -3211,8 +2787,6 @@ export default function HomePage() {
                             };
 
                             localStorage.setItem('orderData', JSON.stringify(orderData));
-
-                            // 무통장입금 안내 페이지로 이동
                             router.push('/payment');
                           } else {
                             setErrors(['신청 처리 중 오류가 발생했습니다.']);
@@ -3231,7 +2805,8 @@ export default function HomePage() {
                   </div>
 
                   <p className={styles.modalPaymentSecurity}>
-                    🔒 결제 정보는 암호화되어 안전하게 처리됩니다
+                    <img src="https://img.icons8.com/?id=39138&format=png&size=48" alt="Security" width="16" height="16" className={styles.securityIcon} />
+                    결제 정보는 암호화되어 안전하게 처리됩니다
                   </p>
                 </div>
               )}
@@ -3239,49 +2814,14 @@ export default function HomePage() {
           </div>
         </div>
       )}
+    </>
+  );
+}
 
-      {/* Business Info Modal */}
-      {showBusinessInfo && (
-        <div className={styles.modalOverlay} onClick={() => setShowBusinessInfo(false)}>
-          <div className={styles.businessModal} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.modalClose}
-              onClick={() => setShowBusinessInfo(false)}
-            >
-              ×
-            </button>
-            <h3 className={styles.businessModalTitle}>사업자 정보</h3>
-            <div className={styles.businessModalContent}>
-              <div className={styles.businessRow}>
-                <span className={styles.businessLabel}>상호명</span>
-                <span className={styles.businessValue}>어싱크사이트</span>
-              </div>
-              <div className={styles.businessRow}>
-                <span className={styles.businessLabel}>대표자</span>
-                <span className={styles.businessValue}>최보임</span>
-              </div>
-              <div className={styles.businessRow}>
-                <span className={styles.businessLabel}>사업자등록번호</span>
-                <span className={styles.businessValue}>456-12-02771</span>
-              </div>
-              <div className={styles.businessRow}>
-                <span className={styles.businessLabel}>사업장 주소</span>
-                <span className={styles.businessValue}>경기도 화성시 동탄대로4길 18</span>
-              </div>
-              <div className={styles.businessRow}>
-                <span className={styles.businessLabel}>대표전화</span>
-                <span className={styles.businessValue}>010-8120-4131</span>
-              </div>
-              <div className={styles.businessRow}>
-                <span className={styles.businessLabel}>이메일</span>
-                <span className={styles.businessValue}>official.querydaily@gmail.com</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-
-    </div>
+export default function HomePageV2() {
+  return (
+    <ThemeProvider>
+      <LandingPageContent />
+    </ThemeProvider>
   );
 }

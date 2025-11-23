@@ -1035,7 +1035,7 @@
   font-size: 0.9rem;
   font-weight: 600;
   padding: 12px;
-  border: 2px solid rgba(0, 0, 0, 0.08);
+  border: 2px solid var(--color-text-muted);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;

@@ -17,19 +17,6 @@ export interface ThemeColors {
 }
 
 export const themes: Record<string, ThemeColors> = {
-  minimal: {
-    name: '화이트 미니멀',
-    primary: '#1a1a1a',
-    primaryLight: '#333333',
-    secondary: '#8b5cf6',
-    secondaryLight: '#a78bfa',
-    bgPrimary: '#ffffff',
-    bgSecondary: '#f8f9fa',
-    bgTertiary: '#f1f3f5',
-    textPrimary: '#1a1a1a',
-    textSecondary: '#4a4a4a',
-    textMuted: '#6b7280',
-  },
   v1dark: {
     name: 'v1 다크 (보라/핑크)',
     primary: '#8b5cf6',
@@ -42,32 +29,6 @@ export const themes: Record<string, ThemeColors> = {
     textPrimary: '#ffffff',
     textSecondary: '#cccccc',
     textMuted: '#888888',
-  },
-  dark: {
-    name: '다크 모던',
-    primary: '#8b5cf6',
-    primaryLight: '#a78bfa',
-    secondary: '#ec4899',
-    secondaryLight: '#f472b6',
-    bgPrimary: '#000000',
-    bgSecondary: '#0a0a0a',
-    bgTertiary: '#0d0d0d',
-    textPrimary: '#ffffff',
-    textSecondary: '#cccccc',
-    textMuted: '#888888',
-  },
-  professional: {
-    name: '프로페셔널',
-    primary: '#1e3a5f',
-    primaryLight: '#2d5a8b',
-    secondary: '#d4a574',
-    secondaryLight: '#e5c4a8',
-    bgPrimary: '#0f172a',
-    bgSecondary: '#1e293b',
-    bgTertiary: '#334155',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textMuted: '#94a3b8',
   },
 };
 

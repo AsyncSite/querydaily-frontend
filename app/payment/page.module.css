@@ -1,6 +1,6 @@
 .main {
   min-height: 100vh;
-  background: #05060a;
+  background: var(--color-bg-primary);
   padding: 80px 16px 40px;
 }
 
@@ -14,7 +14,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  color: #ffffff;
+  color: var(--color-text-primary);
   font-size: 16px;
 }
 
@@ -27,13 +27,13 @@
 .title {
   font-size: 32px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
 }
 
 .subtitle {
   font-size: 16px;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
@@ -41,15 +41,15 @@
 .sectionTitle {
   font-size: 14px;
   font-weight: 700;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   margin-bottom: 16px;
 }
 
 /* Order Info */
 .orderInfo {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-text-muted);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
@@ -60,7 +60,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-text-muted);
 }
 
 .infoRow:last-child {
@@ -69,13 +69,13 @@
 
 .label {
   font-size: 14px;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
 }
 
 .value {
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 /* Account Info */
@@ -84,8 +84,8 @@
 }
 
 .bankCard {
-  background: linear-gradient(135deg, rgba(195, 232, 141, 0.1) 0%, rgba(195, 232, 141, 0.05) 100%);
-  border: 2px solid rgba(195, 232, 141, 0.3);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-secondary);
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
@@ -94,7 +94,7 @@
 .bankLogo {
   font-size: 20px;
   font-weight: 800;
-  color: #c3e88d;
+  color: var(--color-secondary);
   margin-bottom: 24px;
   text-align: center;
 }
@@ -103,7 +103,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--color-bg-tertiary);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -112,17 +112,17 @@
 .number {
   font-size: 20px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   letter-spacing: 1px;
   font-family: 'SF Mono', 'Monaco', monospace;
 }
 
 .copyBtn {
   padding: 8px 16px;
-  background: rgba(195, 232, 141, 0.2);
-  border: 1px solid rgba(195, 232, 141, 0.3);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-secondary);
   border-radius: 6px;
-  color: #c3e88d;
+  color: var(--color-secondary);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -130,7 +130,8 @@
 }
 
 .copyBtn:hover {
-  background: rgba(195, 232, 141, 0.3);
+  background: var(--color-secondary);
+  color: var(--color-bg-primary);
 }
 
 .accountHolder {
@@ -138,14 +139,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--color-text-muted);
   margin-bottom: 12px;
 }
 
 .holderName {
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 .depositName {
@@ -156,8 +157,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-secondary);
   padding: 12px 16px;
   border-radius: 8px;
   margin-top: 8px;
@@ -167,7 +168,7 @@
   flex: 1;
   background: transparent;
   border: none;
-  color: #ffc107;
+  color: var(--color-secondary);
   font-size: 16px;
   font-weight: 700;
   outline: none;
@@ -175,34 +176,34 @@
 }
 
 .depositNameInput::placeholder {
-  color: rgba(255, 193, 7, 0.5);
+  color: var(--color-text-muted);
   font-weight: 400;
 }
 
 .depositNameText {
   font-size: 16px;
   font-weight: 700;
-  color: #ffc107;
+  color: var(--color-secondary);
 }
 
 .depositNameHint {
   margin-top: 8px;
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
 /* Notice */
 .notice {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-text-muted);
   border-radius: 12px;
   padding: 20px;
 }
 
 .noticeItem {
   font-size: 14px;
-  color: #e0e0e0;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 12px;
 }
@@ -212,7 +213,7 @@
 }
 
 .noticeItem strong {
-  color: #ffc107;
+  color: var(--color-secondary);
   font-weight: 700;
 }
 
@@ -224,10 +225,10 @@
 .completeBtn {
   width: 100%;
   padding: 18px;
-  background: linear-gradient(135deg, #c3e88d 0%, #a5d65a 100%);
+  background: var(--color-secondary);
   border: none;
   border-radius: 12px;
-  color: #05060a;
+  color: var(--color-bg-primary);
   font-size: 17px;
   font-weight: 800;
   cursor: pointer;
@@ -237,16 +238,16 @@
 
 .completeBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(195, 232, 141, 0.3);
+  opacity: 0.9;
 }
 
 .laterBtn {
   width: 100%;
   padding: 16px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-text-muted);
   border-radius: 12px;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -254,27 +255,27 @@
 }
 
 .laterBtn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #ffffff;
+  border-color: var(--color-secondary);
+  color: var(--color-text-primary);
 }
 
 /* Contact */
 .contact {
   text-align: center;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--color-bg-secondary);
   border-radius: 12px;
 }
 
 .contactText {
   font-size: 14px;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   margin-bottom: 12px;
 }
 
 .contactLink {
   display: inline-block;
-  color: #c3e88d;
+  color: var(--color-secondary);
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
@@ -302,3 +303,48 @@
     font-size: 17px;
   }
 }
+
+/* Impact Message - 감동 포인트 */
+.impactMessage {
+  background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+  border: 2px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 32px 24px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.impactTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.impactDesc {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.impactDesc strong {
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .impactMessage {
+    padding: 24px 20px;
+  }
+
+  .impactTitle {
+    font-size: 20px;
+  }
+
+  .impactDesc {
+    font-size: 14px;
+  }
+}
+

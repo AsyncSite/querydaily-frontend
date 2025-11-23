@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import { ThemeProvider, ThemeSelector, useTheme } from '../prototype-hyundoo/v3/ThemeContext';
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const router = useRouter();
   const [orderData, setOrderData] = useState<{
     orderId: string;
@@ -38,7 +39,7 @@ export default function PaymentPage() {
   };
 
   const handleComplete = () => {
-    router.push('/order-complete');
+    router.push('/');
   };
 
   if (!orderData) {
@@ -51,7 +52,31 @@ export default function PaymentPage() {
         <div className={styles.header}>
           <h1 className={styles.title}>무통장입금 안내</h1>
           <p className={styles.subtitle}>
-            아래 계좌로 입금 후, 입금 완료 버튼을 눌러주세요
+            아래 계좌로 입금해주세요
+          </p>
+        </div>
+
+        {/* 감동 메시지 */}
+        <div className={styles.impactMessage}>
+          <h3 className={styles.impactTitle}>
+            {orderData.product === 'growth-plan' ? (
+              <>20일 후, "이 질문 나올 줄 알았어"</>
+            ) : (
+              <>내일 면접이어도 괜찮아요</>
+            )}
+          </h3>
+          <p className={styles.impactDesc}>
+            {orderData.product === 'growth-plan' ? (
+              <>
+                하루 10분씩 준비하면 면접장에서<br />
+                <strong>흔들리지 않는 자신감</strong>을 갖게 됩니다
+              </>
+            ) : (
+              <>
+                당신 이력서에서 가장 중요한 질문 3개.<br />
+                <strong>오늘 준비하면, 내일 자신있게 답할 수 있어요</strong>
+              </>
+            )}
           </p>
         </div>
 
@@ -78,32 +103,6 @@ export default function PaymentPage() {
               <span className={styles.value}>{orderData.price}</span>
             </div>
           )}
-        </div>
-
-        {/* 리얼 인터뷰/레주메 핏 특별 안내 */}
-        <div style={{
-          backgroundColor: '#FEF9E7',
-          border: '2px solid #FEE500',
-          borderRadius: '8px',
-          padding: '20px',
-          marginBottom: '20px'
-        }}>
-          <p style={{
-            margin: '0 0 10px 0',
-            color: '#3C1E1E',
-            fontSize: '15px',
-            lineHeight: '1.6'
-          }}>
-            💬 <strong>리얼 인터뷰</strong> 또는 <strong>레주메 핏</strong>을 구매하신 고객님은 입금 확인 후 <strong>카카오톡 채널을 통해 연락</strong>해주세요
-          </p>
-          <p style={{
-            margin: '0',
-            color: '#3C1E1E',
-            fontSize: '14px',
-            lineHeight: '1.6'
-          }}>
-            일정 조율 및 상세 안내가 카카오톡 채널을 통해 진행됩니다
-          </p>
         </div>
 
         {/* 입금 계좌 정보 */}
@@ -146,20 +145,17 @@ export default function PaymentPage() {
                 </button>
               </div>
               <p className={styles.depositNameHint}>
-                ⚠️ 실제 입금하실 분의 이름으로 수정 가능합니다
+                실제 입금하실 분의 이름으로 수정 가능합니다
               </p>
             </div>
           </div>
 
           <div className={styles.notice}>
             <p className={styles.noticeItem}>
-              ⚠️ 반드시 위의 <strong>입금자명</strong>과 동일하게 입금해주세요
+              반드시 위의 <strong>입금자명</strong>과 동일하게 입금해주세요
             </p>
             <p className={styles.noticeItem}>
-              📌 입금 확인 후 24시간 내에 상품이 이메일로 발송됩니다
-            </p>
-            <p className={styles.noticeItem}>
-              💡 입금 후 아래 버튼을 눌러 입금 완료를 알려주세요
+              입금 확인 후 24시간 내에 상품이 이메일로 발송됩니다
             </p>
           </div>
         </div>
@@ -170,14 +166,7 @@ export default function PaymentPage() {
             className={styles.completeBtn}
             onClick={handleComplete}
           >
-            입금 완료했어요 →
-          </button>
-
-          <button
-            className={styles.laterBtn}
-            onClick={() => router.push('/')}
-          >
-            나중에 입금할게요
+            확인했어요
           </button>
         </div>
 
@@ -196,6 +185,17 @@ export default function PaymentPage() {
           </a>
         </div>
       </div>
+
+      {/* Theme Selector */}
+      <ThemeSelector />
     </main>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <ThemeProvider>
+      <PaymentPageContent />
+    </ThemeProvider>
   );
 }

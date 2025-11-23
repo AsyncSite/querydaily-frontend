@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import { ThemeProvider, ThemeSelector, useTheme } from '../prototype-hyundoo/v3/ThemeContext';
 
 type PaymentStatus = 'CHECKING' | 'PENDING' | 'CONFIRMED' | 'TIMEOUT';
 
@@ -14,7 +15,7 @@ interface OrderStatusResponse {
   updatedAt?: string;
 }
 
-export default function OrderCompletePage() {
+function OrderCompletePageContent() {
   const router = useRouter();
   const [orderData, setOrderData] = useState<{
     orderId: string;
@@ -27,8 +28,6 @@ export default function OrderCompletePage() {
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('CHECKING');
   const [pollingCount, setPollingCount] = useState(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const KAKAO_CHANNEL_CHAT_LINK = 'http://pf.kakao.com/_hWMtn/chat';
 
   // 주문 상태 폴링 (카드 결제만)
   useEffect(() => {
@@ -144,13 +143,11 @@ export default function OrderCompletePage() {
     switch (paymentStatus) {
       case 'CONFIRMED':
         return {
-          icon: '✅',
           title: isAccountTransfer ? '입금이 확인되었습니다!' : '결제가 완료되었습니다!',
           subtitle: '곧 상품을 이메일로 발송해드립니다.'
         };
       case 'PENDING':
         return {
-          icon: '🔄',
           title: isAccountTransfer
             ? '입금 대기 중입니다'
             : `결제를 확인하고 있습니다... ${pollingCount > 0 ? `(${pollingCount * 3}초)` : ''}`,
@@ -160,15 +157,11 @@ export default function OrderCompletePage() {
         };
       case 'TIMEOUT':
         return {
-          icon: '⏱️',
-          title: isAccountTransfer ? '입금 대기 중입니다' : '결제 확인 중입니다',
-          subtitle: isAccountTransfer
-            ? '입금이 확인되는 즉시 이메일로 안내드립니다.'
-            : '결제가 확인되는 즉시 이메일로 안내드립니다.'
+          title: isAccountTransfer ? '입금 대기 중입니다' : '주문이 완료되었습니다',
+          subtitle: ''
         };
       default:
         return {
-          icon: '🔄',
           title: '주문이 완료되었습니다!',
           subtitle: isAccountTransfer
             ? '입금 확인 후 상품을 이메일로 발송해드립니다'
@@ -182,74 +175,48 @@ export default function OrderCompletePage() {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        {/* Success Animation */}
-        <div className={styles.successIcon}>
-          <div className={styles.checkmark}>{statusDisplay.icon}</div>
-        </div>
-
         <h1 className={styles.title}>{statusDisplay.title}</h1>
 
         <p className={styles.subtitle}>
           {statusDisplay.subtitle}
         </p>
 
+        {/* 감동 메시지 */}
+        <div className={styles.impactMessage}>
+          <h3 className={styles.impactTitle}>
+            {orderData.product === 'growth-plan' ? (
+              <>20일 후, "이 질문 나올 줄 알았어"</>
+            ) : (
+              <>내일 면접이어도 괜찮아요</>
+            )}
+          </h3>
+          <p className={styles.impactDesc}>
+            {orderData.product === 'growth-plan' ? (
+              <>
+                하루 10분씩 준비하면 면접장에서<br />
+                <strong>흔들리지 않는 자신감</strong>을 갖게 됩니다
+              </>
+            ) : (
+              <>
+                당신 이력서에서 가장 중요한 질문 3개.<br />
+                <strong>오늘 준비하면, 내일 자신있게 답할 수 있어요</strong>
+              </>
+            )}
+          </p>
+        </div>
+
         {/* 결제 완료 시 성공 메시지 */}
         {paymentStatus === 'CONFIRMED' && (
-          <div className={styles.notice} style={{ backgroundColor: '#d4edda', borderColor: '#c3e6cb' }}>
+          <div className={`${styles.notice} ${styles.successNotice}`}>
             <h4 className={styles.noticeTitle}>
-              {isAccountTransfer ? '🎉 입금이 확인되었습니다!' : '🎉 결제가 완료되었습니다!'}
+              좋은 선택을 하셨습니다
             </h4>
             <ul className={styles.noticeList}>
-              <li>24시간 내에 등록하신 이메일로 상품을 발송해드립니다</li>
+              <li><strong>{orderData.email}</strong>로 24시간 내 발송됩니다</li>
+              <li>면접관이 묻기 전에 미리 준비하세요</li>
             </ul>
           </div>
         )}
-
-        {/* 카카오톡 채널 안내 - 모든 상품에 표시 */}
-        <div style={{
-          backgroundColor: '#FEF9E7',
-          border: '2px solid #FEE500',
-          borderRadius: '8px',
-          padding: '20px',
-          marginBottom: '20px'
-        }}>
-          <h4 style={{
-            margin: '0 0 15px 0',
-            color: '#3C1E1E',
-            fontSize: '18px',
-            fontWeight: '700'
-          }}>💬 카카오톡 채널 안내</h4>
-          <ul style={{
-            margin: '0',
-            paddingLeft: '20px',
-            color: '#3C1E1E',
-            fontSize: '15px',
-            lineHeight: '1.8'
-          }}>
-            <li>궁금하신 점이나 문의사항이 있으시면 <strong>카카오톡 채널</strong>로 문의해주세요</li>
-            <li><strong>리얼 인터뷰</strong> 또는 <strong>레주메 핏</strong>을 구매하신 고객님은 입금 확인 후 카카오톡 채널을 통해 연락해주세요</li>
-            <li>아래 버튼을 눌러 채널을 추가해주세요</li>
-          </ul>
-          <div style={{ marginTop: '15px', textAlign: 'center' }}>
-            <a
-              href={KAKAO_CHANNEL_CHAT_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-block',
-                padding: '12px 24px',
-                backgroundColor: '#FEE500',
-                color: '#3C1E1E',
-                textDecoration: 'none',
-                borderRadius: '6px',
-                fontWeight: '700',
-                fontSize: '16px'
-              }}
-            >
-              📱 카카오톡 채널 문의하기
-            </a>
-          </div>
-        </div>
 
         {/* Order Summary */}
         <div className={styles.orderSummary}>
@@ -272,7 +239,7 @@ export default function OrderCompletePage() {
           {paymentStatus === 'PENDING' && !isAccountTransfer && (
             <div className={styles.summaryRow}>
               <span className={styles.label}>상태</span>
-              <span className={styles.value} style={{ color: '#ffa500' }}>
+              <span className={`${styles.value} ${styles.pendingStatus}`}>
                 결제 확인 중... ({pollingCount * 3}초)
               </span>
             </div>
@@ -319,11 +286,13 @@ export default function OrderCompletePage() {
 
         {/* Important Notice */}
         <div className={styles.notice}>
-          <h4 className={styles.noticeTitle}>📌 꼭 확인해주세요!</h4>
+          <h4 className={styles.noticeTitle}>
+            안내 사항
+          </h4>
           <ul className={styles.noticeList}>
-            <li>입금자명이 주문 시 입력한 이름과 동일해야 합니다</li>
+            <li><strong>{orderData.email}</strong>로 24시간 내 발송됩니다</li>
             <li>스팸메일함도 확인해주세요</li>
-            <li>24시간이 지나도 메일을 받지 못하셨다면 문의해주세요</li>
+            <li>궁금한 점은 언제든 카카오톡 채널로 문의해주세요</li>
           </ul>
         </div>
 
@@ -333,19 +302,21 @@ export default function OrderCompletePage() {
             className={styles.primaryBtn}
             onClick={() => router.push('/')}
           >
-            메인으로 돌아가기
+            확인했어요
           </button>
-
-          <a
-            href={KAKAO_CHANNEL_CHAT_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondaryBtn}
-          >
-            카카오톡 문의하기
-          </a>
         </div>
       </div>
+
+      {/* Theme Selector */}
+      <ThemeSelector />
     </main>
+  );
+}
+
+export default function OrderCompletePage() {
+  return (
+    <ThemeProvider>
+      <OrderCompletePageContent />
+    </ThemeProvider>
   );
 }

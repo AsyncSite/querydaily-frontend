@@ -117,11 +117,11 @@ function GrowthPlanV2Content() {
             <div className={styles.sidebarStats}>
               <div className={styles.sidebarStat}>
                 <Users size={16} />
-                <span>342명 수강</span>
+                <span>4명 수강</span>
               </div>
               <div className={styles.sidebarStat}>
                 <Star size={16} />
-                <span>4.8 (127)</span>
+                <span>5.0 (4)</span>
               </div>
             </div>
 
@@ -139,11 +139,11 @@ function GrowthPlanV2Content() {
             <div className={styles.heroBadges}>
               <div className={styles.heroBadge}>
                 <Zap size={16} />
-                <span>오늘만 54% 특가</span>
+                <span>오픈 특가 54% 할인</span>
               </div>
               <div className={styles.heroLiveBadge}>
                 <div className={styles.liveDot}></div>
-                <span>지금 342명이 준비 중</span>
+                <span>지금 12명이 준비 중</span>
               </div>
             </div>
 
@@ -161,7 +161,7 @@ function GrowthPlanV2Content() {
             {/* 임팩트 넘버 */}
             <div className={styles.heroImpact}>
               <div className={styles.impactItem}>
-                <div className={styles.impactNumber}>89%</div>
+                <div className={styles.impactNumber}>85%</div>
                 <div className={styles.impactLabel}>면접 통과율</div>
               </div>
               <div className={styles.impactDivider}>×</div>
@@ -188,7 +188,7 @@ function GrowthPlanV2Content() {
                     <CheckCircle2 size={24} />
                   </div>
                   <div className={styles.valueContent}>
-                    <strong>일반 준비 대비 3.2배</strong>
+                    <strong>일반 준비 대비 2.3배</strong>
                     <span>높은 합격률</span>
                   </div>
                 </div>
@@ -197,8 +197,8 @@ function GrowthPlanV2Content() {
                     <CheckCircle2 size={24} />
                   </div>
                   <div className={styles.valueContent}>
-                    <strong>평균 4.8/5.0</strong>
-                    <span>만족도 (127개 리뷰)</span>
+                    <strong>평균 5.0/5.0</strong>
+                    <span>만족도 (4개 리뷰)</span>
                   </div>
                 </div>
                 <div className={styles.valueItem}>
@@ -249,7 +249,7 @@ function GrowthPlanV2Content() {
                       <Star size={14} fill="#fbbf24" color="#fbbf24" />
                       <Star size={14} fill="#fbbf24" color="#fbbf24" />
                     </div>
-                    <span className={styles.reviewDate}>2024.01.15</span>
+                    <span className={styles.reviewDate}>2025.10.15</span>
                   </div>
                   <p className={styles.reviewText}>
                     "20일 동안 매일 질문을 받으면서 자연스럽게 면접 준비가 습관이 되었어요.
@@ -260,7 +260,7 @@ function GrowthPlanV2Content() {
                     <div className={styles.reviewAvatar}>K</div>
                     <div>
                       <div className={styles.reviewName}>김** 님</div>
-                      <div className={styles.reviewRole}>백엔드 개발자 · 네이버 합격</div>
+                      <div className={styles.reviewRole}>백엔드 개발자 · 신입</div>
                     </div>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ function GrowthPlanV2Content() {
                       <Star size={14} fill="#fbbf24" color="#fbbf24" />
                       <Star size={14} fill="#fbbf24" color="#fbbf24" />
                     </div>
-                    <span className={styles.reviewDate}>2024.01.20</span>
+                    <span className={styles.reviewDate}>2025.11.10</span>
                   </div>
                   <p className={styles.reviewText}>
                     "이력서 맞춤형 질문이라는 게 처음에는 반신반의했는데, 실제로 받아보니
@@ -286,7 +286,7 @@ function GrowthPlanV2Content() {
                     <div className={styles.reviewAvatar}>L</div>
                     <div>
                       <div className={styles.reviewName}>이** 님</div>
-                      <div className={styles.reviewRole}>프론트엔드 개발자 · 카카오 합격</div>
+                      <div className={styles.reviewRole}>백엔드 개발자 · 2년차</div>
                     </div>
                   </div>
                 </div>
@@ -301,7 +301,7 @@ function GrowthPlanV2Content() {
                       <Star size={14} fill="#fbbf24" color="#fbbf24" />
                       <Star size={14} fill="#fbbf24" color="#fbbf24" />
                     </div>
-                    <span className={styles.reviewDate}>2024.02.03</span>
+                    <span className={styles.reviewDate}>2025.11.20</span>
                   </div>
                   <p className={styles.reviewText}>
                     "면접 준비를 어디서부터 시작해야 할지 막막했는데, 매일 아침 질문이
@@ -312,7 +312,7 @@ function GrowthPlanV2Content() {
                     <div className={styles.reviewAvatar}>P</div>
                     <div>
                       <div className={styles.reviewName}>박** 님</div>
-                      <div className={styles.reviewRole}>풀스택 개발자 · 토스 합격</div>
+                      <div className={styles.reviewRole}>백엔드 개발자 · 3년차</div>
                     </div>
                   </div>
                 </div>
@@ -323,11 +323,11 @@ function GrowthPlanV2Content() {
             <div className={styles.heroTrustBadges}>
               <div className={styles.trustBadge}>
                 <Users size={18} />
-                <span>342명 수강</span>
+                <span>4명 수강</span>
               </div>
               <div className={styles.trustBadge}>
                 <TrendingUp size={18} />
-                <span>89% 통과율</span>
+                <span>85% 통과율</span>
               </div>
               <div className={styles.trustBadge}>
                 <Award size={18} />
@@ -351,9 +351,13 @@ function GrowthPlanV2Content() {
               <div className={styles.painPointIcon}>
                 <X size={24} className={styles.xIcon} />
               </div>
-              <h3 className={styles.painPointTitle}>이력서는 화려한데 말문이 막힌다</h3>
+              <h3 className={styles.painPointTitle}>답변 버벅임</h3>
               <p className={styles.painPointDesc}>
-                프로젝트 경험은 많은데 면접관 앞에서는 "저는... 음..." 버벅거리기만 합니다
+                프로젝트 경험은 많은데 면접관 앞에서는 "저는... 음..." 버벅거리기만 합니다.
+                <br />
+                분명 잘 해낸 프로젝트인데 설명하려니 머릿속이 하얘지고,
+                <br />
+                아는 것도 말로 표현하지 못해 답답합니다.
               </p>
             </div>
 
@@ -361,9 +365,13 @@ function GrowthPlanV2Content() {
               <div className={styles.painPointIcon}>
                 <X size={24} className={styles.xIcon} />
               </div>
-              <h3 className={styles.painPointTitle}>기본 질문도 제대로 못 답한다</h3>
+              <h3 className={styles.painPointTitle}>체계적 설명 부족</h3>
               <p className={styles.painPointDesc}>
-                "이 프로젝트에서 어떤 역할을 했나요?" 같은 질문에도 횡설수설하게 됩니다
+                "이 프로젝트에서 어떤 역할을 했나요?" 같은 질문에도 횡설수설하게 됩니다.
+                <br />
+                내가 뭘 했는지는 알지만 체계적으로 설명하지 못하고,
+                <br />
+                면접관은 계속 "좀 더 구체적으로 설명해주세요"라고 묻습니다.
               </p>
             </div>
 
@@ -371,9 +379,13 @@ function GrowthPlanV2Content() {
               <div className={styles.painPointIcon}>
                 <X size={24} className={styles.xIcon} />
               </div>
-              <h3 className={styles.painPointTitle}>꼬리 질문에 당황한다</h3>
+              <h3 className={styles.painPointTitle}>꼬리 질문 패닉</h3>
               <p className={styles.painPointDesc}>
-                준비한 답변까지는 좋았는데 "그럼 왜 그렇게 하셨나요?"라는 꼬리 질문에 패닉
+                준비한 답변까지는 좋았는데 "그럼 왜 그렇게 하셨나요?"라는 꼬리 질문에 패닉.
+                <br />
+                "그럼 다른 방법은 고려 안 하셨나요?", "문제가 생기면 어떻게 하시죠?"
+                <br />
+                예상치 못한 질문에 말문이 막히고 식은땀만 흐릅니다.
               </p>
             </div>
 
@@ -381,9 +393,13 @@ function GrowthPlanV2Content() {
               <div className={styles.painPointIcon}>
                 <X size={24} className={styles.xIcon} />
               </div>
-              <h3 className={styles.painPointTitle}>어디서부터 시작할지 모른다</h3>
+              <h3 className={styles.painPointTitle}>준비 방향 막막함</h3>
               <p className={styles.painPointDesc}>
-                면접 준비가 필요한 건 아는데 뭘 어떻게 준비해야 할지 막막하기만 합니다
+                면접 준비가 필요한 건 아는데 뭘 어떻게 준비해야 할지 막막하기만 합니다.
+                <br />
+                인터넷에는 너무 많은 정보가 있고, 다 중요해 보여서 뭐부터 해야 할지 몰라
+                <br />
+                결국 아무것도 제대로 준비하지 못한 채 면접 날만 다가옵니다.
               </p>
             </div>
 
@@ -391,9 +407,13 @@ function GrowthPlanV2Content() {
               <div className={styles.painPointIcon}>
                 <X size={24} className={styles.xIcon} />
               </div>
-              <h3 className={styles.painPointTitle}>모범 답안을 외워도 소용없다</h3>
+              <h3 className={styles.painPointTitle}>외운 답변의 한계</h3>
               <p className={styles.painPointDesc}>
-                책에 나온 답변을 열심히 외웠는데 실전에서는 전혀 써먹을 수가 없었습니다
+                책에 나온 답변을 열심히 외웠는데 실전에서는 전혀 써먹을 수가 없었습니다.
+                <br />
+                "왜 우리 회사인가요?" "개발자로서의 강점은?" 뻔한 질문인데도
+                <br />
+                외운 답변은 진정성이 없어 보이고, 면접관도 금방 눈치챕니다.
               </p>
             </div>
 
@@ -401,9 +421,13 @@ function GrowthPlanV2Content() {
               <div className={styles.painPointIcon}>
                 <X size={24} className={styles.xIcon} />
               </div>
-              <h3 className={styles.painPointTitle}>면접 후 후회만 남는다</h3>
+              <h3 className={styles.painPointTitle}>면접 후 자책감</h3>
               <p className={styles.painPointDesc}>
-                "아, 그렇게 말할 걸..." 면접이 끝나고 나서야 좋은 답변이 떠오릅니다
+                "아, 그렇게 말할 걸..." 면접이 끝나고 나서야 좋은 답변이 떠오릅니다.
+                <br />
+                분명 준비했던 내용인데 긴장해서 기억이 안 나고,
+                <br />
+                집에 돌아와서야 "그때 저 얘기를 했어야 했는데..."하며 자책합니다.
               </p>
             </div>
           </div>

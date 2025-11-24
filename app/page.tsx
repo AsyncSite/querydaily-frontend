@@ -2161,7 +2161,7 @@ function LandingPageContent() {
                 </summary>
                 <div className={styles.faqAnswer}>
                   ChatGPT는 일반적인 질문을 생성하지만, QueryDaily는 <strong>당신의 이력서를 분석</strong>하여 맞춤 질문을 만듭니다.<br /><br />
-                  또한 매일 자동으로 발송되어 꾸준한 연습이 가능하며, STAR 기법 가이드를 함께 제공합니다.
+                  또한 매일 발송되어 꾸준한 연습이 가능합니다.
                 </div>
               </details>
 

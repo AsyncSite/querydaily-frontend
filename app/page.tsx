@@ -2550,7 +2550,7 @@ function LandingPageContent() {
                   )}
 
                   <p className={styles.modalHint}>
-                    이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
+                    이력서는 암호화되어 안전하게 보관됩니다
                   </p>
                 </div>
               )}

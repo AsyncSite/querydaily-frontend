@@ -101,7 +101,7 @@ function GrowthPlanV2Content() {
               </div>
               <div className={styles.sidebarFeature}>
                 <Check size={16} />
-                <span>프리미엄 답변 가이드</span>
+                <span>상세 해설 & 꼬리질문</span>
               </div>
               <div className={styles.sidebarFeature}>
                 <Check size={16} />
@@ -305,7 +305,7 @@ function GrowthPlanV2Content() {
                   </div>
                   <p className={styles.reviewText}>
                     "면접 준비를 어디서부터 시작해야 할지 막막했는데, 매일 아침 질문이
-                    오니까 자연스럽게 공부 루틴이 만들어졌어요. 특히 답변 가이드의
+                    오니까 자연스럽게 공부 루틴이 만들어졌어요. 특히 상세 해설의
                     '질문 해부' 섹션이 면접관의 의도를 파악하는 데 큰 도움이 되었습니다."
                   </p>
                   <div className={styles.reviewAuthor}>
@@ -337,111 +337,117 @@ function GrowthPlanV2Content() {
           </div>
         </section>
 
-        {/* Pain Points Section */}
-        <section className={styles.painPoints}>
-          <h2 className={styles.sectionTitle}>
-            이런 고민, 있으시죠?
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            많은 지원자들이 똑같은 문제로 고민합니다
-          </p>
+        {/* Plan Recommendation Section */}
+        <section className={styles.planRecommendation}>
+          <div className={styles.planRecommendationContainer}>
+            <h2 className={styles.sectionTitle}>
+              어떤 플랜이 나에게 맞을까?
+            </h2>
+            <p className={styles.sectionSubtitle}>
+              상황에 맞는 플랜을 선택하세요
+            </p>
 
-          <div className={styles.painPointsGrid}>
-            <div className={styles.painPoint}>
-              <div className={styles.painPointIcon}>
-                <X size={24} className={styles.xIcon} />
+            <div className={styles.planCardsGrid}>
+              {/* 그로스 플랜 카드 */}
+              <div className={styles.planCard + ' ' + styles.recommended}>
+                <div className={styles.planCardTopBar}></div>
+                <div className={styles.planCardBadge}>RECOMMENDED</div>
+                <h3 className={styles.planCardTitle}>그로스 플랜</h3>
+                <ul className={styles.planCardList}>
+                  <li>
+                    <Check size={18} />
+                    <span>면접까지 <strong>1주일 이상</strong> 여유</span>
+                  </li>
+                  <li>
+                    <Check size={18} />
+                    <span><strong>모든 질문</strong> 빠짐없이 준비</span>
+                  </li>
+                  <li>
+                    <Check size={18} />
+                    <span>꼬리 질문까지 <strong>완벽 대비</strong></span>
+                  </li>
+                  <li>
+                    <Check size={18} />
+                    <span>이번 이직이 <strong>정말 중요</strong>한 분</span>
+                  </li>
+                </ul>
               </div>
-              <h3 className={styles.painPointTitle}>답변 버벅임</h3>
-              <p className={styles.painPointDesc}>
-                프로젝트 경험은 많은데 면접관 앞에서는 "저는... 음..." 버벅거리기만 합니다.
-                <br />
-                분명 잘 해낸 프로젝트인데 설명하려니 머릿속이 하얘지고,
-                <br />
-                아는 것도 말로 표현하지 못해 답답합니다.
-              </p>
+
+              {/* 크리티컬 히트 카드 */}
+              <div className={styles.planCard}>
+                <div className={styles.planCardTopBar + ' ' + styles.secondary}></div>
+                <div className={styles.planCardBadge + ' ' + styles.secondary}>빠른 경험</div>
+                <h3 className={styles.planCardTitle}>크리티컬 히트</h3>
+                <ul className={styles.planCardList}>
+                  <li>
+                    <span className={styles.planBullet}>•</span>
+                    <span>면접이 <strong>3일 이내</strong>로 급한 분</span>
+                  </li>
+                  <li>
+                    <span className={styles.planBullet}>•</span>
+                    <span><strong>먼저 경험</strong>해보고 싶은 분</span>
+                  </li>
+                  <li>
+                    <span className={styles.planBullet}>•</span>
+                    <span>핵심 <strong>3개만</strong> 빠르게</span>
+                  </li>
+                </ul>
+                <button
+                  className={styles.criticalHitCtaButton}
+                  onClick={() => router.push('/prototype-hyundoo/v4/products/critical-hit')}
+                >
+                  <Zap size={18} />
+                  크리티컬 히트 보러가기
+                  <ArrowRight size={18} />
+                </button>
+              </div>
             </div>
 
-            <div className={styles.painPoint}>
-              <div className={styles.painPointIcon}>
-                <X size={24} className={styles.xIcon} />
-              </div>
-              <h3 className={styles.painPointTitle}>체계적 설명 부족</h3>
-              <p className={styles.painPointDesc}>
-                "이 프로젝트에서 어떤 역할을 했나요?" 같은 질문에도 횡설수설하게 됩니다.
-                <br />
-                내가 뭘 했는지는 알지만 체계적으로 설명하지 못하고,
-                <br />
-                면접관은 계속 "좀 더 구체적으로 설명해주세요"라고 묻습니다.
-              </p>
-            </div>
-
-            <div className={styles.painPoint}>
-              <div className={styles.painPointIcon}>
-                <X size={24} className={styles.xIcon} />
-              </div>
-              <h3 className={styles.painPointTitle}>꼬리 질문 패닉</h3>
-              <p className={styles.painPointDesc}>
-                준비한 답변까지는 좋았는데 "그럼 왜 그렇게 하셨나요?"라는 꼬리 질문에 패닉.
-                <br />
-                "그럼 다른 방법은 고려 안 하셨나요?", "문제가 생기면 어떻게 하시죠?"
-                <br />
-                예상치 못한 질문에 말문이 막히고 식은땀만 흐릅니다.
-              </p>
-            </div>
-
-            <div className={styles.painPoint}>
-              <div className={styles.painPointIcon}>
-                <X size={24} className={styles.xIcon} />
-              </div>
-              <h3 className={styles.painPointTitle}>준비 방향 막막함</h3>
-              <p className={styles.painPointDesc}>
-                면접 준비가 필요한 건 아는데 뭘 어떻게 준비해야 할지 막막하기만 합니다.
-                <br />
-                인터넷에는 너무 많은 정보가 있고, 다 중요해 보여서 뭐부터 해야 할지 몰라
-                <br />
-                결국 아무것도 제대로 준비하지 못한 채 면접 날만 다가옵니다.
-              </p>
-            </div>
-
-            <div className={styles.painPoint}>
-              <div className={styles.painPointIcon}>
-                <X size={24} className={styles.xIcon} />
-              </div>
-              <h3 className={styles.painPointTitle}>외운 답변의 한계</h3>
-              <p className={styles.painPointDesc}>
-                책에 나온 답변을 열심히 외웠는데 실전에서는 전혀 써먹을 수가 없었습니다.
-                <br />
-                "왜 우리 회사인가요?" "개발자로서의 강점은?" 뻔한 질문인데도
-                <br />
-                외운 답변은 진정성이 없어 보이고, 면접관도 금방 눈치챕니다.
-              </p>
-            </div>
-
-            <div className={styles.painPoint}>
-              <div className={styles.painPointIcon}>
-                <X size={24} className={styles.xIcon} />
-              </div>
-              <h3 className={styles.painPointTitle}>면접 후 자책감</h3>
-              <p className={styles.painPointDesc}>
-                "아, 그렇게 말할 걸..." 면접이 끝나고 나서야 좋은 답변이 떠오릅니다.
-                <br />
-                분명 준비했던 내용인데 긴장해서 기억이 안 나고,
-                <br />
-                집에 돌아와서야 "그때 저 얘기를 했어야 했는데..."하며 자책합니다.
+            {/* 추천 메시지 */}
+            <div className={styles.planRecommendationMessage}>
+              <p>
+                <span className={styles.recommendQuestion}>고민된다면?</span>{' '}
+                <strong className={styles.recommendPlan}>그로스 플랜</strong>을 추천드립니다.<br/>
+                <span className={styles.recommendSubtext}>제대로 준비해서 한 번에 붙는 게 결국 더 빠릅니다.</span>
               </p>
             </div>
           </div>
+        </section>
 
-          <div className={styles.painPointsCta}>
-            <div className={styles.painPointsCtaIcon}>
-              <Check size={32} />
+        {/* Pain Points Section */}
+        <section className={styles.painPoints}>
+          <h2 className={styles.sectionTitle}>
+            혹시 이런 경험 있으신가요?
+          </h2>
+
+          <div className={styles.painPointsSimple}>
+            <div className={styles.painPointItem}>
+              <X size={20} className={styles.xIcon} />
+              <span>면접관 앞에서 <strong>"저는... 음..."</strong> 버벅거림</span>
             </div>
-            <h3 className={styles.painPointsCtaTitle}>
-              QueryDaily는 이 모든 문제를 해결합니다
-            </h3>
-            <p className={styles.painPointsCtaDesc}>
-              20일간의 체계적인 훈련으로 면접장에서 자신있게 답변하세요
-            </p>
+            <div className={styles.painPointItem}>
+              <X size={20} className={styles.xIcon} />
+              <span><strong>"좀 더 구체적으로요"</strong> 라는 말에 식은땀</span>
+            </div>
+            <div className={styles.painPointItem}>
+              <X size={20} className={styles.xIcon} />
+              <span><strong>"왜 그렇게 했나요?"</strong> 꼬리 질문에 패닉</span>
+            </div>
+            <div className={styles.painPointItem}>
+              <X size={20} className={styles.xIcon} />
+              <span>면접 끝나고 <strong>"아 그때 그렇게 말할 걸..."</strong> 후회</span>
+            </div>
+          </div>
+
+          <div className={styles.painPointsSolution}>
+            <div className={styles.solutionArrow}>↓</div>
+            <div className={styles.solutionContent}>
+              <CheckCircle2 size={28} className={styles.checkIcon} />
+              <div>
+                <strong>실력 문제가 아닙니다. 연습 부족입니다.</strong>
+                <span>20일만 투자하면 달라집니다</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -449,10 +455,10 @@ function GrowthPlanV2Content() {
         <section className={styles.beforeAfter}>
           <div className={styles.beforeAfterHeader}>
             <h2 className={styles.sectionTitle}>
-              20일 후, 당신의 면접 실력
+              능력이 아니라, 준비의 차이입니다
             </h2>
             <p className={styles.sectionSubtitle}>
-              실제 면접 현장에서 느껴지는 극적인 변화
+              실력은 이미 충분합니다. 그걸 보여주는 연습만 하면 됩니다.
             </p>
 
             {/* 메인 통계 박스 */}
@@ -460,26 +466,26 @@ function GrowthPlanV2Content() {
               <div className={styles.mainStatItem}>
                 <div className={styles.mainStatBefore}>
                   <X size={20} />
-                  <span>일반 준비</span>
+                  <span>준비 없이</span>
                 </div>
-                <div className={styles.mainStatNumber}>28%</div>
-                <div className={styles.mainStatLabel}>면접 통과율</div>
+                <div className={styles.mainStatNumber}>38%</div>
+                <div className={styles.mainStatLabel}>평균 합격률</div>
               </div>
 
-              <div className={styles.mainStatVs}>VS</div>
+              <div className={styles.mainStatVs}>→</div>
 
               <div className={styles.mainStatItem}>
                 <div className={styles.mainStatAfter}>
                   <Check size={20} />
-                  <span>QueryDaily 수강생</span>
+                  <span>체계적 준비</span>
                 </div>
-                <div className={styles.mainStatNumber + ' ' + styles.success}>89%</div>
-                <div className={styles.mainStatLabel}>면접 통과율</div>
+                <div className={styles.mainStatNumber + ' ' + styles.success}>85%</div>
+                <div className={styles.mainStatLabel}>합격률 달성</div>
               </div>
 
               <div className={styles.mainStatBadge}>
                 <TrendingUp size={18} />
-                <strong>3.2배</strong> 높은 합격률
+                <strong>2.3배</strong> 높은 합격률
               </div>
             </div>
           </div>
@@ -492,76 +498,47 @@ function GrowthPlanV2Content() {
                   <X size={32} />
                 </div>
                 <div>
-                  <h3>QueryDaily 사용 전</h3>
-                  <p className={styles.comparisonSubheader}>준비 없는 면접의 현실</p>
+                  <h3>보통의 면접 준비</h3>
+                  <p className={styles.comparisonSubheader}>뭘 해야 할지 모르겠는 상태</p>
                 </div>
               </div>
               <div className={styles.comparisonItems}>
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeBefore}>1</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Clock size={16} />
-                      <span className={styles.metricValue}>10초 침묵</span>
-                    </div>
-                    <strong>"저는... React를 사용했고... 음..."</strong>
-                    <span className={styles.comparisonDetail}>답변 시작조차 못하고 버벅거림</span>
+                    <strong>면접 질문 검색</strong>
+                    <span className={styles.comparisonDetail}>어떤 게 나올지 모름</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeBefore}>2</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <BookOpen size={16} />
-                      <span className={styles.metricValue}>외운 답변</span>
-                    </div>
-                    <strong>"좋은 개발자가 되고 싶어서요"</strong>
-                    <span className={styles.comparisonDetail}>책에서 본 천편일률적 답변, 진정성 제로</span>
+                    <strong>블로그 뒤져서 모범답안 정리</strong>
+                    <span className={styles.comparisonDetail}>내 경험이랑 안 맞음</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeBefore}>3</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <AlertCircle size={16} />
-                      <span className={styles.metricValue}>패닉 상태</span>
-                    </div>
-                    <strong>"그건... 잘 모르겠는데요..."</strong>
-                    <span className={styles.comparisonDetail}>꼬리 질문에 완전히 무너짐</span>
+                    <strong>혼자 답변 연습</strong>
+                    <span className={styles.comparisonDetail}>이게 맞나? 확신 없음</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeBefore}>4</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Clock size={16} />
-                      <span className={styles.metricValue}>30분 중 5분</span>
-                    </div>
-                    <strong>실제로 말한 시간 단 5분</strong>
-                    <span className={styles.comparisonDetail}>나머지 25분은 "음...", "저..." 침묵만</span>
-                  </div>
-                </div>
-
-                <div className={styles.comparisonItem}>
-                  <div className={styles.comparisonItemBadge + ' ' + styles.badgeBefore}>5</div>
-                  <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Briefcase size={16} />
-                      <span className={styles.metricValue}>5개 중 0개</span>
-                    </div>
-                    <strong>프로젝트 설명 실패</strong>
-                    <span className={styles.comparisonDetail}>"무엇을" 했는지만 나열, Why와 How는 설명 못함</span>
+                    <strong>매일 몇 시간씩 준비</strong>
+                    <span className={styles.comparisonDetail}>언제 끝날지 모름</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonResult + ' ' + styles.resultFail}>
                   <X size={20} />
                   <div>
-                    <strong>면접 결과: 탈락</strong>
-                    <span>"역량은 있어 보이는데 전달력이 아쉽네요"</span>
+                    <strong>결과: 불안한 채로 면접장 입장</strong>
                   </div>
                 </div>
               </div>
@@ -574,76 +551,47 @@ function GrowthPlanV2Content() {
                   <Check size={32} />
                 </div>
                 <div>
-                  <h3>QueryDaily 사용 후</h3>
-                  <p className={styles.comparisonSubheader}>20일간의 체계적 훈련 결과</p>
+                  <h3>QueryDaily로 준비하면</h3>
+                  <p className={styles.comparisonSubheader}>"이 질문, 준비했던 건데?"</p>
                 </div>
               </div>
               <div className={styles.comparisonItems}>
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeAfter}>1</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Target size={16} />
-                      <span className={styles.metricValue}>2분 완결</span>
-                    </div>
-                    <strong>"S.T.A.R 기법으로 말씀드리면..."</strong>
-                    <span className={styles.comparisonDetail}>Situation→Task→Action→Result 구조화된 답변</span>
+                    <strong>내 이력서 기반 예상 질문 완비</strong>
+                    <span className={styles.comparisonDetail}>면접관이 물을 질문, 이미 다 준비됨</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeAfter}>2</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Award size={16} />
-                      <span className={styles.metricValue}>차별화</span>
-                    </div>
-                    <strong>"제가 경험한 구체적 사례는..."</strong>
-                    <span className={styles.comparisonDetail}>내 이력서 기반, 오직 나만 할 수 있는 진짜 스토리</span>
+                    <strong>꼬리질문까지 미리 대비</strong>
+                    <span className={styles.comparisonDetail}>"왜요?" "어떻게요?"에도 막힘없이</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeAfter}>3</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Lightbulb size={16} />
-                      <span className={styles.metricValue}>준비 완료</span>
-                    </div>
-                    <strong>"그 부분은 이렇게 해결했습니다"</strong>
-                    <span className={styles.comparisonDetail}>꼬리 질문 3-5개 미리 예상, 오히려 기다리게 됨</span>
+                    <strong>실전에서 바로 쓰는 답변 구조</strong>
+                    <span className={styles.comparisonDetail}>준비한 그대로 자신있게 답변</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonItem}>
                   <div className={styles.comparisonItemBadge + ' ' + styles.badgeAfter}>4</div>
                   <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <Clock size={16} />
-                      <span className={styles.metricValue}>30분→40분</span>
-                    </div>
-                    <strong>면접 시간 연장 요청받음</strong>
-                    <span className={styles.comparisonDetail}>면접관: "시간 괜찮으시면 더 듣고 싶은데요?"</span>
-                  </div>
-                </div>
-
-                <div className={styles.comparisonItem}>
-                  <div className={styles.comparisonItemBadge + ' ' + styles.badgeAfter}>5</div>
-                  <div className={styles.comparisonContent}>
-                    <div className={styles.comparisonMetric}>
-                      <BarChart3 size={16} />
-                      <span className={styles.metricValue}>임팩트</span>
-                    </div>
-                    <strong>프로젝트마다 Why-How-Result</strong>
-                    <span className={styles.comparisonDetail}>"배포 70% 단축, 장애 90% 감소" 숫자로 증명</span>
+                    <strong>예상 적중률 85%</strong>
+                    <span className={styles.comparisonDetail}>실제 면접에서 준비한 질문이 나옴</span>
                   </div>
                 </div>
 
                 <div className={styles.comparisonResult + ' ' + styles.resultSuccess}>
                   <Check size={20} />
                   <div>
-                    <strong>면접 결과: 합격</strong>
-                    <span>"경험도 풍부하고 전달력도 훌륭하시네요"</span>
+                    <strong>결과: "아, 이거 준비했던 건데!" 자신감 폭발</strong>
                   </div>
                 </div>
               </div>
@@ -656,14 +604,28 @@ function GrowthPlanV2Content() {
                 <Zap size={32} />
               </div>
               <div className={styles.ctaBoxContent}>
-                <h3>단 20일의 차이가 합격을 결정합니다</h3>
-                <p>지금 시작하지 않으면, 다음 면접에서도 똑같은 실수를 반복하게 됩니다.</p>
+                <h3>합격은 여유에서 나옵니다</h3>
+                <p>준비된 사람은 떨지 않습니다. 20일 후, 당신도 그렇게 됩니다.</p>
               </div>
               <button className={styles.ctaBoxButton}>
                 지금 합격 준비 시작하기
                 <ArrowRight size={20} />
               </button>
             </div>
+          </div>
+        </section>
+
+        {/* Product Detail Intro */}
+        <section className={styles.productDetailIntro}>
+          <div className={styles.detailIntroContent}>
+            <span className={styles.detailIntroBadge}>상품 상세</span>
+            <h2 className={styles.detailIntroTitle}>
+              20일 동안<br />
+              <span className={styles.detailIntroHighlight}>무엇을 받게 되나요?</span>
+            </h2>
+            <p className={styles.detailIntroDesc}>
+              그로스 플랜에 포함된 모든 것을 확인하세요
+            </p>
           </div>
         </section>
 
@@ -678,7 +640,7 @@ function GrowthPlanV2Content() {
                   매일 발송되는 맞춤형 질문
                 </h2>
                 <p className={styles.imageCardDesc}>
-                  오전 7시와 저녁 5시, 하루 2번<br />
+                  오전 7시와 오후 5시, 하루 2번<br />
                   총 40개의 질문이 20일간 발송됩니다
                 </p>
                 <div className={styles.imageCardFeatures}>
@@ -688,11 +650,14 @@ function GrowthPlanV2Content() {
                   </div>
                   <div className={styles.featureRow}>
                     <Check size={18} />
-                    <span>저녁 5시: 프리미엄 답변 가이드</span>
+                    <span>오후 5시: 상세 해설 & 꼬리질문</span>
                   </div>
-                  <div className={styles.featureRow}>
-                    <Check size={18} />
-                    <span>이메일 영구 보관</span>
+                </div>
+                <div className={styles.imageCardHighlight}>
+                  <Clock size={20} />
+                  <div>
+                    <strong>하루 10분이면 충분!</strong>
+                    <span>출퇴근길 갓생 루틴으로 면접 준비 완료</span>
                   </div>
                 </div>
               </div>
@@ -703,21 +668,28 @@ function GrowthPlanV2Content() {
                   실제 기출 질문 포함
                 </h2>
                 <p className={styles.imageCardDesc}>
-                  300개 이상의 실제 면접 질문을 분석하여<br />
-                  당신의 이력서에 맞게 재구성합니다
+                  네카라쿠배부터 삼성·현대·LG까지<br />
+                  500개 이상의 실제 면접 질문을 분석했습니다
                 </p>
                 <div className={styles.imageCardFeatures}>
                   <div className={styles.featureRow}>
                     <Check size={18} />
-                    <span>기술 스택 맞춤형 질문</span>
+                    <span>토스, 당근, 배민 등 유니콘 기업 기출</span>
                   </div>
                   <div className={styles.featureRow}>
                     <Check size={18} />
-                    <span>프로젝트 경험 기반 시나리오</span>
+                    <span>삼성, 현대, LG 대기업 면접 패턴</span>
                   </div>
                   <div className={styles.featureRow}>
                     <Check size={18} />
-                    <span>회사별 면접 스타일 반영</span>
+                    <span>스타트업부터 대기업까지 맞춤 분석</span>
+                  </div>
+                </div>
+                <div className={styles.imageCardHighlight}>
+                  <Target size={20} />
+                  <div>
+                    <strong>예상 적중률 85%</strong>
+                    <span>실제 면접에서 준비한 질문이 나와요</span>
                   </div>
                 </div>
               </div>
@@ -725,7 +697,7 @@ function GrowthPlanV2Content() {
               <div className={styles.productImageCard}>
                 <h2 className={styles.imageCardTitle}>
                   <BookOpen size={24} />
-                  프리미엄 답변 가이드
+                  상세 해설 & 꼬리질문
                 </h2>
                 <p className={styles.imageCardDesc}>
                   5단계 구성의 체계적인 가이드로<br />
@@ -743,6 +715,13 @@ function GrowthPlanV2Content() {
                   <div className={styles.featureRow}>
                     <Check size={18} />
                     <span>핵심 키워드 및 기술 용어 정리</span>
+                  </div>
+                </div>
+                <div className={styles.imageCardHighlight}>
+                  <Award size={20} />
+                  <div>
+                    <strong>면접관이 원하는 답변 구조</strong>
+                    <span>"무슨 일이 있었고, 뭘 했고, 어떻게 됐는지" 순서대로</span>
                   </div>
                 </div>
               </div>
@@ -770,83 +749,14 @@ function GrowthPlanV2Content() {
                     <span>실무 경험 연결 팁</span>
                   </div>
                 </div>
+                <div className={styles.imageCardHighlight}>
+                  <MessageSquare size={20} />
+                  <div>
+                    <strong>"왜요?" "어떻게요?"에도 막힘없이</strong>
+                    <span>진짜 실력이 드러나는 꼬리질문까지 완벽 대비</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* What You Get Section */}
-        <section className={styles.whatYouGet}>
-          <h2 className={styles.sectionTitle}>
-            그로스 플랜에 포함된 것들
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            20일간 매일 제공되는 프리미엄 콘텐츠
-          </p>
-
-          <div className={styles.benefitsGrid}>
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <Calendar size={32} />
-              </div>
-              <h3 className={styles.benefitTitle}>매일 2회 질문 발송</h3>
-              <p className={styles.benefitDescription}>
-                오전 7시와 저녁 5시, 총 40개의 맞춤형 질문이 20일간 발송됩니다.
-                출근길과 퇴근 후, 하루 2번 면접 준비를 습관화하세요.
-              </p>
-              <ul className={styles.benefitList}>
-                <li><Check size={16} /> 오전 7시: 출근길 학습</li>
-                <li><Check size={16} /> 저녁 5시: 답변 가이드 제공</li>
-                <li><Check size={16} /> 20일간 총 40개 질문</li>
-              </ul>
-            </div>
-
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <Building2 size={32} />
-              </div>
-              <h3 className={styles.benefitTitle}>실제 기출 질문 포함</h3>
-              <p className={styles.benefitDescription}>
-                실제 면접에서 나온 질문들을 분석하여 당신의 이력서에 맞게 재구성합니다.
-                일반적인 질문이 아닌, 당신만을 위한 질문입니다.
-              </p>
-              <ul className={styles.benefitList}>
-                <li><Check size={16} /> 300+ 기출 질문 데이터베이스</li>
-                <li><Check size={16} /> 이력서 맞춤형 재구성</li>
-                <li><Check size={16} /> 회사별 면접 스타일 반영</li>
-              </ul>
-            </div>
-
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <BookOpen size={32} />
-              </div>
-              <h3 className={styles.benefitTitle}>프리미엄 답변 가이드</h3>
-              <p className={styles.benefitDescription}>
-                단순 모범 답안이 아닌, 5단계 구성의 프리미엄 가이드를 제공합니다.
-                질문 해부부터 STAR 기법 적용까지 완벽하게 학습하세요.
-              </p>
-              <ul className={styles.benefitList}>
-                <li><Check size={16} /> 질문 해부: 면접관의 의도 파악</li>
-                <li><Check size={16} /> STAR 기법 기반 답변 구조화</li>
-                <li><Check size={16} /> 핵심 키워드 및 기술 용어 정리</li>
-              </ul>
-            </div>
-
-            <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>
-                <Lightbulb size={32} />
-              </div>
-              <h3 className={styles.benefitTitle}>꼬리 질문 대비 전략</h3>
-              <p className={styles.benefitDescription}>
-                면접의 진짜 승부는 꼬리 질문입니다. 예상 꼬리 질문과 대응 전략을
-                미리 준비하여 어떤 질문에도 당황하지 않게 됩니다.
-              </p>
-              <ul className={styles.benefitList}>
-                <li><Check size={16} /> 질문별 3-5개 예상 꼬리 질문</li>
-                <li><Check size={16} /> 꼬리 질문 대응 전략</li>
-                <li><Check size={16} /> 실무 경험 연결 팁</li>
-              </ul>
             </div>
           </div>
         </section>
@@ -857,7 +767,7 @@ function GrowthPlanV2Content() {
             실제로 받게 될 이메일
           </h2>
           <p className={styles.sectionSubtitle}>
-            매일 오전 7시와 저녁 5시, 이런 이메일을 받게 됩니다
+            매일 오전 7시와 오후 5시, 이런 이메일을 받게 됩니다
           </p>
 
           <div className={styles.emailTimeline}>
@@ -910,21 +820,15 @@ function GrowthPlanV2Content() {
 
                   <div className={styles.emailTip}>
                     💡 <strong>준비 팁:</strong> 오늘 하루 이 질문에 대해 생각해보세요.<br/>
-                    저녁 5시에 프리미엄 답변 가이드를 보내드립니다.
+                    오후 5시에 상세 해설과 꼬리질문을 보내드립니다.
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className={styles.emailDivider}>
-              <ChevronRight size={32} />
-            </div>
-
-            {/* 저녁 5시 이메일 */}
+ㅣ            </div>{/* 오후 5시 이메일 */}
             <div className={styles.emailTimeSlot}>
               <div className={styles.emailTime}>
                 <Clock size={24} />
-                <span>저녁 5시</span>
+                <span>오후 5시</span>
               </div>
 
               <div className={styles.emailCard}>
@@ -940,14 +844,26 @@ function GrowthPlanV2Content() {
                 </div>
 
                 <div className={styles.emailSubject}>
-                  [QueryDaily] Day 1 답변 가이드: STAR 기법으로 완벽 대비하기
+                  [QueryDaily] Day 1 상세 해설: STAR 기법으로 완벽 대비하기
                 </div>
 
                 <div className={styles.emailBody}>
+                  <div className={styles.emailQuestionBox}>
+                    <div className={styles.emailQuestionLabel}>
+                      <Target size={18} />
+                      오늘의 질문
+                    </div>
+                    <p className={styles.emailQuestionText}>
+                      이력서에 기재된 "사용자 관리 시스템 개발" 프로젝트에서
+                      마이크로서비스 아키텍처를 선택한 이유는 무엇인가요?
+                      기존 모놀리식 구조 대비 어떤 장단점을 고려하셨나요?
+                    </p>
+                  </div>
+
                   <div className={styles.answerSection}>
                     <div className={styles.answerTitle}>
-                      <CheckCircle2 size={20} />
-                      1. 질문 해부
+                      <BarChart3 size={20} />
+                      1. 질문 분석
                     </div>
                     <div className={styles.answerContent}>
                       이 질문은 단순히 기술 선택의 이유만 묻는 것이 아닙니다.<br/>
@@ -963,31 +879,57 @@ function GrowthPlanV2Content() {
                   <div className={styles.answerSection}>
                     <div className={styles.answerTitle}>
                       <Target size={20} />
-                      2. STAR 기법 답변 구조
+                      2. 핵심 키워드
+                    </div>
+                    <div className={styles.keywords}>
+                      <span className={styles.keyword}>API Gateway</span>
+                      <span className={styles.keyword}>Service Mesh</span>
+                      <span className={styles.keyword}>Event-Driven</span>
+                      <span className={styles.keyword}>Saga Pattern</span>
+                      <span className={styles.keyword}>Circuit Breaker</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.answerSection}>
+                    <div className={styles.answerTitle}>
+                      <Star size={20} />
+                      3. STAR 구조화
                     </div>
                     <div className={styles.starFramework}>
                       <div className={styles.starItem}>
-                        <div className={styles.starLabel}>S (Situation)</div>
+                        <div className={styles.starLabel}>
+                          <span className={styles.starLetter}>S</span>
+                          <span className={styles.starMeaning}>Situation</span>
+                        </div>
                         <div className={styles.starText}>
-                          "당시 회사는 사용자가 급증하면서 모놀리식 구조의 한계를 느끼고 있었습니다..."
+                          "당시 회사는 사용자가 급증하면서 모놀리식 구조의 한계를 느끼고 있었습니다."
                         </div>
                       </div>
                       <div className={styles.starItem}>
-                        <div className={styles.starLabel}>T (Task)</div>
+                        <div className={styles.starLabel}>
+                          <span className={styles.starLetter}>T</span>
+                          <span className={styles.starMeaning}>Task</span>
+                        </div>
                         <div className={styles.starText}>
-                          "저는 확장 가능하면서도 팀이 독립적으로 개발할 수 있는 구조를 설계해야 했습니다..."
+                          "저는 확장 가능하면서도 팀이 독립적으로 개발할 수 있는 구조를 설계해야 했습니다."
                         </div>
                       </div>
                       <div className={styles.starItem}>
-                        <div className={styles.starLabel}>A (Action)</div>
+                        <div className={styles.starLabel}>
+                          <span className={styles.starLetter}>A</span>
+                          <span className={styles.starMeaning}>Action</span>
+                        </div>
                         <div className={styles.starText}>
-                          "각 도메인별로 서비스를 분리하고, API Gateway 패턴을 도입했습니다..."
+                          "각 도메인별로 서비스를 분리하고, API Gateway 패턴을 도입했습니다."
                         </div>
                       </div>
                       <div className={styles.starItem}>
-                        <div className={styles.starLabel}>R (Result)</div>
+                        <div className={styles.starLabel}>
+                          <span className={styles.starLetter}>R</span>
+                          <span className={styles.starMeaning}>Result</span>
+                        </div>
                         <div className={styles.starText}>
-                          "배포 주기가 2주에서 3일로 단축되었고, 장애 격리가 가능해졌습니다..."
+                          "배포 주기가 2주에서 3일로 단축되었고, 장애 격리가 가능해졌습니다."
                         </div>
                       </div>
                     </div>
@@ -995,8 +937,41 @@ function GrowthPlanV2Content() {
 
                   <div className={styles.answerSection}>
                     <div className={styles.answerTitle}>
-                      <AlertCircle size={20} />
-                      3. 예상 꼬리 질문 (3개)
+                      <Users size={20} />
+                      4. 페르소나별 모범 답변
+                    </div>
+                    <div className={styles.personaAnswers}>
+                      <div className={styles.personaCard + ' ' + styles.bigTech}>
+                        <div className={styles.personaHeader}>
+                          <Building2 size={18} />
+                          <span>빅테크 지원자</span>
+                        </div>
+                        <p className={styles.personaText}>
+                          "저희 팀은 일 평균 트래픽 500만 요청을 처리하는 시스템을 운영했습니다.
+                          모놀리식 구조에서 배포 시 전체 서비스 다운타임이 발생했고, 이를 해결하기 위해
+                          도메인 주도 설계를 기반으로 마이크로서비스로 전환했습니다.
+                          결과적으로 무중단 배포가 가능해지고 장애 격리율이 95%까지 향상되었습니다."
+                        </p>
+                      </div>
+                      <div className={styles.personaCard + ' ' + styles.unicorn}>
+                        <div className={styles.personaHeader}>
+                          <Zap size={18} />
+                          <span>유니콘 지원자</span>
+                        </div>
+                        <p className={styles.personaText}>
+                          "빠르게 성장하는 스타트업에서 개발 속도와 안정성의 균형이 중요했습니다.
+                          처음에는 빠른 개발을 위해 모놀리식으로 시작했지만, 팀이 10명으로 늘어나면서
+                          배포 충돌이 잦아졌습니다. 핵심 도메인부터 점진적으로 분리하여
+                          팀별 독립 배포가 가능해지고 개발 생산성이 2배 향상되었습니다."
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.answerSection}>
+                    <div className={styles.answerTitle}>
+                      <MessageSquare size={20} />
+                      5. 예상 꼬리 질문
                     </div>
                     <div className={styles.followUpQuestions}>
                       <div className={styles.followUpItem}>
@@ -1014,39 +989,12 @@ function GrowthPlanV2Content() {
                     </div>
                   </div>
 
-                  <div className={styles.answerSection}>
-                    <div className={styles.answerTitle}>
-                      <BookOpen size={20} />
-                      4. 핵심 키워드
-                    </div>
-                    <div className={styles.keywords}>
-                      <span className={styles.keyword}>API Gateway</span>
-                      <span className={styles.keyword}>Service Mesh</span>
-                      <span className={styles.keyword}>Event-Driven</span>
-                      <span className={styles.keyword}>Saga Pattern</span>
-                      <span className={styles.keyword}>Circuit Breaker</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.answerSection}>
-                    <div className={styles.answerTitle}>
-                      <Trophy size={20} />
-                      5. 실전 팁
-                    </div>
-                    <div className={styles.answerContent}>
-                      <strong>✓ 좋은 답변의 조건:</strong>
-                      <ul>
-                        <li>숫자로 말하기 (배포 주기 70% 단축, 장애 복구 시간 5분 → 30초)</li>
-                        <li>trade-off를 명확히 언급 (복잡도 증가 vs 확장성 향상)</li>
-                        <li>팀과의 협업 과정 포함</li>
-                      </ul>
-                      <strong>✗ 피해야 할 답변:</strong>
-                      <ul>
-                        <li>"요즘 유행이라서" "다른 회사도 다 쓰니까"</li>
-                        <li>기술 용어만 나열하고 맥락 없이</li>
-                        <li>단점은 언급 안 하고 장점만</li>
-                      </ul>
-                    </div>
+                  <div className={styles.emailFooter}>
+                    <a href="http://pf.kakao.com/_fxdxfTG" className={styles.emailFeedbackLink}>
+                      <MessageSquare size={16} />
+                      <span>Growth Plan이 도움이 되셨나요?<br/>피드백이나 궁금한 점 모두 카톡으로 편하게 알려주세요!</span>
+                    </a>
+                    <p className={styles.emailCopyright}>© 2025 QueryDaily Growth Plan by AsyncSite</p>
                   </div>
                 </div>
               </div>
@@ -1056,8 +1004,7 @@ function GrowthPlanV2Content() {
           <div className={styles.emailPreviewCta}>
             <p className={styles.emailPreviewText}>
               이렇게 <strong>매일 2번</strong>, <strong>20일간 총 40개의 질문</strong>을 받게 됩니다.<br/>
-              모든 이메일은 영구 보관되어 <strong>언제든 다시 확인</strong>할 수 있습니다.
-            </p>
+                          </p>
           </div>
         </section>
 
@@ -1077,8 +1024,8 @@ function GrowthPlanV2Content() {
                 <FileText size={24} className={styles.stepIcon} />
                 <h3 className={styles.stepTitle}>이력서 업로드</h3>
                 <p className={styles.stepDescription}>
-                  결제 후 이력서를 업로드하면 AI가 기술 스택, 프로젝트 경험,
-                  경력 수준을 분석하여 당신만의 프로필을 생성합니다.
+                  결제 후 이력서를 업로드하면 현직 시니어 개발자들이
+                  직접 검토하여 맞춤형 질문을 설계합니다.
                 </p>
               </div>
             </div>
@@ -1113,58 +1060,10 @@ function GrowthPlanV2Content() {
                 <Mail size={24} className={styles.stepIcon} />
                 <h3 className={styles.stepTitle}>매일 자동 발송</h3>
                 <p className={styles.stepDescription}>
-                  매일 오전 7시와 저녁 5시, 검증된 질문과 프리미엄 답변 가이드가
+                  매일 오전 7시와 오후 5시, 검증된 질문과 상세 해설이
                   이메일로 자동 발송됩니다.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section - 숫자로 보는 효과 */}
-        <section className={styles.statsSection}>
-          <h2 className={styles.sectionTitle}>
-            데이터가 증명하는 QueryDaily
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            실제 수치로 확인하는 성과
-          </p>
-
-          <div className={styles.statsGrid}>
-            <div className={styles.statCard}>
-              <div className={styles.statIcon}>
-                <Users size={40} />
-              </div>
-              <div className={styles.statNumber}>342명</div>
-              <div className={styles.statLabel}>수강생</div>
-              <p className={styles.statDesc}>이미 많은 분들이 합격의 기쁨을 경험했습니다</p>
-            </div>
-
-            <div className={styles.statCard}>
-              <div className={styles.statIcon}>
-                <Star size={40} />
-              </div>
-              <div className={styles.statNumber}>4.8/5.0</div>
-              <div className={styles.statLabel}>평균 만족도</div>
-              <p className={styles.statDesc}>127개의 리뷰로 검증된 품질</p>
-            </div>
-
-            <div className={styles.statCard}>
-              <div className={styles.statIcon}>
-                <Trophy size={40} />
-              </div>
-              <div className={styles.statNumber}>89%</div>
-              <div className={styles.statLabel}>면접 통과율</div>
-              <p className={styles.statDesc}>일반 준비 대비 3.2배 높은 합격률</p>
-            </div>
-
-            <div className={styles.statCard}>
-              <div className={styles.statIcon}>
-                <Calendar size={40} />
-              </div>
-              <div className={styles.statNumber}>40개</div>
-              <div className={styles.statLabel}>맞춤형 질문</div>
-              <p className={styles.statDesc}>20일간 매일 2회 발송</p>
             </div>
           </div>
         </section>
@@ -1223,13 +1122,13 @@ function GrowthPlanV2Content() {
                   <td>이력서 분석</td>
                   <td><X size={18} className={styles.xIcon} /></td>
                   <td><Check size={18} className={styles.checkIcon} /></td>
-                  <td className={styles.highlighted}><Check size={18} className={styles.checkIcon} /> (AI)</td>
+                  <td className={styles.highlighted}><Check size={18} className={styles.checkIcon} /></td>
                 </tr>
                 <tr>
-                  <td>언제든 복습</td>
+                  <td>영구 보관</td>
                   <td>△</td>
                   <td><X size={18} className={styles.xIcon} /></td>
-                  <td className={styles.highlighted}><Check size={18} className={styles.checkIcon} /> (이메일)</td>
+                  <td className={styles.highlighted}><Check size={18} className={styles.checkIcon} /></td>
                 </tr>
               </tbody>
             </table>
@@ -1419,75 +1318,6 @@ function GrowthPlanV2Content() {
           </div>
         </section>
 
-        {/* Plan Recommendation Section */}
-        <section className={styles.planRecommendation}>
-          <div className={styles.planRecommendationContainer}>
-            <h2 className={styles.sectionTitle}>
-              어떤 플랜이 나에게 맞을까?
-            </h2>
-            <p className={styles.sectionSubtitle}>
-              상황에 맞는 플랜을 선택하세요
-            </p>
-
-            <div className={styles.planCardsGrid}>
-              {/* 그로스 플랜 카드 */}
-              <div className={styles.planCard + ' ' + styles.recommended}>
-                <div className={styles.planCardTopBar}></div>
-                <div className={styles.planCardBadge}>RECOMMENDED</div>
-                <h3 className={styles.planCardTitle}>그로스 플랜</h3>
-                <ul className={styles.planCardList}>
-                  <li>
-                    <Check size={18} />
-                    <span>면접까지 <strong>1주일 이상</strong> 여유</span>
-                  </li>
-                  <li>
-                    <Check size={18} />
-                    <span><strong>모든 질문</strong> 빠짐없이 준비</span>
-                  </li>
-                  <li>
-                    <Check size={18} />
-                    <span>꼬리 질문까지 <strong>완벽 대비</strong></span>
-                  </li>
-                  <li>
-                    <Check size={18} />
-                    <span>이번 이직이 <strong>정말 중요</strong>한 분</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* 크리티컬 히트 카드 */}
-              <div className={styles.planCard}>
-                <div className={styles.planCardTopBar + ' ' + styles.secondary}></div>
-                <div className={styles.planCardBadge + ' ' + styles.secondary}>빠른 경험</div>
-                <h3 className={styles.planCardTitle}>크리티컬 히트</h3>
-                <ul className={styles.planCardList}>
-                  <li>
-                    <span className={styles.planBullet}>•</span>
-                    <span>면접이 <strong>3일 이내</strong>로 급한 분</span>
-                  </li>
-                  <li>
-                    <span className={styles.planBullet}>•</span>
-                    <span><strong>먼저 경험</strong>해보고 싶은 분</span>
-                  </li>
-                  <li>
-                    <span className={styles.planBullet}>•</span>
-                    <span>핵심 <strong>3개만</strong> 빠르게</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* 추천 메시지 */}
-            <div className={styles.planRecommendationMessage}>
-              <p>
-                <span className={styles.recommendQuestion}>고민된다면?</span>{' '}
-                <strong className={styles.recommendPlan}>그로스 플랜</strong>을 추천드립니다.<br/>
-                <span className={styles.recommendSubtext}>제대로 준비해서 한 번에 붙는 게 결국 더 빠릅니다.</span>
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* FAQ Section */}
         <section className={styles.faq}>
           <h2 className={styles.sectionTitle}>
@@ -1511,9 +1341,7 @@ function GrowthPlanV2Content() {
                   <p>
                     결제 후 30일 이내에 20일간의 질문 발송이 완료됩니다.
                     질문 발송 시작 시점을 직접 선택할 수 있으며, 한번 시작하면
-                    20일간 매일 자동으로 발송됩니다. 발송된 질문은 이메일로 영구 보관되므로
-                    언제든지 다시 확인할 수 있습니다.
-                  </p>
+                    20일간 매일 자동으로 발송됩니다.                   </p>
                 </div>
               )}
             </div>
@@ -1590,7 +1418,7 @@ function GrowthPlanV2Content() {
                 className={`${styles.faqQuestion} ${openFaq === 4 ? styles.active : ''}`}
                 onClick={() => toggleFaq(4)}
               >
-                <span>답변 가이드만 받고 질문은 스킵할 수 있나요?</span>
+                <span>상세 해설만 받고 질문은 스킵할 수 있나요?</span>
                 <ChevronDown
                   size={20}
                   className={`${styles.faqIcon} ${openFaq === 4 ? styles.rotated : ''}`}
@@ -1599,11 +1427,9 @@ function GrowthPlanV2Content() {
               {openFaq === 4 && (
                 <div className={styles.faqAnswer}>
                   <p>
-                    오전 7시에 질문이 발송되고, 저녁 5시에 해당 질문의 답변 가이드가 발송됩니다.
+                    오전 7시에 질문이 발송되고, 오후 5시에 해당 질문의 상세 해설이 발송됩니다.
                     질문을 먼저 스스로 고민해보는 것을 권장하지만, 시간이 부족하다면
-                    저녁 5시의 답변 가이드를 바로 확인하셔도 됩니다. 모든 이메일은 영구 보관되므로
-                    나중에 다시 확인하면서 학습할 수 있습니다.
-                  </p>
+                    오후 5시의 상세 해설을 바로 확인하셔도 됩니다.                   </p>
                 </div>
               )}
             </div>

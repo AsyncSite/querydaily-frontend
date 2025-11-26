@@ -84,8 +84,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
-  border-top: 1px solid #e5e7eb;
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-bg-tertiary);
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
   z-index: 999;
   padding: 1rem 0;
@@ -116,18 +116,18 @@
 
 .floatingPriceOriginal {
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
   text-decoration: line-through;
 }
 
 .floatingPriceCurrent {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .floatingCtaButton {
-  background: #3b82f6;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
   color: white;
   border: none;
   padding: 0.75rem 2rem;
@@ -137,10 +137,12 @@
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.3);
 }
 
 .floatingCtaButton:hover {
-  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(var(--color-accent-rgb), 0.4);
 }
 
 /* ===== Hero Section ===== */
@@ -174,7 +176,6 @@
   font-weight: 700;
   font-size: 0.875rem;
   box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-  animation: pulse 2s infinite;
 }
 
 .heroLiveBadge {
@@ -203,7 +204,7 @@
     transform: scale(1);
   }
   50% {
-    transform: scale(1.02);
+    transform: scale(1.01);
   }
 }
 
@@ -621,18 +622,18 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #3b82f6;
+  color: var(--color-secondary);
 }
 
 .statNumber {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .statLabel {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .heroPricing {
@@ -640,9 +641,9 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1.5rem;
-  background: #f9fafb;
+  background: var(--color-bg-secondary);
   border-radius: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-bg-tertiary);
 }
 
 .priceWrapper {
@@ -653,20 +654,20 @@
 
 .priceLabel {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   min-width: 60px;
 }
 
 .priceOriginal {
   font-size: 1.1rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
   text-decoration: line-through;
 }
 
 .priceCurrent {
   font-size: 2rem;
   font-weight: 800;
-  color: #3b82f6;
+  color: var(--color-secondary);
 }
 
 .discountBadge {
@@ -679,7 +680,7 @@
 }
 
 .heroCta {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
   color: white;
   border: none;
   padding: 1rem 2.5rem;
@@ -692,12 +693,12 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 16px rgba(var(--color-accent-rgb), 0.3);
 }
 
 .heroCta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 24px rgba(var(--color-accent-rgb), 0.4);
 }
 
 .refundNotice {
@@ -705,7 +706,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #059669;
+  color: var(--color-success);
   margin: 0;
 }
 
@@ -905,7 +906,7 @@
 .stepNumber {
   width: 48px;
   height: 48px;
-  background: #9ca3af;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -914,6 +915,7 @@
   font-size: 1.3rem;
   font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(var(--color-secondary-rgb), 0.3);
 }
 
 .stepContent {
@@ -921,20 +923,20 @@
 }
 
 .stepIcon {
-  color: #9ca3af;
+  color: var(--color-secondary);
   margin-bottom: 0.5rem;
 }
 
 .stepTitle {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text-primary);
   margin-bottom: 0.75rem;
 }
 
 .stepDescription {
   font-size: 0.95rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   line-height: 1.7;
 }
 
@@ -1049,10 +1051,11 @@
 }
 
 .faqItem {
-  background: white;
+  background: var(--color-bg-secondary);
   border-radius: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-bg-tertiary);
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .faqQuestion {
@@ -1068,21 +1071,21 @@
   transition: all 0.2s;
   font-size: 1rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
   text-align: left;
 }
 
 .faqQuestion:hover {
-  background: #f9fafb;
+  background: rgba(var(--color-accent-rgb), 0.05);
 }
 
 .faqQuestion.active {
-  background: #eff6ff;
-  color: #3b82f6;
+  background: rgba(var(--color-accent-rgb), 0.1);
+  color: var(--color-secondary);
 }
 
 .faqIcon {
-  color: #6b7280;
+  color: var(--color-text-muted);
   transition: transform 0.3s;
   flex-shrink: 0;
 }
@@ -1109,8 +1112,8 @@
 
 .faqAnswer p {
   font-size: 0.95rem;
-  color: #6b7280;
-  line-height: 1.7;
+  color: var(--color-text-secondary);
+  line-height: 1.9;
   margin: 0;
 }
 
@@ -2873,86 +2876,289 @@
   max-width: 100%;
   margin: 4rem 0;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(var(--color-accent-rgb), 0.05) 100%);
+  background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.03) 0%, rgba(var(--color-secondary-rgb), 0.05) 100%);
   border-radius: 24px;
-  border: 2px solid rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+}
+
+.urgencyHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.urgencyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(var(--color-accent-rgb), 0.1);
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 1.5rem;
+}
+
+.urgencyMainTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.urgencyHighlight {
+  color: var(--color-secondary);
+  position: relative;
+}
+
+.urgencySubtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.urgencySubtitle strong {
+  color: var(--color-text-primary);
 }
 
 .urgencyContent {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
 }
 
-.urgencyCard {
-  padding: 2.5rem;
+/* Timeline Styles */
+.urgencyTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.urgencyTimeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--color-secondary), rgba(var(--color-accent-rgb), 0.3), #ef4444);
+}
+
+.timelineItem {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  position: relative;
+}
+
+.timelineDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(var(--color-accent-rgb), 0.3);
+  border: 3px solid var(--color-bg-primary);
+  position: absolute;
+  left: -2rem;
+  top: 1.75rem;
+  z-index: 1;
+}
+
+.timelineNow .timelineDot {
+  width: 20px;
+  height: 20px;
+  background: var(--color-secondary);
+  left: calc(-2rem - 2px);
+  box-shadow: 0 0 0 4px rgba(var(--color-secondary-rgb), 0.2);
+}
+
+.timelinePulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.timelineDanger .timelineDot {
+  background: #ef4444;
+}
+
+.timelineContent {
+  flex: 1;
+  padding: 1.5rem;
   background: var(--color-bg-secondary);
   border-radius: 16px;
-  border: 2px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.1);
   transition: all 0.3s ease;
 }
 
-.urgencyCard:hover {
-  transform: translateY(-4px);
-  border-color: rgba(239, 68, 68, 0.4);
-  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
+.timelineNow .timelineContent {
+  background: linear-gradient(135deg, rgba(var(--color-secondary-rgb), 0.08) 0%, rgba(var(--color-accent-rgb), 0.05) 100%);
+  border-color: rgba(var(--color-secondary-rgb), 0.3);
 }
 
-.urgencyIcon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 0 1.5rem 0;
-  color: white;
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+.timelineDanger .timelineContent {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.2);
 }
 
-.urgencyTitle {
-  font-size: 1.2rem;
+.timelineLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.timelineNow .timelineLabel {
+  color: var(--color-secondary);
+}
+
+.timelineDanger .timelineLabel {
+  color: #ef4444;
+}
+
+.timelineTitle {
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-text-primary);
-  margin: 0 0 1.5rem 0;
-  line-height: 1.4;
+  margin-bottom: 0.5rem;
 }
 
-.urgencyList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.timelineDesc {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* CTA Card Styles */
+.urgencyCtaCard {
+  background: var(--color-bg-secondary);
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 2px solid rgba(var(--color-secondary-rgb), 0.2);
+  box-shadow: 0 8px 32px rgba(var(--color-accent-rgb), 0.1);
+}
+
+.urgencyCtaHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+  border-radius: 100px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  width: fit-content;
+}
+
+.urgencyPriceSection {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.1);
+}
+
+.urgencyPriceOriginal {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  margin-bottom: 0.5rem;
+}
+
+.urgencyPriceCurrent {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+
+.urgencyDiscount {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: rgba(var(--color-secondary-rgb), 0.15);
+  color: var(--color-secondary);
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.urgencyBenefits {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-.urgencyList li {
+.urgencyBenefitItem {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
-  padding: 1rem;
-  background: rgba(var(--color-accent-rgb), 0.03);
-  border-radius: 10px;
-  transition: all 0.2s ease;
-}
-
-.urgencyList li:hover {
-  background: rgba(var(--color-accent-rgb), 0.08);
-}
-
-.urgencyList li svg {
-  color: #ef4444;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
-}
-
-.urgencyList li span {
   font-size: 0.95rem;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+}
+
+.urgencyBenefitItem svg {
+  color: var(--color-secondary);
+  flex-shrink: 0;
+}
+
+.urgencyCtaButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem 2rem;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(var(--color-secondary-rgb), 0.3);
+}
+
+.urgencyCtaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(var(--color-secondary-rgb), 0.4);
+}
+
+.urgencyCtaNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.urgencyCtaNote svg {
+  color: var(--color-accent);
 }
 
 @media (max-width: 968px) {
@@ -2970,6 +3176,30 @@
 
   .urgencyContent {
     grid-template-columns: 1fr;
+  }
+
+  .urgencyMainTitle {
+    font-size: 1.6rem;
+  }
+
+  .urgencyTimeline {
+    padding-left: 1.5rem;
+  }
+
+  .timelineDot {
+    left: -1.5rem;
+  }
+
+  .timelineNow .timelineDot {
+    left: calc(-1.5rem - 2px);
+  }
+
+  .urgencyCtaCard {
+    padding: 2rem;
+  }
+
+  .urgencyPriceCurrent {
+    font-size: 2.5rem;
   }
 }
 
@@ -3353,11 +3583,11 @@
 
 /* Email Question Box (오후 5시 이메일 상단 질문 박스) */
 .emailQuestionBox {
-  background: #F8F9FA;
+  background: rgba(var(--color-accent-rgb), 0.05);
   padding: 1.25rem;
   border-radius: 10px;
   margin-bottom: 1.5rem;
-  border-left: 4px solid #FF8C00;
+  border-left: 4px solid var(--color-secondary);
 }
 
 .emailQuestionLabel {
@@ -3366,7 +3596,7 @@
   gap: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #FF8C00;
+  color: var(--color-secondary);
   margin-bottom: 0.75rem;
 }
 
@@ -3375,34 +3605,15 @@
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.6;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 /* Email Footer */
 .emailFooter {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--color-bg-tertiary);
   text-align: center;
-}
-
-.emailFeedbackLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #00B388;
-  text-decoration: none;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  transition: opacity 0.2s;
-}
-
-.emailFeedbackLink:hover {
-  opacity: 0.8;
-}
-
-.emailFeedbackLink span {
-  text-align: left;
 }
 
 .emailCopyright {

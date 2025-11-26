@@ -2217,7 +2217,7 @@ function LandingPageContent() {
                 빠르게 답변드릴게요.
               </p>
               <a
-                href="http://pf.kakao.com/_fxdxfTG"
+                href="http://pf.kakao.com/_hWMtn"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -2297,7 +2297,7 @@ function LandingPageContent() {
                     </svg>
                   </a>
                   <a
-                    href="http://pf.kakao.com/_fxdxfTG"
+                    href="http://pf.kakao.com/_hWMtn"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -2350,7 +2350,7 @@ function LandingPageContent() {
                   <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
                     <a href="#how-it-works" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용방법</a>
                     <a href="#faq" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>자주 묻는 질문</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>1:1 상담</a>
+                    <a href="http://pf.kakao.com/_hWMtn" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>1:1 상담</a>
                   </div>
                 </div>
 
@@ -2377,7 +2377,7 @@ function LandingPageContent() {
                   }}>Contact</h4>
                   <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
                     <a href="mailto:contact@querydaily.com" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>contact@querydaily.com</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>카카오톡 상담</a>
+                    <a href="http://pf.kakao.com/_hWMtn" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>카카오톡 상담</a>
                   </div>
                 </div>
               </div>

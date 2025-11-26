@@ -110,7 +110,7 @@ function GrowthPlanV2Content() {
             </div>
 
             <button className={styles.sidebarCtaButton}>
-              합격 준비 시작하기
+              이력서 업로드
               <ArrowRight size={18} />
             </button>
 
@@ -226,7 +226,7 @@ function GrowthPlanV2Content() {
                 </div>
                 <div className={styles.ctaInfoItem}>
                   <Clock size={16} />
-                  <span>30일 이내 시작 보장</span>
+                  <span>7일 이내 시작 보장</span>
                 </div>
               </div>
             </div>
@@ -451,6 +451,74 @@ function GrowthPlanV2Content() {
           </div>
         </section>
 
+        {/* Common Mistakes - 흔한 실수 */}
+        <section className={styles.commonMistakes}>
+          <h2 className={styles.sectionTitle}>
+            면접 준비, 이렇게 하면 실패합니다
+          </h2>
+          <p className={styles.sectionSubtitle}>
+            이미 검증된 올바른 방법으로 준비하세요
+          </p>
+
+          <div className={styles.mistakesGrid}>
+            <div className={styles.mistakeCard}>
+              <div className={styles.mistakeHeader}>
+                <X size={24} className={styles.xIcon} />
+                <h3>일반 모범 답안 달달 외우기</h3>
+              </div>
+              <p className={styles.mistakeDesc}>
+                면접관은 외운 티 바로 알아챕니다. 실제 경험이 없는 답변은 티가 납니다.
+              </p>
+              <div className={styles.mistakeSolution}>
+                <Check size={18} className={styles.checkIcon} />
+                <span><strong>해결:</strong> 내 경험 기반 스토리로 만들어야 합니다</span>
+              </div>
+            </div>
+
+            <div className={styles.mistakeCard}>
+              <div className={styles.mistakeHeader}>
+                <X size={24} className={styles.xIcon} />
+                <h3>프로젝트는 많은데 설명을 못함</h3>
+              </div>
+              <p className={styles.mistakeDesc}>
+                "뭐 했는지"만 나열하고 "왜, 어떻게"를 못 말하면 설득력이 없습니다.
+              </p>
+              <div className={styles.mistakeSolution}>
+                <Check size={18} className={styles.checkIcon} />
+                <span><strong>해결:</strong> STAR 기법으로 구조화된 답변 준비</span>
+              </div>
+            </div>
+
+            <div className={styles.mistakeCard}>
+              <div className={styles.mistakeHeader}>
+                <X size={24} className={styles.xIcon} />
+                <h3>메인 질문만 준비하고 꼬리 질문 무시</h3>
+              </div>
+              <p className={styles.mistakeDesc}>
+                진짜 실력은 꼬리 질문에서 드러납니다. 여기서 대부분 탈락합니다.
+              </p>
+              <div className={styles.mistakeSolution}>
+                <Check size={18} className={styles.checkIcon} />
+                <span><strong>해결:</strong> 꼬리 질문까지 미리 준비해야 합니다</span>
+              </div>
+            </div>
+
+            <div className={styles.mistakeCard}>
+              <div className={styles.mistakeHeader}>
+                <X size={24} className={styles.xIcon} />
+                <h3>벼락치기로 전날 밤 준비</h3>
+              </div>
+              <p className={styles.mistakeDesc}>
+                단기 기억은 실전에서 안 나옵니다. 긴장하면 다 날아갑니다.
+              </p>
+              <div className={styles.mistakeSolution}>
+                <Check size={18} className={styles.checkIcon} />
+                <span><strong>해결:</strong> 20일간 매일 조금씩, 장기 기억으로 내재화</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Before/After Section */}
         <section className={styles.beforeAfter}>
           <div className={styles.beforeAfterHeader}>
@@ -608,7 +676,7 @@ function GrowthPlanV2Content() {
                 <p>준비된 사람은 떨지 않습니다. 20일 후, 당신도 그렇게 됩니다.</p>
               </div>
               <button className={styles.ctaBoxButton}>
-                지금 합격 준비 시작하기
+                이력서 업로드
                 <ArrowRight size={20} />
               </button>
             </div>
@@ -824,7 +892,8 @@ function GrowthPlanV2Content() {
                   </div>
                 </div>
               </div>
-ㅣ            </div>{/* 오후 5시 이메일 */}
+            </div>
+            {/* 오후 5시 이메일 */}
             <div className={styles.emailTimeSlot}>
               <div className={styles.emailTime}>
                 <Clock size={24} />
@@ -837,7 +906,7 @@ function GrowthPlanV2Content() {
                     <Mail size={18} />
                     <div>
                       <div className={styles.emailSender}>QueryDaily</div>
-                      <div className={styles.emailAddress}>answer@querydaily.com</div>
+                      <div className={styles.emailAddress}>official.querydaily@gmail.com</div>
                     </div>
                   </div>
                   <div className={styles.emailBadge + ' ' + styles.premium}>프리미엄 가이드</div>
@@ -990,10 +1059,6 @@ function GrowthPlanV2Content() {
                   </div>
 
                   <div className={styles.emailFooter}>
-                    <a href="http://pf.kakao.com/_fxdxfTG" className={styles.emailFeedbackLink}>
-                      <MessageSquare size={16} />
-                      <span>Growth Plan이 도움이 되셨나요?<br/>피드백이나 궁금한 점 모두 카톡으로 편하게 알려주세요!</span>
-                    </a>
                     <p className={styles.emailCopyright}>© 2025 QueryDaily Growth Plan by AsyncSite</p>
                   </div>
                 </div>
@@ -1135,74 +1200,6 @@ function GrowthPlanV2Content() {
           </div>
         </section>
 
-        {/* Common Mistakes - 흔한 실수 */}
-        <section className={styles.commonMistakes}>
-          <h2 className={styles.sectionTitle}>
-            면접 준비, 이렇게 하면 실패합니다
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            이미 검증된 올바른 방법으로 준비하세요
-          </p>
-
-          <div className={styles.mistakesGrid}>
-            <div className={styles.mistakeCard}>
-              <div className={styles.mistakeHeader}>
-                <X size={24} className={styles.xIcon} />
-                <h3>실수 1: 일반 모범 답안 달달 외우기</h3>
-              </div>
-              <p className={styles.mistakeDesc}>
-                면접관은 외운 티 바로 알아챕니다. 실제 경험이 없는 답변은 티가 납니다.
-              </p>
-              <div className={styles.mistakeSolution}>
-                <Check size={18} className={styles.checkIcon} />
-                <span><strong>해결:</strong> 내 경험 기반 스토리로 만들어야 합니다</span>
-              </div>
-            </div>
-
-            <div className={styles.mistakeCard}>
-              <div className={styles.mistakeHeader}>
-                <X size={24} className={styles.xIcon} />
-                <h3>실수 2: 프로젝트는 많은데 설명을 못함</h3>
-              </div>
-              <p className={styles.mistakeDesc}>
-                "뭐 했는지"만 나열하고 "왜, 어떻게"를 못 말하면 설득력이 없습니다.
-              </p>
-              <div className={styles.mistakeSolution}>
-                <Check size={18} className={styles.checkIcon} />
-                <span><strong>해결:</strong> STAR 기법으로 구조화된 답변 준비</span>
-              </div>
-            </div>
-
-            <div className={styles.mistakeCard}>
-              <div className={styles.mistakeHeader}>
-                <X size={24} className={styles.xIcon} />
-                <h3>실수 3: 메인 질문만 준비하고 꼬리 질문 무시</h3>
-              </div>
-              <p className={styles.mistakeDesc}>
-                진짜 실력은 꼬리 질문에서 드러납니다. 여기서 대부분 탈락합니다.
-              </p>
-              <div className={styles.mistakeSolution}>
-                <Check size={18} className={styles.checkIcon} />
-                <span><strong>해결:</strong> 꼬리 질문까지 미리 준비해야 합니다</span>
-              </div>
-            </div>
-
-            <div className={styles.mistakeCard}>
-              <div className={styles.mistakeHeader}>
-                <X size={24} className={styles.xIcon} />
-                <h3>실수 4: 벼락치기로 전날 밤 준비</h3>
-              </div>
-              <p className={styles.mistakeDesc}>
-                단기 기억은 실전에서 안 나옵니다. 긴장하면 다 날아갑니다.
-              </p>
-              <div className={styles.mistakeSolution}>
-                <Check size={18} className={styles.checkIcon} />
-                <span><strong>해결:</strong> 20일간 매일 조금씩, 장기 기억으로 내재화</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Guarantee Section - 리스크 제거 */}
         <section className={styles.guarantee}>
           <h2 className={styles.sectionTitle}>
@@ -1257,63 +1254,99 @@ function GrowthPlanV2Content() {
 
         {/* Urgency Section - 긴급성 */}
         <section className={styles.urgency}>
-          <h2 className={styles.sectionTitle}>
-            지금이 최적의 타이밍입니다
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            면접 준비는 시간이 필요합니다
-          </p>
+          <div className={styles.urgencyHeader}>
+            <div className={styles.urgencyBadge}>
+              <Clock size={16} />
+              <span>타이밍이 중요합니다</span>
+            </div>
+            <h2 className={styles.urgencyMainTitle}>
+              면접 준비, <span className={styles.urgencyHighlight}>미루면 늦습니다</span>
+            </h2>
+            <p className={styles.urgencySubtitle}>
+              합격한 사람들의 공통점은 단 하나, <strong>일찍 시작했다</strong>는 것입니다
+            </p>
+          </div>
 
           <div className={styles.urgencyContent}>
-            <div className={styles.urgencyCard}>
-              <div className={styles.urgencyIcon}>
-                <Clock size={48} />
+            {/* 왼쪽: 타임라인 */}
+            <div className={styles.urgencyTimeline}>
+              <div className={styles.timelineItem + ' ' + styles.timelineNow}>
+                <div className={styles.timelineDot}>
+                  <div className={styles.timelinePulse}></div>
+                </div>
+                <div className={styles.timelineContent}>
+                  <div className={styles.timelineLabel}>지금 시작하면</div>
+                  <div className={styles.timelineTitle}>20일 후, 면접장에서 자신감</div>
+                  <div className={styles.timelineDesc}>
+                    모든 예상 질문 준비 완료 + 꼬리질문까지 대비
+                  </div>
+                </div>
               </div>
-              <h3 className={styles.urgencyTitle}>면접까지 시간이 있나요?</h3>
-              <ul className={styles.urgencyList}>
-                <li>
-                  <ChevronRight size={18} />
-                  <span><strong>3일 남았다면:</strong> 크리티컬 히트 (핵심 3개)</span>
-                </li>
-                <li>
-                  <ChevronRight size={18} />
-                  <span><strong>1주일+ 남았다면:</strong> 그로스 플랜 (BEST)</span>
-                </li>
-              </ul>
+
+              <div className={styles.timelineItem}>
+                <div className={styles.timelineDot}></div>
+                <div className={styles.timelineContent}>
+                  <div className={styles.timelineLabel}>1주일 뒤 시작하면</div>
+                  <div className={styles.timelineTitle}>핵심 질문만 겨우 준비</div>
+                  <div className={styles.timelineDesc}>
+                    꼬리질문 대비 불가, 불안한 상태로 면접
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.timelineItem + ' ' + styles.timelineDanger}>
+                <div className={styles.timelineDot}></div>
+                <div className={styles.timelineContent}>
+                  <div className={styles.timelineLabel}>면접 직전 시작하면</div>
+                  <div className={styles.timelineTitle}>준비 없이 면접장 입장</div>
+                  <div className={styles.timelineDesc}>
+                    "아... 그때 시작할 걸" 후회
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className={styles.urgencyCard}>
-              <div className={styles.urgencyIcon}>
-                <Flame size={48} />
+            {/* 오른쪽: CTA 카드 */}
+            <div className={styles.urgencyCtaCard}>
+              <div className={styles.urgencyCtaHeader}>
+                <Zap size={24} />
+                <span>오픈 특가 진행 중</span>
               </div>
-              <h3 className={styles.urgencyTitle}>특별 할인은 언제 끝날지 모릅니다</h3>
-              <ul className={styles.urgencyList}>
-                <li>
-                  <ChevronRight size={18} />
-                  <span>현재 54% 할인 중 (₩106,000 → ₩49,000)</span>
-                </li>
-                <li>
-                  <ChevronRight size={18} />
-                  <span>조기 종료 가능</span>
-                </li>
-              </ul>
-            </div>
 
-            <div className={styles.urgencyCard}>
-              <div className={styles.urgencyIcon}>
-                <Users size={48} />
+              <div className={styles.urgencyPriceSection}>
+                <div className={styles.urgencyPriceOriginal}>₩106,000</div>
+                <div className={styles.urgencyPriceCurrent}>₩49,000</div>
+                <div className={styles.urgencyDiscount}>54% 할인</div>
               </div>
-              <h3 className={styles.urgencyTitle}>이미 342명이 준비하고 있습니다</h3>
-              <ul className={styles.urgencyList}>
-                <li>
-                  <ChevronRight size={18} />
-                  <span>경쟁자들은 이미 시작했습니다</span>
-                </li>
-                <li>
-                  <ChevronRight size={18} />
-                  <span>당신은요?</span>
-                </li>
-              </ul>
+
+              <div className={styles.urgencyBenefits}>
+                <div className={styles.urgencyBenefitItem}>
+                  <Check size={18} />
+                  <span>20일간 40개 맞춤 질문</span>
+                </div>
+                <div className={styles.urgencyBenefitItem}>
+                  <Check size={18} />
+                  <span>STAR 기법 상세 해설</span>
+                </div>
+                <div className={styles.urgencyBenefitItem}>
+                  <Check size={18} />
+                  <span>꼬리질문 완벽 대비</span>
+                </div>
+                <div className={styles.urgencyBenefitItem}>
+                  <Shield size={18} />
+                  <span>첫 질문 전 100% 환불</span>
+                </div>
+              </div>
+
+              <button className={styles.urgencyCtaButton}>
+                지금 바로 시작하기
+                <ArrowRight size={20} />
+              </button>
+
+              <div className={styles.urgencyCtaNote}>
+                <Clock size={14} />
+                <span>결제 후 7일 이내 시작 보장</span>
+              </div>
             </div>
           </div>
         </section>
@@ -1339,9 +1372,12 @@ function GrowthPlanV2Content() {
               {openFaq === 0 && (
                 <div className={styles.faqAnswer}>
                   <p>
-                    결제 후 30일 이내에 20일간의 질문 발송이 완료됩니다.
-                    질문 발송 시작 시점을 직접 선택할 수 있으며, 한번 시작하면
-                    20일간 매일 자동으로 발송됩니다.                   </p>
+                    결제 후 7일 이내에 20일간의 질문 발송이 완료됩니다.
+                    <br /><br />
+                    질문 발송 시작 시점을 직접 선택할 수 있으며,
+                    <br />
+                    한번 시작하면 20일간 매일 자동으로 발송됩니다.
+                  </p>
                 </div>
               )}
             </div>
@@ -1360,10 +1396,11 @@ function GrowthPlanV2Content() {
               {openFaq === 1 && (
                 <div className={styles.faqAnswer}>
                   <p>
-                    PDF, DOCX, TXT 형식을 지원합니다. 가장 최신 버전의 이력서를
-                    업로드해주시면 AI가 자동으로 분석하여 기술 스택, 프로젝트 경험,
-                    경력 수준을 파악합니다. 이력서는 안전하게 암호화되어 저장되며,
-                    질문 생성에만 사용됩니다.
+                    PDF 형식을 지원합니다.
+                    <br /><br />
+                    가장 최신 버전의 이력서를 업로드해주시면 현직 시니어 개발자들이 직접 분석하고 확인하여 기술 스택, 프로젝트 경험, 경력 수준을 파악합니다.
+                    <br /><br />
+                    이력서는 안전하게 암호화되어 저장되며, 질문 생성에만 사용됩니다.
                   </p>
                 </div>
               )}
@@ -1384,7 +1421,9 @@ function GrowthPlanV2Content() {
                 <div className={styles.faqAnswer}>
                   <p>
                     첫 질문 발송 전에는 100% 환불이 가능합니다.
+                    <br /><br />
                     질문 발송이 시작된 이후에는 남은 일수에 대해 일할 계산하여 환불해드립니다.
+                    <br /><br />
                     예를 들어 20일 중 10일간 질문을 받으셨다면, 남은 10일에 해당하는 금액을 환불받으실 수 있습니다.
                   </p>
                 </div>
@@ -1405,9 +1444,11 @@ function GrowthPlanV2Content() {
               {openFaq === 3 && (
                 <div className={styles.faqAnswer}>
                   <p>
-                    모든 질문은 5가지 품질 기준(기술 정확성, 통찰력, 공정성, 실무 관련성, 독창성)으로
-                    검증되지만, 만약 이력서와 맞지 않는 질문이 발송된 경우 고객센터로 문의해주시면
-                    해당 질문을 재생성하여 발송해드립니다. 품질에 자신이 있기 때문에 이런 정책을 운영하고 있습니다.
+                    모든 질문은 5가지 품질 기준(기술 정확성, 통찰력, 공정성, 실무 관련성, 독창성)으로 검증됩니다.
+                    <br /><br />
+                    만약 이력서와 맞지 않는 질문이 발송된 경우 고객센터로 문의해주시면 해당 질문을 재생성하여 발송해드립니다.
+                    <br /><br />
+                    품질에 자신이 있기 때문에 이런 정책을 운영하고 있습니다.
                   </p>
                 </div>
               )}
@@ -1428,55 +1469,43 @@ function GrowthPlanV2Content() {
                 <div className={styles.faqAnswer}>
                   <p>
                     오전 7시에 질문이 발송되고, 오후 5시에 해당 질문의 상세 해설이 발송됩니다.
-                    질문을 먼저 스스로 고민해보는 것을 권장하지만, 시간이 부족하다면
-                    오후 5시의 상세 해설을 바로 확인하셔도 됩니다.                   </p>
+                    <br /><br />
+                    질문을 먼저 스스로 고민해보는 것을 권장하지만, 시간이 부족하다면 오후 5시의 상세 해설을 바로 확인하셔도 됩니다.
+                  </p>
                 </div>
               )}
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
+        {/* Final Message */}
         <section className={styles.finalCta}>
           <div className={styles.finalCtaContent}>
             <h2 className={styles.finalCtaTitle}>
-              20일 후, 면접장에서 자신감 넘치는 당신을 만나세요
+              지금 이 순간, 당신은 이미 변하고 있습니다
             </h2>
-            <p className={styles.finalCtaSubtitle}>
-              매일 한 걸음씩, 합격에 가까워지는 성장을 경험하세요
+            <p className={styles.finalCtaSubtitle} style={{
+              fontSize: '1.1rem',
+              lineHeight: '1.9',
+              maxWidth: '600px',
+              margin: '0 auto',
+              opacity: 0.9
+            }}>
+              면접이 두려운 건 당연합니다.<br />
+              누구나 처음은 떨리니까요.<br /><br />
+
+              하지만 20일 뒤, 면접장 문을 열고 들어가는 당신은<br />
+              오늘의 당신과 다른 사람일 겁니다.<br /><br />
+
+              &ldquo;이 질문, 나 준비했어.&rdquo;<br />
+              그 한마디가 입 밖으로 나올 때의 자신감.<br /><br />
+
+              그게 바로 우리가 드리고 싶은 선물입니다.<br /><br />
+
+              <strong style={{ color: 'var(--color-accent)' }}>
+                당신의 이야기는, 충분히 가치 있습니다.
+              </strong>
             </p>
-
-            <div className={styles.finalPricing}>
-              <div className={styles.finalPriceBox}>
-                <div className={styles.finalPriceLabel}>정가</div>
-                <div className={styles.finalPriceOriginal}>₩106,000</div>
-              </div>
-              <div className={styles.finalArrow}>→</div>
-              <div className={styles.finalPriceBox}>
-                <div className={styles.finalPriceLabel}>특별가 (54% 할인)</div>
-                <div className={styles.finalPriceCurrent}>₩49,000</div>
-              </div>
-            </div>
-
-            <button className={styles.finalCtaButton}>
-              지금 시작하기
-              <ArrowRight size={20} />
-            </button>
-
-            <div className={styles.finalBenefits}>
-              <div className={styles.finalBenefit}>
-                <Clock size={16} />
-                <span>30일 이내 시작 보장</span>
-              </div>
-              <div className={styles.finalBenefit}>
-                <Shield size={16} />
-                <span>100% 환불 보장</span>
-              </div>
-              <div className={styles.finalBenefit}>
-                <Users size={16} />
-                <span>342명의 수강생</span>
-              </div>
-            </div>
           </div>
         </section>
 

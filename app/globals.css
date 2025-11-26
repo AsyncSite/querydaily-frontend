@@ -86,6 +86,37 @@
     line-height: 1.6;
     overflow-x: hidden;
   }
+
+  /* Mobile Responsive Global Styles */
+  @media (max-width: 768px) {
+    /* Ensure text doesn't overflow */
+    h1, h2, h3, h4, h5, h6 {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Better touch targets */
+    button,
+    a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Smooth font scaling */
+    body {
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+  }
+
+  /* High DPI displays (Retina) */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
 }
 
 @layer utilities {

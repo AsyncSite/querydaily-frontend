@@ -414,7 +414,7 @@ function LandingPageContent() {
               {/* 고민 3 */}
               <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
                 <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"어떻게 답해야 할지 모르겠어요"</p>
-                <p style={{fontSize: '0.9rem', opacity: 0.7}}>STAR 기법? 들어는 봤는데 적용이 안 됨</p>
+                <p style={{fontSize: '0.9rem', opacity: 0.7}}>답변 구조는 어떻게 짜야 하는지 막막함</p>
               </div>
 
               {/* 고민 4 */}
@@ -943,7 +943,7 @@ function LandingPageContent() {
             {/* Keyword Cloud */}
             <div className={styles.keywordCloud}>
               <span className={styles.keyword} data-size="xxl">이력서 기반 질문</span>
-              <span className={styles.keyword} data-size="xl">STAR 구조화</span>
+              <span className={styles.keyword} data-size="xl">답변 구조화</span>
               <span className={styles.keyword} data-size="lg">모범 답변 제공</span>
               <span className={styles.keyword} data-size="xxl">실전 같은 질문</span>
               <span className={styles.keyword} data-size="md">체계적 정리</span>
@@ -1210,7 +1210,7 @@ function LandingPageContent() {
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureCheck}>✓</span>
-                    <span>어떻게 답할지 막막할 때, STAR 가이드가 알려줘요</span>
+                    <span>어떻게 답할지 막막할 때, 답변 가이드가 알려줘요</span>
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureCheck}>✓</span>
@@ -1223,26 +1223,15 @@ function LandingPageContent() {
                   <span className={styles.priceOriginal}>정가 ₩106,000</span>
                 </div>
 
-                <div className={styles.buttonGroup}>
-                  <button
-                    className={`${styles.planBtn} ${styles.featured}`}
-                    onClick={() => {
-                      setSelectedPurchaseProduct('growth-plan');
-                      setPurchaseModalOpen(true);
-                      setPurchaseModalStep(1);
-                    }}
-                  >
-                    흔들리지 않는 면접 준비하기
-                  </button>
-                  <button
-                    className={styles.detailBtn}
-                    onClick={() => {
-                      router.push('/products/growth-plan');
-                    }}
-                  >
-                    상세 보기
-                  </button>
-                </div>
+                <button
+                  className={`${styles.planBtn} ${styles.featured}`}
+                  onClick={() => {
+                    router.push('/products/growth-plan');
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  상세 보기
+                </button>
 
                 <p style={{
                   margin: 0,
@@ -1294,26 +1283,15 @@ function LandingPageContent() {
                   <span className={styles.priceOriginal}>정가 ₩15,900</span>
                 </div>
 
-                <div className={styles.buttonGroup}>
-                  <button
-                    className={styles.planBtn}
-                    onClick={() => {
-                      setSelectedPurchaseProduct('critical-hit');
-                      setPurchaseModalOpen(true);
-                      setPurchaseModalStep(1);
-                    }}
-                  >
-                    오늘 준비 시작하기
-                  </button>
-                  <button
-                    className={styles.detailBtn}
-                    onClick={() => {
-                      router.push('/products/critical-hit');
-                    }}
-                  >
-                    상세 보기
-                  </button>
-                </div>
+                <button
+                  className={styles.planBtn}
+                  onClick={() => {
+                    router.push('/products/critical-hit');
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  상세 보기
+                </button>
 
                 <p style={{
                   margin: 0,

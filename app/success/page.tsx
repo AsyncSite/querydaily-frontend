@@ -2,7 +2,15 @@
 
 import { Suspense } from 'react';
 import styles from './page.module.css';
-import { trackExternalLink } from '@/components/GoogleAnalytics';
+import { trackEvent } from '@/lib/analytics';
+
+// Track external link clicks
+const trackExternalLink = (label: string) => {
+  trackEvent('click' as never, {
+    event_category: 'external_link',
+    event_label: label,
+  } as never);
+};
 
 function SuccessContent() {
 

@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { products } from '../data';
 import styles from './page.module.css';
 import { submitBetaApplication, createOrder } from '@/lib/api';
+import { useProductDetailAnalytics } from '@/hooks/useProductDetailAnalytics';
+import { EngagementTracker } from '@/components/analytics';
+import type { ProductId, TriggerLocation } from '@/lib/analytics';
 import {
   FileText,
   Bot,
@@ -81,6 +84,13 @@ export default function ProductDetailPage() {
 
   const product = products.find(p => p.id === productId);
 
+  // GA Analytics - only track if product exists
+  const analytics = useProductDetailAnalytics({
+    id: productId as ProductId,
+    name: product?.name || '',
+    price: product?.priceCurrent || 0,
+  });
+
   const handleCardPayment = async () => {
     try {
       setIsSubmitting(true);
@@ -112,7 +122,7 @@ export default function ProductDetailPage() {
         return;
       }
 
-      // 주문 정보 저장
+      // 주문 정보 저장 (purchaseSource: 'product_detail' - GA 추적용)
       const orderInfo = {
         orderId: response.data.orderId,
         product: selectedPurchaseProduct || '',
@@ -121,6 +131,7 @@ export default function ProductDetailPage() {
         email: purchaseEmail,
         name: purchaseName,
         phone: purchasePhone || '',
+        purchaseSource: 'product_detail', // GA4 purchase 이벤트 추적용
       };
       localStorage.setItem('orderData', JSON.stringify(orderInfo));
 
@@ -187,6 +198,9 @@ export default function ProductDetailPage() {
 
   return (
     <>
+      {/* Engagement Tracking (Scroll + Dwell Time) */}
+      <EngagementTracker pageType="product_detail" productId={productId as ProductId} />
+
       {/* Fixed CTA - 항상 보이는 CTA */}
       <div className={styles.fixedCta}>
         <div className={styles.fixedCtaContainer}>
@@ -203,6 +217,8 @@ export default function ProductDetailPage() {
             className={styles.fixedCtaButton}
             disabled={!product.available}
             onClick={() => {
+              analytics.trackFixedCTA();
+              analytics.trackCheckoutStart('fixed');
               setSelectedPurchaseProduct(productId);
               setPurchaseModalOpen(true);
               setPurchaseModalStep(1);
@@ -257,6 +273,8 @@ export default function ProductDetailPage() {
               className={styles.purchaseBtn}
               disabled={!product.available}
               onClick={() => {
+                analytics.trackHeroCTA();
+                analytics.trackCheckoutStart('hero');
                 setSelectedPurchaseProduct(productId);
                 setPurchaseModalOpen(true);
                 setPurchaseModalStep(1);
@@ -695,6 +713,8 @@ export default function ProductDetailPage() {
             className={styles.purchaseBtn}
             disabled={!product.available}
             onClick={() => {
+              analytics.trackFooterCTA();
+              analytics.trackCheckoutStart('footer');
               setSelectedPurchaseProduct(productId);
               setPurchaseModalOpen(true);
               setPurchaseModalStep(1);
@@ -708,11 +728,17 @@ export default function ProductDetailPage() {
 
       {/* Purchase Modal */}
       {purchaseModalOpen && (
-        <div className={styles.modalOverlay} onClick={() => setPurchaseModalOpen(false)}>
+        <div className={styles.modalOverlay} onClick={() => {
+          analytics.trackPurchaseModalClose(purchaseModalStep, 'outside_click');
+          setPurchaseModalOpen(false);
+        }}>
           <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
             <button
               className={styles.modalClose}
-              onClick={() => setPurchaseModalOpen(false)}
+              onClick={() => {
+                analytics.trackPurchaseModalClose(purchaseModalStep, 'user_close');
+                setPurchaseModalOpen(false);
+              }}
               aria-label="Close modal"
             >
               ✕

@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { ThemeProvider, ThemeSelector, useTheme, themes } from './ThemeContext';
 import { submitBetaApplication, createOrder } from '@/lib/api';
+import { useLandingAnalytics } from '@/hooks/useLandingAnalytics';
+import { EngagementTracker } from '@/components/analytics';
+import type { ProductId } from '@/lib/analytics';
 
 type HeroVariant = 'v2' | 'donggun' | 'jiyeon';
 
@@ -19,6 +22,19 @@ function LandingPageContent() {
   const router = useRouter();
   const { theme, themeName } = useTheme();
   const [isTextVisible, setIsTextVisible] = useState(false);
+
+  // GA Analytics
+  const {
+    trackHeroPrimaryCTA,
+    trackFixedHeaderCTA,
+    trackProductCTA,
+    trackBridgeCTA,
+    trackCheckoutStart,
+    trackPaymentMethodSelect,
+    trackField,
+    trackResumeUpload,
+    trackPurchaseModalClose,
+  } = useLandingAnalytics();
 
   // Purchase Modal States
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
@@ -79,7 +95,7 @@ function LandingPageContent() {
         return;
       }
 
-      // 주문 정보 저장
+      // 주문 정보 저장 (purchaseSource: 'landing' - GA 추적용)
       const orderInfo = {
         orderId: response.data.orderId,
         product: selectedPurchaseProduct || '',
@@ -88,6 +104,7 @@ function LandingPageContent() {
         email: purchaseEmail,
         name: purchaseName,
         phone: purchasePhone || '',
+        purchaseSource: 'landing', // GA4 purchase 이벤트 추적용
       };
       localStorage.setItem('orderData', JSON.stringify(orderInfo));
 
@@ -141,6 +158,9 @@ function LandingPageContent() {
 
   return (
     <>
+      {/* Engagement Tracking (Scroll + Dwell Time) */}
+      <EngagementTracker pageType="landing" />
+
       {/* Fixed CTA */}
       <div className={styles.fixedCta}>
         <div className={styles.fixedCtaContainer}>
@@ -148,7 +168,7 @@ function LandingPageContent() {
             <div className={styles.fixedCtaTitle}>Query<span>Daily</span></div>
             <div className={styles.fixedCtaSubtitle}>이력서 맞춤형 면접 질문 서비스</div>
           </div>
-          <a href="#products" className={styles.fixedCtaButton}>
+          <a href="#products" className={styles.fixedCtaButton} onClick={trackFixedHeaderCTA}>
             지금 시작하기
           </a>
         </div>
@@ -200,7 +220,7 @@ function LandingPageContent() {
               </span>
             </div>
 
-            <a href="#products" className={`${styles.heroBtn} ${isTextVisible ? styles.visible : ''}`}>
+            <a href="#products" className={`${styles.heroBtn} ${isTextVisible ? styles.visible : ''}`} onClick={trackHeroPrimaryCTA}>
               내 이력서로 합격 시그널 받기 →
             </a>
           </div>
@@ -510,7 +530,7 @@ function LandingPageContent() {
 
             {/* CTA 버튼 */}
             <div style={{textAlign: 'center', marginTop: '2rem'}}>
-              <a href="#products" style={{
+              <a href="#products" onClick={trackBridgeCTA} style={{
                 display: 'inline-block',
                 padding: '1rem 2.5rem',
                 background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
@@ -1227,6 +1247,8 @@ function LandingPageContent() {
                   <button
                     className={`${styles.planBtn} ${styles.featured}`}
                     onClick={() => {
+                      trackProductCTA('growth-plan');
+                      trackCheckoutStart('growth-plan', 49000, 'hero');
                       setSelectedPurchaseProduct('growth-plan');
                       setPurchaseModalOpen(true);
                       setPurchaseModalStep(1);
@@ -1298,6 +1320,8 @@ function LandingPageContent() {
                   <button
                     className={styles.planBtn}
                     onClick={() => {
+                      trackProductCTA('critical-hit');
+                      trackCheckoutStart('critical-hit', 9900, 'hero');
                       setSelectedPurchaseProduct('critical-hit');
                       setPurchaseModalOpen(true);
                       setPurchaseModalStep(1);
@@ -2410,11 +2434,17 @@ function LandingPageContent() {
 
       {/* Purchase Modal for Paid Products */}
       {purchaseModalOpen && (
-        <div className={styles.modalOverlay} onClick={() => setPurchaseModalOpen(false)}>
+        <div className={styles.modalOverlay} onClick={() => {
+          trackPurchaseModalClose(purchaseModalStep, selectedPurchaseProduct as ProductId);
+          setPurchaseModalOpen(false);
+        }}>
           <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
             <button
               className={styles.modalClose}
-              onClick={() => setPurchaseModalOpen(false)}
+              onClick={() => {
+                trackPurchaseModalClose(purchaseModalStep, selectedPurchaseProduct as ProductId);
+                setPurchaseModalOpen(false);
+              }}
               aria-label="Close modal"
             >
               ✕

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { ThemeProvider, ThemeSelector, useTheme } from '../prototype-hyundoo/v3/ThemeContext';
+import { trackPurchase, gaTracker, type ProductId, type PurchaseSource } from '@/lib/analytics';
 
 type PaymentStatus = 'CHECKING' | 'PENDING' | 'CONFIRMED' | 'TIMEOUT';
 
@@ -23,11 +24,65 @@ function OrderCompletePageContent() {
     price: string;
     email: string;
     paymentMethod?: string; // 'ACCOUNT_TRANSFER' | 'INICIS' 등
+    purchaseSource?: string; // 'landing' | 'product_detail'
   } | null>(null);
 
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('CHECKING');
   const [pollingCount, setPollingCount] = useState(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasTrackedPurchase = useRef(false);
+
+  // GA4 Purchase 이벤트 트래킹
+  useEffect(() => {
+    if (paymentStatus === 'CONFIRMED' && orderData && !hasTrackedPurchase.current) {
+      hasTrackedPurchase.current = true;
+
+      // 상품 정보 매핑
+      const productIdMap: Record<string, ProductId> = {
+        'growth-plan': 'growth-plan',
+        'critical-hit': 'critical-hit',
+        '그로스 플랜': 'growth-plan',
+        '크리티컬 히트': 'critical-hit',
+      };
+
+      const productNameMap: Record<string, string> = {
+        'growth-plan': '그로스 플랜',
+        'critical-hit': '크리티컬 히트',
+        '그로스 플랜': '그로스 플랜',
+        '크리티컬 히트': '크리티컬 히트',
+      };
+
+      const productId = productIdMap[orderData.product] || 'growth-plan';
+      const productName = productNameMap[orderData.product] || orderData.product;
+
+      // 가격 파싱 (문자열에서 숫자 추출)
+      const price = parseInt(orderData.price.replace(/[^0-9]/g, ''), 10) || 0;
+
+      // 결제 방법 매핑
+      const paymentMethodMap: Record<string, 'card' | 'bank'> = {
+        'INICIS': 'card',
+        'CARD': 'card',
+        'card': 'card',
+        'ACCOUNT_TRANSFER': 'bank',
+        'BANK': 'bank',
+        'TRANSFER': 'bank',
+        'bank': 'bank',
+      };
+      const paymentMethod = paymentMethodMap[orderData.paymentMethod?.toUpperCase() || ''] || 'card';
+
+      // 구매 출처 (저장된 정보 또는 기본값)
+      const purchaseSource = (orderData.purchaseSource as PurchaseSource) || 'landing';
+
+      trackPurchase({
+        transactionId: orderData.orderId,
+        productId,
+        productName,
+        price,
+        paymentMethod,
+        purchaseSource,
+      });
+    }
+  }, [paymentStatus, orderData]);
 
   // 주문 상태 폴링 (카드 결제만)
   useEffect(() => {

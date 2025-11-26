@@ -57,15 +57,15 @@ export default function RefundPolicyPage() {
               <h3 className={styles.productName}>크리티컬 히트 (단건 질문)</h3>
               <div className={styles.policyBox}>
                 <div className={styles.policyRow}>
-                  <span className={styles.condition}>작업 시작 전</span>
+                  <span className={styles.condition}>메일 발송 전</span>
                   <span className={styles.rate}>100% 환불</span>
                 </div>
                 <div className={styles.policyRow}>
-                  <span className={styles.condition}>질문 발송 후</span>
+                  <span className={styles.condition}>메일 발송 후</span>
                   <span className={styles.rate}>환불 불가</span>
                 </div>
                 <p className={styles.note}>
-                  * 이력서 분석이 시작되기 전까지는 전액 환불이 가능합니다
+                  * 면접 질문 메일이 발송된 순간부터 환불이 불가능합니다
                 </p>
               </div>
             </div>
@@ -74,16 +74,17 @@ export default function RefundPolicyPage() {
               <h3 className={styles.productName}>그로스 플랜 (월 구독)</h3>
               <div className={styles.policyBox}>
                 <div className={styles.policyRow}>
-                  <span className={styles.condition}>7일 이내</span>
-                  <span className={styles.rate}>일할 계산 환불</span>
+                  <span className={styles.condition}>10회 이하 사용</span>
+                  <span className={styles.rate}>차감 후 환불</span>
                 </div>
                 <div className={styles.policyRow}>
-                  <span className={styles.condition}>7일 이후</span>
+                  <span className={styles.condition}>10회 이상 사용</span>
                   <span className={styles.rate}>환불 불가</span>
                 </div>
                 <p className={styles.note}>
-                  * 사용 일수에 따라 일할 계산하여 환불해드립니다<br/>
-                  * 계산식: (결제금액 ÷ 30일) × 미사용 일수
+                  * 10회까지는 사용 횟수에 비례하여 차감 후 환불됩니다<br/>
+                  * 계산식: 결제금액 - (결제금액 ÷ 20 × 발급받은 횟수)<br/>
+                  * 10회부터는 환불이 불가능합니다
                 </p>
               </div>
             </div>

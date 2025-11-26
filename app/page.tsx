@@ -218,7 +218,7 @@ function LandingPageContent() {
           <div className={styles.problemContainer}>
 
             <h2 className={styles.sectionTitle}>
-              혹시 이런 <span className={styles.highlight}>불안</span>, 느끼고 계신가요?
+              혹시 이런 <span className={styles.highlight}>불안</span> 느끼고 계신가요?
             </h2>
 
             {/* 불안 공감 포인트 */}
@@ -2149,9 +2149,9 @@ function LandingPageContent() {
                   <span className={styles.faqIcon}>+</span>
                 </summary>
                 <div className={styles.faqAnswer}>
-                  크리티컬 히트: 발송 전 100% 환불<br />
-                  그로스 플랜: 첫 질문 발송 전 100% 환불, 이후 남은 일수에 대해 일할 계산<br /><br />
-                  환불 사유는 묻지 않습니다.
+                  크리티컬 히트: 메일 발송 전 100% 환불, 메일 발송 후 환불 불가<br />
+                  그로스 플랜: 10회까지는 (결제금액 ÷ 20 × 발급받은 횟수) 만큼 차감 후 환불, 10회부터는 환불 불가<br /><br />
+                  자세한 내용은 <a href="/refund-policy" style={{color: 'var(--color-primary)', textDecoration: 'underline'}}>환불 정책 페이지</a>를 확인해주세요.
                 </div>
               </details>
 
@@ -2342,7 +2342,7 @@ function LandingPageContent() {
                   <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
                     <a href="/terms" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용약관</a>
                     <a href="/privacy" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>개인정보처리방침</a>
-                    <a href="/refund" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>환불정책</a>
+                    <a href="/refund-policy" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>환불정책</a>
                   </div>
                 </div>
 

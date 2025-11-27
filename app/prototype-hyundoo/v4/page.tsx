@@ -184,18 +184,18 @@ function LandingPageContent() {
             </span>
 
             <h1 className={`${styles.heroTitle} ${styles.heroTitleMega} ${isTextVisible ? styles.visible : ''}`}>
-              합격 시그널을<br/>
+              합격 시그널을<br />
               <span className={styles.highlight}>미리 받으세요</span>
             </h1>
 
             <p className={`${styles.heroTagline} ${isTextVisible ? styles.visible : ''}`}>
-              면접관이 물을 질문은 이미 <strong>당신 이력서에</strong> 다 있습니다.<br/>
+              면접관이 물을 질문은 이미 <strong>당신 이력서에</strong> 다 있습니다.<br />
               그 질문들을 미리 알면, 면접은 달라집니다.
             </p>
 
             {/* 차별점 강조 */}
             <div className={`${styles.socialProof} ${isTextVisible ? styles.visible : ''}`}>
-              <span className={styles.socialProofText} style={{fontSize: '0.95rem', opacity: 0.9}}>
+              <span className={styles.socialProofText} style={{ fontSize: '0.95rem', opacity: 0.9 }}>
                 일반 질문이 아닌, <strong>내 이력서 기반 맞춤 질문</strong>
               </span>
             </div>
@@ -222,90 +222,90 @@ function LandingPageContent() {
             </h2>
 
             {/* 불안 공감 포인트 */}
-            <div className={styles.prepMessage} style={{marginBottom: '2.5rem'}}>
-              <p className={styles.prepMessageSub} style={{fontSize: '1.05rem', lineHeight: '1.8'}}>
-                "이 회사 떨어지면 다음은 언제지..."<br/>
-                "나이만 먹고 있는 건 아닐까..."<br/>
+            <div className={styles.prepMessage} style={{ marginBottom: '2.5rem' }}>
+              <p className={styles.prepMessageSub} style={{ fontSize: '1.05rem', lineHeight: '1.8' }}>
+                "이 회사 떨어지면 다음은 언제지..."<br />
+                "나이만 먹고 있는 건 아닐까..."<br />
                 "다른 사람들은 다 잘 가는 것 같은데..."
               </p>
             </div>
 
-            <p style={{textAlign: 'center', fontSize: '1.1rem', marginBottom: '2.5rem', opacity: 0.9}}>
+            <p style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '2.5rem', opacity: 0.9 }}>
               그런데 막상 면접장에 가면, 이렇게 됩니다.
             </p>
 
             {/* 채팅 스타일 시나리오 - 아바타 포함 */}
-            <div style={{maxWidth: '480px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '480px', margin: '0 auto' }}>
               {/* 시나리오 1 */}
-              <div style={{marginBottom: '2.5rem'}}>
+              <div style={{ marginBottom: '2.5rem' }}>
                 {/* 면접관 말풍선 */}
-                <div style={{display: 'flex', gap: '0.8rem', marginBottom: '1rem'}}>
-                  <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+                <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                   </div>
-                  <div style={{background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1}}>
-                    <p style={{fontSize: '0.95rem', lineHeight: '1.5'}}>"Redis 캐싱을 구현하셨네요.<br/><strong>왜 Redis를 선택했나요?</strong>"</p>
+                  <div style={{ background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1 }}>
+                    <p style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>"Redis 캐싱을 구현하셨네요.<br /><strong>왜 Redis를 선택했나요?</strong>"</p>
                   </div>
                 </div>
                 {/* 내 답변 */}
-                <div style={{display: 'flex', gap: '0.8rem', justifyContent: 'flex-end'}}>
-                  <div style={{background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)'}}>
-                    <p style={{fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center'}}>"<strong>그냥</strong>... 빠르다고 해서요...<br/>주변에서 많이 써서..."</p>
+                <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                  <div style={{ background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)' }}>
+                    <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>"<strong>그냥</strong>... 빠르다고 해서요...<br />주변에서 많이 써서..."</p>
                   </div>
                 </div>
               </div>
 
               {/* 시나리오 2 */}
-              <div style={{marginBottom: '2.5rem'}}>
-                <div style={{display: 'flex', gap: '0.8rem', marginBottom: '1rem'}}>
-                  <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+              <div style={{ marginBottom: '2.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                   </div>
-                  <div style={{background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1}}>
-                    <p style={{fontSize: '0.95rem', lineHeight: '1.5'}}>"Spring Boot로 API를 만드셨군요.<br/><strong>왜 Spring이었나요?</strong>"</p>
+                  <div style={{ background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1 }}>
+                    <p style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>"Spring Boot로 API를 만드셨군요.<br /><strong>왜 Spring이었나요?</strong>"</p>
                   </div>
                 </div>
-                <div style={{display: 'flex', gap: '0.8rem', justifyContent: 'flex-end'}}>
-                  <div style={{background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)'}}>
-                    <p style={{fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center'}}>"음... <strong>국비학원</strong>에서 배워서요...<br/>다들 쓰길래..."</p>
+                <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                  <div style={{ background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)' }}>
+                    <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>"음... <strong>국비학원</strong>에서 배워서요...<br />다들 쓰길래..."</p>
                   </div>
                 </div>
               </div>
 
               {/* 시나리오 3 */}
-              <div style={{marginBottom: '1.5rem'}}>
-                <div style={{display: 'flex', gap: '0.8rem', marginBottom: '1rem'}}>
-                  <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '1rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--color-accent-rgb), 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                   </div>
-                  <div style={{background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1}}>
-                    <p style={{fontSize: '0.95rem', lineHeight: '1.5'}}>"트랜잭션 처리를 하셨네요.<br/><strong>격리 수준은 어떻게 설정했나요?</strong>"</p>
+                  <div style={{ background: 'rgba(var(--color-accent-rgb), 0.08)', padding: '1rem 1.2rem', borderRadius: '0 12px 12px 12px', flex: 1 }}>
+                    <p style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>"트랜잭션 처리를 하셨네요.<br /><strong>격리 수준은 어떻게 설정했나요?</strong>"</p>
                   </div>
                 </div>
-                <div style={{display: 'flex', gap: '0.8rem', justifyContent: 'flex-end'}}>
-                  <div style={{background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)'}}>
-                    <p style={{fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center'}}>"그건... <strong>기본값</strong> 쓴 것 같은데...<br/>따로 설정은 안 했어요..."</p>
+                <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                  <div style={{ background: 'rgba(239, 68, 68, 0.12)', padding: '1rem 1.2rem', borderRadius: '12px 0 12px 12px', maxWidth: '85%', borderRight: '3px solid rgba(239, 68, 68, 0.5)' }}>
+                    <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>"그건... <strong>기본값</strong> 쓴 것 같은데...<br />따로 설정은 안 했어요..."</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <p style={{textAlign: 'center', fontSize: '1.05rem', marginTop: '1rem', marginBottom: '1rem'}}>
-              분명히 해봤는데, 말이 안 나옵니다.<br/><br/>
-              <strong style={{fontSize: '1.1rem'}}>능력이 없어서가 아니에요.<br/>준비가 안 된 거예요.</strong>
+            <p style={{ textAlign: 'center', fontSize: '1.05rem', marginTop: '1rem', marginBottom: '1rem' }}>
+              분명히 해봤는데, 말이 안 나옵니다.<br /><br />
+              <strong style={{ fontSize: '1.1rem' }}>능력이 없어서가 아니에요.<br />준비가 안 된 거예요.</strong>
             </p>
 
-            <p style={{textAlign: 'center', fontSize: '0.95rem', marginTop: '2rem', opacity: 0.7, fontStyle: 'italic'}}>
-              "준비해야 하는 건 아는데...<br/>
+            <p style={{ textAlign: 'center', fontSize: '0.95rem', marginTop: '2rem', opacity: 0.7, fontStyle: 'italic' }}>
+              "준비해야 하는 건 아는데...<br />
               뭘 어떻게 준비해야 하지?"
             </p>
 
@@ -315,71 +315,71 @@ function LandingPageContent() {
         {/* 탈락 이유 상세 섹션 */}
         <section className={styles.statistics}>
           <div className={styles.statisticsContainer}>
-            <span className={styles.badge} style={{background: 'rgba(255,100,100,0.2)', color: '#ff6b6b'}}>채용 담당자 설문</span>
-            <h2 className={styles.sectionTitle} style={{marginTop: '1rem'}}>
-              면접에서 떨어지는<br/>
+            <span className={styles.badge} style={{ background: 'rgba(255,100,100,0.2)', color: '#ff6b6b' }}>채용 담당자 설문</span>
+            <h2 className={styles.sectionTitle} style={{ marginTop: '1rem' }}>
+              면접에서 떨어지는<br />
               <span className={styles.highlight}>진짜 이유</span>
             </h2>
 
-            <p style={{textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8}}>
+            <p style={{ textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8 }}>
               채용 담당자 500명이 직접 밝힌 탈락 사유
             </p>
 
             {/* 메인 통계 */}
-            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
-              <div style={{fontSize: '4rem', fontWeight: '800', background: 'linear-gradient(135deg, #ff6b6b, #ee5a5a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1}}>
-                70<span style={{fontSize: '2rem'}}>%</span>
+            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <div style={{ fontSize: '4rem', fontWeight: '800', background: 'linear-gradient(135deg, #ff6b6b, #ee5a5a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1 }}>
+                70<span style={{ fontSize: '2rem' }}>%</span>
               </div>
-              <p style={{fontSize: '1.1rem', marginTop: '0.5rem', fontWeight: '600'}}>
+              <p style={{ fontSize: '1.1rem', marginTop: '0.5rem', fontWeight: '600' }}>
                 "준비가 부족해 보였다"
               </p>
             </div>
 
             {/* 구체적 탈락 이유 */}
-            <div style={{maxWidth: '500px', margin: '0 auto'}}>
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>47%</div>
+            <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px' }}>47%</div>
                 <div>
-                  <p style={{fontSize: '1rem', fontWeight: '600'}}>"왜?"에 대한 답변이 없다</p>
-                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>기술 선택의 이유를 설명하지 못함</p>
+                  <p style={{ fontSize: '1rem', fontWeight: '600' }}>"왜?"에 대한 답변이 없다</p>
+                  <p style={{ fontSize: '0.85rem', opacity: 0.7 }}>기술 선택의 이유를 설명하지 못함</p>
                 </div>
               </div>
 
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>38%</div>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px' }}>38%</div>
                 <div>
-                  <p style={{fontSize: '1rem', fontWeight: '600'}}>경험을 구체적으로 말하지 못한다</p>
-                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>숫자, 과정, 결과가 모호함</p>
+                  <p style={{ fontSize: '1rem', fontWeight: '600' }}>경험을 구체적으로 말하지 못한다</p>
+                  <p style={{ fontSize: '0.85rem', opacity: 0.7 }}>숫자, 과정, 결과가 모호함</p>
                 </div>
               </div>
 
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>31%</div>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px' }}>31%</div>
                 <div>
-                  <p style={{fontSize: '1rem', fontWeight: '600'}}>꼬리 질문에 무너진다</p>
-                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>한 단계 깊이 들어가면 답변 불가</p>
+                  <p style={{ fontSize: '1rem', fontWeight: '600' }}>꼬리 질문에 무너진다</p>
+                  <p style={{ fontSize: '0.85rem', opacity: 0.7 }}>한 단계 깊이 들어가면 답변 불가</p>
                 </div>
               </div>
 
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                <div style={{fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px'}}>28%</div>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem', background: 'rgba(255,100,100,0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#ff6b6b', minWidth: '60px' }}>28%</div>
                 <div>
-                  <p style={{fontSize: '1rem', fontWeight: '600'}}>이력서 내용을 기억 못 한다</p>
-                  <p style={{fontSize: '0.85rem', opacity: 0.7}}>본인이 쓴 내용도 설명하지 못함</p>
+                  <p style={{ fontSize: '1rem', fontWeight: '600' }}>이력서 내용을 기억 못 한다</p>
+                  <p style={{ fontSize: '0.85rem', opacity: 0.7 }}>본인이 쓴 내용도 설명하지 못함</p>
                 </div>
               </div>
             </div>
 
-            <p style={{textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '2rem'}}>
+            <p style={{ textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '2rem' }}>
               데이터 출처: Glassdoor (2024-2025), LinkedIn Talent Solutions
             </p>
 
-            <div className={styles.ctaNudge} style={{marginTop: '2.5rem'}}>
+            <div className={styles.ctaNudge} style={{ marginTop: '2.5rem' }}>
               <p className={styles.ctaNudgeMain}>
                 전부 <strong>준비하면 해결되는 문제</strong>입니다.
               </p>
-              <p className={styles.ctaNudgeDesc} style={{marginTop: '0.8rem'}}>
-                문제는 뭘 준비해야 하는지 모른다는 것.<br/>
+              <p className={styles.ctaNudgeDesc} style={{ marginTop: '0.8rem' }}>
+                문제는 뭘 준비해야 하는지 모른다는 것.<br />
                 <span className={styles.ctaNudgeHighlight}>QueryDaily가 그걸 알려드립니다.</span>
               </p>
             </div>
@@ -390,53 +390,53 @@ function LandingPageContent() {
         <section className={styles.problemSection}>
           <div className={styles.problemContainer}>
             <h2 className={styles.sectionTitle}>
-              "준비해야 하는 건 아는데...<br/>
+              "준비해야 하는 건 아는데...<br />
               <span className={styles.highlight}>뭘 어떻게?</span>"
             </h2>
 
-            <p style={{textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8}}>
+            <p style={{ textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8 }}>
               혼자 준비하려고 하면 이런 벽에 부딪힙니다
             </p>
 
-            <div style={{maxWidth: '520px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '520px', margin: '0 auto' }}>
               {/* 고민 1 */}
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"어떤 질문이 나올지 모르겠어요"</p>
-                <p style={{fontSize: '0.9rem', opacity: 0.7}}>블로그마다 다른 질문, 뭘 준비해야 할지 막막함</p>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)' }}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>"어떤 질문이 나올지 모르겠어요"</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>블로그마다 다른 질문, 뭘 준비해야 할지 막막함</p>
               </div>
 
               {/* 고민 2 */}
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"일반 질문은 내 경험이랑 안 맞아요"</p>
-                <p style={{fontSize: '0.9rem', opacity: 0.7}}>교과서적인 답변만 외우게 되는 느낌</p>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)' }}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>"일반 질문은 내 경험이랑 안 맞아요"</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>교과서적인 답변만 외우게 되는 느낌</p>
               </div>
 
               {/* 고민 3 */}
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"어떻게 답해야 할지 모르겠어요"</p>
-                <p style={{fontSize: '0.9rem', opacity: 0.7}}>STAR 기법? 들어는 봤는데 적용이 안 됨</p>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)' }}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>"어떻게 답해야 할지 모르겠어요"</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>STAR 기법? 들어는 봤는데 적용이 안 됨</p>
               </div>
 
               {/* 고민 4 */}
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"꼬리 질문이 무서워요"</p>
-                <p style={{fontSize: '0.9rem', opacity: 0.7}}>한 번 막히면 멘탈이 무너질 것 같음</p>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)' }}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>"꼬리 질문이 무서워요"</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>한 번 막히면 멘탈이 무너질 것 같음</p>
               </div>
 
               {/* 고민 5 */}
-              <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)'}}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem'}}>"시간이 없어요"</p>
-                <p style={{fontSize: '0.9rem', opacity: 0.7}}>퇴근하면 지치고, 주말엔 쉬고 싶음</p>
+              <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', borderLeft: '3px solid var(--color-text-muted)' }}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>"시간이 없어요"</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>퇴근하면 지치고, 주말엔 쉬고 싶음</p>
               </div>
             </div>
 
-            <div className={styles.ctaNudge} style={{marginTop: '2.5rem'}}>
-              <p className={styles.ctaNudgeMain} style={{fontSize: '1.2rem'}}>
+            <div className={styles.ctaNudge} style={{ marginTop: '2.5rem' }}>
+              <p className={styles.ctaNudgeMain} style={{ fontSize: '1.2rem' }}>
                 그래서 우리가 만들었습니다.
               </p>
-              <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem', lineHeight: '1.8'}}>
-                어떤 질문이 나올지 알려드리고,<br/>
-                어떻게 답해야 하는지 가이드하고,<br/>
+              <p className={styles.ctaNudgeDesc} style={{ marginTop: '1rem', lineHeight: '1.8' }}>
+                어떤 질문이 나올지 알려드리고,<br />
+                어떻게 답해야 하는지 가이드하고,<br />
                 <span className={styles.ctaNudgeHighlight}>하루 10분이면 끝나도록</span> 압축했습니다.
               </p>
             </div>
@@ -448,7 +448,7 @@ function LandingPageContent() {
         <section className={styles.statistics}>
           <div className={styles.statisticsContainer}>
             {/* 핵심 메시지 - 크게 */}
-            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
+            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
               <h2 style={{
                 fontSize: '2.2rem',
                 fontWeight: '800',
@@ -456,8 +456,8 @@ function LandingPageContent() {
                 marginBottom: '1.5rem',
                 color: 'var(--color-text-primary)'
               }}>
-                같은 경력,<br/>
-                <span className={styles.highlight} style={{fontSize: '2.8rem'}}>다른 결과</span>
+                같은 경력,<br />
+                <span className={styles.highlight} style={{ fontSize: '2.8rem' }}>다른 결과</span>
               </h2>
               <p style={{
                 fontSize: '1.4rem',
@@ -472,44 +472,44 @@ function LandingPageContent() {
             </div>
 
             {/* Before/After 대비 - 메인 */}
-            <div className={styles.comparisonMain} style={{position: 'relative'}}>
+            <div className={styles.comparisonMain} style={{ position: 'relative' }}>
               {/* 배경 글로우 효과 */}
-              <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none'}}></div>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }}></div>
 
               <div className={styles.comparisonSide}>
                 <p className={styles.comparisonLabel}>준비 없이</p>
                 <div className={styles.comparisonNumber}>
-                  <span className={styles.comparisonNum} style={{opacity: 0.4, fontSize: '3rem'}}>38%</span>
+                  <span className={styles.comparisonNum} style={{ opacity: 0.4, fontSize: '3rem' }}>38%</span>
                 </div>
-                <p className={styles.comparisonDesc} style={{opacity: 0.6}}>평균 합격률</p>
+                <p className={styles.comparisonDesc} style={{ opacity: 0.6 }}>평균 합격률</p>
               </div>
 
-              <div className={styles.comparisonVs} style={{fontSize: '2.5rem', opacity: 0.5}}>→</div>
+              <div className={styles.comparisonVs} style={{ fontSize: '2.5rem', opacity: 0.5 }}>→</div>
 
               <div className={`${styles.comparisonSide} ${styles.comparisonSuccess}`}>
-                <p className={styles.comparisonLabel} style={{color: 'var(--color-secondary)'}}>체계적 준비</p>
+                <p className={styles.comparisonLabel} style={{ color: 'var(--color-secondary)' }}>체계적 준비</p>
                 <div className={styles.comparisonNumber}>
-                  <span className={styles.comparisonNum} style={{fontSize: '4rem'}}>85%</span>
+                  <span className={styles.comparisonNum} style={{ fontSize: '4rem' }}>85%</span>
                 </div>
-                <p className={styles.comparisonDesc} style={{fontWeight: '700'}}>합격률 달성</p>
+                <p className={styles.comparisonDesc} style={{ fontWeight: '700' }}>합격률 달성</p>
               </div>
             </div>
 
             {/* 강조 박스 */}
-            <div style={{marginTop: '2.5rem', padding: '1.8rem 2rem', background: 'rgba(var(--color-accent-rgb), 0.12)', borderRadius: '16px', border: '2px solid rgba(var(--color-accent-rgb), 0.25)', textAlign: 'center'}}>
-              <p style={{fontSize: '1.2rem', fontWeight: '700', margin: 0, lineHeight: '1.8'}}>
-                체계적으로 준비한 지원자는<br/>
-                평균 <span style={{color: 'var(--color-secondary)', fontWeight: '800', fontSize: '1.5rem'}}>2.3배</span> 높은 합격률을 보입니다
+            <div style={{ marginTop: '2.5rem', padding: '1.8rem 2rem', background: 'rgba(var(--color-accent-rgb), 0.12)', borderRadius: '16px', border: '2px solid rgba(var(--color-accent-rgb), 0.25)', textAlign: 'center' }}>
+              <p style={{ fontSize: '1.2rem', fontWeight: '700', margin: 0, lineHeight: '1.8' }}>
+                체계적으로 준비한 지원자는<br />
+                평균 <span style={{ color: 'var(--color-secondary)', fontWeight: '800', fontSize: '1.5rem' }}>2.3배</span> 높은 합격률을 보입니다
               </p>
             </div>
 
             {/* 부연 설명 */}
-            <p style={{textAlign: 'center', fontSize: '0.95rem', opacity: 0.7, marginTop: '1.5rem'}}>
+            <p style={{ textAlign: 'center', fontSize: '0.95rem', opacity: 0.7, marginTop: '1.5rem' }}>
               실력은 이미 충분합니다. 그걸 보여주는 연습만 하면 됩니다.
             </p>
 
             {/* CTA 버튼 */}
-            <div style={{textAlign: 'center', marginTop: '2rem'}}>
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
               <a href="#products" style={{
                 display: 'inline-block',
                 padding: '1rem 2.5rem',
@@ -536,105 +536,105 @@ function LandingPageContent() {
               면접장, <span className={styles.highlight}>그 순간</span>
             </h2>
 
-            <p style={{textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8}}>
+            <p style={{ textAlign: 'center', fontSize: '1rem', marginBottom: '2.5rem', opacity: 0.8 }}>
               준비 없이 들어가면 이렇게 됩니다
             </p>
 
             {/* 불안 시나리오들 */}
-            <div style={{maxWidth: '520px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '520px', margin: '0 auto' }}>
               {/* 다대일 면접 */}
-              <div style={{marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)'}}>
-                <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem'}}>다대일 면접</p>
-                <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem'}}>
+              <div style={{ marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)' }}>
+                <p style={{ fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem' }}>다대일 면접</p>
+                <p style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem' }}>
                   "면접관이 3명인데... 다 날 쳐다보고 있어"
                 </p>
-                <p style={{fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6'}}>
-                  누가 뭘 물어볼지 모르겠고,<br/>
+                <p style={{ fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6' }}>
+                  누가 뭘 물어볼지 모르겠고,<br />
                   한 명이 고개를 갸웃하면 심장이 철렁
                 </p>
               </div>
 
               {/* 압박 면접 */}
-              <div style={{marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)'}}>
-                <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem'}}>압박 면접</p>
-                <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem'}}>
+              <div style={{ marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)' }}>
+                <p style={{ fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem' }}>압박 면접</p>
+                <p style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem' }}>
                   "그래서 결론이 뭔가요?"
                 </p>
-                <p style={{fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6'}}>
-                  말을 끊고 다그치듯 물어보면<br/>
+                <p style={{ fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6' }}>
+                  말을 끊고 다그치듯 물어보면<br />
                   머릿속이 하얘지고 말이 꼬이기 시작
                 </p>
               </div>
 
               {/* 경쟁자와의 비교 */}
-              <div style={{marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)'}}>
-                <p style={{fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem'}}>대기실에서</p>
-                <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem'}}>
+              <div style={{ marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,100,100,0.06)', borderRadius: '12px', borderLeft: '3px solid rgba(255,100,100,0.4)' }}>
+                <p style={{ fontSize: '0.85rem', opacity: 0.6, marginBottom: '0.8rem' }}>대기실에서</p>
+                <p style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.8rem' }}>
                   "옆 사람은 뭔가 자신감 넘치는데..."
                 </p>
-                <p style={{fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6'}}>
-                  나만 떨고 있는 것 같고,<br/>
+                <p style={{ fontSize: '0.95rem', opacity: 0.7, lineHeight: '1.6' }}>
+                  나만 떨고 있는 것 같고,<br />
                   저 사람보다는 나아야 하는데... 불안
                 </p>
               </div>
             </div>
 
             {/* 전환 화살표 */}
-            <div style={{textAlign: 'center', margin: '2.5rem 0'}}>
-              <div style={{display: 'inline-block', padding: '0.8rem 2rem', background: 'rgba(var(--color-accent-rgb), 0.1)', borderRadius: '100px', border: '2px solid rgba(var(--color-accent-rgb), 0.3)'}}>
-                <span style={{fontSize: '1.5rem'}}>↓</span>
+            <div style={{ textAlign: 'center', margin: '2.5rem 0' }}>
+              <div style={{ display: 'inline-block', padding: '0.8rem 2rem', background: 'rgba(var(--color-accent-rgb), 0.1)', borderRadius: '100px', border: '2px solid rgba(var(--color-accent-rgb), 0.3)' }}>
+                <span style={{ fontSize: '1.5rem' }}>↓</span>
               </div>
             </div>
 
             {/* 전환 - 준비된 사람 */}
-            <div style={{marginTop: '0', padding: '3rem 2rem', background: 'linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.15) 0%, rgba(var(--color-accent-rgb), 0.05) 100%)', borderRadius: '24px', border: '2px solid rgba(var(--color-accent-rgb), 0.3)', position: 'relative', overflow: 'hidden'}}>
+            <div style={{ marginTop: '0', padding: '3rem 2rem', background: 'linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.15) 0%, rgba(var(--color-accent-rgb), 0.05) 100%)', borderRadius: '24px', border: '2px solid rgba(var(--color-accent-rgb), 0.3)', position: 'relative', overflow: 'hidden' }}>
               {/* 배경 장식 */}
-              <div style={{position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.2) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none'}}></div>
+              <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', background: 'radial-gradient(circle, rgba(var(--color-accent-rgb), 0.2) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }}></div>
 
-              <h3 style={{textAlign: 'center', fontSize: '2rem', fontWeight: '800', marginBottom: '2rem', lineHeight: '1.4'}}>
-                하지만<br/>
-                <span className={styles.highlight} style={{fontSize: '2.5rem'}}>준비된 사람</span>은 다릅니다
+              <h3 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: '800', marginBottom: '2rem', lineHeight: '1.4' }}>
+                하지만<br />
+                <span className={styles.highlight} style={{ fontSize: '2.5rem' }}>준비된 사람</span>은 다릅니다
               </h3>
 
-              <div style={{maxWidth: '500px', margin: '0 auto'}}>
+              <div style={{ maxWidth: '500px', margin: '0 auto' }}>
                 {/* 체크 아이템 1 */}
-                <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)'}}>
-                  <div style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
-                    <span style={{color: '#fff', fontWeight: '700', fontSize: '1rem'}}>✓</span>
+                <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)' }}>
+                  <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>✓</span>
                   </div>
                   <div>
-                    <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.3rem'}}>"이 질문 나올 줄 알았어"</p>
-                    <p style={{fontSize: '0.9rem', opacity: 0.8}}>예상했기 때문에 당황하지 않음</p>
+                    <p style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.3rem' }}>"이 질문 나올 줄 알았어"</p>
+                    <p style={{ fontSize: '0.9rem', opacity: 0.8 }}>예상했기 때문에 당황하지 않음</p>
                   </div>
                 </div>
 
                 {/* 체크 아이템 2 */}
-                <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)'}}>
-                  <div style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
-                    <span style={{color: '#fff', fontWeight: '700', fontSize: '1rem'}}>✓</span>
+                <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)' }}>
+                  <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>✓</span>
                   </div>
                   <div>
-                    <p style={{margin: 0, marginBottom: '0.3rem', fontSize: '1.05rem', fontWeight: '600'}}>압박 질문에도 논리적으로 대응</p>
-                    <p style={{margin: 0, fontSize: '0.9rem', opacity: 0.8}}>연습해 본 적 있으니까</p>
+                    <p style={{ margin: 0, marginBottom: '0.3rem', fontSize: '1.05rem', fontWeight: '600' }}>압박 질문에도 논리적으로 대응</p>
+                    <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>연습해 본 적 있으니까</p>
                   </div>
                 </div>
 
                 {/* 체크 아이템 3 */}
-                <div style={{marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)'}}>
-                  <div style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
-                    <span style={{color: '#fff', fontWeight: '700', fontSize: '1rem'}}>✓</span>
+                <div style={{ marginBottom: '1.5rem', padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '4px solid var(--color-accent)' }}>
+                  <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>✓</span>
                   </div>
                   <div>
-                    <p style={{fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.3rem'}}>옆 사람은 신경 안 씀</p>
-                    <p style={{fontSize: '0.9rem', opacity: 0.8}}>내 답변에만 집중할 여유</p>
+                    <p style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.3rem' }}>옆 사람은 신경 안 씀</p>
+                    <p style={{ fontSize: '0.9rem', opacity: 0.8 }}>내 답변에만 집중할 여유</p>
                   </div>
                 </div>
               </div>
 
               {/* 결론 메시지 */}
-              <div style={{marginTop: '2rem', padding: '1.5rem', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '12px', textAlign: 'center'}}>
-                <p style={{fontSize: '1.3rem', fontWeight: '700', color: '#fff', margin: 0}}>
-                  불안이 아닌, <strong style={{fontSize: '1.5rem'}}>자신감</strong>으로<br/>
+              <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ fontSize: '1.3rem', fontWeight: '700', color: '#fff', margin: 0 }}>
+                  불안이 아닌, <strong style={{ fontSize: '1.5rem' }}>자신감</strong>으로<br />
                   면접장에 들어갑니다.
                 </p>
               </div>
@@ -649,19 +649,19 @@ function LandingPageContent() {
             {/* 핵심 카피 */}
             <h2 className={styles.megaCopy}>
               차이는 단 하나.
-              <br/><br/>
-              면접관이 물을 질문을<br/>
+              <br /><br />
+              면접관이 물을 질문을<br />
               <span className={styles.highlight}>미리 알았다는 것</span>
             </h2>
 
             {/* 증거 박스 - 리디자인 */}
-            <div style={{marginBottom: '3rem'}}>
-              <p style={{textAlign: 'center', fontSize: '1rem', fontWeight: '600', marginBottom: '1.5rem', opacity: 0.8}}>
+            <div style={{ marginBottom: '3rem' }}>
+              <p style={{ textAlign: 'center', fontSize: '1rem', fontWeight: '600', marginBottom: '1.5rem', opacity: 0.8 }}>
                 합격자들에서 발견되는 패턴
               </p>
 
               {/* 3개 스탯 카드 */}
-              <div style={{display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem'}}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                 <div style={{
                   flex: '1',
                   minWidth: '140px',
@@ -672,8 +672,8 @@ function LandingPageContent() {
                   textAlign: 'center',
                   border: '1px solid rgba(var(--color-accent-rgb), 0.15)'
                 }}>
-                  <div style={{fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem'}}>90%</div>
-                  <div style={{fontSize: '0.85rem', opacity: 0.8, fontWeight: '500'}}>질문 연습</div>
+                  <div style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem' }}>90%</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.8, fontWeight: '500' }}>질문 연습</div>
                 </div>
 
                 <div style={{
@@ -686,8 +686,8 @@ function LandingPageContent() {
                   textAlign: 'center',
                   border: '1px solid rgba(var(--color-accent-rgb), 0.15)'
                 }}>
-                  <div style={{fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem'}}>92%</div>
-                  <div style={{fontSize: '0.85rem', opacity: 0.8, fontWeight: '500'}}>모의 면접</div>
+                  <div style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem' }}>92%</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.8, fontWeight: '500' }}>모의 면접</div>
                 </div>
 
                 <div style={{
@@ -700,13 +700,13 @@ function LandingPageContent() {
                   textAlign: 'center',
                   border: '1px solid rgba(var(--color-accent-rgb), 0.15)'
                 }}>
-                  <div style={{fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem'}}>55%</div>
-                  <div style={{fontSize: '0.85rem', opacity: 0.8, fontWeight: '500'}}>비언어 소통</div>
+                  <div style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem' }}>55%</div>
+                  <div style={{ fontSize: '0.85rem', opacity: 0.8, fontWeight: '500' }}>비언어 소통</div>
                 </div>
               </div>
 
               {/* 출처 */}
-              <p style={{textAlign: 'center', fontSize: '0.75rem', opacity: 0.5, lineHeight: '1.6'}}>
+              <p style={{ textAlign: 'center', fontSize: '0.75rem', opacity: 0.5, lineHeight: '1.6' }}>
                 데이터 출처: Glassdoor, Preplaced Interview Research, Novoresume
               </p>
             </div>
@@ -731,10 +731,10 @@ function LandingPageContent() {
             <div className={styles.lineGraphContainer}>
               <svg className={styles.lineGraph} viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
                 {/* Grid Lines */}
-                <line x1="50" y1="250" x2="550" y2="250" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
-                <line x1="50" y1="187.5" x2="550" y2="187.5" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
-                <line x1="50" y1="125" x2="550" y2="125" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
-                <line x1="50" y1="62.5" x2="550" y2="62.5" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2"/>
+                <line x1="50" y1="250" x2="550" y2="250" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2" />
+                <line x1="50" y1="187.5" x2="550" y2="187.5" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2" />
+                <line x1="50" y1="125" x2="550" y2="125" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2" />
+                <line x1="50" y1="62.5" x2="550" y2="62.5" stroke="var(--color-text-muted)" strokeWidth="1" opacity="0.2" />
 
                 {/* Y-axis Labels */}
                 <text x="30" y="255" fill="var(--color-text-muted)" fontSize="12" textAnchor="end">0%</text>
@@ -780,16 +780,16 @@ function LandingPageContent() {
                 </defs>
 
                 {/* Unprepared Data Points */}
-                <circle cx="50" cy="226" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
-                <circle cx="216.67" cy="218.75" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
-                <circle cx="383.33" cy="212.5" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
-                <circle cx="550" cy="212.5" r="5" fill="var(--color-text-muted)" className={styles.dataPoint}/>
+                <circle cx="50" cy="226" r="5" fill="var(--color-text-muted)" className={styles.dataPoint} />
+                <circle cx="216.67" cy="218.75" r="5" fill="var(--color-text-muted)" className={styles.dataPoint} />
+                <circle cx="383.33" cy="212.5" r="5" fill="var(--color-text-muted)" className={styles.dataPoint} />
+                <circle cx="550" cy="212.5" r="5" fill="var(--color-text-muted)" className={styles.dataPoint} />
 
                 {/* Prepared Data Points */}
-                <circle cx="50" cy="226" r="5" fill={theme.secondary} className={styles.dataPoint}/>
-                <circle cx="216.67" cy="175" r="5" fill={theme.secondary} className={styles.dataPoint}/>
-                <circle cx="383.33" cy="93.75" r="5" fill={theme.secondaryLight} className={styles.dataPoint}/>
-                <circle cx="550" cy="31.25" r="5" fill={theme.secondaryLight} className={styles.dataPoint}/>
+                <circle cx="50" cy="226" r="5" fill={theme.secondary} className={styles.dataPoint} />
+                <circle cx="216.67" cy="175" r="5" fill={theme.secondary} className={styles.dataPoint} />
+                <circle cx="383.33" cy="93.75" r="5" fill={theme.secondaryLight} className={styles.dataPoint} />
+                <circle cx="550" cy="31.25" r="5" fill={theme.secondaryLight} className={styles.dataPoint} />
 
                 {/* Final Value Labels */}
                 <text x="560" y="218" fill="var(--color-text-muted)" fontSize="14" fontWeight="700">38%</text>
@@ -804,7 +804,7 @@ function LandingPageContent() {
             {/* 준비 방법 섹션 */}
             <div className={styles.prepMethod}>
               <h3 className={styles.prepMethodTitle}>
-                준비를 하는 가장 좋은 방법은<br/>
+                준비를 하는 가장 좋은 방법은<br />
                 그냥 지금 시작하는 것입니다.
               </h3>
 
@@ -812,7 +812,7 @@ function LandingPageContent() {
                 이런 고민, 해보셨죠?
               </p>
 
-              <p style={{textAlign: 'center', fontSize: '0.9rem', opacity: 0.6, marginBottom: '1.5rem', fontStyle: 'italic'}}>
+              <p style={{ textAlign: 'center', fontSize: '0.9rem', opacity: 0.6, marginBottom: '1.5rem', fontStyle: 'italic' }}>
                 "면접 질문 검색해봤자... 내 경험이랑 안 맞는데..."
               </p>
 
@@ -877,7 +877,7 @@ function LandingPageContent() {
                   진짜 질문. 진짜 경험. 합격하는 답변.
                 </p>
                 <p className={styles.prepMessageSub}>
-                  우리는 이것만 보내드립니다.<br/>
+                  우리는 이것만 보내드립니다.<br />
                   당신은 그냥 받아보기만 하세요.
                 </p>
               </div>
@@ -890,7 +890,7 @@ function LandingPageContent() {
               </p>
               <p className={styles.ctaNudgeDesc}>
                 그 여유를 만들 충분한 시간
-                <br/>
+                <br />
                 <span className={styles.ctaNudgeHighlight}>하루 단 10분</span>
               </p>
               <a href="#products" style={{
@@ -989,8 +989,8 @@ function LandingPageContent() {
                   margin: 0,
                   opacity: 0.9
                 }}>
-                  "그때 그 질문,<br/>
-                  <span style={{color: 'var(--color-secondary)', fontWeight: '600'}}>더 잘 대답할 수 있었는데...</span>"
+                  "그때 그 질문,<br />
+                  <span style={{ color: 'var(--color-secondary)', fontWeight: '600' }}>더 잘 대답할 수 있었는데...</span>"
                 </p>
               </div>
             </div>
@@ -1002,11 +1002,11 @@ function LandingPageContent() {
               lineHeight: '1.6',
               marginBottom: '2.5rem'
             }}>
-              후회는<br/>
-              <span style={{color: 'var(--color-secondary)'}}>면접장을 나서야</span> 찾아옵니다.
+              후회는<br />
+              <span style={{ color: 'var(--color-secondary)' }}>면접장을 나서야</span> 찾아옵니다.
             </h2>
 
-            <div style={{maxWidth: '480px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '480px', margin: '0 auto' }}>
               {/* 흔한 후회들 */}
               <div style={{
                 padding: '1.5rem',
@@ -1022,7 +1022,7 @@ function LandingPageContent() {
                 }}>
                   면접 후 가장 많이 하는 말
                 </p>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                   <p style={{
                     fontSize: '0.95rem',
                     margin: 0,
@@ -1071,8 +1071,8 @@ function LandingPageContent() {
                   marginBottom: '1rem',
                   lineHeight: '1.6'
                 }}>
-                  미리 준비했다면<br/>
-                  <span style={{fontSize: '1.3rem', color: 'var(--color-secondary)'}}>후회 대신 자신감</span>이<br/>
+                  미리 준비했다면<br />
+                  <span style={{ fontSize: '1.3rem', color: 'var(--color-secondary)' }}>후회 대신 자신감</span>이<br />
                   남았을 겁니다.
                 </p>
                 <p style={{
@@ -1085,11 +1085,11 @@ function LandingPageContent() {
               </div>
 
               {/* 준비된 상태의 이점 */}
-              <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-                <p style={{fontSize: '1rem', opacity: 0.7, marginBottom: '1.5rem'}}>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <p style={{ fontSize: '1rem', opacity: 0.7, marginBottom: '1.5rem' }}>
                   준비된 사람은 면접장을 나서며
                 </p>
-                <div style={{display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap'}}>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                   <div style={{
                     padding: '1rem 1.5rem',
                     background: 'rgba(var(--color-accent-rgb), 0.1)',
@@ -1097,7 +1097,7 @@ function LandingPageContent() {
                     textAlign: 'center',
                     border: '1px solid rgba(var(--color-accent-rgb), 0.2)'
                   }}>
-                    <p style={{fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)'}}>
+                    <p style={{ fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)' }}>
                       "할 만큼 했다"
                     </p>
                   </div>
@@ -1108,7 +1108,7 @@ function LandingPageContent() {
                     textAlign: 'center',
                     border: '1px solid rgba(var(--color-accent-rgb), 0.2)'
                   }}>
-                    <p style={{fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)'}}>
+                    <p style={{ fontSize: '1.1rem', fontWeight: '600', margin: 0, color: 'var(--color-secondary)' }}>
                       "최선을 다했다"
                     </p>
                   </div>
@@ -1116,13 +1116,13 @@ function LandingPageContent() {
               </div>
             </div>
 
-            <div className={styles.ctaNudge} style={{marginTop: '2rem'}}>
-              <p className={styles.ctaNudgeMain} style={{fontSize: '1.3rem'}}>
-                다음 면접,<br/>
-                <span style={{color: 'var(--color-secondary)'}}>후회 없이 끝내세요.</span>
+            <div className={styles.ctaNudge} style={{ marginTop: '2rem' }}>
+              <p className={styles.ctaNudgeMain} style={{ fontSize: '1.3rem' }}>
+                다음 면접,<br />
+                <span style={{ color: 'var(--color-secondary)' }}>후회 없이 끝내세요.</span>
               </p>
-              <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem'}}>
-                <span className={styles.ctaNudgeHighlight}>하루 10분만</span> 투자하세요.<br/>
+              <p className={styles.ctaNudgeDesc} style={{ marginTop: '1rem' }}>
+                <span className={styles.ctaNudgeHighlight}>하루 10분만</span> 투자하세요.<br />
                 그게 전부입니다.
               </p>
             </div>
@@ -1135,7 +1135,7 @@ function LandingPageContent() {
             <div className={styles.sectionHeader}>
               <span className={styles.badge}>시작하기</span>
               <h2 className={styles.sectionTitle}>
-                내일을,<br/>
+                내일을,<br />
                 <span className={styles.emphasizeLarge}>오늘</span> 준비하세요
               </h2>
             </div>
@@ -1156,8 +1156,8 @@ function LandingPageContent() {
                 marginBottom: '1rem',
                 lineHeight: '1.6'
               }}>
-                질문도, 가이드도, 답변 구조도<br/>
-                <span style={{color: 'var(--color-secondary)'}}>우리가 다 준비해뒀습니다.</span>
+                질문도, 가이드도, 답변 구조도<br />
+                <span style={{ color: 'var(--color-secondary)' }}>우리가 다 준비해뒀습니다.</span>
               </p>
               <p style={{
                 fontSize: '1rem',
@@ -1165,7 +1165,7 @@ function LandingPageContent() {
                 marginBottom: '1.5rem',
                 lineHeight: '1.8'
               }}>
-                당신은 그냥 열어보기만 하면 됩니다.<br/>
+                당신은 그냥 열어보기만 하면 됩니다.<br />
                 매일 정해진 시간에 알아서 도착하니까요.
               </p>
               <div style={{
@@ -1180,8 +1180,8 @@ function LandingPageContent() {
                   margin: 0,
                   color: 'var(--color-secondary)'
                 }}>
-                  기회는 우리가 만들어드립니다.<br/>
-                  <span style={{fontSize: '1.2rem'}}>당신은 선택만 하세요.</span>
+                  기회는 우리가 만들어드립니다.<br />
+                  <span style={{ fontSize: '1.2rem' }}>당신은 선택만 하세요.</span>
                 </p>
               </div>
             </div>
@@ -1253,7 +1253,7 @@ function LandingPageContent() {
                   textAlign: 'center',
                   lineHeight: '1.6'
                 }}>
-                  하루 2,450원, 커피 한 잔 값으로<br/>
+                  하루 2,450원, 커피 한 잔 값으로<br />
                   <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>하루 10분 투자가 자신감으로 바뀝니다</span>
                 </p>
               </div>
@@ -1284,8 +1284,8 @@ function LandingPageContent() {
                     <span>결제하면 24시간 내, 빠르게 준비 시작</span>
                   </div>
                   <div className={`${styles.feature} ${styles.featureEmpty}`}>
-                    <span className={styles.featureCheck} style={{visibility: 'hidden'}}>✓</span>
-                    <span style={{visibility: 'hidden'}}>Spacer</span>
+                    <span className={styles.featureCheck} style={{ visibility: 'hidden' }}>✓</span>
+                    <span style={{ visibility: 'hidden' }}>Spacer</span>
                   </div>
                 </div>
 
@@ -1324,7 +1324,7 @@ function LandingPageContent() {
                   textAlign: 'center',
                   lineHeight: '1.6'
                 }}>
-                  급할수록 핵심만 정확하게<br/>
+                  급할수록 핵심만 정확하게<br />
                   <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>오늘 결제, 내일 면접 준비 완료</span>
                 </p>
               </div>
@@ -1406,20 +1406,20 @@ function LandingPageContent() {
                     margin: 0,
                     listStyle: 'none'
                   }}>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ color: 'var(--color-secondary)' }}>✓</span>
                       <span>면접까지 <strong>1주일 이상</strong> 여유</span>
                     </li>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ color: 'var(--color-secondary)' }}>✓</span>
                       <span><strong>모든 질문</strong> 빠짐없이 준비</span>
                     </li>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ color: 'var(--color-secondary)' }}>✓</span>
                       <span>꼬리 질문까지 <strong>완벽 대비</strong></span>
                     </li>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{color: 'var(--color-secondary)'}}>✓</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ color: 'var(--color-secondary)' }}>✓</span>
                       <span>이번 이직이 <strong>정말 중요</strong>한 분</span>
                     </li>
                   </ul>
@@ -1468,16 +1468,16 @@ function LandingPageContent() {
                     margin: 0,
                     listStyle: 'none'
                   }}>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{opacity: 0.5}}>•</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ opacity: 0.5 }}>•</span>
                       <span>면접이 <strong>3일 이내</strong>로 급한 분</span>
                     </li>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{opacity: 0.5}}>•</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ opacity: 0.5 }}>•</span>
                       <span><strong>먼저 경험</strong>해보고 싶은 분</span>
                     </li>
-                    <li style={{display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
-                      <span style={{opacity: 0.5}}>•</span>
+                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                      <span style={{ opacity: 0.5 }}>•</span>
                       <span>핵심 <strong>3개만</strong> 빠르게</span>
                     </li>
                   </ul>
@@ -1496,9 +1496,9 @@ function LandingPageContent() {
                   margin: 0,
                   lineHeight: '1.6'
                 }}>
-                  <span style={{opacity: 0.7}}>고민된다면?</span>{' '}
-                  <strong style={{color: 'var(--color-secondary)'}}>그로스 플랜</strong>을 추천드립니다.<br/>
-                  <span style={{fontSize: '0.85rem', opacity: 0.6}}>제대로 준비해서 한 번에 붙는 게 결국 더 빠릅니다.</span>
+                  <span style={{ opacity: 0.7 }}>고민된다면?</span>{' '}
+                  <strong style={{ color: 'var(--color-secondary)' }}>그로스 플랜</strong>을 추천드립니다.<br />
+                  <span style={{ fontSize: '0.85rem', opacity: 0.6 }}>제대로 준비해서 한 번에 붙는 게 결국 더 빠릅니다.</span>
                 </p>
               </div>
             </div>
@@ -1511,10 +1511,10 @@ function LandingPageContent() {
             <div className={styles.sectionHeader}>
               <span className={styles.badge}>핵심 차별점</span>
               <h2 className={styles.sectionTitle}>
-                ChatGPT는 <span className={styles.deemphasize}>일반론</span>을 말합니다.<br/>
+                ChatGPT는 <span className={styles.deemphasize}>일반론</span>을 말합니다.<br />
                 QueryDaily는 <span className={styles.emphasize}>당신의 경험</span>을 묻습니다.
               </h2>
-              <p style={{textAlign: 'center', fontSize: '0.9rem', opacity: 0.6, marginTop: '1rem', fontStyle: 'italic'}}>
+              <p style={{ textAlign: 'center', fontSize: '0.9rem', opacity: 0.6, marginTop: '1rem', fontStyle: 'italic' }}>
                 "ChatGPT에 물어봤는데... 뭔가 내 상황이랑 안 맞아..."
               </p>
             </div>
@@ -1534,8 +1534,8 @@ function LandingPageContent() {
                 lineHeight: '1.8',
                 margin: 0
               }}>
-                면접관은 <strong>당신 이력서</strong>를 보고 질문합니다.<br/>
-                <span style={{color: 'var(--color-secondary)'}}>그 질문을 미리 알면?</span>
+                면접관은 <strong>당신 이력서</strong>를 보고 질문합니다.<br />
+                <span style={{ color: 'var(--color-secondary)' }}>그 질문을 미리 알면?</span>
               </p>
             </div>
 
@@ -1604,11 +1604,11 @@ function LandingPageContent() {
                 marginBottom: '1rem',
                 textAlign: 'center'
               }}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.8rem', color: '#ff6b6b'}}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.8rem', color: '#ff6b6b' }}>
                   ChatGPT
                 </p>
-                <p style={{fontSize: '0.95rem', opacity: 0.8, margin: 0, lineHeight: '1.7'}}>
-                  당신 이력서를 모름 → 일반 질문만<br/>
+                <p style={{ fontSize: '0.95rem', opacity: 0.8, margin: 0, lineHeight: '1.7' }}>
+                  당신 이력서를 모름 → 일반 질문만<br />
                   다 같은 답 → 차별화 안 됨
                 </p>
               </div>
@@ -1620,11 +1620,11 @@ function LandingPageContent() {
                 borderRadius: '12px',
                 textAlign: 'center'
               }}>
-                <p style={{fontSize: '1rem', fontWeight: '600', marginBottom: '0.8rem', color: 'var(--color-secondary)'}}>
+                <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.8rem', color: 'var(--color-secondary)' }}>
                   QueryDaily
                 </p>
-                <p style={{fontSize: '0.95rem', opacity: 0.8, margin: 0, lineHeight: '1.7'}}>
-                  당신 이력서 분석 → 맞춤 질문<br/>
+                <p style={{ fontSize: '0.95rem', opacity: 0.8, margin: 0, lineHeight: '1.7' }}>
+                  당신 이력서 분석 → 맞춤 질문<br />
                   당신만의 답 → 면접관 기억에 남음
                 </p>
               </div>
@@ -1648,8 +1648,8 @@ function LandingPageContent() {
                 marginBottom: '1rem',
                 lineHeight: '1.7'
               }}>
-                면접관이 물을 질문은<br/>
-                <span style={{color: 'var(--color-secondary)', fontSize: '1.4rem'}}>이미 당신 이력서에</span> 다 있습니다.
+                면접관이 물을 질문은<br />
+                <span style={{ color: 'var(--color-secondary)', fontSize: '1.4rem' }}>이미 당신 이력서에</span> 다 있습니다.
               </p>
               <p style={{
                 fontSize: '0.95rem',
@@ -1657,7 +1657,7 @@ function LandingPageContent() {
                 margin: 0,
                 lineHeight: '1.6'
               }}>
-                ChatGPT는 그걸 모릅니다.<br/>
+                ChatGPT는 그걸 모릅니다.<br />
                 <strong>QueryDaily는 그걸 찾아드립니다.</strong>
               </p>
             </div>
@@ -1665,7 +1665,7 @@ function LandingPageContent() {
         </section>
 
         {/* Philosophy Section - 공감과 응원 */}
-        <section className={styles.problemSection} style={{position: 'relative', overflow: 'hidden'}}>
+        <section className={styles.problemSection} style={{ position: 'relative', overflow: 'hidden' }}>
           {/* 배경 장식 요소들 */}
           <div style={{
             position: 'absolute',
@@ -1716,19 +1716,19 @@ function LandingPageContent() {
             pointerEvents: 'none'
           }}>✓</div>
 
-          <div className={styles.problemContainer} style={{position: 'relative', zIndex: 1}}>
+          <div className={styles.problemContainer} style={{ position: 'relative', zIndex: 1 }}>
             <h2 className={styles.sectionTitle}>
-              걱정하지 마세요,<br/>
+              걱정하지 마세요,<br />
               <span className={styles.highlight}>당신은 할 수 있어요</span>
             </h2>
 
-            <div className={styles.prepMessage} style={{marginTop: '3rem', marginBottom: '3rem'}}>
-              <p className={styles.prepMessageMain} style={{fontSize: '1.4rem', lineHeight: '2'}}>
+            <div className={styles.prepMessage} style={{ marginTop: '3rem', marginBottom: '3rem' }}>
+              <p className={styles.prepMessageMain} style={{ fontSize: '1.4rem', lineHeight: '2' }}>
                 면접이 두려운 건 당연해요.
               </p>
-              <p className={styles.prepMessageSub} style={{fontSize: '1.1rem', marginTop: '1.5rem'}}>
-                열심히 준비한 만큼 잘 보여주고 싶은 마음,<br/>
-                그 마음이 긴장이 되는 거예요.<br/>
+              <p className={styles.prepMessageSub} style={{ fontSize: '1.1rem', marginTop: '1.5rem' }}>
+                열심히 준비한 만큼 잘 보여주고 싶은 마음,<br />
+                그 마음이 긴장이 되는 거예요.<br />
                 <strong>그건 당신이 진심이라는 증거</strong>입니다.
               </p>
             </div>
@@ -1736,36 +1736,36 @@ function LandingPageContent() {
             <div className={styles.scenarioList}>
               <div className={styles.scenarioItem}>
                 <div className={styles.scenarioText}>
-                  <p className={styles.scenarioAction} style={{fontSize: '1.1rem', fontWeight: '600'}}>이미 해낸 것들이 있잖아요</p>
+                  <p className={styles.scenarioAction} style={{ fontSize: '1.1rem', fontWeight: '600' }}>이미 해낸 것들이 있잖아요</p>
                   <p className={styles.scenarioQuestion}>프로젝트도 했고, 어려운 문제도 풀었고, 여기까지 왔어요</p>
-                  <p className={styles.scenarioResult} style={{color: 'var(--color-accent)'}}>→ 그걸 말로 풀어내는 연습만 하면 돼요</p>
+                  <p className={styles.scenarioResult} style={{ color: 'var(--color-accent)' }}>→ 그걸 말로 풀어내는 연습만 하면 돼요</p>
                 </div>
               </div>
 
               <div className={styles.scenarioItem}>
                 <div className={styles.scenarioText}>
-                  <p className={styles.scenarioAction} style={{fontSize: '1.1rem', fontWeight: '600'}}>면접관도 당신 편이에요</p>
+                  <p className={styles.scenarioAction} style={{ fontSize: '1.1rem', fontWeight: '600' }}>면접관도 당신 편이에요</p>
                   <p className={styles.scenarioQuestion}>그들도 좋은 사람을 만나고 싶어해요</p>
-                  <p className={styles.scenarioResult} style={{color: 'var(--color-accent)'}}>→ 당신이 그 사람임을 보여주기만 하면 돼요</p>
+                  <p className={styles.scenarioResult} style={{ color: 'var(--color-accent)' }}>→ 당신이 그 사람임을 보여주기만 하면 돼요</p>
                 </div>
               </div>
 
               <div className={styles.scenarioItem}>
                 <div className={styles.scenarioText}>
-                  <p className={styles.scenarioAction} style={{fontSize: '1.1rem', fontWeight: '600'}}>준비하면 달라져요</p>
+                  <p className={styles.scenarioAction} style={{ fontSize: '1.1rem', fontWeight: '600' }}>준비하면 달라져요</p>
                   <p className={styles.scenarioQuestion}>예상된 질문에는 자신감이 생겨요</p>
-                  <p className={styles.scenarioResult} style={{color: 'var(--color-accent)'}}>→ 그 자신감이 면접장에서 빛나요</p>
+                  <p className={styles.scenarioResult} style={{ color: 'var(--color-accent)' }}>→ 그 자신감이 면접장에서 빛나요</p>
                 </div>
               </div>
             </div>
 
-            <div className={styles.ctaNudge} style={{marginTop: '3rem'}}>
+            <div className={styles.ctaNudge} style={{ marginTop: '3rem' }}>
               <p className={styles.ctaNudgeMain}>
-                당신은 이미 충분해요.<br/>
+                당신은 이미 충분해요.<br />
                 그걸 잘 보여주는 법만 연습하면 돼요.
               </p>
-              <p className={styles.ctaNudgeDesc} style={{marginTop: '1rem'}}>
-                새로운 걸 배우는 게 아니에요.<br/>
+              <p className={styles.ctaNudgeDesc} style={{ marginTop: '1rem' }}>
+                새로운 걸 배우는 게 아니에요.<br />
                 <span className={styles.ctaNudgeHighlight}>이미 가진 걸, 잘 전달하는 거예요.</span>
               </p>
             </div>
@@ -1782,16 +1782,16 @@ function LandingPageContent() {
               lineHeight: '1.6',
               marginBottom: '2rem'
             }}>
-              회사가 나를 선택하는 게 아니라,<br/>
-              <span className={styles.highlight} style={{fontSize: '1.8rem'}}>내가 회사를 선택하는 겁니다.</span>
+              회사가 나를 선택하는 게 아니라,<br />
+              <span className={styles.highlight} style={{ fontSize: '1.8rem' }}>내가 회사를 선택하는 겁니다.</span>
             </h2>
 
-            <div className={styles.prepMessage} style={{marginBottom: '2.5rem'}}>
-              <p className={styles.prepMessageSub} style={{fontSize: '1.05rem', lineHeight: '1.9'}}>
-                준비된 사람은 다릅니다.<br/><br/>
-                면접장에서 떨지 않고,<br/>
-                오히려 <strong>"이 회사가 나한테 맞는지"</strong> 살펴봅니다.<br/><br/>
-                여러 곳에서 합격하면,<br/>
+            <div className={styles.prepMessage} style={{ marginBottom: '2.5rem' }}>
+              <p className={styles.prepMessageSub} style={{ fontSize: '1.05rem', lineHeight: '1.9' }}>
+                준비된 사람은 다릅니다.<br /><br />
+                면접장에서 떨지 않고,<br />
+                오히려 <strong>"이 회사가 나한테 맞는지"</strong> 살펴봅니다.<br /><br />
+                여러 곳에서 합격하면,<br />
                 <strong>더 좋은 조건, 더 맞는 문화</strong>를 고를 수 있습니다.
               </p>
             </div>
@@ -1875,11 +1875,11 @@ function LandingPageContent() {
               </div>
             </div>
 
-            <div className={styles.ctaNudge} style={{marginTop: '2.5rem'}}>
+            <div className={styles.ctaNudge} style={{ marginTop: '2.5rem' }}>
               <p className={styles.ctaNudgeMain}>
                 당신의 커리어를 당신이 주도하세요.
               </p>
-              <p className={styles.ctaNudgeDesc} style={{marginTop: '0.8rem'}}>
+              <p className={styles.ctaNudgeDesc} style={{ marginTop: '0.8rem' }}>
                 그 시작은 <span className={styles.ctaNudgeHighlight}>제대로 된 면접 준비</span>입니다.
               </p>
             </div>
@@ -1892,11 +1892,11 @@ function LandingPageContent() {
             <div className={styles.whoWeAreHeader}>
               <span className={styles.whoWeAreBadge}>만든 사람들</span>
               <h2 className={styles.sectionTitle}>
-                사실 우리는 먼저 떨어져본 사람들입니다.<br/>
+                사실 우리는 먼저 떨어져본 사람들입니다.<br />
                 <span className={styles.whoWeAreHighlight}>그래서 알아요.</span>
               </h2>
               <p className={styles.sectionSubtitle}>
-                왜 떨어지는지.<br/>
+                왜 떨어지는지.<br />
                 어떻게 하면 붙는지.
               </p>
             </div>
@@ -1924,11 +1924,11 @@ function LandingPageContent() {
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor: theme.secondary, stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor: theme.secondaryLight, stopOpacity:1}} />
+                        <stop offset="0%" style={{ stopColor: theme.secondary, stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: theme.secondaryLight, stopOpacity: 1 }} />
                       </linearGradient>
                     </defs>
-                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad1)" opacity="0.9"/>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad1)" opacity="0.9" />
                   </svg>
                 </div>
                 <div className={styles.expertBadge}>현) 판교 N사 개발자</div>
@@ -1938,7 +1938,7 @@ function LandingPageContent() {
                   <span className={styles.journeyTo}>판교 대기업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  "저도 국비생이었어요. 300번 떨어졌죠."<br/>
+                  "저도 국비생이었어요. 300번 떨어졌죠."<br />
                   → 2년 후, 당신도 연봉 2배 받을 수 있어요
                 </p>
               </div>
@@ -1948,11 +1948,11 @@ function LandingPageContent() {
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor: theme.secondaryLight, stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor: theme.secondary, stopOpacity:1}} />
+                        <stop offset="0%" style={{ stopColor: theme.secondaryLight, stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: theme.secondary, stopOpacity: 1 }} />
                       </linearGradient>
                     </defs>
-                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad2)" opacity="0.9"/>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad2)" opacity="0.9" />
                   </svg>
                 </div>
                 <div className={styles.expertBadge}>현) 유니콘 B사 개발자</div>
@@ -1962,7 +1962,7 @@ function LandingPageContent() {
                   <span className={styles.journeyTo}>유니콘 스타트업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  "SI 야근에 지쳐서 100번 넘게 지원했어요."<br/>
+                  "SI 야근에 지쳐서 100번 넘게 지원했어요."<br />
                   → 이제 당신은 그러지 않아도 됩니다
                 </p>
               </div>
@@ -1972,11 +1972,11 @@ function LandingPageContent() {
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor: theme.primaryLight, stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor: theme.secondary, stopOpacity:1}} />
+                        <stop offset="0%" style={{ stopColor: theme.primaryLight, stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: theme.secondary, stopOpacity: 1 }} />
                       </linearGradient>
                     </defs>
-                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad3)" opacity="0.9"/>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad3)" opacity="0.9" />
                   </svg>
                 </div>
                 <div className={styles.expertBadge}>전) 커머스 C사 개발자</div>
@@ -1986,7 +1986,7 @@ function LandingPageContent() {
                   <span className={styles.journeyTo}>대형 커머스</span>
                 </div>
                 <p className={styles.expertStory}>
-                  "무명 스타트업에서 시작했어요. 막막했죠."<br/>
+                  "무명 스타트업에서 시작했어요. 막막했죠."<br />
                   → 당신의 시작도 빛날 수 있어요
                 </p>
               </div>
@@ -1996,11 +1996,11 @@ function LandingPageContent() {
                   <svg className={styles.personSilhouette} viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor: theme.secondary, stopOpacity:1}} />
-                        <stop offset="100%" style={{stopColor: theme.primary, stopOpacity:1}} />
+                        <stop offset="0%" style={{ stopColor: theme.secondary, stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: theme.primary, stopOpacity: 1 }} />
                       </linearGradient>
                     </defs>
-                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad4)" opacity="0.9"/>
+                    <path d="M50 12 C58 12 64 18 64 28 C64 36 58 42 50 42 C42 42 36 36 36 28 C36 18 42 12 50 12 Z M25 48 C30 45 38 44 45 44 L55 44 C62 44 70 45 75 48 C82 52 85 58 85 65 L85 110 L15 110 L15 65 C15 58 18 52 25 48 Z" fill="url(#grad4)" opacity="0.9" />
                   </svg>
                 </div>
                 <div className={styles.expertBadge}>현) 테크 기업 개발자</div>
@@ -2010,7 +2010,7 @@ function LandingPageContent() {
                   <span className={styles.journeyTo}>판교 테크 기업</span>
                 </div>
                 <p className={styles.expertStory}>
-                  "CS 전공이어도 면접에선 떨어졌어요."<br/>
+                  "CS 전공이어도 면접에선 떨어졌어요."<br />
                   → 전공 상관없이, 당신도 붙을 수 있어요
                 </p>
               </div>
@@ -2018,7 +2018,7 @@ function LandingPageContent() {
 
             <div className={styles.teamSummary}>
               <p className={styles.summaryMain}>
-                우리의 <span className={styles.highlight}>500번 실패</span>가<br/>
+                우리의 <span className={styles.highlight}>500번 실패</span>가<br />
                 당신의 <span className={styles.highlight}>첫 합격</span>을 만듭니다.
               </p>
               <p style={{
@@ -2028,16 +2028,16 @@ function LandingPageContent() {
                 lineHeight: '1.8',
                 textAlign: 'center'
               }}>
-                우리가 시행착오로 얻은 노하우,<br/>
-                <strong style={{color: 'var(--color-secondary)'}}>전부 드리고 싶어요.</strong><br/>
-                <span style={{fontSize: '0.9rem', opacity: 0.7}}>당신은 우리처럼 돌아가지 않아도 되니까요.</span>
+                우리가 시행착오로 얻은 노하우,<br />
+                <strong style={{ color: 'var(--color-secondary)' }}>전부 드리고 싶어요.</strong><br />
+                <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>당신은 우리처럼 돌아가지 않아도 되니까요.</span>
               </p>
             </div>
           </div>
         </section>
 
         {/* Bridge CTA Section - 킥 포인트 */}
-        <section className={styles.bridgeCta} style={{position: 'relative', overflow: 'hidden'}}>
+        <section className={styles.bridgeCta} style={{ position: 'relative', overflow: 'hidden' }}>
           {/* 배경 글로우 */}
           <div style={{
             position: 'absolute',
@@ -2051,15 +2051,15 @@ function LandingPageContent() {
             pointerEvents: 'none'
           }}></div>
 
-          <div className={styles.bridgeCtaContainer} style={{position: 'relative', zIndex: 1}}>
-            <div style={{textAlign: 'center', maxWidth: '600px', margin: '0 auto'}}>
+          <div className={styles.bridgeCtaContainer} style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
               <p style={{
                 fontSize: '1.1rem',
                 opacity: 0.7,
                 marginBottom: '2rem',
                 lineHeight: '1.8'
               }}>
-                면접에서 떨어진 그날 밤,<br/>
+                면접에서 떨어진 그날 밤,<br />
                 분명 이렇게 생각했을 거예요.
               </p>
 
@@ -2069,13 +2069,13 @@ function LandingPageContent() {
                 lineHeight: '1.6',
                 marginBottom: '2rem'
               }}>
-                <span style={{opacity: 0.5}}>"</span>나는 분명 할 수 있었는데...<br/>
+                <span style={{ opacity: 0.5 }}>"</span>나는 분명 할 수 있었는데...<br />
                 <span style={{
                   background: 'linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light))',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   fontSize: '2.3rem'
-                }}>왜 말이 안 나왔지?</span><span style={{opacity: 0.5}}>"</span>
+                }}>왜 말이 안 나왔지?</span><span style={{ opacity: 0.5 }}>"</span>
               </h3>
 
               <p style={{
@@ -2084,11 +2084,11 @@ function LandingPageContent() {
                 marginBottom: '2.5rem',
                 fontWeight: '500'
               }}>
-                실력이 없어서가 아니에요.<br/>
-                <strong>그 질문이 나올 줄 몰랐을 뿐</strong>이에요.<br/><br/>
-                <span style={{opacity: 0.8}}>
-                  알았다면, 준비했을 거예요.<br/>
-                  준비했다면, <span style={{color: 'var(--color-secondary)', fontWeight: '700'}}>말할 수 있었을 거예요.</span>
+                실력이 없어서가 아니에요.<br />
+                <strong>그 질문이 나올 줄 몰랐을 뿐</strong>이에요.<br /><br />
+                <span style={{ opacity: 0.8 }}>
+                  알았다면, 준비했을 거예요.<br />
+                  준비했다면, <span style={{ color: 'var(--color-secondary)', fontWeight: '700' }}>말할 수 있었을 거예요.</span>
                 </span>
               </p>
 
@@ -2104,11 +2104,11 @@ function LandingPageContent() {
                   margin: 0,
                   lineHeight: '1.7'
                 }}>
-                  다음 면접에서는<br/>
+                  다음 면접에서는<br />
                   <span style={{
                     color: 'var(--color-secondary)',
                     fontSize: '1.6rem'
-                  }}>"이 질문 나올 줄 알았어"</span><br/>
+                  }}>"이 질문 나올 줄 알았어"</span><br />
                   라고 말하세요.
                 </p>
               </div>
@@ -2213,7 +2213,7 @@ function LandingPageContent() {
                 marginBottom: '1.5rem',
                 lineHeight: '1.6'
               }}>
-                카카오톡으로 편하게 물어보세요.<br/>
+                카카오톡으로 편하게 물어보세요.<br />
                 빠르게 답변드릴게요.
               </p>
               <a
@@ -2235,7 +2235,7 @@ function LandingPageContent() {
                 }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z"/>
+                  <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z" />
                 </svg>
                 카카오톡으로 문의하기
               </a>
@@ -2249,7 +2249,7 @@ function LandingPageContent() {
           background: 'linear-gradient(180deg, var(--color-bg) 0%, rgba(var(--color-accent-rgb), 0.08) 100%)',
           borderTop: '1px solid rgba(var(--color-accent-rgb), 0.1)'
         }}>
-          <div style={{maxWidth: '1200px', margin: '0 auto'}}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             {/* 상단 컨텐츠 */}
             <div style={{
               display: 'flex',
@@ -2259,8 +2259,8 @@ function LandingPageContent() {
               gap: '4rem'
             }}>
               {/* 브랜드 섹션 */}
-              <div style={{maxWidth: '400px'}}>
-                <div className={styles.footerLogo} style={{fontSize: '2rem', marginBottom: '1rem'}}>
+              <div style={{ maxWidth: '400px' }}>
+                <div className={styles.footerLogo} style={{ fontSize: '2rem', marginBottom: '1rem' }}>
                   Query<span>Daily</span>
                 </div>
                 <p style={{
@@ -2269,12 +2269,12 @@ function LandingPageContent() {
                   lineHeight: '1.8',
                   marginBottom: '1.5rem'
                 }}>
-                  당신의 이력서를 분석해서,<br/>
+                  당신의 이력서를 분석해서,<br />
                   면접관이 꼭 물어볼 질문을 매일 보내드립니다.
                 </p>
 
                 {/* 소셜 링크 */}
-                <div style={{display: 'flex', gap: '1rem'}}>
+                <div style={{ display: 'flex', gap: '1rem' }}>
                   <a
                     href="https://www.instagram.com/querydaily"
                     target="_blank"
@@ -2293,7 +2293,7 @@ function LandingPageContent() {
                     }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                     </svg>
                   </a>
                   <a
@@ -2314,7 +2314,7 @@ function LandingPageContent() {
                     }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z"/>
+                      <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z" />
                     </svg>
                   </a>
                 </div>
@@ -2333,10 +2333,10 @@ function LandingPageContent() {
                     color: 'var(--color-text)',
                     marginBottom: '1.2rem'
                   }}>상품</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>전체 상품</a>
-                    <a href="#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>그로스 플랜</a>
-                    <a href="#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>크리티컬 히트</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>전체 상품</a>
+                    <a href="#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>그로스 플랜</a>
+                    <a href="#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>크리티컬 히트</a>
                   </div>
                 </div>
 
@@ -2347,10 +2347,10 @@ function LandingPageContent() {
                     color: 'var(--color-text)',
                     marginBottom: '1.2rem'
                   }}>서비스</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="#how-it-works" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용방법</a>
-                    <a href="#faq" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>자주 묻는 질문</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>1:1 상담</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="#how-it-works" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>이용방법</a>
+                    <a href="#faq" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>자주 묻는 질문</a>
+                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>1:1 상담</a>
                   </div>
                 </div>
 
@@ -2361,10 +2361,10 @@ function LandingPageContent() {
                     color: 'var(--color-text)',
                     marginBottom: '1.2rem'
                   }}>고객지원</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="/terms" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용약관</a>
-                    <a href="/privacy" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>개인정보처리방침</a>
-                    <a href="/refund" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>환불정책</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="/terms" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>이용약관</a>
+                    <a href="/privacy" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>개인정보처리방침</a>
+                    <a href="/refund" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>환불정책</a>
                   </div>
                 </div>
 
@@ -2375,9 +2375,9 @@ function LandingPageContent() {
                     color: 'var(--color-text)',
                     marginBottom: '1.2rem'
                   }}>Contact</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="mailto:contact@querydaily.com" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>contact@querydaily.com</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>카카오톡 상담</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="mailto:official.querydaily@gmail.com" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>official.querydaily@gmail.com</a>
+                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>카카오톡 상담</a>
                   </div>
                 </div>
               </div>
@@ -2402,7 +2402,7 @@ function LandingPageContent() {
                 margin: 0,
                 fontSize: '0.8rem',
                 color: 'var(--color-text-muted)'
-              }}>사업자등록번호: 123-45-67890 | 대표: QueryDaily</p>
+              }}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
             </div>
           </div>
         </footer>
@@ -2426,9 +2426,8 @@ function LandingPageContent() {
                 {[1, 2, 3, 4].map((step) => (
                   <div
                     key={step}
-                    className={`${styles.modalProgressDot} ${
-                      purchaseModalStep >= step ? styles.modalProgressDotActive : ''
-                    }`}
+                    className={`${styles.modalProgressDot} ${purchaseModalStep >= step ? styles.modalProgressDotActive : ''
+                      }`}
                   />
                 ))}
               </div>

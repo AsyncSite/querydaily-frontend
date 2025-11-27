@@ -284,10 +284,10 @@ export default function HomePageV3() {
             <div className={styles.lineGraphContainer}>
               <svg className={styles.lineGraph} viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
                 {/* 그리드 라인 */}
-                <line x1="50" y1="250" x2="550" y2="250" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
-                <line x1="50" y1="187.5" x2="550" y2="187.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
-                <line x1="50" y1="125" x2="550" y2="125" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
-                <line x1="50" y1="62.5" x2="550" y2="62.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                <line x1="50" y1="250" x2="550" y2="250" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+                <line x1="50" y1="187.5" x2="550" y2="187.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+                <line x1="50" y1="125" x2="550" y2="125" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+                <line x1="50" y1="62.5" x2="550" y2="62.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
 
                 {/* Y축 레이블 */}
                 <text x="30" y="255" fill="#9ca3af" fontSize="12" textAnchor="end">0%</text>
@@ -333,16 +333,16 @@ export default function HomePageV3() {
                 </defs>
 
                 {/* 준비 없는 경우 데이터 포인트 */}
-                <circle cx="50" cy="226" r="5" fill="#6b7280" className={styles.dataPoint}/>
-                <circle cx="216.67" cy="218.75" r="5" fill="#6b7280" className={styles.dataPoint}/>
-                <circle cx="383.33" cy="212.5" r="5" fill="#6b7280" className={styles.dataPoint}/>
-                <circle cx="550" cy="212.5" r="5" fill="#6b7280" className={styles.dataPoint}/>
+                <circle cx="50" cy="226" r="5" fill="#6b7280" className={styles.dataPoint} />
+                <circle cx="216.67" cy="218.75" r="5" fill="#6b7280" className={styles.dataPoint} />
+                <circle cx="383.33" cy="212.5" r="5" fill="#6b7280" className={styles.dataPoint} />
+                <circle cx="550" cy="212.5" r="5" fill="#6b7280" className={styles.dataPoint} />
 
                 {/* 준비한 경우 데이터 포인트 */}
-                <circle cx="50" cy="226" r="5" fill="#8b5cf6" className={styles.dataPoint}/>
-                <circle cx="216.67" cy="175" r="5" fill="#a855f7" className={styles.dataPoint}/>
-                <circle cx="383.33" cy="93.75" r="5" fill="#d946ef" className={styles.dataPoint}/>
-                <circle cx="550" cy="31.25" r="5" fill="#ec4899" className={styles.dataPoint}/>
+                <circle cx="50" cy="226" r="5" fill="#8b5cf6" className={styles.dataPoint} />
+                <circle cx="216.67" cy="175" r="5" fill="#a855f7" className={styles.dataPoint} />
+                <circle cx="383.33" cy="93.75" r="5" fill="#d946ef" className={styles.dataPoint} />
+                <circle cx="550" cy="31.25" r="5" fill="#ec4899" className={styles.dataPoint} />
 
                 {/* 최종 값 레이블 */}
                 <text x="550" y="205" fill="#9ca3af" fontSize="14" fontWeight="700" textAnchor="start" dx="10">38%</text>
@@ -796,7 +796,7 @@ export default function HomePageV3() {
             <span className={styles.feedbackBadge}>💭 여러분의 의견을 들려주세요</span>
             <h2 className={styles.sectionTitle}>서비스 만족도 평가</h2>
             <p className={styles.feedbackSubtitle}>
-              QueryDaily를 사용해보신 경험을 공유해주세요.<br/>
+              QueryDaily를 사용해보신 경험을 공유해주세요.<br />
               더 나은 서비스로 보답하겠습니다.
             </p>
           </div>
@@ -811,7 +811,7 @@ export default function HomePageV3() {
               <div className={styles.feedbackIcon}>⭐</div>
               <h3 className={styles.feedbackCardTitle}>서비스 만족도 평가</h3>
               <p className={styles.feedbackCardDescription}>
-                QueryDaily의 질문 품질, 서비스 경험에 대한<br/>
+                QueryDaily의 질문 품질, 서비스 경험에 대한<br />
                 솔직한 평가를 남겨주세요
               </p>
               <div className={styles.feedbackCardButton}>평가하러 가기 →</div>
@@ -826,7 +826,7 @@ export default function HomePageV3() {
               <div className={styles.feedbackIcon}>💡</div>
               <h3 className={styles.feedbackCardTitle}>상품 추가 건의</h3>
               <p className={styles.feedbackCardDescription}>
-                이런 상품이 있으면 좋겠다는<br/>
+                이런 상품이 있으면 좋겠다는<br />
                 아이디어를 자유롭게 제안해주세요
               </p>
               <div className={styles.feedbackCardButton}>건의하러 가기 →</div>
@@ -844,7 +844,7 @@ export default function HomePageV3() {
                 Query<span>Daily</span>
               </div>
               <p className={styles.footerDescription}>
-                당신의 이력서를 분석해서,<br/>
+                당신의 이력서를 분석해서,<br />
                 면접관이 꼭 물어볼 질문을 매일 보내드립니다.
               </p>
 
@@ -869,7 +869,7 @@ export default function HomePageV3() {
                   💬
                 </a>
                 <a
-                  href="mailto:contact@querydaily.com"
+                  href="mailto:official.querydaily@gmail.com"
                   className={styles.socialLink}
                   aria-label="Email"
                 >
@@ -902,7 +902,7 @@ export default function HomePageV3() {
 
               <div className={styles.footerSection}>
                 <h4>Contact</h4>
-                <a href="mailto:contact@querydaily.com">contact@querydaily.com</a>
+                <a href="mailto:official.querydaily@gmail.com">official.querydaily@gmail.com</a>
                 <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer">카카오톡 상담</a>
               </div>
             </div>
@@ -913,7 +913,7 @@ export default function HomePageV3() {
               © 2024 QueryDaily. All rights reserved.
             </p>
             <p className={styles.footerCompany}>
-              사업자등록번호: 123-45-67890 | 대표: QueryDaily
+              사업자등록번호: 456-12-02771 | 대표: 최보임
             </p>
           </div>
         </div>

@@ -149,7 +149,7 @@ function GrowthPlanV2Content() {
 
             {/* 메인 헤드라인 */}
             <h1 className={styles.heroTitle}>
-              합격하는 사람들은<br/>
+              합격하는 사람들은<br />
               <span className={styles.heroHighlight}>이미 시작했습니다</span>
             </h1>
 
@@ -407,7 +407,7 @@ function GrowthPlanV2Content() {
             <div className={styles.planRecommendationMessage}>
               <p>
                 <span className={styles.recommendQuestion}>고민된다면?</span>{' '}
-                <strong className={styles.recommendPlan}>그로스 플랜</strong>을 추천드립니다.<br/>
+                <strong className={styles.recommendPlan}>그로스 플랜</strong>을 추천드립니다.<br />
                 <span className={styles.recommendSubtext}>제대로 준비해서 한 번에 붙는 게 결국 더 빠릅니다.</span>
               </p>
             </div>
@@ -864,7 +864,7 @@ function GrowthPlanV2Content() {
 
                 <div className={styles.emailBody}>
                   <div className={styles.emailGreeting}>
-                    안녕하세요, 김개발님 👋<br/>
+                    안녕하세요, 김개발님 👋<br />
                     오늘의 면접 질문을 준비했습니다.
                   </div>
 
@@ -874,8 +874,8 @@ function GrowthPlanV2Content() {
                       오늘의 질문
                     </div>
                     <div className={styles.questionText}>
-                      이력서에 기재된 "사용자 관리 시스템 개발" 프로젝트에서<br/>
-                      마이크로서비스 아키텍처를 선택한 이유는 무엇인가요?<br/>
+                      이력서에 기재된 "사용자 관리 시스템 개발" 프로젝트에서<br />
+                      마이크로서비스 아키텍처를 선택한 이유는 무엇인가요?<br />
                       기존 모놀리식 구조 대비 어떤 장단점을 고려하셨나요?
                     </div>
                   </div>
@@ -887,7 +887,7 @@ function GrowthPlanV2Content() {
                   </div>
 
                   <div className={styles.emailTip}>
-                    💡 <strong>준비 팁:</strong> 오늘 하루 이 질문에 대해 생각해보세요.<br/>
+                    💡 <strong>준비 팁:</strong> 오늘 하루 이 질문에 대해 생각해보세요.<br />
                     오후 5시에 상세 해설과 꼬리질문을 보내드립니다.
                   </div>
                 </div>
@@ -935,7 +935,7 @@ function GrowthPlanV2Content() {
                       1. 질문 분석
                     </div>
                     <div className={styles.answerContent}>
-                      이 질문은 단순히 기술 선택의 이유만 묻는 것이 아닙니다.<br/>
+                      이 질문은 단순히 기술 선택의 이유만 묻는 것이 아닙니다.<br />
                       <strong>면접관이 진짜 보고 싶은 것:</strong>
                       <ul>
                         <li>기술적 trade-off를 이해하고 있는가</li>
@@ -1068,8 +1068,8 @@ function GrowthPlanV2Content() {
 
           <div className={styles.emailPreviewCta}>
             <p className={styles.emailPreviewText}>
-              이렇게 <strong>매일 2번</strong>, <strong>20일간 총 40개의 질문</strong>을 받게 됩니다.<br/>
-                          </p>
+              이렇게 <strong>매일 2번</strong>, <strong>20일간 총 40개의 질문</strong>을 받게 됩니다.<br />
+            </p>
           </div>
         </section>
 
@@ -1516,7 +1516,7 @@ function GrowthPlanV2Content() {
           borderTop: '1px solid rgba(var(--color-accent-rgb), 0.1)',
           marginTop: '4rem'
         }}>
-          <div style={{maxWidth: '1200px', margin: '0 auto'}}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             {/* 상단 컨텐츠 */}
             <div style={{
               display: 'flex',
@@ -1526,9 +1526,9 @@ function GrowthPlanV2Content() {
               gap: '4rem'
             }}>
               {/* 브랜드 섹션 */}
-              <div style={{maxWidth: '400px'}}>
-                <div style={{fontSize: '2rem', marginBottom: '1rem', fontWeight: '700', color: 'var(--color-text-primary)'}}>
-                  Query<span style={{color: 'var(--color-secondary)'}}>Daily</span>
+              <div style={{ maxWidth: '400px' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: '700', color: 'var(--color-text-primary)' }}>
+                  Query<span style={{ color: 'var(--color-secondary)' }}>Daily</span>
                 </div>
                 <p style={{
                   fontSize: '0.95rem',
@@ -1536,12 +1536,12 @@ function GrowthPlanV2Content() {
                   lineHeight: '1.8',
                   marginBottom: '1.5rem'
                 }}>
-                  당신의 이력서를 분석해서,<br/>
+                  당신의 이력서를 분석해서,<br />
                   면접관이 꼭 물어볼 질문을 매일 보내드립니다.
                 </p>
 
                 {/* 소셜 링크 */}
-                <div style={{display: 'flex', gap: '1rem'}}>
+                <div style={{ display: 'flex', gap: '1rem' }}>
                   <a
                     href="https://www.instagram.com/querydaily"
                     target="_blank"
@@ -1560,7 +1560,7 @@ function GrowthPlanV2Content() {
                     }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                     </svg>
                   </a>
                   <a
@@ -1581,7 +1581,7 @@ function GrowthPlanV2Content() {
                     }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z"/>
+                      <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z" />
                     </svg>
                   </a>
                 </div>
@@ -1600,10 +1600,10 @@ function GrowthPlanV2Content() {
                     color: 'var(--color-text-primary)',
                     marginBottom: '1.2rem'
                   }}>상품</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="/prototype-hyundoo/v4#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>전체 상품</a>
-                    <a href="/prototype-hyundoo/v4/products/growth-plan/v2" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>그로스 플랜</a>
-                    <a href="/prototype-hyundoo/v4#products" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>크리티컬 히트</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="/prototype-hyundoo/v4#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>전체 상품</a>
+                    <a href="/prototype-hyundoo/v4/products/growth-plan/v2" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>그로스 플랜</a>
+                    <a href="/prototype-hyundoo/v4#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>크리티컬 히트</a>
                   </div>
                 </div>
 
@@ -1614,10 +1614,10 @@ function GrowthPlanV2Content() {
                     color: 'var(--color-text-primary)',
                     marginBottom: '1.2rem'
                   }}>서비스</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="#how-it-works" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용방법</a>
-                    <a href="#faq" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>자주 묻는 질문</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>1:1 상담</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="#how-it-works" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>이용방법</a>
+                    <a href="#faq" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>자주 묻는 질문</a>
+                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>1:1 상담</a>
                   </div>
                 </div>
 
@@ -1628,10 +1628,10 @@ function GrowthPlanV2Content() {
                     color: 'var(--color-text-primary)',
                     marginBottom: '1.2rem'
                   }}>고객지원</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="/terms" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>이용약관</a>
-                    <a href="/privacy" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>개인정보처리방침</a>
-                    <a href="/refund" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>환불정책</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="/terms" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>이용약관</a>
+                    <a href="/privacy" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>개인정보처리방침</a>
+                    <a href="/refund" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>환불정책</a>
                   </div>
                 </div>
 
@@ -1642,9 +1642,9 @@ function GrowthPlanV2Content() {
                     color: 'var(--color-text-primary)',
                     marginBottom: '1.2rem'
                   }}>Contact</h4>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.8rem'}}>
-                    <a href="mailto:contact@querydaily.com" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>contact@querydaily.com</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem'}}>카카오톡 상담</a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <a href="mailto:official.querydaily@gmail.com" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>official.querydaily@gmail.com</a>
+                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>카카오톡 상담</a>
                   </div>
                 </div>
               </div>
@@ -1669,7 +1669,7 @@ function GrowthPlanV2Content() {
                 margin: 0,
                 fontSize: '0.8rem',
                 color: 'var(--color-text-muted)'
-              }}>사업자등록번호: 123-45-67890 | 대표: QueryDaily</p>
+              }}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
             </div>
           </div>
         </footer>

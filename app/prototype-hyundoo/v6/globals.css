@@ -1,0 +1,14 @@
+/* V5 Light Theme - CSS Variables */
+:root {
+  --color-primary: #dc2626;
+  --color-primary-light: #ef4444;
+  --color-secondary: #dc2626;
+  --color-secondary-light: #9333ea;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #f1f3f5;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #888888;
+  --color-accent-rgb: 220, 38, 38;
+}

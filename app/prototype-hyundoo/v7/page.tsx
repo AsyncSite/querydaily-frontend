@@ -5,6 +5,7 @@ import styles from './page.module.css';
 
 export default function V7Page() {
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   return (
     <div className={styles.container}>
@@ -140,7 +141,7 @@ export default function V7Page() {
             <div className={styles.pricingCard}>
               <h3 className={styles.planName}>크리티컬 히트</h3>
               <div className={styles.planPrice}>
-                <span className={styles.price}>29,000</span>
+                <span className={styles.price}>9,900</span>
                 <span className={styles.currency}>원</span>
               </div>
               <p className={styles.planDesc}>핵심 질문만 받고 싶다면</p>
@@ -156,7 +157,7 @@ export default function V7Page() {
               <div className={styles.featuredBadge}>인기</div>
               <h3 className={styles.planName}>그로스 플랜</h3>
               <div className={styles.planPrice}>
-                <span className={styles.price}>99,000</span>
+                <span className={styles.price}>49,000</span>
                 <span className={styles.currency}>원</span>
               </div>
               <p className={styles.planDesc}>완벽하게 준비하고 싶다면</p>
@@ -215,6 +216,46 @@ export default function V7Page() {
               </div>
 
               <div className={styles.formGroup}>
+                <label htmlFor="resume">이력서 업로드 (선택)</label>
+                <div className={styles.fileUploadArea}>
+                  <input
+                    type="file"
+                    id="resume"
+                    accept=".pdf"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 10 * 1024 * 1024) {
+                          alert('파일 크기는 10MB 이하여야 합니다');
+                          e.target.value = '';
+                          return;
+                        }
+                        setResumeFile(file);
+                      }
+                    }}
+                  />
+                  <label htmlFor="resume" className={styles.fileUploadBox}>
+                    {resumeFile ? (
+                      <>
+                        <span className={styles.uploadedIcon}>✓</span>
+                        <span className={styles.uploadedFileName}>{resumeFile.name}</span>
+                        <span className={styles.uploadedSize}>
+                          ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className={styles.uploadIcon}>📄</span>
+                        <span className={styles.uploadText}>PDF 파일을 선택하세요</span>
+                        <span className={styles.uploadHint}>최대 10MB · 더 정확한 질문 생성</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
                 <label htmlFor="role">현재 직무 (선택)</label>
                 <select id="role">
                   <option value="">선택해주세요</option>
@@ -251,7 +292,7 @@ export default function V7Page() {
               </button>
 
               <p className={styles.formNote}>
-                * 필수 항목 · 선택 정보는 더 정확한 질문 제공을 위해 사용됩니다
+                * 필수 항목 · 이력서를 업로드하시면 훨씬 정확한 맞춤 질문을 받으실 수 있습니다
               </p>
             </form>
           </div>

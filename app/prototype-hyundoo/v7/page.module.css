@@ -240,53 +240,116 @@
 }
 
 .proofContent {
-  max-width: 700px;
+  max-width: 1100px;
   margin: 0 auto;
+}
+
+.proofHeader {
   text-align: center;
+  margin-bottom: 64px;
 }
 
 .proofScore {
-  font-size: 6rem;
+  font-size: 5rem;
   font-weight: 900;
   background: linear-gradient(135deg, #dc2626 0%, #9333ea 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .proofText {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: var(--color-text-secondary);
-  margin: 0 0 40px 0;
+  margin: 0;
 }
 
-.proofQuote {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  font-style: italic;
-  line-height: 1.6;
-  margin: 0;
-  padding: 32px;
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.reviewCard {
   background: #fafafa;
-  border-radius: 16px;
-  border-left: 6px solid #dc2626;
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.reviewCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: #e5e5e5;
+}
+
+.reviewText {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.7;
+  margin: 0 0 24px 0;
+  flex-grow: 1;
+}
+
+.reviewAuthor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.reviewName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.reviewRole {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 1024px) {
+  .reviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .proofScore {
-    font-size: 4rem;
+    font-size: 3.5rem;
   }
 
   .proofText {
     font-size: 1.2rem;
   }
 
-  .proofQuote {
-    font-size: 1.3rem;
+  .proofHeader {
+    margin-bottom: 48px;
+  }
+
+  .reviewGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .reviewCard {
     padding: 24px;
+    min-height: auto;
+  }
+
+  .reviewText {
+    font-size: 1.05rem;
   }
 }
 
@@ -357,6 +420,13 @@
   margin-bottom: 16px;
 }
 
+.originalPrice {
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
 .price {
   font-size: 3.5rem;
   font-weight: 900;
@@ -389,7 +459,7 @@
 .planFeatures li {
   font-size: 1.1rem;
   font-weight: 500;
-  color: var(--color-text-primary);
+  color: #1f2937;
   padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -399,6 +469,7 @@
 }
 
 .planCta {
+  display: block;
   width: 100%;
   font-size: 1.3rem;
   font-weight: 700;
@@ -409,6 +480,8 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
+  text-decoration: none;
 }
 
 .planCta:hover {
@@ -452,10 +525,34 @@
   border-top: 1px solid #f0f0f0;
 }
 
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.footerLinks a {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerLinks a:hover {
+  color: #dc2626;
+}
+
 .footer p {
   font-size: 1rem;
   color: var(--color-text-muted);
-  margin: 0;
+  margin: 0 0 8px 0;
+}
+
+.footerBiz {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
 
 /* ==================== V7 NEW STYLES ==================== */
@@ -867,5 +964,70 @@
 
   .uploadedFileName {
     font-size: 0.9rem;
+  }
+}
+
+/* ==================== FLOATING CTA ==================== */
+.floatingCta {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 999;
+  cursor: pointer;
+  animation: floatBounce 3s ease-in-out infinite;
+}
+
+@keyframes floatBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.floatingCtaInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, #dc2626 0%, #9333ea 100%);
+  color: white;
+  border-radius: 50px;
+  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.floatingCta:hover .floatingCtaInner {
+  transform: scale(1.05);
+  box-shadow: 0 12px 40px rgba(220, 38, 38, 0.5), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.floatingCtaIcon {
+  font-size: 1.3rem;
+}
+
+.floatingCtaText {
+  font-size: 1.1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .floatingCta {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .floatingCtaInner {
+    padding: 14px 24px;
+  }
+
+  .floatingCtaIcon {
+    font-size: 1.1rem;
+  }
+
+  .floatingCtaText {
+    font-size: 1rem;
   }
 }

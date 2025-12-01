@@ -1117,6 +1117,47 @@
   margin: 0;
 }
 
+/* FAQ 하단 카카오톡 문의 */
+.faqKakao {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(var(--color-accent-rgb), 0.08);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.faqKakaoText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.faqKakaoSub {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+}
+
+.kakaoButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: #FEE500;
+  color: #000000;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.kakaoButton:hover {
+  transform: translateY(-2px);
+}
+
 /* ===== Final CTA Section ===== */
 .finalCta {
   max-width: 1200px;
@@ -1906,6 +1947,7 @@
   padding-left: 0;
   margin: 0;
   list-style: none;
+  color: var(--color-text-primary);
 }
 
 .planCardList li {
@@ -2302,15 +2344,15 @@
 }
 
 .afterBadge {
-  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-light) 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
   color: white;
 }
 
 .comparisonSubheader {
   font-size: 0.95rem;
-  color: var(--color-text-muted);
+  color: #4a5568;
   margin: 0.5rem 0 0 0;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .comparisonHeader.before {
@@ -2333,7 +2375,7 @@
   font-size: 1.3rem;
   font-weight: 700;
   margin: 0;
-  color: var(--color-text-primary);
+  color: #1f2937;
 }
 
 .comparisonItems {
@@ -2446,7 +2488,7 @@
 }
 
 .resultFail strong {
-  color: #fca5a5;
+  color: #dc2626;
 }
 
 .resultSuccess {
@@ -2459,7 +2501,7 @@
 }
 
 .resultSuccess strong {
-  color: #86efac;
+  color: #16a34a;
 }
 
 .beforeAfterCta {
@@ -3661,4 +3703,65 @@
   .questionText {
     font-size: 1rem;
   }
+}
+
+/* ===== Footer ===== */
+.footer {
+  padding: 60px 20px;
+  text-align: center;
+  background: white;
+  border-top: 1px solid #f0f0f0;
+}
+
+.kakaoButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: #FEE500;
+  color: #191919;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.kakaoButton:hover {
+  background: #F5DC00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.footerLinks a {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerLinks a:hover {
+  color: #dc2626;
+}
+
+.footer p {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin: 0 0 8px 0;
+}
+
+.footerBiz {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }

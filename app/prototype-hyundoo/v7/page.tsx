@@ -14,10 +14,10 @@ export default function V7Page() {
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
-            당신을 합격시킵니다.
+            합격을 만듭니다.
           </h1>
           <p className={styles.heroSub}>
-            면접 준비, 20일이면 끝.
+            이력서 기반 면접 준비, 20일이면 끝.
           </p>
 
           {/* Dual CTA Strategy */}
@@ -43,7 +43,7 @@ export default function V7Page() {
         <div className={styles.howContent}>
           <div className={styles.howItem}>
             <span className={styles.howNumber}>1</span>
-            <p className={styles.howText}>매일 당신 이력서 기반 질문 + 합격 답변</p>
+            <p className={styles.howText}>매일 이력서 기반 질문<br />+ 합격 답변</p>
           </div>
           <div className={styles.howItem}>
             <span className={styles.howNumber}>2</span>
@@ -59,13 +59,13 @@ export default function V7Page() {
       {/* What - 핵심 3개 */}
       <section className={styles.what}>
         <div className={styles.whatContent}>
-          <h2 className={styles.whatTitle}>당신이 받는 것</h2>
+          <h2 className={styles.whatTitle}>제공 서비스</h2>
           <div className={styles.whatList}>
             <div className={styles.whatItem}>
               <div className={styles.whatIcon}>→</div>
               <div>
                 <h3 className={styles.whatItemTitle}>진짜 질문</h3>
-                <p className={styles.whatItemDesc}>당신 이력서 기반</p>
+                <p className={styles.whatItemDesc}>이력서 기반 맞춤 질문</p>
               </div>
             </div>
             <div className={styles.whatItem}>
@@ -93,16 +93,16 @@ export default function V7Page() {
             무료로 먼저 체험해보세요
           </h2>
           <p className={styles.freeTrialDesc}>
-            질문 3개 + 합격 답변 · 24시간 내 이메일 발송
+            질문 1개 + 합격 답변 · 48시간 내 이메일 발송
           </p>
 
           <div className={styles.freeTrialStats}>
             <div className={styles.freeTrialStat}>
-              <div className={styles.freeTrialStatNumber}>1,234</div>
+              <div className={styles.freeTrialStatNumber}>592</div>
               <div className={styles.freeTrialStatLabel}>명이 무료로 받아갔어요</div>
             </div>
             <div className={styles.freeTrialStat}>
-              <div className={styles.freeTrialStatNumber}>4.8/5.0</div>
+              <div className={styles.freeTrialStatNumber}>5.0/5.0</div>
               <div className={styles.freeTrialStatLabel}>평균 만족도</div>
             </div>
           </div>
@@ -115,19 +115,50 @@ export default function V7Page() {
           </button>
 
           <p className={styles.freeTrialNote}>
-            "진짜 제 이력서 질문이라 놀랐습니다" - 백엔드 개발자 K님
+            "진짜 제 이력서 질문이라 놀랐습니다" - 1년차 백엔드 개발자 K님
           </p>
         </div>
       </section>
 
-      {/* Proof - 최소한 */}
+      {/* Proof - 후기 섹션 */}
       <section className={styles.proof}>
         <div className={styles.proofContent}>
-          <div className={styles.proofScore}>5.0/5.0</div>
-          <p className={styles.proofText}>실제 사용자 만족도</p>
-          <p className={styles.proofQuote}>
-            "이거 하고 붙었어요. 진짜 제 이력서 질문이라 놀랐습니다."
-          </p>
+          <div className={styles.proofHeader}>
+            <div className={styles.proofScore}>5.0/5.0</div>
+            <p className={styles.proofText}>실제 사용자 만족도</p>
+          </div>
+
+          <div className={styles.reviewGrid}>
+            <div className={styles.reviewCard}>
+              <p className={styles.reviewText}>
+                "이거 하고 붙었어요. 진짜 제 이력서 질문이라 놀랐습니다."
+              </p>
+              <div className={styles.reviewAuthor}>
+                <span className={styles.reviewName}>K님</span>
+                <span className={styles.reviewRole}>1년차 백엔드 개발자</span>
+              </div>
+            </div>
+
+            <div className={styles.reviewCard}>
+              <p className={styles.reviewText}>
+                "면접 전날 급하게 신청했는데, 실제로 비슷한 질문이 나왔어요."
+              </p>
+              <div className={styles.reviewAuthor}>
+                <span className={styles.reviewName}>L님</span>
+                <span className={styles.reviewRole}>3년차 프론트엔드 개발자</span>
+              </div>
+            </div>
+
+            <div className={styles.reviewCard}>
+              <p className={styles.reviewText}>
+                "답변 가이드가 진짜 도움됐어요. 어떻게 말해야 할지 감이 잡혔습니다."
+              </p>
+              <div className={styles.reviewAuthor}>
+                <span className={styles.reviewName}>P님</span>
+                <span className={styles.reviewRole}>신입 풀스택 개발자</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -141,14 +172,16 @@ export default function V7Page() {
             <div className={styles.pricingCard}>
               <h3 className={styles.planName}>크리티컬 히트</h3>
               <div className={styles.planPrice}>
+                <span className={styles.originalPrice}>15,900원</span>
                 <span className={styles.price}>9,900</span>
                 <span className={styles.currency}>원</span>
               </div>
-              <p className={styles.planDesc}>핵심 질문만 받고 싶다면</p>
+              <p className={styles.planDesc}>핵심만 빠르게</p>
               <ul className={styles.planFeatures}>
-                <li>20일 × 3문제/일</li>
-                <li>총 60개 질문</li>
-                <li>합격 답변 포함</li>
+                <li>질문 3개 + 답변 가이드</li>
+                <li>이력서 기반 맞춤 질문</li>
+                <li>합격자 답변 패턴 포함</li>
+                <li>48시간 내 이메일 발송</li>
               </ul>
               <button className={styles.planCta}>선택하기</button>
             </div>
@@ -157,17 +190,18 @@ export default function V7Page() {
               <div className={styles.featuredBadge}>인기</div>
               <h3 className={styles.planName}>그로스 플랜</h3>
               <div className={styles.planPrice}>
+                <span className={styles.originalPrice}>106,000원</span>
                 <span className={styles.price}>49,000</span>
                 <span className={styles.currency}>원</span>
               </div>
               <p className={styles.planDesc}>완벽하게 준비하고 싶다면</p>
               <ul className={styles.planFeatures}>
-                <li>20일 × 10문제/일</li>
-                <li>총 200개 질문</li>
-                <li>합격 답변 포함</li>
-                <li>모의 면접 무제한</li>
+                <li>20일 × 2개/일 (총 40개)</li>
+                <li>꼬리질문 대비</li>
+                <li>빅테크/유니콘 기업 답변 가이드</li>
+                <li>상세 해설 포함</li>
               </ul>
-              <button className={styles.planCta}>선택하기</button>
+              <a href="/prototype-hyundoo/v4/products/growth-plan/v2" className={styles.planCta}>선택하기</a>
             </div>
           </div>
         </div>
@@ -175,8 +209,20 @@ export default function V7Page() {
 
       {/* Footer - 최소한 */}
       <footer className={styles.footer}>
-        <p>© 2024 QueryDaily. All rights reserved.</p>
+        <div className={styles.footerLinks}>
+          <a href="https://velog.io/@querydaily/posts" target="_blank" rel="noopener noreferrer">Velog</a>
+          <a href="https://www.threads.com/@querydaily.official" target="_blank" rel="noopener noreferrer">Threads</a>
+        </div>
+        <p>© 2025 QueryDaily. All rights reserved.</p>
+        <p className={styles.footerBiz}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
       </footer>
+
+      {/* Floating CTA Button */}
+      <div className={styles.floatingCta} onClick={() => setShowFreeTrialModal(true)}>
+        <div className={styles.floatingCtaInner}>
+          <span className={styles.floatingCtaText}>무료 체험하기</span>
+        </div>
+      </div>
 
       {/* Free Trial Modal */}
       {showFreeTrialModal && (
@@ -256,8 +302,8 @@ export default function V7Page() {
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="role">현재 직무 (선택)</label>
-                <select id="role">
+                <label htmlFor="role">현재 직무 *</label>
+                <select id="role" required>
                   <option value="">선택해주세요</option>
                   <option value="backend">백엔드 개발자</option>
                   <option value="frontend">프론트엔드 개발자</option>
@@ -268,8 +314,8 @@ export default function V7Page() {
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="experience">경력 (선택)</label>
-                <select id="experience">
+                <label htmlFor="experience">경력 *</label>
+                <select id="experience" required>
                   <option value="">선택해주세요</option>
                   <option value="0">신입</option>
                   <option value="1-3">1-3년</option>

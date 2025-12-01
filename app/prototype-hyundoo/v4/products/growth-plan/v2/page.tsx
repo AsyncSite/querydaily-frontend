@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import './additional-styles.css';
-import { ThemeProvider, ThemeSelector } from '../../../ThemeContext';
 import {
   Calendar,
   Building2,
@@ -38,6 +37,55 @@ import {
 function GrowthPlanV2Content() {
   const router = useRouter();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // 화이트 테마 CSS 변수 적용
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const originalStyles: { [key: string]: string } = {};
+    const properties = [
+      '--color-primary',
+      '--color-primary-light',
+      '--color-secondary',
+      '--color-secondary-light',
+      '--color-bg-primary',
+      '--color-bg-secondary',
+      '--color-bg-tertiary',
+      '--color-text-primary',
+      '--color-text-secondary',
+      '--color-text-muted',
+      '--color-accent-rgb',
+    ];
+
+    properties.forEach(prop => {
+      originalStyles[prop] = root.style.getPropertyValue(prop);
+    });
+
+
+    // 화이트 테마 설정 (가독성 높은 색상)
+    root.style.setProperty('--color-primary', '#8b5cf6');
+    root.style.setProperty('--color-primary-light', '#a78bfa');
+    root.style.setProperty('--color-secondary', '#8b5cf6');
+    root.style.setProperty('--color-secondary-light', '#ec4899');
+    root.style.setProperty('--color-bg-primary', '#ffffff');
+    root.style.setProperty('--color-bg-secondary', '#f8f9fa');
+    root.style.setProperty('--color-bg-tertiary', '#f1f3f4');
+    root.style.setProperty('--color-text-primary', '#1a1a1a');
+    root.style.setProperty('--color-text-secondary', '#4a4a4a');
+    root.style.setProperty('--color-text-muted', '#6b7280');
+    root.style.setProperty('--color-accent-rgb', '139, 92, 246');
+
+    // 컴포넌트 언마운트 시 원래대로 복원 (선택사항)
+    return () => {
+      // 다른 페이지로 이동시 다크 테마로 복원하고 싶다면 여기에 코드 추가
+      Object.entries(originalStyles).forEach(([key, value]) => {
+        if (value) {
+          root.style.setProperty(key, value);
+        } else {
+          root.style.removeProperty(key);
+        }
+      });
+    };
+  }, []);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -155,7 +203,7 @@ function GrowthPlanV2Content() {
 
             {/* 서브 헤드라인 */}
             <p className={styles.heroSubheadline}>
-              면접관이 물을 질문은 이미 <strong>당신 이력서에</strong> 다 있습니다
+              면접관이 물을 질문은 이미 <strong>이력서에</strong> 다 있습니다
             </p>
 
             {/* 임팩트 넘버 */}
@@ -280,7 +328,7 @@ function GrowthPlanV2Content() {
                   <p className={styles.reviewText}>
                     "이력서 맞춤형 질문이라는 게 처음에는 반신반의했는데, 실제로 받아보니
                     제 프로젝트와 기술 스택을 정확히 파고드는 질문들이라 깜짝 놀랐습니다.
-                    STAR 기법으로 답변을 구조화하는 연습도 많은 도움이 되었어요."
+                    모범 답변 예시를 보면서 답변 구조를 잡는 연습도 많은 도움이 되었어요."
                   </p>
                   <div className={styles.reviewAuthor}>
                     <div className={styles.reviewAvatar}>L</div>
@@ -485,7 +533,7 @@ function GrowthPlanV2Content() {
               </p>
               <div className={styles.mistakeSolution}>
                 <Check size={18} className={styles.checkIcon} />
-                <span><strong>해결:</strong> STAR 기법으로 구조화된 답변 준비</span>
+                <span><strong>해결:</strong> "상황→행동→결과" 순서로 말하는 연습</span>
               </div>
             </div>
 
@@ -673,7 +721,7 @@ function GrowthPlanV2Content() {
               </div>
               <div className={styles.ctaBoxContent}>
                 <h3>합격은 여유에서 나옵니다</h3>
-                <p>준비된 사람은 떨지 않습니다. 20일 후, 당신도 그렇게 됩니다.</p>
+                <p>준비된 사람은 떨지 않습니다. 20일이면 충분합니다.</p>
               </div>
               <button className={styles.ctaBoxButton}>
                 이력서 업로드
@@ -769,7 +817,7 @@ function GrowthPlanV2Content() {
                 </h2>
                 <p className={styles.imageCardDesc}>
                   5단계 구성의 체계적인 가이드로<br />
-                  STAR 기법까지 완벽하게 학습
+                  합격하는 답변 구조를 완벽하게 학습
                 </p>
                 <div className={styles.imageCardFeatures}>
                   <div className={styles.featureRow}>
@@ -778,7 +826,7 @@ function GrowthPlanV2Content() {
                   </div>
                   <div className={styles.featureRow}>
                     <Check size={18} />
-                    <span>STAR 기법 기반 답변 구조화</span>
+                    <span>상황→행동→결과 순서로 답변 구조화</span>
                   </div>
                   <div className={styles.featureRow}>
                     <Check size={18} />
@@ -913,7 +961,7 @@ function GrowthPlanV2Content() {
                 </div>
 
                 <div className={styles.emailSubject}>
-                  [QueryDaily] Day 1 상세 해설: STAR 기법으로 완벽 대비하기
+                  [QueryDaily] Day 1 상세 해설: 합격하는 답변의 비밀
                 </div>
 
                 <div className={styles.emailBody}>
@@ -962,13 +1010,13 @@ function GrowthPlanV2Content() {
                   <div className={styles.answerSection}>
                     <div className={styles.answerTitle}>
                       <Star size={20} />
-                      3. STAR 구조화
+                      3. 모범 답변 구조
                     </div>
                     <div className={styles.starFramework}>
                       <div className={styles.starItem}>
                         <div className={styles.starLabel}>
-                          <span className={styles.starLetter}>S</span>
-                          <span className={styles.starMeaning}>Situation</span>
+                          <span className={styles.starLetter}>1</span>
+                          <span className={styles.starMeaning}>상황 설명</span>
                         </div>
                         <div className={styles.starText}>
                           "당시 회사는 사용자가 급증하면서 모놀리식 구조의 한계를 느끼고 있었습니다."
@@ -976,17 +1024,8 @@ function GrowthPlanV2Content() {
                       </div>
                       <div className={styles.starItem}>
                         <div className={styles.starLabel}>
-                          <span className={styles.starLetter}>T</span>
-                          <span className={styles.starMeaning}>Task</span>
-                        </div>
-                        <div className={styles.starText}>
-                          "저는 확장 가능하면서도 팀이 독립적으로 개발할 수 있는 구조를 설계해야 했습니다."
-                        </div>
-                      </div>
-                      <div className={styles.starItem}>
-                        <div className={styles.starLabel}>
-                          <span className={styles.starLetter}>A</span>
-                          <span className={styles.starMeaning}>Action</span>
+                          <span className={styles.starLetter}>2</span>
+                          <span className={styles.starMeaning}>내가 한 일</span>
                         </div>
                         <div className={styles.starText}>
                           "각 도메인별로 서비스를 분리하고, API Gateway 패턴을 도입했습니다."
@@ -994,8 +1033,8 @@ function GrowthPlanV2Content() {
                       </div>
                       <div className={styles.starItem}>
                         <div className={styles.starLabel}>
-                          <span className={styles.starLetter}>R</span>
-                          <span className={styles.starMeaning}>Result</span>
+                          <span className={styles.starLetter}>3</span>
+                          <span className={styles.starMeaning}>결과</span>
                         </div>
                         <div className={styles.starText}>
                           "배포 주기가 2주에서 3일로 단축되었고, 장애 격리가 가능해졌습니다."
@@ -1172,7 +1211,7 @@ function GrowthPlanV2Content() {
                   <td className={styles.highlighted}><strong>20일 매일</strong></td>
                 </tr>
                 <tr>
-                  <td>STAR 기법</td>
+                  <td>답변 구조화</td>
                   <td><X size={18} className={styles.xIcon} /></td>
                   <td><Check size={18} className={styles.checkIcon} /></td>
                   <td className={styles.highlighted}><Check size={18} className={styles.checkIcon} /></td>
@@ -1326,7 +1365,7 @@ function GrowthPlanV2Content() {
                 </div>
                 <div className={styles.urgencyBenefitItem}>
                   <Check size={18} />
-                  <span>STAR 기법 상세 해설</span>
+                  <span>모범 답변 상세 해설</span>
                 </div>
                 <div className={styles.urgencyBenefitItem}>
                   <Check size={18} />
@@ -1422,9 +1461,9 @@ function GrowthPlanV2Content() {
                   <p>
                     첫 질문 발송 전에는 100% 환불이 가능합니다.
                     <br /><br />
-                    질문 발송이 시작된 이후에는 남은 일수에 대해 일할 계산하여 환불해드립니다.
+                    질문 발송이 시작된 이후에는 50% 미만 진행 시까지 남은 일수에 대해 일할 계산하여 환불해드립니다.
                     <br /><br />
-                    예를 들어 20일 중 10일간 질문을 받으셨다면, 남은 10일에 해당하는 금액을 환불받으실 수 있습니다.
+                    예를 들어 20일 중 5일간 질문을 받으셨다면, 남은 15일에 해당하는 금액을 환불받으실 수 있습니다. (50% 이상 진행 시 환불 불가)
                   </p>
                 </div>
               )}
@@ -1476,13 +1515,25 @@ function GrowthPlanV2Content() {
               )}
             </div>
           </div>
+
+          {/* FAQ 하단 카카오톡 문의 */}
+          <div className={styles.faqKakao}>
+            <p className={styles.faqKakaoText}>더 궁금한 점이 있으신가요?</p>
+            <p className={styles.faqKakaoSub}>카카오톡으로 편하게 물어보세요.</p>
+            <a href="https://pf.kakao.com/_hWMtn" target="_blank" rel="noopener noreferrer" className={styles.kakaoButton}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z" />
+              </svg>
+              카카오톡 문의하기
+            </a>
+          </div>
         </section>
 
         {/* Final Message */}
         <section className={styles.finalCta}>
           <div className={styles.finalCtaContent}>
             <h2 className={styles.finalCtaTitle}>
-              지금 이 순간, 당신은 이미 변하고 있습니다
+              지금 이 순간, 이미 변하고 있습니다
             </h2>
             <p className={styles.finalCtaSubtitle} style={{
               fontSize: '1.1rem',
@@ -1494,184 +1545,29 @@ function GrowthPlanV2Content() {
               면접이 두려운 건 당연합니다.<br />
               누구나 처음은 떨리니까요.<br /><br />
 
-              하지만 20일 뒤, 면접장 문을 열고 들어가는 당신은<br />
-              오늘의 당신과 다른 사람일 겁니다.<br /><br />
+              하지만 20일 뒤, 면접장 문을 열고 들어가는 모습은<br />
+              오늘과는 다를 겁니다.<br /><br />
 
               &ldquo;이 질문, 나 준비했어.&rdquo;<br />
               그 한마디가 입 밖으로 나올 때의 자신감.<br /><br />
 
-              그게 바로 우리가 드리고 싶은 선물입니다.<br /><br />
+              그게 바로 QueryDaily가 드리고 싶은 선물입니다.<br /><br />
 
               <strong style={{ color: 'var(--color-accent)' }}>
-                당신의 이야기는, 충분히 가치 있습니다.
+                그 이야기는, 충분히 가치 있습니다.
               </strong>
             </p>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer style={{
-          padding: '5rem 2rem 2rem',
-          background: 'linear-gradient(180deg, var(--color-bg-primary) 0%, rgba(var(--color-accent-rgb), 0.08) 100%)',
-          borderTop: '1px solid rgba(var(--color-accent-rgb), 0.1)',
-          marginTop: '4rem'
-        }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            {/* 상단 컨텐츠 */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: '3rem',
-              flexWrap: 'wrap',
-              gap: '4rem'
-            }}>
-              {/* 브랜드 섹션 */}
-              <div style={{ maxWidth: '400px' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: '700', color: 'var(--color-text-primary)' }}>
-                  Query<span style={{ color: 'var(--color-secondary)' }}>Daily</span>
-                </div>
-                <p style={{
-                  fontSize: '0.95rem',
-                  color: 'var(--color-text-muted)',
-                  lineHeight: '1.8',
-                  marginBottom: '1.5rem'
-                }}>
-                  당신의 이력서를 분석해서,<br />
-                  면접관이 꼭 물어볼 질문을 매일 보내드립니다.
-                </p>
-
-                {/* 소셜 링크 */}
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <a
-                    href="https://www.instagram.com/querydaily"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      background: 'rgba(var(--color-accent-rgb), 0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-text-muted)',
-                      textDecoration: 'none',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="http://pf.kakao.com/_fxdxfTG"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      background: 'rgba(var(--color-accent-rgb), 0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-text-muted)',
-                      textDecoration: 'none',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.707 4.8 4.27 6.054-.188.702-.682 2.545-.78 2.94-.123.49.18.483.378.352.156-.103 2.5-1.667 3.508-2.343.538.073 1.093.112 1.624.112 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-
-              {/* 링크 섹션들 */}
-              <div style={{
-                display: 'flex',
-                gap: '4rem',
-                flexWrap: 'wrap'
-              }}>
-                <div>
-                  <h4 style={{
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    color: 'var(--color-text-primary)',
-                    marginBottom: '1.2rem'
-                  }}>상품</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    <a href="/prototype-hyundoo/v4#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>전체 상품</a>
-                    <a href="/prototype-hyundoo/v4/products/growth-plan/v2" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>그로스 플랜</a>
-                    <a href="/prototype-hyundoo/v4#products" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>크리티컬 히트</a>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 style={{
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    color: 'var(--color-text-primary)',
-                    marginBottom: '1.2rem'
-                  }}>서비스</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    <a href="#how-it-works" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>이용방법</a>
-                    <a href="#faq" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>자주 묻는 질문</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>1:1 상담</a>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 style={{
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    color: 'var(--color-text-primary)',
-                    marginBottom: '1.2rem'
-                  }}>고객지원</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    <a href="/terms" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>이용약관</a>
-                    <a href="/privacy" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>개인정보처리방침</a>
-                    <a href="/refund" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>환불정책</a>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 style={{
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    color: 'var(--color-text-primary)',
-                    marginBottom: '1.2rem'
-                  }}>Contact</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    <a href="mailto:official.querydaily@gmail.com" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>official.querydaily@gmail.com</a>
-                    <a href="http://pf.kakao.com/_fxdxfTG" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>카카오톡 상담</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 하단 - 저작권 및 사업자 정보 */}
-            <div style={{
-              borderTop: '1px solid rgba(var(--color-accent-rgb), 0.1)',
-              paddingTop: '2rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem'
-            }}>
-              <p style={{
-                margin: 0,
-                fontSize: '0.8rem',
-                color: 'var(--color-text-muted)'
-              }}>© 2024 QueryDaily. All rights reserved.</p>
-              <p style={{
-                margin: 0,
-                fontSize: '0.8rem',
-                color: 'var(--color-text-muted)'
-              }}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
-            </div>
+        {/* Footer - 최소한 */}
+        <footer className={styles.footer}>
+          <div className={styles.footerLinks}>
+            <a href="https://velog.io/@querydaily/posts" target="_blank" rel="noopener noreferrer">Velog</a>
+            <a href="https://www.threads.com/@querydaily.official" target="_blank" rel="noopener noreferrer">Threads</a>
           </div>
+          <p>© 2025 QueryDaily. All rights reserved.</p>
+          <p className={styles.footerBiz}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
         </footer>
       </div>
     </>
@@ -1679,9 +1575,5 @@ function GrowthPlanV2Content() {
 }
 
 export default function GrowthPlanV2() {
-  return (
-    <ThemeProvider>
-      <GrowthPlanV2Content />
-    </ThemeProvider>
-  );
+  return <GrowthPlanV2Content />;
 }

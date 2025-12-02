@@ -3,6 +3,7 @@
 import { useState, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import './white-theme.css';
 import './additional-styles.css';
 import {
   Calendar,
@@ -141,11 +142,11 @@ function GrowthPlanV2Content() {
             <div className={styles.sidebarFeatures}>
               <div className={styles.sidebarFeature}>
                 <Check size={16} />
-                <span>매일 2회 맞춤 질문</span>
+                <span>매일 1회 맞춤 질문</span>
               </div>
               <div className={styles.sidebarFeature}>
                 <Check size={16} />
-                <span>20일간 총 40개 질문</span>
+                <span>20일간 총 20개 질문</span>
               </div>
               <div className={styles.sidebarFeature}>
                 <Check size={16} />
@@ -214,7 +215,7 @@ function GrowthPlanV2Content() {
               </div>
               <div className={styles.impactDivider}>×</div>
               <div className={styles.impactItem}>
-                <div className={styles.impactNumber}>40개</div>
+                <div className={styles.impactNumber}>20개</div>
                 <div className={styles.impactLabel}>맞춤 질문</div>
               </div>
               <div className={styles.impactDivider}>×</div>
@@ -254,7 +255,7 @@ function GrowthPlanV2Content() {
                     <CheckCircle2 size={24} />
                   </div>
                   <div className={styles.valueContent}>
-                    <strong>매일 2번씩 20일간</strong>
+                    <strong>매일 1번씩 20일간</strong>
                     <span>체계적인 학습 루틴</span>
                   </div>
                 </div>
@@ -756,8 +757,8 @@ function GrowthPlanV2Content() {
                   매일 발송되는 맞춤형 질문
                 </h2>
                 <p className={styles.imageCardDesc}>
-                  오전 7시와 오후 5시, 하루 2번<br />
-                  총 40개의 질문이 20일간 발송됩니다
+                  매일 오전 7시에 질문, 오후 5시에 해설<br />
+                  총 20개의 질문이 20일간 발송됩니다
                 </p>
                 <div className={styles.imageCardFeatures}>
                   <div className={styles.featureRow}>
@@ -1107,7 +1108,7 @@ function GrowthPlanV2Content() {
 
           <div className={styles.emailPreviewCta}>
             <p className={styles.emailPreviewText}>
-              이렇게 <strong>매일 2번</strong>, <strong>20일간 총 40개의 질문</strong>을 받게 됩니다.<br />
+              이렇게 <strong>매일 1개씩</strong>, <strong>20일간 총 20개의 질문</strong>을 받게 됩니다.<br />
             </p>
           </div>
         </section>
@@ -1361,7 +1362,7 @@ function GrowthPlanV2Content() {
               <div className={styles.urgencyBenefits}>
                 <div className={styles.urgencyBenefitItem}>
                   <Check size={18} />
-                  <span>20일간 40개 맞춤 질문</span>
+                  <span>20일간 20개 맞춤 질문</span>
                 </div>
                 <div className={styles.urgencyBenefitItem}>
                   <Check size={18} />
@@ -1397,30 +1398,6 @@ function GrowthPlanV2Content() {
           </h2>
 
           <div className={styles.faqList}>
-            <div className={styles.faqItem}>
-              <button
-                className={`${styles.faqQuestion} ${openFaq === 0 ? styles.active : ''}`}
-                onClick={() => toggleFaq(0)}
-              >
-                <span>20일 안에 완료하지 못하면 어떻게 되나요?</span>
-                <ChevronDown
-                  size={20}
-                  className={`${styles.faqIcon} ${openFaq === 0 ? styles.rotated : ''}`}
-                />
-              </button>
-              {openFaq === 0 && (
-                <div className={styles.faqAnswer}>
-                  <p>
-                    결제 후 7일 이내에 20일간의 질문 발송이 완료됩니다.
-                    <br /><br />
-                    질문 발송 시작 시점을 직접 선택할 수 있으며,
-                    <br />
-                    한번 시작하면 20일간 매일 자동으로 발송됩니다.
-                  </p>
-                </div>
-              )}
-            </div>
-
             <div className={styles.faqItem}>
               <button
                 className={`${styles.faqQuestion} ${openFaq === 1 ? styles.active : ''}`}

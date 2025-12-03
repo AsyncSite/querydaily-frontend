@@ -420,8 +420,8 @@ export default function V7Page() {
           </p>
           <div className={styles.reassurancePerks}>
             <span className={styles.reassurancePerk}>✓ 신용카드 불필요</span>
-            <span className={styles.reassurancePerk}>✓ 3일 안에 발송</span>
-            <span className={styles.reassurancePerk}>✓ 20문제 무료</span>
+            <span className={styles.reassurancePerk}>✓ 48시간 내 발송</span>
+            <span className={styles.reassurancePerk}>✓ 질문 1개 + 합격 답변</span>
           </div>
           <button
             className={styles.reassuranceCta}

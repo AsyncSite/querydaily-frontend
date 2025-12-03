@@ -165,7 +165,7 @@ export default function V7Page() {
         <div className={styles.heroContent}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot}></span>
-            592명이 이미 시작했어요
+            73명이 이미 시작했어요
           </div>
 
           <h1 className={styles.heroTitle}>
@@ -300,7 +300,7 @@ export default function V7Page() {
 
           <div className={styles.freeTrialStats}>
             <div className={styles.freeTrialStat}>
-              <div className={styles.freeTrialStatNumber}>592</div>
+              <div className={styles.freeTrialStatNumber}>73</div>
               <div className={styles.freeTrialStatLabel}>명이 무료로 받아갔어요</div>
             </div>
             <div className={styles.freeTrialStat}>
@@ -317,7 +317,7 @@ export default function V7Page() {
           </button>
 
           <p className={styles.freeTrialNote}>
-            "진짜 제 이력서 질문이라 놀랐습니다" - 1년차 백엔드 개발자 K님
+            "진짜 제 이력서 질문이라 놀랐습니다" <br className={styles.mobileBreak} />- 1년차 백엔드 개발자 K님
           </p>
         </div>
       </section>
@@ -367,7 +367,7 @@ export default function V7Page() {
       {/* Price + CTA - 프레이밍 변경 */}
       <section id="pricing" className={styles.pricing}>
         <div className={styles.pricingContent}>
-          <h2 className={styles.pricingTitle}>체험 없이 바로 시작하시겠어요?</h2>
+          <h2 className={styles.pricingTitle}>체험 없이 <br className={styles.mobileBreak} />바로 시작하시겠어요?</h2>
           <p className={styles.pricingSubtitle}>이미 준비된 분들을 위한 플랜</p>
 
           <div className={styles.pricingGrid}>
@@ -409,6 +409,32 @@ export default function V7Page() {
         </div>
       </section>
 
+      {/* 무료 체험 재강조 섹션 */}
+      <section className={styles.freeTrialReassurance}>
+        <div className={styles.reassuranceContent}>
+          <div className={styles.reassuranceIcon}>💡</div>
+          <h2 className={styles.reassuranceTitle}>아직 확신이 서지 않으신가요?</h2>
+          <p className={styles.reassuranceText}>
+            괜찮습니다. 부담 갖지 마세요.<br />
+            먼저 무료로 경험해보고 결정하셔도 됩니다.
+          </p>
+          <div className={styles.reassurancePerks}>
+            <span className={styles.reassurancePerk}>✓ 신용카드 불필요</span>
+            <span className={styles.reassurancePerk}>✓ 3일 안에 발송</span>
+            <span className={styles.reassurancePerk}>✓ 20문제 무료</span>
+          </div>
+          <button
+            className={styles.reassuranceCta}
+            onClick={() => setShowFreeTrialModal(true)}
+          >
+            무료로 먼저 체험하기
+          </button>
+          <p className={styles.reassuranceNote}>
+            이미 73명이 무료로 시작했습니다
+          </p>
+        </div>
+      </section>
+
       {/* Footer - 최소한 */}
       <footer className={styles.footer}>
         <div className={styles.footerLinks}>
@@ -419,10 +445,19 @@ export default function V7Page() {
         <p className={styles.footerBiz}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
       </footer>
 
-      {/* Floating CTA Button */}
-      <div className={styles.floatingCta} onClick={() => setShowFreeTrialModal(true)}>
-        <div className={styles.floatingCtaInner}>
-          <span className={styles.floatingCtaText}>무료 체험하기</span>
+      {/* Floating CTA Bar - Full Width */}
+      <div className={styles.floatingCtaBar}>
+        <div className={styles.floatingCtaBarInner}>
+          <div className={styles.floatingCtaLeft}>
+            <span className={styles.floatingCtaIcon}>🔥</span>
+            <span className={styles.floatingCtaCount}>73명이 지금 체험 중</span>
+          </div>
+          <button
+            className={styles.floatingCtaButton}
+            onClick={() => setShowFreeTrialModal(true)}
+          >
+            무료 체험하기
+          </button>
         </div>
       </div>
 

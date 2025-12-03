@@ -482,6 +482,17 @@
   color: var(--color-text-secondary);
 }
 
+/* Mobile line break - hidden on desktop, visible on mobile */
+.mobileBreak {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileBreak {
+    display: inline;
+  }
+}
+
 @media (max-width: 1024px) {
   .reviewGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -1043,6 +1054,8 @@
     font-size: 1.2rem;
     padding: 20px 48px;
     width: 100%;
+    text-align: center;
+    display: block;
   }
 
   .heroCtaSecondary {
@@ -1170,68 +1183,121 @@
   }
 }
 
-/* ==================== FLOATING CTA ==================== */
-.floatingCta {
+/* ==================== FLOATING CTA BAR - FULL WIDTH ==================== */
+.floatingCtaBar {
   position: fixed;
-  bottom: 32px;
-  right: 32px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 999;
-  cursor: pointer;
-  animation: floatBounce 3s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(220, 38, 38, 0.1);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
+  animation: slideUpBar 0.4s ease-out;
 }
 
-@keyframes floatBounce {
-  0%, 100% {
+@keyframes slideUpBar {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
     transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
+    opacity: 1;
   }
 }
 
-.floatingCtaInner {
+.floatingCtaBarInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 28px;
-  background: linear-gradient(135deg, #dc2626 0%, #9333ea 100%);
-  color: white;
-  border-radius: 50px;
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.floatingCta:hover .floatingCtaInner {
-  transform: scale(1.05);
-  box-shadow: 0 12px 40px rgba(220, 38, 38, 0.5), 0 6px 16px rgba(0, 0, 0, 0.2);
+.floatingCtaLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .floatingCtaIcon {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.floatingCtaText {
+.floatingCtaCount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.floatingCtaButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #dc2626 0%, #9333ea 100%);
+  color: white;
   font-size: 1.1rem;
   font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .floatingCta {
-    bottom: 20px;
-    right: 20px;
-  }
+.floatingCtaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.4);
+}
 
-  .floatingCtaInner {
-    padding: 14px 24px;
+.floatingCtaButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .floatingCtaBarInner {
+    padding: 14px 20px;
+    gap: 12px;
   }
 
   .floatingCtaIcon {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
-  .floatingCtaText {
+  .floatingCtaCount {
+    font-size: 0.9rem;
+  }
+
+  .floatingCtaButton {
+    padding: 12px 24px;
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .floatingCtaBarInner {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .floatingCtaLeft {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .floatingCtaButton {
+    width: 100%;
+    padding: 14px 20px;
   }
 }
 
@@ -1319,5 +1385,137 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+}
+
+/* ==================== FREE TRIAL REASSURANCE SECTION ==================== */
+.freeTrialReassurance {
+  padding: 120px 20px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.freeTrialReassurance::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.08) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  filter: blur(80px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.reassuranceContent {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.reassuranceIcon {
+  font-size: 4rem;
+  margin-bottom: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.reassuranceTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+.reassuranceText {
+  font-size: 1.25rem;
+  color: #6b7280;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+.reassurancePerks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.reassurancePerk {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reassuranceCta {
+  display: inline-block;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 20px 48px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+  margin-bottom: 20px;
+}
+
+.reassuranceCta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(16, 185, 129, 0.4);
+}
+
+.reassuranceNote {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .freeTrialReassurance {
+    padding: 80px 20px;
+  }
+
+  .reassuranceTitle {
+    font-size: 1.875rem;
+  }
+
+  .reassuranceText {
+    font-size: 1.125rem;
+  }
+
+  .reassurancePerks {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .reassuranceCta {
+    font-size: 1.125rem;
+    padding: 18px 36px;
   }
 }

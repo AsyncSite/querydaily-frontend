@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import './white-theme.css';
 import './additional-styles.css';
-import { submitBetaApplication, createOrder } from '@/lib/api';
+import { submitBetaApplication, createOrder, ProductCode } from '@/lib/api';
 import {
   Calendar,
   Building2,
@@ -76,7 +76,7 @@ function GrowthPlanV2Content() {
         email: purchaseEmail,
         name: purchaseName,
         phone: purchasePhone,
-        productCode: 'GROWTH_PLAN',
+        productCode: ProductCode.GROWTH_PLAN,
         paymentMethod: 'card',
         resume: purchaseFile || undefined
       });

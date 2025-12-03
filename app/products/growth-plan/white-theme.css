@@ -1,0 +1,21 @@
+/* White Theme Variables for Growth Plan V2 */
+:root {
+  --color-primary: #8b5cf6;
+  --color-primary-light: #a78bfa;
+  --color-secondary: #8b5cf6;
+  --color-secondary-light: #a78bfa;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #f1f3f4;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #6b7280;
+  --color-accent-rgb: 139, 92, 246;
+}
+
+/* Force white background on body and html */
+html,
+body {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}

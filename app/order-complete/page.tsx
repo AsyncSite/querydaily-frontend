@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { ThemeProvider, ThemeSelector, useTheme } from '../prototype-hyundoo/v3/ThemeContext';
 
 type PaymentStatus = 'CHECKING' | 'PENDING' | 'CONFIRMED' | 'TIMEOUT';
 
@@ -28,6 +27,52 @@ function OrderCompletePageContent() {
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('CHECKING');
   const [pollingCount, setPollingCount] = useState(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 화이트 테마 CSS 변수 적용
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const originalStyles: { [key: string]: string } = {};
+    const properties = [
+      '--color-primary',
+      '--color-primary-light',
+      '--color-secondary',
+      '--color-secondary-light',
+      '--color-bg-primary',
+      '--color-bg-secondary',
+      '--color-bg-tertiary',
+      '--color-text-primary',
+      '--color-text-secondary',
+      '--color-text-muted',
+      '--color-accent-rgb',
+    ];
+
+    properties.forEach(prop => {
+      originalStyles[prop] = root.style.getPropertyValue(prop);
+    });
+
+    // 화이트 테마 설정 (growth-plan/v2와 동일)
+    root.style.setProperty('--color-primary', '#8b5cf6');
+    root.style.setProperty('--color-primary-light', '#a78bfa');
+    root.style.setProperty('--color-secondary', '#8b5cf6');
+    root.style.setProperty('--color-secondary-light', '#ec4899');
+    root.style.setProperty('--color-bg-primary', '#ffffff');
+    root.style.setProperty('--color-bg-secondary', '#f8f9fa');
+    root.style.setProperty('--color-bg-tertiary', '#f1f3f4');
+    root.style.setProperty('--color-text-primary', '#1a1a1a');
+    root.style.setProperty('--color-text-secondary', '#4a4a4a');
+    root.style.setProperty('--color-text-muted', '#6b7280');
+    root.style.setProperty('--color-accent-rgb', '139, 92, 246');
+
+    return () => {
+      Object.entries(originalStyles).forEach(([key, value]) => {
+        if (value) {
+          root.style.setProperty(key, value);
+        } else {
+          root.style.removeProperty(key);
+        }
+      });
+    };
+  }, []);
 
   // 주문 상태 폴링 (카드 결제만)
   useEffect(() => {
@@ -307,16 +352,10 @@ function OrderCompletePageContent() {
         </div>
       </div>
 
-      {/* Theme Selector */}
-      <ThemeSelector />
     </main>
   );
 }
 
 export default function OrderCompletePage() {
-  return (
-    <ThemeProvider>
-      <OrderCompletePageContent />
-    </ThemeProvider>
-  );
+  return <OrderCompletePageContent />;
 }

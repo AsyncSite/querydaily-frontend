@@ -6,6 +6,130 @@ import styles from './page.module.css';
 export default function V7Page() {
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Form state
+  const [formData, setFormData] = useState({
+    email: '',
+    name: '',
+    role: '',
+    experience: '',
+    worry: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const mapExperienceToCareerLevel = (experience: string): string => {
+    switch (experience) {
+      case '0':
+      case '1-3':
+        return 'JUNIOR';
+      case '3-5':
+        return 'MIDDLE';
+      case '5+':
+        return 'SENIOR';
+      default:
+        return 'JUNIOR';
+    }
+  };
+
+  const mapRoleToTechStack = (role: string): string[] => {
+    switch (role) {
+      case 'backend':
+        return ['Backend', 'Java', 'Spring'];
+      case 'frontend':
+        return ['Frontend', 'React', 'JavaScript'];
+      case 'fullstack':
+        return ['Backend', 'Frontend'];
+      case 'devops':
+        return ['DevOps', 'AWS', 'Docker'];
+      default:
+        return ['Development'];
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // 이력서 필수 체크
+    if (!resumeFile) {
+      setSubmitResult({
+        success: false,
+        message: '이력서를 업로드해주세요.'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitResult(null);
+
+    try {
+      const leadData = {
+        email: formData.email,
+        name: formData.name,
+        profile: {
+          careerLevel: mapExperienceToCareerLevel(formData.experience),
+          techStack: mapRoleToTechStack(formData.role),
+          timezone: 'Asia/Seoul',
+          worry: formData.worry || null
+        }
+      };
+
+      // FormData로 multipart/form-data 전송
+      const formDataToSend = new FormData();
+      formDataToSend.append('lead', new Blob([JSON.stringify(leadData)], { type: 'application/json' }));
+
+      // 이력서 파일이 있으면 추가
+      if (resumeFile) {
+        formDataToSend.append('resume', resumeFile);
+      }
+
+      const response = await fetch('/api/v1/public/leads', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Reset form
+        setFormData({ email: '', name: '', role: '', experience: '', worry: '' });
+        setResumeFile(null);
+        setSubmitResult(null);
+        // 모달 닫기
+        setShowFreeTrialModal(false);
+        // 토스트 표시
+        setToastMessage('신청이 완료되었습니다! 48시간 내 이메일을 확인해주세요.');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 4000);
+      } else {
+        // 에러 코드에 따른 메시지 처리
+        let errorMessage = '신청에 실패했습니다. 다시 시도해주세요.';
+        if (data.errorCode === 'TRIAL_ALREADY_USED') {
+          errorMessage = '이미 등록된 이메일입니다. 다른 이메일로 시도해주세요.';
+        } else if (data.message) {
+          errorMessage = data.message;
+        }
+        setSubmitResult({
+          success: false,
+          message: errorMessage
+        });
+      }
+    } catch (error) {
+      setSubmitResult({
+        success: false,
+        message: '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Scroll animation observer
   useEffect(() => {
@@ -315,16 +439,24 @@ export default function V7Page() {
 
             <h2 className={styles.modalTitle}>무료 체험 신청</h2>
             <p className={styles.modalDesc}>
-              질문 3개 + 합격 답변을 24시간 내 이메일로 보내드립니다
+              질문 1개 + 합격 답변을 48시간 내 이메일로 보내드립니다
             </p>
 
-            <form className={styles.freeTrialForm}>
+            <form className={styles.freeTrialForm} onSubmit={handleSubmit}>
+              {submitResult && (
+                <div className={submitResult.success ? styles.successMessage : styles.errorMessage}>
+                  {submitResult.message}
+                </div>
+              )}
+
               <div className={styles.formGroup}>
                 <label htmlFor="email">이메일 *</label>
                 <input
                   type="email"
                   id="email"
                   placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
@@ -335,17 +467,20 @@ export default function V7Page() {
                   type="text"
                   id="name"
                   placeholder="홍길동"
+                  value={formData.name}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="resume">이력서 업로드 (선택)</label>
+                <label htmlFor="resume">이력서 업로드 *</label>
                 <div className={styles.fileUploadArea}>
                   <input
                     type="file"
                     id="resume"
                     accept=".pdf"
+                    required
                     style={{ display: 'none' }}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -372,7 +507,7 @@ export default function V7Page() {
                       <>
                         <span className={styles.uploadIcon}>📄</span>
                         <span className={styles.uploadText}>PDF 파일을 선택하세요</span>
-                        <span className={styles.uploadHint}>최대 10MB · 더 정확한 질문 생성</span>
+                        <span className={styles.uploadHint}>최대 10MB</span>
                       </>
                     )}
                   </label>
@@ -381,7 +516,7 @@ export default function V7Page() {
 
               <div className={styles.formGroup}>
                 <label htmlFor="role">현재 직무 *</label>
-                <select id="role" required>
+                <select id="role" value={formData.role} onChange={handleInputChange} required>
                   <option value="">선택해주세요</option>
                   <option value="backend">백엔드 개발자</option>
                   <option value="frontend">프론트엔드 개발자</option>
@@ -393,7 +528,7 @@ export default function V7Page() {
 
               <div className={styles.formGroup}>
                 <label htmlFor="experience">경력 *</label>
-                <select id="experience" required>
+                <select id="experience" value={formData.experience} onChange={handleInputChange} required>
                   <option value="">선택해주세요</option>
                   <option value="0">신입</option>
                   <option value="1-3">1-3년</option>
@@ -408,18 +543,27 @@ export default function V7Page() {
                   id="worry"
                   placeholder="예: Redis를 왜 사용했는지 물어보면 대답을 못할 것 같아요"
                   rows={3}
+                  value={formData.worry}
+                  onChange={handleInputChange}
                 />
               </div>
 
-              <button type="submit" className={styles.formSubmit}>
-                무료로 받기
+              <button type="submit" className={styles.formSubmit} disabled={isSubmitting}>
+                {isSubmitting ? '신청 중...' : '무료로 받기'}
               </button>
 
               <p className={styles.formNote}>
-                * 필수 항목 · 이력서를 업로드하시면 훨씬 정확한 맞춤 질문을 받으실 수 있습니다
+                * 필수 항목
               </p>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      {showToast && (
+        <div className={styles.toast}>
+          {toastMessage}
         </div>
       )}
 

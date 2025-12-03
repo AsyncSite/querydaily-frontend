@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { ThemeProvider, ThemeSelector, useTheme } from '../prototype-hyundoo/v3/ThemeContext';
 
 function PaymentPageContent() {
   const router = useRouter();
@@ -18,6 +17,52 @@ function PaymentPageContent() {
   } | null>(null);
   const [copySuccess, setCopySuccess] = useState('');
   const [depositorName, setDepositorName] = useState('');
+
+  // 화이트 테마 CSS 변수 적용
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const originalStyles: { [key: string]: string } = {};
+    const properties = [
+      '--color-primary',
+      '--color-primary-light',
+      '--color-secondary',
+      '--color-secondary-light',
+      '--color-bg-primary',
+      '--color-bg-secondary',
+      '--color-bg-tertiary',
+      '--color-text-primary',
+      '--color-text-secondary',
+      '--color-text-muted',
+      '--color-accent-rgb',
+    ];
+
+    properties.forEach(prop => {
+      originalStyles[prop] = root.style.getPropertyValue(prop);
+    });
+
+    // 화이트 테마 설정 (growth-plan/v2와 동일)
+    root.style.setProperty('--color-primary', '#8b5cf6');
+    root.style.setProperty('--color-primary-light', '#a78bfa');
+    root.style.setProperty('--color-secondary', '#8b5cf6');
+    root.style.setProperty('--color-secondary-light', '#ec4899');
+    root.style.setProperty('--color-bg-primary', '#ffffff');
+    root.style.setProperty('--color-bg-secondary', '#f8f9fa');
+    root.style.setProperty('--color-bg-tertiary', '#f1f3f4');
+    root.style.setProperty('--color-text-primary', '#1a1a1a');
+    root.style.setProperty('--color-text-secondary', '#4a4a4a');
+    root.style.setProperty('--color-text-muted', '#6b7280');
+    root.style.setProperty('--color-accent-rgb', '139, 92, 246');
+
+    return () => {
+      Object.entries(originalStyles).forEach(([key, value]) => {
+        if (value) {
+          root.style.setProperty(key, value);
+        } else {
+          root.style.removeProperty(key);
+        }
+      });
+    };
+  }, []);
 
   useEffect(() => {
     // localStorage에서 주문 정보 가져오기
@@ -39,7 +84,12 @@ function PaymentPageContent() {
   };
 
   const handleComplete = () => {
-    router.push('/');
+    // growth-plan에서 왔으면 해당 페이지로, 아니면 메인으로
+    if (orderData?.product === 'growth-plan') {
+      router.push('/prototype-hyundoo/v4/products/growth-plan/v2');
+    } else {
+      router.push('/');
+    }
   };
 
   if (!orderData) {
@@ -186,16 +236,10 @@ function PaymentPageContent() {
         </div>
       </div>
 
-      {/* Theme Selector */}
-      <ThemeSelector />
     </main>
   );
 }
 
 export default function PaymentPage() {
-  return (
-    <ThemeProvider>
-      <PaymentPageContent />
-    </ThemeProvider>
-  );
+  return <PaymentPageContent />;
 }

@@ -90,7 +90,7 @@ export default function FloatingFreeTrial({ onOpenModal }: { onOpenModal: () => 
               2025년 최신 면접 기출
             </span>
             <span className={styles.minimizedSubtext}>
-              3문제 무료
+              1문제 무료
             </span>
           </div>
           <span className={styles.ctaArrow}>→</span>
@@ -120,7 +120,7 @@ export default function FloatingFreeTrial({ onOpenModal }: { onOpenModal: () => 
             </h4>
             <p className={styles.hintText}>
               네카라쿠배 2025년 상반기 기출<br/>
-              실제 면접 질문 3개 무료 제공
+              실제 면접 질문 1개 무료 제공
             </p>
 
             <div className={styles.features}>

@@ -40,6 +40,15 @@ const nextConfig = {
     ];
   },
 
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: 'http://localhost:8387/api/v1/:path*',
+      },
+    ];
+  },
+
   poweredByHeader: false,
   generateEtags: true,
   compress: true,

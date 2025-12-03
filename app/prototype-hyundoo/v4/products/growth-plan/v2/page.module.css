@@ -3766,3 +3766,434 @@
   font-size: 0.9rem;
   color: var(--color-text-muted);
 }
+
+/* ===== Purchase Modal Styles (White Theme) ===== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.modalContainer {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f3f4f6;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #6b7280;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.modalClose:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.modalContent {
+  padding: 2rem;
+}
+
+.modalProgress {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.modalProgressDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  transition: all 0.3s;
+}
+
+.modalProgressDotActive {
+  background: #8b5cf6;
+  width: 24px;
+  border-radius: 4px;
+}
+
+.modalStep {
+  text-align: center;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+
+.modalSubtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0 0 1.5rem;
+}
+
+.selectedProductInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+  border-radius: 12px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.modalProductBadge {
+  padding: 0.25rem 0.75rem;
+  background: #8b5cf6;
+  color: white;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.modalProductPrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #8b5cf6;
+}
+
+.modalFormGroup {
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.fileUploadArea {
+  width: 100%;
+}
+
+.fileUploadBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #f9fafb;
+  min-height: 150px;
+}
+
+.fileUploadBox:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.uploadIcon {
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.uploadText {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.uploadHint {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.uploadedIcon {
+  margin-bottom: 0.5rem;
+}
+
+.uploadedFileName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+.uploadedSize {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.paymentMethodTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 1.5rem 0 1rem;
+  text-align: center;
+}
+
+.paymentMethodButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.paymentMethodBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.paymentMethodBtn:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.bankTransferBtn:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.cardPaymentBtn:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.paymentMethodIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paymentMethodText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.paymentMethodText strong {
+  font-size: 1rem;
+  color: #1a1a1a;
+}
+
+.paymentMethodText small {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.modalLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background: #ffffff;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.modalInput:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.modalInput::placeholder {
+  color: #9ca3af;
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modalBtn {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.modalBtnSecondary {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.modalBtnSecondary:hover {
+  background: #e5e7eb;
+}
+
+.modalBtnPrimary {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: none;
+  color: white;
+}
+
+.modalBtnPrimary:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.modalBtnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modalBtnLarge {
+  padding: 1.125rem;
+}
+
+.modalHint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.modalOrderSummary {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.modalOrderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.modalOrderTotal {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  font-weight: 600;
+}
+
+.totalPrice {
+  color: #8b5cf6;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.modalHighlight {
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modalHighlight p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #065f46;
+}
+
+.modalPaymentSecurity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 1rem;
+}
+
+.securityIcon {
+  opacity: 0.7;
+}
+
+/* Modal Responsive */
+@media (max-width: 480px) {
+  .modalContainer {
+    margin: 1rem;
+    max-height: 85vh;
+  }
+
+  .modalContent {
+    padding: 1.5rem;
+  }
+
+  .paymentMethodButtons {
+    flex-direction: column;
+  }
+}

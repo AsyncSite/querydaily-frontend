@@ -274,7 +274,7 @@ export default function V7Page() {
               </div>
               <p className={styles.planDesc}>완벽하게 준비하고 싶다면</p>
               <ul className={styles.planFeatures}>
-                <li>20일 × 2개/일 (총 40개)</li>
+                <li>20일 x 질문 & 답변 1개 (총 20개)</li>
                 <li>꼬리질문 대비</li>
                 <li>빅테크/유니콘 기업 답변 가이드</li>
                 <li>상세 해설 포함</li>
@@ -315,7 +315,7 @@ export default function V7Page() {
 
             <h2 className={styles.modalTitle}>무료 체험 신청</h2>
             <p className={styles.modalDesc}>
-              질문 3개 + 합격 답변을 24시간 내 이메일로 보내드립니다
+              질문 1개 + 답변을 48시간 내 이메일로 보내드립니다
             </p>
 
             <form className={styles.freeTrialForm}>
@@ -340,12 +340,13 @@ export default function V7Page() {
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="resume">이력서 업로드 (선택)</label>
+                <label htmlFor="resume">이력서 업로드 *</label>
                 <div className={styles.fileUploadArea}>
                   <input
                     type="file"
                     id="resume"
                     accept=".pdf"
+                    required
                     style={{ display: 'none' }}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -372,7 +373,7 @@ export default function V7Page() {
                       <>
                         <span className={styles.uploadIcon}>📄</span>
                         <span className={styles.uploadText}>PDF 파일을 선택하세요</span>
-                        <span className={styles.uploadHint}>최대 10MB · 더 정확한 질문 생성</span>
+                        <span className={styles.uploadHint}>최대 10MB</span>
                       </>
                     )}
                   </label>
@@ -416,7 +417,7 @@ export default function V7Page() {
               </button>
 
               <p className={styles.formNote}>
-                * 필수 항목 · 이력서를 업로드하시면 훨씬 정확한 맞춤 질문을 받으실 수 있습니다
+                * 필수 항목
               </p>
             </form>
           </div>

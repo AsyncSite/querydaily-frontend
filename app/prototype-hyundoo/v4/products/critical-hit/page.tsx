@@ -32,11 +32,14 @@ import {
   Flame,
   MessageSquare,
   Trophy,
+  Gift,
 } from 'lucide-react';
 
 function CriticalHitContent() {
   const router = useRouter();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   // 화이트 테마 CSS 변수 적용
   useLayoutEffect(() => {
@@ -979,6 +982,128 @@ function CriticalHitContent() {
           <p className={styles.footerBiz}>사업자등록번호: 456-12-02771 | 대표: 최보임</p>
         </footer>
       </div>
+
+      {/* Sticky Free Trial Bar */}
+      <div className={styles.stickyFreeTrialBar}>
+        <div className={styles.freeTrialBarContent}>
+          <div className={styles.freeTrialBarText}>
+            <Gift size={18} />
+            <span>가격이 부담된다면? <strong>무료로 먼저 체험해보세요</strong></span>
+          </div>
+          <button
+            className={styles.freeTrialBarButton}
+            onClick={() => setShowFreeTrialModal(true)}
+          >
+            무료 체험 신청하기
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Free Trial Modal */}
+      {showFreeTrialModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowFreeTrialModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setShowFreeTrialModal(false)}>
+              ×
+            </button>
+            <h2 className={styles.modalTitle}>무료 체험 신청</h2>
+            <p className={styles.modalDesc}>
+              이력서를 업로드하면 48시간 내에 질문 1개 + 답변을 무료로 받아보실 수 있습니다.
+            </p>
+
+            <form className={styles.freeTrialForm} onSubmit={(e) => e.preventDefault()}>
+              <div className={styles.formGroup}>
+                <label>이메일 *</label>
+                <input type="email" placeholder="example@email.com" required />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>이름 *</label>
+                <input type="text" placeholder="홍길동" required />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>이력서 (PDF) *</label>
+                <div className={styles.fileUploadArea}>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    id="resumeUpload"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 10 * 1024 * 1024) {
+                          alert('파일 크기는 10MB 이하여야 합니다.');
+                          return;
+                        }
+                        setResumeFile(file);
+                      }
+                    }}
+                    required
+                  />
+                  <label htmlFor="resumeUpload" className={styles.fileUploadBox}>
+                    {resumeFile ? (
+                      <>
+                        <span className={styles.uploadedIcon}>✓</span>
+                        <span className={styles.uploadedFileName}>{resumeFile.name}</span>
+                        <span className={styles.uploadedSize}>
+                          ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className={styles.uploadIcon}>📄</span>
+                        <span className={styles.uploadText}>클릭하여 이력서 업로드</span>
+                        <span className={styles.uploadHint}>PDF 파일, 최대 10MB</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>희망 직무 *</label>
+                <select required>
+                  <option value="">선택해주세요</option>
+                  <option value="backend">백엔드 개발자</option>
+                  <option value="frontend">프론트엔드 개발자</option>
+                  <option value="fullstack">풀스택 개발자</option>
+                  <option value="devops">DevOps 엔지니어</option>
+                  <option value="other">기타</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>경력 *</label>
+                <select required>
+                  <option value="">선택해주세요</option>
+                  <option value="new">신입</option>
+                  <option value="1-3">1-3년</option>
+                  <option value="3-5">3-5년</option>
+                  <option value="5+">5년 이상</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>면접 관련 고민 (선택)</label>
+                <textarea
+                  placeholder="면접 준비하면서 특별히 걱정되는 부분이 있으시면 알려주세요."
+                  rows={3}
+                />
+              </div>
+
+              <button type="submit" className={styles.formSubmit}>
+                무료 체험 신청하기
+              </button>
+              <p className={styles.formNote}>
+                신청 후 48시간 내에 이메일로 질문이 발송됩니다
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

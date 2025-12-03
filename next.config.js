@@ -41,10 +41,14 @@ const nextConfig = {
   },
 
   async rewrites() {
+    const backendUrl = process.env.NODE_ENV === 'production'
+      ? 'https://api.asyncsite.com/api/query-daily'
+      : 'http://localhost:8387';
+
     return [
       {
         source: '/api/v1/:path*',
-        destination: 'http://localhost:8387/api/v1/:path*',
+        destination: `${backendUrl}/api/v1/:path*`,
       },
     ];
   },

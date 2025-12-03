@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import './white-theme.css';
@@ -34,6 +34,7 @@ import {
   Flame,
   MessageSquare,
   Trophy,
+  Gift,
 } from 'lucide-react';
 
 // Phone validation helper
@@ -183,6 +184,8 @@ function GrowthPlanV2Content() {
       });
     };
   }, []);
+  const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -190,6 +193,145 @@ function GrowthPlanV2Content() {
 
   return (
     <>
+      {/* Sticky Free Trial Bar - 하단 고정 */}
+      <div className={styles.stickyFreeTrialBar}>
+        <div className={styles.freeTrialBarContent}>
+          <span className={styles.freeTrialBarText}>
+            <Gift size={18} />
+            가격이 부담된다면? <strong>무료로 먼저 체험해보세요</strong>
+          </span>
+          <button
+            className={styles.freeTrialBarButton}
+            onClick={() => setShowFreeTrialModal(true)}
+          >
+            무료 체험 신청하기
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Free Trial Modal */}
+      {showFreeTrialModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowFreeTrialModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.modalClose}
+              onClick={() => setShowFreeTrialModal(false)}
+            >
+              ×
+            </button>
+
+            <h2 className={styles.modalTitle}>무료 체험 신청</h2>
+            <p className={styles.modalDesc}>
+              질문 1개 + 답변을 48시간 내 이메일로 보내드립니다
+            </p>
+
+            <form className={styles.freeTrialForm}>
+              <div className={styles.formGroup}>
+                <label htmlFor="email">이메일 *</label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="name">이름 *</label>
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="홍길동"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="resumeUpload">이력서 업로드 *</label>
+                <div className={styles.fileUploadArea}>
+                  <input
+                    type="file"
+                    id="resumeUpload"
+                    accept=".pdf"
+                    required
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 10 * 1024 * 1024) {
+                          alert('파일 크기는 10MB 이하여야 합니다');
+                          e.target.value = '';
+                          return;
+                        }
+                        setResumeFile(file);
+                      }
+                    }}
+                  />
+                  <label htmlFor="resumeUpload" className={styles.fileUploadBox}>
+                    {resumeFile ? (
+                      <>
+                        <span className={styles.uploadedIcon}>✓</span>
+                        <span className={styles.uploadedFileName}>{resumeFile.name}</span>
+                        <span className={styles.uploadedSize}>
+                          ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className={styles.uploadIcon}>📄</span>
+                        <span className={styles.uploadText}>PDF 파일을 선택하세요</span>
+                        <span className={styles.uploadHint}>최대 10MB</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="role">현재 직무 *</label>
+                <select id="role" required>
+                  <option value="">선택해주세요</option>
+                  <option value="backend">백엔드 개발자</option>
+                  <option value="frontend">프론트엔드 개발자</option>
+                  <option value="fullstack">풀스택 개발자</option>
+                  <option value="devops">DevOps/인프라</option>
+                  <option value="other">기타</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="experience">경력 *</label>
+                <select id="experience" required>
+                  <option value="">선택해주세요</option>
+                  <option value="0">신입</option>
+                  <option value="1-3">1-3년</option>
+                  <option value="3-5">3-5년</option>
+                  <option value="5+">5년 이상</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="worry">가장 걱정되는 면접 질문이 있다면? (선택)</label>
+                <textarea
+                  id="worry"
+                  placeholder="예: Redis를 왜 사용했는지 물어보면 대답을 못할 것 같아요"
+                  rows={3}
+                />
+              </div>
+
+              <button type="submit" className={styles.formSubmit}>
+                무료로 받기
+              </button>
+
+              <p className={styles.formNote}>
+                * 필수 항목
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Sticky Header */}
       <header className={styles.stickyHeader}>
         <div className={styles.headerContainer}>
@@ -274,6 +416,7 @@ function GrowthPlanV2Content() {
               <Shield size={14} />
               첫 질문 발송 전 100% 환불
             </p>
+
           </div>
         </aside>
 
@@ -1054,7 +1197,7 @@ function GrowthPlanV2Content() {
                       <div className={styles.emailAddress}>official.querydaily@gmail.com</div>
                     </div>
                   </div>
-                  <div className={styles.emailBadge + ' ' + styles.premium}>프리미엄 가이드</div>
+                  <div className={styles.emailBadge}>Day 1 / 20</div>
                 </div>
 
                 <div className={styles.emailSubject}>

@@ -18,6 +18,14 @@
   }
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 70px;
+  }
+}
+
 /* ===== Sticky Header ===== */
 .stickyHeader {
   position: fixed;
@@ -499,17 +507,36 @@
 
 /* 반응형 */
 @media (max-width: 768px) {
+  .hero {
+    padding: 2rem 0 3rem;
+  }
+
+  .heroBadges {
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .heroBadge,
+  .heroLiveBadge {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.75rem;
+  }
+
   .heroTitle {
-    font-size: 2.25rem;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
   }
 
   .heroSubheadline {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
 
   .heroImpact {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
   }
 
   .impactDivider {
@@ -517,21 +544,71 @@
   }
 
   .impactNumber {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+
+  .impactLabel {
+    font-size: 0.8rem;
+  }
+
+  .heroValueProp {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .valueTitle {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
   }
 
   .valueGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .valueIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .valueContent strong {
+    font-size: 0.95rem;
+  }
+
+  .valueContent span {
+    font-size: 0.85rem;
   }
 
   .heroPrimaryButton {
-    font-size: 1.1rem;
-    padding: 1.25rem 2rem;
+    font-size: 1rem;
+    padding: 1rem 1.5rem;
   }
 
   .heroCtaInfo {
     flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ctaInfoItem {
+    font-size: 0.85rem;
+  }
+
+  .heroReviewPreview {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .reviewPreviewText {
+    font-size: 0.9rem;
+  }
+
+  .heroTrustBadges {
     gap: 0.75rem;
+  }
+
+  .trustBadge {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -791,7 +868,191 @@
 
 @media (max-width: 768px) {
   .sectionTitle {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .whatYouGet,
+  .howItWorks,
+  .reviews {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .benefitCard {
+    padding: 1.5rem;
+  }
+
+  .benefitIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .benefitTitle {
+    font-size: 1.1rem;
+  }
+
+  .benefitDescription {
+    font-size: 0.9rem;
+  }
+
+  .step {
+    gap: 1rem;
+  }
+
+  .stepNumber {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .stepTitle {
+    font-size: 1.05rem;
+  }
+
+  .stepDescription {
+    font-size: 0.9rem;
+  }
+
+  .reviewCard {
+    padding: 1.5rem;
+  }
+
+  .reviewText {
+    font-size: 0.9rem;
+  }
+
+  .faq {
+    padding: 2rem 1rem;
+    margin: 2rem auto;
+  }
+
+  .faqQuestion {
+    padding: 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .faqAnswer {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+
+  .faqAnswer p {
+    font-size: 0.9rem;
+  }
+
+  .productHeader {
+    padding: 1.5rem 1rem 1rem 1rem;
+  }
+
+  .productTitle {
+    font-size: 1.3rem;
+  }
+
+  .productContent {
+    padding: 0 1rem;
+  }
+
+  .productImageCard {
+    padding: 1.5rem;
+  }
+
+  .imageCardTitle {
+    font-size: 1.2rem;
+  }
+
+  .imageCardDesc {
+    font-size: 0.95rem;
+  }
+
+  .featureRow {
+    font-size: 0.9rem;
+  }
+
+  .painPoints {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .painPointItem {
+    padding: 1rem;
+  }
+
+  .painPointItem span {
+    font-size: 0.95rem;
+  }
+
+  .solutionContent {
+    padding: 1.25rem;
+  }
+
+  .solutionContent strong {
+    font-size: 1rem;
+  }
+
+  .solutionContent span {
+    font-size: 0.9rem;
+  }
+
+  .beforeAfter {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .comparisonColumn {
+    padding: 1.5rem;
+  }
+
+  .comparisonHeader h3 {
+    font-size: 1.1rem;
+  }
+
+  .statsSection {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .statCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .statNumber {
+    font-size: 2.25rem;
+  }
+
+  .guarantee {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .guaranteeCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .guaranteeIcon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .urgency {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .emailPreview {
+    margin: 2rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .emailBody {
+    padding: 1.5rem;
+  }
+
+  .footer {
+    padding: 40px 15px;
   }
 }
 
@@ -3792,4 +4053,309 @@
 .footerBiz {
   font-size: 0.9rem;
   color: var(--color-text-muted);
+}
+
+/* ==================== STICKY FREE TRIAL BAR ==================== */
+.stickyFreeTrialBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  padding: 12px 20px;
+  z-index: 999;
+  box-shadow: 0 -4px 20px rgba(124, 58, 237, 0.3);
+}
+
+.freeTrialBarContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.freeTrialBarText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 1rem;
+}
+
+.freeTrialBarText strong {
+  color: #fef08a;
+}
+
+.freeTrialBarButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: white;
+  color: #7c3aed;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.freeTrialBarButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .stickyFreeTrialBar {
+    bottom: 70px; /* floatingCta 위에 위치 */
+    padding: 12px 16px 20px;
+  }
+
+  .freeTrialBarContent {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .freeTrialBarText {
+    font-size: 0.9rem;
+  }
+
+  .freeTrialBarButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==================== FREE TRIAL MODAL ==================== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background: white;
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modalClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.modalClose:hover {
+  background: #f5f5f5;
+  color: var(--color-text-primary);
+}
+
+.modalTitle {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 12px 0;
+}
+
+.modalDesc {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin: 0 0 32px 0;
+}
+
+/* Free Trial Form */
+.freeTrialForm {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  font-size: 1rem;
+  padding: 14px 16px;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  background: white;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formSubmit {
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 18px;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+  margin-top: 8px;
+}
+
+.formSubmit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+}
+
+.formNote {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: -8px 0 0 0;
+}
+
+/* File Upload Styles */
+.fileUploadArea {
+  width: 100%;
+}
+
+.fileUploadBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 24px;
+  border: 2px dashed #e5e5e5;
+  border-radius: 12px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fileUploadBox:hover {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.uploadIcon {
+  font-size: 2.5rem;
+  opacity: 0.6;
+}
+
+.uploadText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.uploadHint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.uploadedIcon {
+  font-size: 2rem;
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.uploadedFileName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+  word-break: break-all;
+}
+
+.uploadedSize {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* Modal Mobile Responsive */
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 32px 24px;
+  }
+
+  .modalTitle {
+    font-size: 1.8rem;
+  }
+
+  .modalDesc {
+    font-size: 1rem;
+  }
+
+  .formSubmit {
+    font-size: 1.1rem;
+    padding: 16px;
+  }
+
+  .fileUploadBox {
+    padding: 24px 16px;
+  }
+
+  .uploadIcon {
+    font-size: 2rem;
+  }
+
+  .uploadText {
+    font-size: 0.9rem;
+  }
+
+  .uploadedFileName {
+    font-size: 0.9rem;
+  }
 }

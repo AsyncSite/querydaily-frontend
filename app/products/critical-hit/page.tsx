@@ -36,6 +36,8 @@ import {
   Gift,
 } from 'lucide-react';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+
 // Phone validation helper
 const validatePhone = (phone: string): boolean => {
   const phoneRegex = /^01[0-9]-?\d{3,4}-?\d{4}$/;
@@ -1172,7 +1174,7 @@ function CriticalHitContent() {
                 formDataToSend.append('lead', new Blob([JSON.stringify(leadData)], { type: 'application/json' }));
                 formDataToSend.append('resume', resumeFile);
 
-                const response = await fetch('/api/v1/public/leads', {
+                const response = await fetch(`${API_BASE_URL}/api/query-daily/leads`, {
                   method: 'POST',
                   body: formDataToSend,
                 });

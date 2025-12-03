@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+
 export default function V7Page() {
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -90,7 +92,7 @@ export default function V7Page() {
         formDataToSend.append('resume', resumeFile);
       }
 
-      const response = await fetch('/api/v1/public/leads', {
+      const response = await fetch(`${API_BASE_URL}/api/query-daily/leads`, {
         method: 'POST',
         body: formDataToSend,
       });

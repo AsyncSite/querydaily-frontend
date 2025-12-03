@@ -187,6 +187,14 @@ function GrowthPlanV2Content() {
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
+  // Free Trial Form States
+  const [freeTrialEmail, setFreeTrialEmail] = useState('');
+  const [freeTrialName, setFreeTrialName] = useState('');
+  const [freeTrialRole, setFreeTrialRole] = useState('');
+  const [freeTrialExperience, setFreeTrialExperience] = useState('');
+  const [freeTrialWorry, setFreeTrialWorry] = useState('');
+  const [isSubmittingFreeTrial, setIsSubmittingFreeTrial] = useState(false);
+
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
@@ -226,7 +234,95 @@ function GrowthPlanV2Content() {
               질문 1개 + 답변을 48시간 내 이메일로 보내드립니다
             </p>
 
-            <form className={styles.freeTrialForm}>
+            <form className={styles.freeTrialForm} onSubmit={async (e) => {
+              e.preventDefault();
+
+              if (!freeTrialEmail.trim() || !freeTrialName.trim() || !resumeFile || !freeTrialRole || !freeTrialExperience) {
+                alert('모든 필수 항목을 입력해주세요.');
+                return;
+              }
+
+              setIsSubmittingFreeTrial(true);
+              try {
+                // v7과 동일한 방식으로 Lead API 호출
+                const mapExperienceToCareerLevel = (experience: string): string => {
+                  switch (experience) {
+                    case '0':
+                    case '1-3':
+                      return 'JUNIOR';
+                    case '3-5':
+                      return 'MIDDLE';
+                    case '5+':
+                      return 'SENIOR';
+                    default:
+                      return 'JUNIOR';
+                  }
+                };
+
+                const mapRoleToTechStack = (role: string): string[] => {
+                  switch (role) {
+                    case 'backend':
+                      return ['Backend', 'Java', 'Spring'];
+                    case 'frontend':
+                      return ['Frontend', 'React', 'JavaScript'];
+                    case 'fullstack':
+                      return ['Backend', 'Frontend'];
+                    case 'devops':
+                      return ['DevOps', 'AWS', 'Docker'];
+                    default:
+                      return ['Development'];
+                  }
+                };
+
+                const leadData = {
+                  email: freeTrialEmail,
+                  name: freeTrialName,
+                  profile: {
+                    careerLevel: mapExperienceToCareerLevel(freeTrialExperience),
+                    techStack: mapRoleToTechStack(freeTrialRole),
+                    timezone: 'Asia/Seoul',
+                    worry: freeTrialWorry || null
+                  }
+                };
+
+                // FormData로 multipart/form-data 전송
+                const formDataToSend = new FormData();
+                formDataToSend.append('lead', new Blob([JSON.stringify(leadData)], { type: 'application/json' }));
+                formDataToSend.append('resume', resumeFile);
+
+                const response = await fetch('/api/v1/public/leads', {
+                  method: 'POST',
+                  body: formDataToSend,
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                  alert('무료 체험 신청이 완료되었습니다!\n48시간 내에 이메일로 질문이 발송됩니다.');
+                  setShowFreeTrialModal(false);
+                  // Reset form
+                  setFreeTrialEmail('');
+                  setFreeTrialName('');
+                  setFreeTrialRole('');
+                  setFreeTrialExperience('');
+                  setFreeTrialWorry('');
+                  setResumeFile(null);
+                } else {
+                  let errorMessage = '신청 처리 중 오류가 발생했습니다.';
+                  if (data.errorCode === 'TRIAL_ALREADY_USED') {
+                    errorMessage = '이미 등록된 이메일입니다. 다른 이메일로 시도해주세요.';
+                  } else if (data.message) {
+                    errorMessage = data.message;
+                  }
+                  alert(errorMessage);
+                }
+              } catch (error) {
+                console.error('Error submitting free trial:', error);
+                alert('신청 처리 중 오류가 발생했습니다.');
+              } finally {
+                setIsSubmittingFreeTrial(false);
+              }
+            }}>
               <div className={styles.formGroup}>
                 <label htmlFor="email">이메일 *</label>
                 <input
@@ -234,6 +330,8 @@ function GrowthPlanV2Content() {
                   id="email"
                   placeholder="your@email.com"
                   required
+                  value={freeTrialEmail}
+                  onChange={(e) => setFreeTrialEmail(e.target.value)}
                 />
               </div>
 
@@ -244,6 +342,8 @@ function GrowthPlanV2Content() {
                   id="name"
                   placeholder="홍길동"
                   required
+                  value={freeTrialName}
+                  onChange={(e) => setFreeTrialName(e.target.value)}
                 />
               </div>
 
@@ -290,7 +390,12 @@ function GrowthPlanV2Content() {
 
               <div className={styles.formGroup}>
                 <label htmlFor="role">현재 직무 *</label>
-                <select id="role" required>
+                <select
+                  id="role"
+                  required
+                  value={freeTrialRole}
+                  onChange={(e) => setFreeTrialRole(e.target.value)}
+                >
                   <option value="">선택해주세요</option>
                   <option value="backend">백엔드 개발자</option>
                   <option value="frontend">프론트엔드 개발자</option>
@@ -302,7 +407,12 @@ function GrowthPlanV2Content() {
 
               <div className={styles.formGroup}>
                 <label htmlFor="experience">경력 *</label>
-                <select id="experience" required>
+                <select
+                  id="experience"
+                  required
+                  value={freeTrialExperience}
+                  onChange={(e) => setFreeTrialExperience(e.target.value)}
+                >
                   <option value="">선택해주세요</option>
                   <option value="0">신입</option>
                   <option value="1-3">1-3년</option>
@@ -317,11 +427,13 @@ function GrowthPlanV2Content() {
                   id="worry"
                   placeholder="예: Redis를 왜 사용했는지 물어보면 대답을 못할 것 같아요"
                   rows={3}
+                  value={freeTrialWorry}
+                  onChange={(e) => setFreeTrialWorry(e.target.value)}
                 />
               </div>
 
-              <button type="submit" className={styles.formSubmit}>
-                무료로 받기
+              <button type="submit" className={styles.formSubmit} disabled={isSubmittingFreeTrial}>
+                {isSubmittingFreeTrial ? '신청 중...' : '무료로 받기'}
               </button>
 
               <p className={styles.formNote}>

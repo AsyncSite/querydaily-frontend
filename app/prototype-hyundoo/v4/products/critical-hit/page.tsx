@@ -4,6 +4,7 @@ import { useState, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import './white-theme.css';
+import { submitBetaApplication, createOrder, ProductCode } from '@/lib/api';
 import {
   Calendar,
   Building2,
@@ -35,11 +36,114 @@ import {
   Gift,
 } from 'lucide-react';
 
+// Phone validation helper
+const validatePhone = (phone: string): boolean => {
+  const phoneRegex = /^01[0-9]-?\d{3,4}-?\d{4}$/;
+  return phoneRegex.test(phone.replace(/\s/g, ''));
+};
+
 function CriticalHitContent() {
   const router = useRouter();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+
+  // Free Trial Form States
+  const [freeTrialEmail, setFreeTrialEmail] = useState('');
+  const [freeTrialName, setFreeTrialName] = useState('');
+  const [freeTrialRole, setFreeTrialRole] = useState('');
+  const [freeTrialExperience, setFreeTrialExperience] = useState('');
+  const [freeTrialWorry, setFreeTrialWorry] = useState('');
+  const [isSubmittingFreeTrial, setIsSubmittingFreeTrial] = useState(false);
+
+  // Purchase Modal States
+  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
+  const [purchaseModalStep, setPurchaseModalStep] = useState(1);
+  const [purchaseFile, setPurchaseFile] = useState<File | null>(null);
+  const [purchaseName, setPurchaseName] = useState('');
+  const [purchaseNameError, setPurchaseNameError] = useState('');
+  const [purchasePhone, setPurchasePhone] = useState('');
+  const [purchasePhoneError, setPurchasePhoneError] = useState('');
+  const [purchaseEmail, setPurchaseEmail] = useState('');
+  const [purchaseEmailError, setPurchaseEmailError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'bank' | 'card' | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  // 결제 모달 열기
+  const openPaymentModal = () => {
+    setPurchaseModalOpen(true);
+    setPurchaseModalStep(1);
+  };
+
+  // 카드 결제 처리
+  const handleCardPayment = async () => {
+    try {
+      setIsSubmitting(true);
+
+      const response = await createOrder({
+        email: purchaseEmail,
+        name: purchaseName,
+        phone: purchasePhone,
+        productCode: ProductCode.CRITICAL_HIT,
+        paymentMethod: 'card',
+        resume: purchaseFile || undefined
+      });
+
+      if (!response.success || !response.data) {
+        alert(`주문 생성에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+        return;
+      }
+
+      const orderInfo = {
+        orderId: response.data.orderId,
+        product: 'critical-hit',
+        price: response.data.amount || 0,
+        paymentMethod: 'card',
+        email: purchaseEmail,
+        name: purchaseName,
+        phone: purchasePhone || '',
+      };
+      localStorage.setItem('orderData', JSON.stringify(orderInfo));
+
+      if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
+        const PortOne = await import('@portone/browser-sdk/v2');
+        const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
+
+        try {
+          const sdkResponse = await PortOne.requestPayment(payload);
+
+          if (!sdkResponse) {
+            alert('결제 응답을 받지 못했습니다.');
+            return;
+          }
+
+          if (sdkResponse.code !== undefined) {
+            let userMessage = '결제를 처리할 수 없습니다.';
+            if (sdkResponse.code === 'FAILURE_TYPE_PG') {
+              userMessage = `결제 실패: ${sdkResponse.message || 'PG사 오류'}`;
+            } else if (sdkResponse.code === 'FAILURE_TYPE_TIMEOUT') {
+              userMessage = '결제 시간이 초과되었습니다.';
+            }
+            alert(userMessage);
+            return;
+          }
+
+          router.push('/order-complete');
+        } catch (sdkError: any) {
+          console.error('[PortOne SDK] Error during requestPayment:', sdkError);
+          alert('결제 창을 여는 중 오류가 발생했습니다.');
+        }
+      } else {
+        alert('리다이렉트 방식은 현재 지원하지 않습니다.');
+      }
+    } catch (error) {
+      console.error('Card payment error:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // 화이트 테마 CSS 변수 적용
   useLayoutEffect(() => {
@@ -104,7 +208,7 @@ function CriticalHitContent() {
               Query<span className={styles.logoAccent}>Daily</span>
             </span>
           </div>
-          <button className={styles.ctaButton}>
+          <button className={styles.ctaButton} onClick={openPaymentModal}>
             지금 시작하기
           </button>
         </div>
@@ -117,7 +221,7 @@ function CriticalHitContent() {
             <span className={styles.floatingPriceOriginal}>₩15,900</span>
             <span className={styles.floatingPriceCurrent}>₩9,900</span>
           </div>
-          <button className={styles.floatingCtaButton}>
+          <button className={styles.floatingCtaButton} onClick={openPaymentModal}>
             지금 시작하기
           </button>
         </div>
@@ -160,7 +264,7 @@ function CriticalHitContent() {
               </div>
             </div>
 
-            <button className={styles.sidebarCtaButton}>
+            <button className={styles.sidebarCtaButton} onClick={openPaymentModal}>
               이력서 업로드
               <ArrowRight size={18} />
             </button>
@@ -266,7 +370,7 @@ function CriticalHitContent() {
 
             {/* CTA 섹션 */}
             <div className={styles.heroCtaSection}>
-              <button className={styles.heroPrimaryButton}>
+              <button className={styles.heroPrimaryButton} onClick={openPaymentModal}>
                 <span>지금 바로 시작하기</span>
                 <ArrowRight size={20} />
               </button>
@@ -820,7 +924,7 @@ function CriticalHitContent() {
                 </div>
               </div>
 
-              <button className={styles.urgencyCtaButton}>
+              <button className={styles.urgencyCtaButton} onClick={openPaymentModal}>
                 지금 바로 시작하기
                 <ArrowRight size={20} />
               </button>
@@ -1012,15 +1116,115 @@ function CriticalHitContent() {
               이력서를 업로드하면 48시간 내에 질문 1개 + 답변을 무료로 받아보실 수 있습니다.
             </p>
 
-            <form className={styles.freeTrialForm} onSubmit={(e) => e.preventDefault()}>
+            <form className={styles.freeTrialForm} onSubmit={async (e) => {
+              e.preventDefault();
+
+              if (!freeTrialEmail.trim() || !freeTrialName.trim() || !resumeFile || !freeTrialRole || !freeTrialExperience) {
+                alert('모든 필수 항목을 입력해주세요.');
+                return;
+              }
+
+              setIsSubmittingFreeTrial(true);
+              try {
+                // v7과 동일한 방식으로 Lead API 호출
+                const mapExperienceToCareerLevel = (experience: string): string => {
+                  switch (experience) {
+                    case 'new':
+                    case '1-3':
+                      return 'JUNIOR';
+                    case '3-5':
+                      return 'MIDDLE';
+                    case '5+':
+                      return 'SENIOR';
+                    default:
+                      return 'JUNIOR';
+                  }
+                };
+
+                const mapRoleToTechStack = (role: string): string[] => {
+                  switch (role) {
+                    case 'backend':
+                      return ['Backend', 'Java', 'Spring'];
+                    case 'frontend':
+                      return ['Frontend', 'React', 'JavaScript'];
+                    case 'fullstack':
+                      return ['Backend', 'Frontend'];
+                    case 'devops':
+                      return ['DevOps', 'AWS', 'Docker'];
+                    default:
+                      return ['Development'];
+                  }
+                };
+
+                const leadData = {
+                  email: freeTrialEmail,
+                  name: freeTrialName,
+                  profile: {
+                    careerLevel: mapExperienceToCareerLevel(freeTrialExperience),
+                    techStack: mapRoleToTechStack(freeTrialRole),
+                    timezone: 'Asia/Seoul',
+                    worry: freeTrialWorry || null
+                  }
+                };
+
+                // FormData로 multipart/form-data 전송
+                const formDataToSend = new FormData();
+                formDataToSend.append('lead', new Blob([JSON.stringify(leadData)], { type: 'application/json' }));
+                formDataToSend.append('resume', resumeFile);
+
+                const response = await fetch('/api/v1/public/leads', {
+                  method: 'POST',
+                  body: formDataToSend,
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                  alert('무료 체험 신청이 완료되었습니다!\n48시간 내에 이메일로 질문이 발송됩니다.');
+                  setShowFreeTrialModal(false);
+                  // Reset form
+                  setFreeTrialEmail('');
+                  setFreeTrialName('');
+                  setFreeTrialRole('');
+                  setFreeTrialExperience('');
+                  setFreeTrialWorry('');
+                  setResumeFile(null);
+                } else {
+                  let errorMessage = '신청 처리 중 오류가 발생했습니다.';
+                  if (data.errorCode === 'TRIAL_ALREADY_USED') {
+                    errorMessage = '이미 등록된 이메일입니다. 다른 이메일로 시도해주세요.';
+                  } else if (data.message) {
+                    errorMessage = data.message;
+                  }
+                  alert(errorMessage);
+                }
+              } catch (error) {
+                console.error('Error submitting free trial:', error);
+                alert('신청 처리 중 오류가 발생했습니다.');
+              } finally {
+                setIsSubmittingFreeTrial(false);
+              }
+            }}>
               <div className={styles.formGroup}>
                 <label>이메일 *</label>
-                <input type="email" placeholder="example@email.com" required />
+                <input
+                  type="email"
+                  placeholder="example@email.com"
+                  required
+                  value={freeTrialEmail}
+                  onChange={(e) => setFreeTrialEmail(e.target.value)}
+                />
               </div>
 
               <div className={styles.formGroup}>
                 <label>이름 *</label>
-                <input type="text" placeholder="홍길동" required />
+                <input
+                  type="text"
+                  placeholder="홍길동"
+                  required
+                  value={freeTrialName}
+                  onChange={(e) => setFreeTrialName(e.target.value)}
+                />
               </div>
 
               <div className={styles.formGroup}>
@@ -1065,7 +1269,11 @@ function CriticalHitContent() {
 
               <div className={styles.formGroup}>
                 <label>희망 직무 *</label>
-                <select required>
+                <select
+                  required
+                  value={freeTrialRole}
+                  onChange={(e) => setFreeTrialRole(e.target.value)}
+                >
                   <option value="">선택해주세요</option>
                   <option value="backend">백엔드 개발자</option>
                   <option value="frontend">프론트엔드 개발자</option>
@@ -1077,7 +1285,11 @@ function CriticalHitContent() {
 
               <div className={styles.formGroup}>
                 <label>경력 *</label>
-                <select required>
+                <select
+                  required
+                  value={freeTrialExperience}
+                  onChange={(e) => setFreeTrialExperience(e.target.value)}
+                >
                   <option value="">선택해주세요</option>
                   <option value="new">신입</option>
                   <option value="1-3">1-3년</option>
@@ -1091,16 +1303,401 @@ function CriticalHitContent() {
                 <textarea
                   placeholder="면접 준비하면서 특별히 걱정되는 부분이 있으시면 알려주세요."
                   rows={3}
+                  value={freeTrialWorry}
+                  onChange={(e) => setFreeTrialWorry(e.target.value)}
                 />
               </div>
 
-              <button type="submit" className={styles.formSubmit}>
-                무료 체험 신청하기
+              <button type="submit" className={styles.formSubmit} disabled={isSubmittingFreeTrial}>
+                {isSubmittingFreeTrial ? '신청 중...' : '무료 체험 신청하기'}
               </button>
               <p className={styles.formNote}>
                 신청 후 48시간 내에 이메일로 질문이 발송됩니다
               </p>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Purchase Modal */}
+      {purchaseModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => setPurchaseModalOpen(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.modalClose}
+              onClick={() => setPurchaseModalOpen(false)}
+              aria-label="Close modal"
+            >
+              ✕
+            </button>
+
+            <div className={styles.modalContent}>
+              {/* Progress Indicator */}
+              <div className={styles.modalProgress}>
+                {[1, 2, 3].map((step) => (
+                  <div
+                    key={step}
+                    className={`${styles.modalProgressDot} ${purchaseModalStep >= step ? styles.modalProgressDotActive : ''}`}
+                  />
+                ))}
+              </div>
+
+              {/* Step 1: Resume Upload */}
+              {purchaseModalStep === 1 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    이력서를 업로드해주세요
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    핵심 질문 3개 생성을 위해 필요합니다
+                  </p>
+
+                  <div className={styles.selectedProductInfo}>
+                    <span className={styles.modalProductBadge}>크리티컬 히트</span>
+                    <span className={styles.modalProductPrice}>₩9,900</span>
+                  </div>
+
+                  <div className={styles.modalFormGroup}>
+                    <div className={styles.fileUploadArea}>
+                      <input
+                        type="file"
+                        id="purchaseResume"
+                        accept=".pdf"
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (file.size > 10 * 1024 * 1024) {
+                              setErrors(['파일 크기는 10MB 이하여야 합니다']);
+                              setTimeout(() => setErrors([]), 3000);
+                              return;
+                            }
+                            setPurchaseFile(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="purchaseResume" className={styles.fileUploadBox}>
+                        {purchaseFile ? (
+                          <>
+                            <span className={styles.uploadedIcon}>
+                              <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Success" width="32" height="32" />
+                            </span>
+                            <span className={styles.uploadedFileName}>{purchaseFile.name}</span>
+                            <span className={styles.uploadedSize}>
+                              ({(purchaseFile.size / 1024 / 1024).toFixed(2)} MB)
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className={styles.uploadIcon}>
+                              <img src="https://img.icons8.com/?id=368&format=png&size=48" alt="Upload" width="40" height="40" />
+                            </span>
+                            <span className={styles.uploadText}>PDF 파일을 선택하거나 드래그하세요</span>
+                            <span className={styles.uploadHint}>최대 10MB</span>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
+                  {purchaseFile && (
+                    <>
+                      <div className={styles.paymentMethodTitle}>
+                        결제 방법을 선택해주세요
+                      </div>
+                      <div className={styles.paymentMethodButtons}>
+                        <button
+                          className={`${styles.paymentMethodBtn} ${styles.bankTransferBtn}`}
+                          onClick={() => {
+                            setPaymentMethod('bank');
+                            setPurchaseModalStep(2);
+                          }}
+                        >
+                          <span className={styles.paymentMethodIcon}>
+                            <img src="https://img.icons8.com/?id=3671&format=png&size=48" alt="Bank" width="32" height="32" />
+                          </span>
+                          <span className={styles.paymentMethodText}>
+                            <strong>무통장입금</strong>
+                            <small>계좌이체로 안전하게 결제</small>
+                          </span>
+                        </button>
+                        <button
+                          className={`${styles.paymentMethodBtn} ${styles.cardPaymentBtn}`}
+                          onClick={() => {
+                            setPaymentMethod('card');
+                            setPurchaseModalStep(2);
+                          }}
+                        >
+                          <span className={styles.paymentMethodIcon}>
+                            <img src="https://img.icons8.com/?id=TwIM2uks64q5&format=png&size=48" alt="Card Payment" width="32" height="32" />
+                          </span>
+                          <span className={styles.paymentMethodText}>
+                            <strong>카드결제</strong>
+                            <small>신용/체크카드로 간편 결제</small>
+                          </span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {!purchaseFile && (
+                    <div className={styles.modalActions}>
+                      <button
+                        className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                        onClick={() => setPurchaseModalOpen(false)}
+                      >
+                        취소
+                      </button>
+                    </div>
+                  )}
+
+                  <p className={styles.modalHint}>
+                    이력서는 암호화되어 안전하게 보관되며, AI 분석에만 사용됩니다
+                  </p>
+                </div>
+              )}
+
+              {/* Step 2: Order Information */}
+              {purchaseModalStep === 2 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    주문자 정보 입력
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    결제를 위한 정보를 입력해주세요
+                  </p>
+
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>이메일 <span className={styles.required}>*</span></label>
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      value={purchaseEmail}
+                      onChange={(e) => {
+                        setPurchaseEmail(e.target.value);
+                        if (purchaseEmailError) {
+                          setPurchaseEmailError('');
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const email = e.target.value.trim();
+                        if (email && !email.includes('@')) {
+                          setPurchaseEmailError('올바른 이메일 주소를 입력해주세요 (예: your@email.com)');
+                        } else {
+                          setPurchaseEmailError('');
+                        }
+                      }}
+                      className={`${styles.modalInput} ${purchaseEmailError ? styles.inputError : ''}`}
+                      autoFocus
+                    />
+                    {purchaseEmailError && (
+                      <p className={styles.errorMessage}>
+                        {purchaseEmailError}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>이름 <span className={styles.required}>*</span></label>
+                    <input
+                      type="text"
+                      placeholder="홍길동"
+                      className={styles.modalInput}
+                      value={purchaseName}
+                      onChange={(e) => {
+                        setPurchaseName(e.target.value);
+                        if (purchaseNameError) {
+                          setPurchaseNameError('');
+                        }
+                      }}
+                      style={purchaseNameError ? { borderColor: '#ff6b6b' } : {}}
+                    />
+                    {purchaseNameError && (
+                      <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                        {purchaseNameError}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className={styles.modalFormGroup}>
+                    <label className={styles.modalLabel}>연락처 <span className={styles.required}>*</span></label>
+                    <input
+                      type="tel"
+                      placeholder="010-1234-5678"
+                      className={styles.modalInput}
+                      value={purchasePhone}
+                      onChange={(e) => {
+                        setPurchasePhone(e.target.value);
+                        if (purchasePhoneError) {
+                          setPurchasePhoneError('');
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const phone = e.target.value.trim();
+                        if (phone && !validatePhone(phone)) {
+                          setPurchasePhoneError('올바른 전화번호 형식을 입력해주세요 (예: 010-1234-5678, 하이픈 필수)');
+                        } else {
+                          setPurchasePhoneError('');
+                        }
+                      }}
+                      style={purchasePhoneError ? { borderColor: '#ff6b6b' } : {}}
+                    />
+                    {purchasePhoneError && (
+                      <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                        {purchasePhoneError}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setPurchaseModalStep(1)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary}`}
+                      onClick={() => {
+                        if (!purchaseEmail.trim()) {
+                          alert('이메일을 입력해주세요');
+                          return;
+                        }
+                        if (!purchaseEmail.includes('@')) {
+                          alert('올바른 이메일 주소를 입력해주세요');
+                          return;
+                        }
+                        if (!purchaseName.trim()) {
+                          alert('이름을 입력해주세요');
+                          return;
+                        }
+                        if (!purchasePhone.trim()) {
+                          alert('연락처를 입력해주세요');
+                          return;
+                        }
+                        if (!validatePhone(purchasePhone)) {
+                          alert('올바른 전화번호 형식을 입력해주세요\n\n예시: 010-1234-5678\n(하이픈 필수)');
+                          return;
+                        }
+
+                        if (paymentMethod === 'card') {
+                          handleCardPayment();
+                        } else {
+                          setPurchaseModalStep(3);
+                        }
+                      }}
+                    >
+                      다음 단계로
+                    </button>
+                  </div>
+
+                  <p className={styles.modalHint}>
+                    입금자명 확인을 위해 정확한 정보를 입력해주세요
+                  </p>
+                </div>
+              )}
+
+              {/* Step 3: Payment */}
+              {purchaseModalStep === 3 && (
+                <div className={styles.modalStep}>
+                  <h2 className={styles.modalTitle}>
+                    무통장입금 안내
+                  </h2>
+                  <p className={styles.modalSubtitle}>
+                    안전한 결제를 진행합니다
+                  </p>
+
+                  <div className={styles.modalOrderSummary}>
+                    <div className={styles.modalOrderItem}>
+                      <span>상품</span>
+                      <span>크리티컬 히트</span>
+                    </div>
+                    <div className={styles.modalOrderItem}>
+                      <span>가격</span>
+                      <span>₩9,900</span>
+                    </div>
+                    <div className={`${styles.modalOrderItem} ${styles.modalOrderTotal}`}>
+                      <span>결제 금액</span>
+                      <span className={styles.totalPrice}>₩9,900</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.modalHighlight}>
+                    <p>
+                      <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Check" width="16" height="16" className={styles.checkIcon} />
+                      무통장입금으로 안전한 결제
+                    </p>
+                    <p>
+                      <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Check" width="16" height="16" className={styles.checkIcon} />
+                      입금 확인 후 48시간 내 발송
+                    </p>
+                    <p>
+                      <img src="https://img.icons8.com/?id=11695&format=png&size=48" alt="Check" width="16" height="16" className={styles.checkIcon} />
+                      이메일로 결과 전송
+                    </p>
+                  </div>
+
+                  <div className={styles.modalActions}>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnSecondary}`}
+                      onClick={() => setPurchaseModalStep(2)}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className={`${styles.modalBtn} ${styles.modalBtnPrimary} ${styles.modalBtnLarge}`}
+                      onClick={async () => {
+                        if (!purchaseFile || !purchaseName || !purchaseEmail || !purchasePhone) {
+                          setErrors(['모든 필수 정보를 입력해주세요.']);
+                          return;
+                        }
+
+                        setIsSubmitting(true);
+                        try {
+                          const response = await submitBetaApplication({
+                            email: purchaseEmail,
+                            name: purchaseName,
+                            phone: purchasePhone,
+                            productType: 'CRITICAL_HIT',
+                            resume: purchaseFile
+                          });
+
+                          if (response.success && response.data?.memberId) {
+                            const orderData = {
+                              memberId: response.data?.memberId,
+                              name: purchaseName,
+                              email: purchaseEmail,
+                              phone: purchasePhone,
+                              product: 'critical-hit',
+                              orderDate: new Date().toISOString(),
+                              orderId: `QD${Date.now()}`
+                            };
+
+                            localStorage.setItem('orderData', JSON.stringify(orderData));
+                            router.push('/payment');
+                          } else {
+                            setErrors(['신청 처리 중 오류가 발생했습니다.']);
+                          }
+                        } catch (error) {
+                          console.error('Error submitting application:', error);
+                          setErrors(['신청 처리 중 오류가 발생했습니다.']);
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? '처리중...' : '무통장입금으로 결제하기'}
+                    </button>
+                  </div>
+
+                  <p className={styles.modalPaymentSecurity}>
+                    <img src="https://img.icons8.com/?id=39138&format=png&size=48" alt="Security" width="16" height="16" className={styles.securityIcon} />
+                    결제 정보는 암호화되어 안전하게 처리됩니다
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

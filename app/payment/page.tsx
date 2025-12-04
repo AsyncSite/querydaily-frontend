@@ -86,7 +86,7 @@ function PaymentPageContent() {
   const handleComplete = () => {
     // growth-plan에서 왔으면 해당 페이지로, 아니면 메인으로
     if (orderData?.product === 'growth-plan') {
-      router.push('/prototype-hyundoo/v4/products/growth-plan/v2');
+      router.push('/products/growth-plan');
     } else {
       router.push('/');
     }

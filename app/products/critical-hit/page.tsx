@@ -205,7 +205,7 @@ function CriticalHitContent() {
       {/* Sticky Header */}
       <header className={styles.stickyHeader}>
         <div className={styles.headerContainer}>
-          <div className={styles.logo} onClick={() => router.push('/prototype-hyundoo/v4')}>
+          <div className={styles.logo} onClick={() => router.push('/')}>
             <span className={styles.logoText}>
               Query<span className={styles.logoAccent}>Daily</span>
             </span>
@@ -551,7 +551,7 @@ function CriticalHitContent() {
                 </ul>
                 <button
                   className={styles.growthPlanCtaButton}
-                  onClick={() => router.push('/prototype-hyundoo/v4/products/growth-plan/v2')}
+                  onClick={() => router.push('/products/growth-plan')}
                 >
                   <Star size={18} />
                   그로스 플랜 보러가기

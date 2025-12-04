@@ -449,7 +449,7 @@ function GrowthPlanV2Content() {
       {/* Sticky Header */}
       <header className={styles.stickyHeader}>
         <div className={styles.headerContainer}>
-          <div className={styles.logo} onClick={() => router.push('/prototype-hyundoo/v4')}>
+          <div className={styles.logo} onClick={() => router.push('/')}>
             <span className={styles.logoText}>
               Query<span className={styles.logoAccent}>Daily</span>
             </span>
@@ -796,7 +796,7 @@ function GrowthPlanV2Content() {
                 </ul>
                 <button
                   className={styles.criticalHitCtaButton}
-                  onClick={() => router.push('/prototype-hyundoo/v4/products/critical-hit')}
+                  onClick={() => router.push('/products/critical-hit')}
                 >
                   <Zap size={18} />
                   크리티컬 히트 보러가기

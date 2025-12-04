@@ -177,7 +177,7 @@ export default function ProductDetailPage() {
       <div className={styles.container}>
         <div className={styles.notFound}>
           <h1>상품을 찾을 수 없습니다</h1>
-          <button onClick={() => router.push('/prototype-hyundoo/v1')} className={styles.backBtn}>
+          <button onClick={() => router.push('/')} className={styles.backBtn}>
             메인으로 돌아가기
           </button>
         </div>
@@ -217,12 +217,12 @@ export default function ProductDetailPage() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
-          <div className={styles.logo} onClick={() => router.push('/prototype-hyundoo/v1')}>
+          <div className={styles.logo} onClick={() => router.push('/')}>
             <span className={styles.logoText}>
               Query<span className={styles.logoAccent}>Daily</span>
             </span>
           </div>
-          <button onClick={() => router.push('/prototype-hyundoo/v1')} className={styles.backBtn}>
+          <button onClick={() => router.push('/')} className={styles.backBtn}>
             ← 돌아가기
           </button>
         </div>

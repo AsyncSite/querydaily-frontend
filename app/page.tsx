@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -9,9 +9,9 @@ export default function V7Page() {
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -61,15 +61,14 @@ export default function V7Page() {
 
     // 이력서 필수 체크
     if (!resumeFile) {
-      setSubmitResult({
-        success: false,
-        message: '이력서를 업로드해주세요.'
-      });
+      setToastType('error');
+      setToastMessage('이력서를 업로드해주세요.');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitResult(null);
 
     try {
       const leadData = {
@@ -103,10 +102,10 @@ export default function V7Page() {
         // Reset form
         setFormData({ email: '', name: '', role: '', experience: '', worry: '' });
         setResumeFile(null);
-        setSubmitResult(null);
         // 모달 닫기
         setShowFreeTrialModal(false);
-        // 토스트 표시
+        // 성공 토스트 표시
+        setToastType('success');
         setToastMessage('신청이 완료되었습니다! 48시간 내 이메일을 확인해주세요.');
         setShowToast(true);
         setTimeout(() => setShowToast(false), 4000);
@@ -118,16 +117,18 @@ export default function V7Page() {
         } else if (data.message) {
           errorMessage = data.message;
         }
-        setSubmitResult({
-          success: false,
-          message: errorMessage
-        });
+        // 에러 토스트 표시
+        setToastType('error');
+        setToastMessage(errorMessage);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 5000);
       }
     } catch (error) {
-      setSubmitResult({
-        success: false,
-        message: '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'
-      });
+      // 네트워크 에러 토스트 표시
+      setToastType('error');
+      setToastMessage('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -480,12 +481,6 @@ export default function V7Page() {
             </p>
 
             <form className={styles.freeTrialForm} onSubmit={handleSubmit}>
-              {submitResult && (
-                <div className={submitResult.success ? styles.successMessage : styles.errorMessage}>
-                  {submitResult.message}
-                </div>
-              )}
-
               <div className={styles.formGroup}>
                 <label htmlFor="email">이메일 *</label>
                 <input
@@ -599,7 +594,7 @@ export default function V7Page() {
 
       {/* Toast */}
       {showToast && (
-        <div className={styles.toast}>
+        <div className={`${styles.toast} ${toastType === 'error' ? styles.toastError : ''}`}>
           {toastMessage}
         </div>
       )}

@@ -153,6 +153,21 @@ export default function V7Page() {
     return () => observer.disconnect();
   }, []);
 
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showFreeTrialModal) {
+        setShowFreeTrialModal(false);
+      }
+    };
+
+    if (showFreeTrialModal) {
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [showFreeTrialModal]);
+
   return (
     <div className={styles.container}>
 

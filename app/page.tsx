@@ -30,6 +30,7 @@ export default function V7Page() {
   const mapExperienceToCareerLevel = (experience: string): string => {
     switch (experience) {
       case '0':
+        return 'NEW_GRAD';
       case '1-3':
         return 'JUNIOR';
       case '3-5':
@@ -37,7 +38,7 @@ export default function V7Page() {
       case '5+':
         return 'SENIOR';
       default:
-        return 'JUNIOR';
+        return 'NEW_GRAD';
     }
   };
 

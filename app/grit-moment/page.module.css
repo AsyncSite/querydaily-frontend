@@ -4,9 +4,19 @@
   color: #ffffff;
 }
 
+.loading,
+.errorMsg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1.125rem;
+  color: #9ca3af;
+}
+
 /* Hero Section */
 .hero {
-  padding: 120px 20px 80px;
+  padding: 60px 20px 40px;
   text-align: center;
   background: linear-gradient(180deg, #0d0e14 0%, #05060a 100%);
 }
@@ -28,6 +38,64 @@
 }
 
 /* Description Section */
+.descSection {
+  padding: 40px 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.intro {
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #b0b0b0;
+  margin-bottom: 40px;
+}
+
+.intro strong {
+  color: #c3e88d;
+}
+
+.criteria {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.criteriaItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.criteriaIcon {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #c3e88d;
+  background: rgba(195, 232, 141, 0.15);
+  padding: 6px 10px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.criteriaItem h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+}
+
+.criteriaItem p {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.4;
+}
+
 .description {
   padding: 60px 20px;
   max-width: 900px;
@@ -287,7 +355,7 @@
 /* Responsive */
 @media (max-width: 640px) {
   .hero {
-    padding: 80px 16px 60px;
+    padding: 40px 16px 30px;
   }
 
   .title {
@@ -296,6 +364,19 @@
 
   .subtitle {
     font-size: 1rem;
+  }
+
+  .descSection {
+    padding: 30px 16px;
+  }
+
+  .intro {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+
+  .criteria {
+    grid-template-columns: 1fr;
   }
 
   .description,

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { createOrder, ProductCode } from '@/lib/api';
+import { createOrder, getProduct, ProductCode, ProductInfo } from '@/lib/api';
 
 export default function GritMomentPage() {
   const router = useRouter();
+  const [product, setProduct] = useState<ProductInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,6 +16,19 @@ export default function GritMomentPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const productInfo = await getProduct(ProductCode.GRIT_MOMENT);
+      setProduct(productInfo);
+      setIsLoading(false);
+    };
+    fetchProduct();
+  }, []);
+
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('ko-KR') + '원';
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -98,7 +113,31 @@ export default function GritMomentPage() {
       // SDK 모드로 결제 진행
       if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
         const PortOne = await import('@portone/browser-sdk/v2');
-        const payload = response.data.portOneSdkPayload as Parameters<typeof PortOne.requestPayment>[0];
+
+        // 무이자 3개월 고정 할부 옵션
+        const installmentOption = {
+          monthOption: {
+            fixedMonth: 3,
+          },
+          freeInstallmentPlans: [
+            { cardCompany: 'CARD_COMPANY_SAMSUNG', months: [3] },
+            { cardCompany: 'CARD_COMPANY_HYUNDAI', months: [3] },
+            { cardCompany: 'CARD_COMPANY_SHINHAN', months: [3] },
+            { cardCompany: 'CARD_COMPANY_KOOKMIN', months: [3] },
+            { cardCompany: 'CARD_COMPANY_LOTTE', months: [3] },
+            { cardCompany: 'CARD_COMPANY_BC', months: [3] },
+            { cardCompany: 'CARD_COMPANY_NH', months: [3] },
+            { cardCompany: 'CARD_COMPANY_HANA', months: [3] },
+            { cardCompany: 'CARD_COMPANY_WOORI', months: [3] },
+            { cardCompany: 'CARD_COMPANY_CITI', months: [3] },
+            { cardCompany: 'CARD_COMPANY_KAKAO', months: [3] },
+          ],
+        };
+
+        const payload = {
+          ...response.data.portOneSdkPayload,
+          installment: installmentOption,
+        } as Parameters<typeof PortOne.requestPayment>[0];
 
         try {
           const sdkResponse = await PortOne.requestPayment(payload);
@@ -141,60 +180,39 @@ export default function GritMomentPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <main className={styles.main}>
+        <div className={styles.loading}>로딩 중...</div>
+      </main>
+    );
+  }
+
+  if (!product) {
+    return (
+      <main className={styles.main}>
+        <div className={styles.errorMsg}>상품 정보를 불러올 수 없습니다.</div>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.main}>
       {/* Hero Section */}
       <section className={styles.hero}>
-        <h1 className={styles.title}>그릿 모먼트</h1>
-        <p className={styles.subtitle}>포기하고 싶을 때, 그 순간을 돌파하는 힘</p>
-      </section>
-
-      {/* Description Section */}
-      <section className={styles.description}>
-        <div className={styles.card}>
-          <h3>그릿(Grit)이란?</h3>
-          <p>
-            그릿은 장기적인 목표를 향해 열정과 끈기를 유지하는 능력입니다.
-            재능보다 중요한 것은 포기하지 않는 힘, 바로 그릿입니다.
-          </p>
-        </div>
-
-        <div className={styles.card}>
-          <h3>무엇을 얻게 되나요?</h3>
-          <ul>
-            <li>목표 설정과 달성을 위한 체계적인 프레임워크</li>
-            <li>어려운 순간을 돌파하는 멘탈 관리 전략</li>
-            <li>함께 성장하는 동료들과의 네트워킹</li>
-            <li>1:1 코칭 세션을 통한 개인화된 피드백</li>
-          </ul>
-        </div>
-
-        <div className={styles.card}>
-          <h3>프로그램 일정</h3>
-          <ul>
-            <li><strong>기간:</strong> 2025년 1월 15일 ~ 3월 15일 (8주)</li>
-            <li><strong>모임:</strong> 매주 토요일 오전 10시 (온라인)</li>
-            <li><strong>정원:</strong> 선착순 20명</li>
-          </ul>
-        </div>
+        <h1 className={styles.title}>{product.displayName}</h1>
+        <p className={styles.subtitle}>8주간의 압축 성장, 함께 설계합니다</p>
       </section>
 
       {/* Pricing & Form Section */}
       <section className={styles.pricingSection}>
         <div className={styles.pricingCard}>
           <div className={styles.priceInfo}>
-            <span className={styles.priceLabel}>참가비</span>
+            <span className={styles.priceLabel}>8주 프로그램 참가비</span>
             <div className={styles.priceAmount}>
               <span className={styles.currency}>&#8361;</span>
-              <span className={styles.price}>1,200,000</span>
+              <span className={styles.price}>{product.currentPrice.toLocaleString('ko-KR')}</span>
             </div>
-            <p className={styles.priceDesc}>8주 프로그램 전체 비용</p>
-          </div>
-
-          <div className={styles.installmentBadge}>
-            <span className={styles.badge}>무이자 할부</span>
-            <p>모든 카드사 3개월 무이자 할부 가능</p>
-            <p className={styles.monthly}>월 400,000원 x 3개월</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>
@@ -249,33 +267,13 @@ export default function GritMomentPage() {
               className={styles.submitBtn}
               disabled={isSubmitting}
             >
-              {isSubmitting ? '처리 중...' : '1,200,000원 결제하기'}
+              {isSubmitting ? '처리 중...' : `${formatPrice(product.currentPrice)} 결제하기`}
             </button>
 
             <p className={styles.refundPolicy}>
               * 프로그램 시작 7일 전까지 100% 환불 가능
             </p>
           </form>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className={styles.faqSection}>
-        <h2 className={styles.sectionTitle}>자주 묻는 질문</h2>
-
-        <div className={styles.faqItem}>
-          <h4>Q. 온라인으로만 진행되나요?</h4>
-          <p>네, 전 세계 어디서든 참여 가능한 온라인 프로그램입니다. Zoom을 통해 진행됩니다.</p>
-        </div>
-
-        <div className={styles.faqItem}>
-          <h4>Q. 중간에 참여가 어려운 주가 있으면 어떻게 하나요?</h4>
-          <p>모든 세션은 녹화되어 제공되며, 개별 코칭을 통해 놓친 내용을 보완할 수 있습니다.</p>
-        </div>
-
-        <div className={styles.faqItem}>
-          <h4>Q. 환불은 어떻게 되나요?</h4>
-          <p>프로그램 시작 7일 전까지 100% 환불, 시작 후에는 진행된 주차에 비례하여 환불됩니다.</p>
         </div>
       </section>
     </main>

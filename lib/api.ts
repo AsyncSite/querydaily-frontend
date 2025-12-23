@@ -262,6 +262,21 @@ export async function getAllProducts(): Promise<ApiResponse<ProductListResponse>
   return response.json();
 }
 
+/**
+ * 단일 상품 조회 (productCode로 조회)
+ */
+export async function getProduct(productCode: ProductCode): Promise<ProductInfo | null> {
+  try {
+    const response = await getAllProducts();
+    if (response.success && response.data?.products) {
+      return response.data.products.find(p => p.productCode === productCode) || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 // ============================================================================
 // Payment Helper (간편 결제 함수)
 // ============================================================================

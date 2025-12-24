@@ -1,0 +1,290 @@
+.main {
+  min-height: 100vh;
+  background: #05060a;
+  color: #ffffff;
+  padding: 80px 16px 40px;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+/* Success Icon */
+.successIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #c3e88d 0%, #82b366 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: #05060a;
+  font-weight: 800;
+  animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Title */
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 40px;
+}
+
+/* Impact Message */
+.impactMessage {
+  background: rgba(195, 232, 141, 0.05);
+  border: 2px solid rgba(195, 232, 141, 0.3);
+  border-radius: 16px;
+  padding: 32px 24px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.impactTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.impactDesc {
+  font-size: 15px;
+  color: #b0b0b0;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.impactDesc strong {
+  color: #c3e88d;
+  font-weight: 600;
+}
+
+/* Order Summary */
+.orderSummary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Next Steps */
+.nextSteps {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.stepsTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.stepNumber {
+  width: 32px;
+  height: 32px;
+  background: rgba(195, 232, 141, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #c3e88d;
+  flex-shrink: 0;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.stepDesc {
+  font-size: 13px;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+/* Notice */
+.notice {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.noticeTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.noticeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.noticeList li {
+  font-size: 13px;
+  color: #9ca3af;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.noticeList li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #c3e88d;
+}
+
+.noticeList li:last-child {
+  margin-bottom: 0;
+}
+
+.noticeList li strong {
+  color: #ffffff;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.primaryBtn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #c3e88d 0%, #a5d65a 100%);
+  border: none;
+  border-radius: 12px;
+  color: #05060a;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(195, 232, 141, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .main {
+    padding: 60px 16px 40px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .checkmark {
+    width: 70px;
+    height: 70px;
+    font-size: 35px;
+  }
+
+  .impactMessage {
+    padding: 24px 20px;
+  }
+
+  .impactTitle {
+    font-size: 18px;
+  }
+
+  .impactDesc {
+    font-size: 14px;
+  }
+}

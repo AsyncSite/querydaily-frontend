@@ -163,8 +163,8 @@ export default function GritMomentPage() {
             return;
           }
 
-          // 결제 성공 - 완료 페이지로 이동
-          router.push('/order-complete');
+          // 결제 성공 - 그릿 모먼트 완료 페이지로 이동
+          router.push('/grit-moment/complete');
         } catch (sdkError: any) {
           console.error('[PortOne SDK] Error during requestPayment:', sdkError);
           alert('결제 창을 여는 중 오류가 발생했습니다.');

@@ -114,8 +114,14 @@ export default function GritMomentPage() {
       if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
         const PortOne = await import('@portone/browser-sdk/v2');
 
+        // 할부 옵션: 2~6개월 선택 가능
         const payload = {
           ...response.data.portOneSdkPayload,
+          installment: {
+            monthOption: {
+              availableMonths: [2, 3, 4, 5, 6],
+            },
+          },
         } as unknown as Parameters<typeof PortOne.requestPayment>[0];
 
         try {
@@ -246,7 +252,7 @@ export default function GritMomentPage() {
               className={styles.submitBtn}
               disabled={isSubmitting}
             >
-              {isSubmitting ? '처리 중...' : `${formatPrice(product.currentPrice)} 결제하기`}
+              {isSubmitting ? '처리 중...' : '결제하기'}
             </button>
 
             <p className={styles.refundPolicy}>

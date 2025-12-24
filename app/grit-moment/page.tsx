@@ -114,29 +114,8 @@ export default function GritMomentPage() {
       if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
         const PortOne = await import('@portone/browser-sdk/v2');
 
-        // 무이자 3개월 고정 할부 옵션
-        const installmentOption = {
-          monthOption: {
-            fixedMonth: 3,
-          },
-          freeInstallmentPlans: [
-            { cardCompany: 'CARD_COMPANY_SAMSUNG', months: [3] },
-            { cardCompany: 'CARD_COMPANY_HYUNDAI', months: [3] },
-            { cardCompany: 'CARD_COMPANY_SHINHAN', months: [3] },
-            { cardCompany: 'CARD_COMPANY_KOOKMIN', months: [3] },
-            { cardCompany: 'CARD_COMPANY_LOTTE', months: [3] },
-            { cardCompany: 'CARD_COMPANY_BC', months: [3] },
-            { cardCompany: 'CARD_COMPANY_NH', months: [3] },
-            { cardCompany: 'CARD_COMPANY_HANA', months: [3] },
-            { cardCompany: 'CARD_COMPANY_WOORI', months: [3] },
-            { cardCompany: 'CARD_COMPANY_CITI', months: [3] },
-            { cardCompany: 'CARD_COMPANY_KAKAO', months: [3] },
-          ],
-        };
-
         const payload = {
           ...response.data.portOneSdkPayload,
-          installment: installmentOption,
         } as unknown as Parameters<typeof PortOne.requestPayment>[0];
 
         try {
@@ -213,9 +192,6 @@ export default function GritMomentPage() {
               <span className={styles.currency}>&#8361;</span>
               <span className={styles.price}>{product.currentPrice.toLocaleString('ko-KR')}</span>
             </div>
-            <p className={styles.installmentInfo}>
-              3개월 무이자 할부 시 월 {Math.floor(product.currentPrice / 3).toLocaleString('ko-KR')}원
-            </p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>

@@ -201,6 +201,13 @@
   color: #6b7280;
 }
 
+.installmentInfo {
+  font-size: 0.95rem;
+  color: #c3e88d;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
 .installmentBadge {
   background: rgba(195, 232, 141, 0.08);
   border: 1px solid rgba(195, 232, 141, 0.2);

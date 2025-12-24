@@ -88,7 +88,7 @@ export default function GritMomentPage() {
       const response = await createOrder({
         email: formData.email,
         name: formData.name,
-        phone: formData.phone.replace(/-/g, ''),
+        phone: formData.phone,
         productCode: ProductCode.GRIT_MOMENT,
         paymentMethod: 'card',
       });
@@ -137,7 +137,7 @@ export default function GritMomentPage() {
         const payload = {
           ...response.data.portOneSdkPayload,
           installment: installmentOption,
-        } as Parameters<typeof PortOne.requestPayment>[0];
+        } as unknown as Parameters<typeof PortOne.requestPayment>[0];
 
         try {
           const sdkResponse = await PortOne.requestPayment(payload);
@@ -213,6 +213,9 @@ export default function GritMomentPage() {
               <span className={styles.currency}>&#8361;</span>
               <span className={styles.price}>{product.currentPrice.toLocaleString('ko-KR')}</span>
             </div>
+            <p className={styles.installmentInfo}>
+              3개월 무이자 할부 시 월 {Math.floor(product.currentPrice / 3).toLocaleString('ko-KR')}원
+            </p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>
@@ -271,7 +274,10 @@ export default function GritMomentPage() {
             </button>
 
             <p className={styles.refundPolicy}>
-              * 프로그램 시작 7일 전까지 100% 환불 가능
+              * 사전 인터뷰를 통해 상호 적합성을 확인한 후 결제가 진행됩니다
+            </p>
+            <p className={styles.refundPolicy}>
+              * 결제 후 환불이 불가하오니 신중하게 결정해주세요
             </p>
           </form>
         </div>

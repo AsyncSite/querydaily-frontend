@@ -525,3 +525,85 @@ export type SubmitApplicationRequest = {
 };
 export type StartFreeTrialResponse = ApiResponse<LeadResponse>;
 export type SubmitApplicationResponse = ApiResponse<OrderResponse>;
+
+// ============================================================================
+// Grit Moment Price API (사용자별 가격 조회)
+// ============================================================================
+
+/**
+ * 그릿모먼츠 가격 정보
+ */
+export interface GritMomentPriceInfo {
+  id: number;
+  email: string;
+  urlId: string;
+  name: string;
+  amount: number;
+  used: boolean;
+  usedAt: string | null;
+  createdAt: string;
+}
+
+/**
+ * 그릿모먼츠 가격 조회 (urlId로 조회)
+ * GET /api/query-daily/grit-moment/price/{urlId}
+ */
+export async function getGritMomentPrice(urlId: string): Promise<ApiResponse<GritMomentPriceInfo>> {
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/grit-moment/price/${urlId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return { success: false, message: 'NOT_FOUND' };
+    }
+    await handleApiError(response);
+  }
+
+  const data = await response.json();
+  return { success: true, data };
+}
+
+/**
+ * 그릿모먼츠 주문 생성 (사용자별 가격 적용)
+ * POST /api/query-daily/orders with priceId
+ */
+export async function createGritMomentOrder(request: {
+  email: string;
+  name: string;
+  phone?: string;
+  urlId: string;  // 가격 조회용 urlId
+}): Promise<ApiResponse<OrderResponse>> {
+  const formData = new FormData();
+
+  const idempotencyKey = crypto.randomUUID();
+
+  const orderRequest = {
+    email: request.email,
+    name: request.name,
+    phone: request.phone || undefined,
+    productCode: ProductCode.GRIT_MOMENT,
+    paymentMethod: 'card',
+    gritMomentUrlId: request.urlId,  // 가격 조회용 urlId 추가
+    idempotencyKey,
+  };
+
+  const orderBlob = new Blob([JSON.stringify(orderRequest)], {
+    type: 'application/json'
+  });
+  formData.append('order', orderBlob);
+
+  const response = await fetch(`${API_BASE_URL}/api/query-daily/orders`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  return response.json();
+}

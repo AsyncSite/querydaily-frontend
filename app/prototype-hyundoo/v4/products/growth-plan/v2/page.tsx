@@ -354,7 +354,6 @@ function GrowthPlanV2Content() {
                     type="file"
                     id="resumeUpload"
                     accept=".pdf"
-                    required
                     style={{ display: 'none' }}
                     onChange={(e) => {
                       const file = e.target.files?.[0];

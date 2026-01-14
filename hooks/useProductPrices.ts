@@ -118,11 +118,11 @@ export function useProductPrice(productCode: ProductCode | string) {
   };
 }
 
-// 기본 가격 (API 실패 시 fallback)
+// 기본 가격 (API 실패 시 fallback) - 할인율은 버림 처리
 export const DEFAULT_PRICES: Record<string, { basePrice: number; currentPrice: number; discountPercent: number }> = {
-  CRITICAL_HIT: { basePrice: 15900, currentPrice: 9900, discountPercent: 38 },
-  GROWTH_PLAN: { basePrice: 106000, currentPrice: 49000, discountPercent: 54 },
-  REAL_INTERVIEW: { basePrice: 179000, currentPrice: 129000, discountPercent: 28 },
+  CRITICAL_HIT: { basePrice: 15900, currentPrice: 9900, discountPercent: 37 },
+  GROWTH_PLAN: { basePrice: 106000, currentPrice: 49000, discountPercent: 53 },
+  REAL_INTERVIEW: { basePrice: 179000, currentPrice: 129000, discountPercent: 27 },
   LAST_CHECK: { basePrice: 49000, currentPrice: 49000, discountPercent: 0 },
   RESUME_FIT: { basePrice: 59000, currentPrice: 59000, discountPercent: 0 },
   TRIAL: { basePrice: 0, currentPrice: 0, discountPercent: 0 },

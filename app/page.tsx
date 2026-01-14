@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import { useSafeProductPrice } from '@/hooks/useProductPrices';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
@@ -12,6 +13,10 @@ export default function V7Page() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+  // 상품 가격 동적 로딩
+  const criticalHitPrice = useSafeProductPrice('CRITICAL_HIT');
+  const growthPlanPrice = useSafeProductPrice('GROWTH_PLAN');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -393,8 +398,8 @@ export default function V7Page() {
             <div className={styles.pricingCard}>
               <h3 className={styles.planName}>크리티컬 히트</h3>
               <div className={styles.planPrice}>
-                <span className={styles.originalPrice}>15,900원</span>
-                <span className={styles.price}>9,900</span>
+                <span className={styles.originalPrice}>{criticalHitPrice.formattedBasePrice}원</span>
+                <span className={styles.price}>{criticalHitPrice.formattedCurrentPrice}</span>
                 <span className={styles.currency}>원</span>
               </div>
               <p className={styles.planDesc}>핵심만 빠르게</p>
@@ -411,8 +416,8 @@ export default function V7Page() {
               <div className={styles.featuredBadge}>인기</div>
               <h3 className={styles.planName}>그로스 플랜</h3>
               <div className={styles.planPrice}>
-                <span className={styles.originalPrice}>106,000원</span>
-                <span className={styles.price}>49,000</span>
+                <span className={styles.originalPrice}>{growthPlanPrice.formattedBasePrice}원</span>
+                <span className={styles.price}>{growthPlanPrice.formattedCurrentPrice}</span>
                 <span className={styles.currency}>원</span>
               </div>
               <p className={styles.planDesc}>완벽하게 준비하고 싶다면</p>

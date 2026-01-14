@@ -6,6 +6,7 @@ import styles from './page.module.css';
 import './white-theme.css';
 import './additional-styles.css';
 import { submitBetaApplication, createOrder, ProductCode } from '@/lib/api';
+import { useSafeProductPrice } from '@/hooks/useProductPrices';
 import {
   Calendar,
   Building2,
@@ -47,6 +48,11 @@ const validatePhone = (phone: string): boolean => {
 
 function GrowthPlanV2Content() {
   const router = useRouter();
+
+  // 상품 가격 (DB에서 조회)
+  const { basePrice, currentPrice, discountPercent, formattedBasePrice, formattedCurrentPrice } =
+    useSafeProductPrice('GROWTH_PLAN');
+
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Purchase Modal States
@@ -356,7 +362,6 @@ function GrowthPlanV2Content() {
                     type="file"
                     id="resumeUpload"
                     accept=".pdf"
-                    required
                     style={{ display: 'none' }}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -464,8 +469,8 @@ function GrowthPlanV2Content() {
       <div className={styles.floatingCta}>
         <div className={styles.floatingCtaContent}>
           <div className={styles.floatingPrice}>
-            <span className={styles.floatingPriceOriginal}>₩106,000</span>
-            <span className={styles.floatingPriceCurrent}>₩49,000</span>
+            <span className={styles.floatingPriceOriginal}>₩{formattedBasePrice}</span>
+            <span className={styles.floatingPriceCurrent}>₩{formattedCurrentPrice}</span>
           </div>
           <button className={styles.floatingCtaButton} onClick={openPaymentModal}>
             합격 준비하기
@@ -486,9 +491,9 @@ function GrowthPlanV2Content() {
             <p className={styles.sidebarSubtitle}>20일 집중 훈련</p>
 
             <div className={styles.sidebarPrice}>
-              <div className={styles.sidebarPriceOriginal}>₩106,000</div>
-              <div className={styles.sidebarPriceCurrent}>₩49,000</div>
-              <div className={styles.sidebarDiscount}>54% 할인</div>
+              <div className={styles.sidebarPriceOriginal}>₩{formattedBasePrice}</div>
+              <div className={styles.sidebarPriceCurrent}>₩{formattedCurrentPrice}</div>
+              <div className={styles.sidebarDiscount}>{discountPercent}% 할인</div>
             </div>
 
             <div className={styles.sidebarFeatures}>
@@ -1550,7 +1555,7 @@ function GrowthPlanV2Content() {
                   <td>가격</td>
                   <td>₩30,000</td>
                   <td>₩500,000+</td>
-                  <td className={styles.highlighted}><strong>₩49,000</strong></td>
+                  <td className={styles.highlighted}><strong>₩{formattedCurrentPrice}</strong></td>
                 </tr>
                 <tr>
                   <td>맞춤형 질문</td>
@@ -1707,9 +1712,9 @@ function GrowthPlanV2Content() {
               </div>
 
               <div className={styles.urgencyPriceSection}>
-                <div className={styles.urgencyPriceOriginal}>₩106,000</div>
-                <div className={styles.urgencyPriceCurrent}>₩49,000</div>
-                <div className={styles.urgencyDiscount}>54% 할인</div>
+                <div className={styles.urgencyPriceOriginal}>₩{formattedBasePrice}</div>
+                <div className={styles.urgencyPriceCurrent}>₩{formattedCurrentPrice}</div>
+                <div className={styles.urgencyDiscount}>{discountPercent}% 할인</div>
               </div>
 
               <div className={styles.urgencyBenefits}>
@@ -1936,7 +1941,7 @@ function GrowthPlanV2Content() {
 
                   <div className={styles.selectedProductInfo}>
                     <span className={styles.modalProductBadge}>그로스 플랜</span>
-                    <span className={styles.modalProductPrice}>₩49,000</span>
+                    <span className={styles.modalProductPrice}>₩{formattedCurrentPrice}</span>
                   </div>
 
                   <div className={styles.modalFormGroup}>
@@ -2196,11 +2201,11 @@ function GrowthPlanV2Content() {
                     </div>
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
-                      <span>₩49,000</span>
+                      <span>₩{formattedCurrentPrice}</span>
                     </div>
                     <div className={`${styles.modalOrderItem} ${styles.modalOrderTotal}`}>
                       <span>결제 금액</span>
-                      <span className={styles.totalPrice}>₩49,000</span>
+                      <span className={styles.totalPrice}>₩{formattedCurrentPrice}</span>
                     </div>
                   </div>
 

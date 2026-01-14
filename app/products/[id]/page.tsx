@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { products } from '../data';
 import styles from './page.module.css';
 import { submitBetaApplication, createOrder } from '@/lib/api';
+import { useSafeProductPrice } from '@/hooks/useProductPrices';
 import {
   FileText,
   Bot,
@@ -80,6 +81,14 @@ export default function ProductDetailPage() {
   const [errors, setErrors] = useState<string[]>([]);
 
   const product = products.find(p => p.id === productId);
+
+  // 상품 코드 매핑
+  const productCodeMap: Record<string, string> = {
+    'critical-hit': 'CRITICAL_HIT',
+    'growth-plan': 'GROWTH_PLAN'
+  };
+  const productCode = productCodeMap[productId] || '';
+  const { currentPrice, formattedCurrentPrice } = useSafeProductPrice(productCode);
 
   const handleCardPayment = async () => {
     try {
@@ -196,7 +205,7 @@ export default function ProductDetailPage() {
               {product.priceOriginal && (
                 <span className={styles.fixedPriceOriginal}>₩{product.priceOriginal.toLocaleString()}</span>
               )}
-              <span className={styles.fixedPriceCurrent}>₩{product.priceCurrent.toLocaleString()}</span>
+              <span className={styles.fixedPriceCurrent}>₩{formattedCurrentPrice}</span>
             </div>
           </div>
           <button
@@ -250,7 +259,7 @@ export default function ProductDetailPage() {
               {product.priceOriginal && (
                 <span className={styles.priceOriginal}>₩{product.priceOriginal.toLocaleString()}</span>
               )}
-              <span className={styles.priceCurrent}>₩{product.priceCurrent.toLocaleString()}</span>
+              <span className={styles.priceCurrent}>₩{formattedCurrentPrice}</span>
             </div>
 
             <button
@@ -748,8 +757,7 @@ export default function ProductDetailPage() {
                       {selectedPurchaseProduct === 'growth-plan' && '그로스 플랜'}
                     </span>
                     <span className={styles.modalProductPrice}>
-                      {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
-                      {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
+                      ₩{formattedCurrentPrice}
                     </span>
                   </div>
 
@@ -1013,17 +1021,11 @@ export default function ProductDetailPage() {
                     </div>
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
-                      <span>
-                        {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
-                        {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
-                      </span>
+                      <span>₩{formattedCurrentPrice}</span>
                     </div>
                     <div className={`${styles.modalOrderItem} ${styles.modalOrderTotal}`}>
                       <span>결제 금액</span>
-                      <span className={styles.totalPrice}>
-                        {selectedPurchaseProduct === 'critical-hit' && '₩9,900'}
-                        {selectedPurchaseProduct === 'growth-plan' && '₩49,000'}
-                      </span>
+                      <span className={styles.totalPrice}>₩{formattedCurrentPrice}</span>
                     </div>
                   </div>
 

@@ -244,7 +244,7 @@ export async function getOrderStatus(orderId: string): Promise<ApiResponse<any>>
 
 /**
  * 전체 상품 목록 조회 (GET /api/query-daily/products)
- * Gateway를 통해 라우팅: /api/query-daily/products → /api/v1/public/products
+ * Gateway를 통해 query-daily-service로 라우팅됨
  * 인증 불필요 (Public API)
  */
 export async function getAllProducts(): Promise<ApiResponse<ProductListResponse>> {

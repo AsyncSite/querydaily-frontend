@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import './white-theme.css';
 import { submitBetaApplication, createOrder, ProductCode } from '@/lib/api';
+import { useSafeProductPrice } from '@/hooks/useProductPrices';
 import {
   Calendar,
   Building2,
@@ -46,6 +47,12 @@ const validatePhone = (phone: string): boolean => {
 
 function CriticalHitContent() {
   const router = useRouter();
+
+  // 상품 가격 (DB에서 조회)
+  const { basePrice, currentPrice, discountPercent, formattedBasePrice, formattedCurrentPrice } =
+    useSafeProductPrice('CRITICAL_HIT');
+  const growthPlanPrice = useSafeProductPrice('GROWTH_PLAN');
+
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showFreeTrialModal, setShowFreeTrialModal] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -220,8 +227,8 @@ function CriticalHitContent() {
       <div className={styles.floatingCta}>
         <div className={styles.floatingCtaContent}>
           <div className={styles.floatingPrice}>
-            <span className={styles.floatingPriceOriginal}>₩15,900</span>
-            <span className={styles.floatingPriceCurrent}>₩9,900</span>
+            <span className={styles.floatingPriceOriginal}>₩{formattedBasePrice}</span>
+            <span className={styles.floatingPriceCurrent}>₩{formattedCurrentPrice}</span>
           </div>
           <button className={styles.floatingCtaButton} onClick={openPaymentModal}>
             지금 시작하기
@@ -242,9 +249,9 @@ function CriticalHitContent() {
             <p className={styles.sidebarSubtitle}>핵심 질문 3개 즉시 제공</p>
 
             <div className={styles.sidebarPrice}>
-              <div className={styles.sidebarPriceOriginal}>₩15,900</div>
-              <div className={styles.sidebarPriceCurrent}>₩9,900</div>
-              <div className={styles.sidebarDiscount}>38% 할인</div>
+              <div className={styles.sidebarPriceOriginal}>₩{formattedBasePrice}</div>
+              <div className={styles.sidebarPriceCurrent}>₩{formattedCurrentPrice}</div>
+              <div className={styles.sidebarDiscount}>{discountPercent}% 할인</div>
             </div>
 
             <div className={styles.sidebarFeatures}>
@@ -328,7 +335,7 @@ function CriticalHitContent() {
               </div>
               <div className={styles.impactDivider}>×</div>
               <div className={styles.impactItem}>
-                <div className={styles.impactNumber}>₩9,900</div>
+                <div className={styles.impactNumber}>₩{formattedCurrentPrice}</div>
                 <div className={styles.impactLabel}>합리적 가격</div>
               </div>
             </div>
@@ -702,8 +709,8 @@ function CriticalHitContent() {
               <tbody>
                 <tr>
                   <td>가격</td>
-                  <td className={styles.highlighted}><strong>₩9,900</strong></td>
-                  <td>₩49,000</td>
+                  <td className={styles.highlighted}><strong>₩{formattedCurrentPrice}</strong></td>
+                  <td>₩{growthPlanPrice.formattedCurrentPrice}</td>
                 </tr>
                 <tr>
                   <td>기간</td>
@@ -902,9 +909,9 @@ function CriticalHitContent() {
               </div>
 
               <div className={styles.urgencyPriceSection}>
-                <div className={styles.urgencyPriceOriginal}>₩15,900</div>
-                <div className={styles.urgencyPriceCurrent}>₩9,900</div>
-                <div className={styles.urgencyDiscount}>38% 할인</div>
+                <div className={styles.urgencyPriceOriginal}>₩{formattedBasePrice}</div>
+                <div className={styles.urgencyPriceCurrent}>₩{formattedCurrentPrice}</div>
+                <div className={styles.urgencyDiscount}>{discountPercent}% 할인</div>
               </div>
 
               <div className={styles.urgencyBenefits}>
@@ -1072,7 +1079,7 @@ function CriticalHitContent() {
               핵심만 빠르게 준비하세요.<br /><br />
 
               <strong style={{ color: 'var(--color-accent)' }}>
-                ₩9,900으로 시작하는 면접 준비
+                ₩{formattedCurrentPrice}으로 시작하는 면접 준비
               </strong>
             </p>
           </div>
@@ -1356,7 +1363,7 @@ function CriticalHitContent() {
 
                   <div className={styles.selectedProductInfo}>
                     <span className={styles.modalProductBadge}>크리티컬 히트</span>
-                    <span className={styles.modalProductPrice}>₩9,900</span>
+                    <span className={styles.modalProductPrice}>₩{formattedCurrentPrice}</span>
                   </div>
 
                   <div className={styles.modalFormGroup}>
@@ -1616,11 +1623,11 @@ function CriticalHitContent() {
                     </div>
                     <div className={styles.modalOrderItem}>
                       <span>가격</span>
-                      <span>₩9,900</span>
+                      <span>₩{formattedCurrentPrice}</span>
                     </div>
                     <div className={`${styles.modalOrderItem} ${styles.modalOrderTotal}`}>
                       <span>결제 금액</span>
-                      <span className={styles.totalPrice}>₩9,900</span>
+                      <span className={styles.totalPrice}>₩{formattedCurrentPrice}</span>
                     </div>
                   </div>
 

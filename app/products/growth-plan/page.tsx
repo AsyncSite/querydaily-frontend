@@ -546,7 +546,7 @@ function GrowthPlanV2Content() {
             <div className={styles.heroBadges}>
               <div className={styles.heroBadge}>
                 <Zap size={16} />
-                <span>오픈 특가 54% 할인</span>
+                <span>오픈 특가 {discountPercent}% 할인</span>
               </div>
               <div className={styles.heroLiveBadge}>
                 <div className={styles.liveDot}></div>

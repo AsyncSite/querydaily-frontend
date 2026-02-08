@@ -128,7 +128,7 @@ export default function GritMomentUserPage() {
       if (response.data.invocationType === 'SDK' && response.data.portOneSdkPayload) {
         const PortOne = await import('@portone/browser-sdk/v2');
 
-        const completeUrl = `${window.location.origin}/order-complete`;
+        const completeUrl = `${window.location.origin}/grit-moment/complete`;
         const payload = {
           ...response.data.portOneSdkPayload,
           redirectUrl: completeUrl,
@@ -162,7 +162,7 @@ export default function GritMomentUserPage() {
             return;
           }
 
-          router.push('/order-complete');
+          router.push('/grit-moment/complete');
         } catch (sdkError: unknown) {
           console.error('[PortOne SDK] Error during requestPayment:', sdkError);
           alert('결제 창을 여는 중 오류가 발생했습니다.');

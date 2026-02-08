@@ -192,7 +192,7 @@ export default function GritMomentUserPage() {
     <main className={styles.main}>
       {/* Hero Section */}
       <section className={styles.hero}>
-        <h1 className={styles.title}>그릿 모먼트</h1>
+        <h1 className={styles.title}>그릿모먼츠</h1>
         <p className={styles.subtitle}>8주간의 압축 성장, 함께 설계합니다</p>
       </section>
 
